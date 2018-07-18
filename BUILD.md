@@ -34,7 +34,7 @@ Make sure you have the latest **CMake** and **build tools for Visual Studio 2015
   
 ### 3. Building Cinder
 
-> :information_source: **You can skip this step** if you directly [download prebuilt Cinder from 2018-07-18](https://1drv.ms/u/s!AuC8m2CvOUXjgdlZthWalFAZjQ0fkw) (~745MB .zip) and unzip the archive into the root directory of this repo, i.e., the `lib/cinder` inside the .zip should match `lib/cinder` inside the repo (overwrite all files).
+> :information_source: **You can skip this step** if you directly [download prebuilt Cinder from 2018-07-18](https://1drv.ms/u/s!AuC8m2CvOUXjgdlZthWalFAZjQ0fkw) (~745MB .zip) and unzip the archive into the root directory of this repo, i.e., the `lib/cinder` inside the .zip should match `lib/cinder` inside the repo (overwrite all files). **Pay attention to `git`** if you do this: make sure not to commit anything inside the `cinder` submodule!
 
 In order to build Cinder, run **MSBuild Command Prompt for VS2015** (a command prompt bundled in Visual Studio 2015 that can run `msbuild`), go to `lib/cinder`, and execute:
 
