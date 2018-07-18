@@ -39,7 +39,7 @@ Make sure you have the latest **CMake** and **build tools for Visual Studio 2015
 In order to build Cinder, run **MSBuild Command Prompt for VS2015** (a command prompt bundled in Visual Studio 2015 that can run `msbuild`), go to `lib/cinder`, and execute:
 
 ```cmd
-\lib\cinder> mkdir build
+lib\cinder> mkdir build
 lib\cinder> cd build
 lib\cinder\build> cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
 lib\cinder\build> msbuild cinder.sln /m
