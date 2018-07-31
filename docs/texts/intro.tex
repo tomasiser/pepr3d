@@ -10,13 +10,15 @@ FDM printing is a relatively simple process - a printer head melts the plastic f
 
 The Prusa environment is very similar to the general description we provided in the section 1.1. For the puprose of our project, the most important concept in the Prusa environment is the slicer. The slicer is a program that receives the 3d model the user wishes to print out and creates the instructions for the Prusa 3d Printer - a G-code file. The file is then transfered to the printer, which then executes the commands in the G-code file. The slicer has to plan the movement of the head for the whole print. This includes several crucial things:
 
-* Covering the whole area of each layer
-* Reinforcing the walls of the object to make them sturdier
-* Filling the inside of the object with a rougher print, because it won't be visible when finished
-* Planning the path so the head can stay in one Z level - an "Eulerian path".
-* Switching the materials for multimaterial printing (more in 1.3)
+\begin{itemize}
+\item Covering the whole area of each layer
+\item Reinforcing the walls of the object to make them sturdier
+\item Filling the inside of the object with a rougher print, because it won't be visible when finished
+\item Planning the path so the head can stay in one Z level - an "Eulerian path".
+\item Switching the materials for multimaterial printing (more in 1.3)
+\end{itemize}
 
-Prusa develop their own slicer - a forked branch of an open-source program called Slic3r (http://slic3r.org/), called Slic3r Prusa Edition (https://www.prusa3d.com/slic3r-prusa-edition/). This slicer can do all we listed above very well.
+Prusa develop their own slicer - a forked branch of an open-source program called Slic3r \footnote{http://slic3r.org/}, called Slic3r Prusa Edition \footnote{https://www.prusa3d.com/slic3r-prusa-edition/}. This slicer can do all we listed above very well.
 
 \section{Multimaterial printing}
 
@@ -38,9 +40,9 @@ Our aim is to make the application for desktop PCs, with main developement time 
 
 Based on the analysis of the experts from Prusa Research s.r.o, there, at the moment, does not exist a software that does what this project is trying to achieve.
 
-The closest existing software is Autodesk Meshmixer (http://www.meshmixer.com/), which is very complicated and is not targeted for FDM printing specifically. As such, it includes a lot of features that are not important for the FDM users and end up being confusing.
+The closest existing software is Autodesk Meshmixer \footnote{http://www.meshmixer.com/}, which is very complicated and is not targeted for FDM printing specifically. As such, it includes a lot of features that are not important for the FDM users and end up being confusing.
 
-Microsoft 3D Builder (https://www.microsoft.com/en-us/p/3d-builder/9wzdncrfj3t6?activetab=pivot%3Aoverviewtab) is another application that handles 3D models but we have not found a way to make it create anything remotely applicable to FDM printing.
+Microsoft 3D Builder \footnote{https://www.microsoft.com/en-us/p/3d-builder/9wzdncrfj3t6?activetab=pivot\%3Aoverviewtab} is another application that handles 3D models but we have not found a way to make it create anything remotely applicable to FDM printing.
 
 \section{Challenges in this project}
 
