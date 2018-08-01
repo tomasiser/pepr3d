@@ -1,9 +1,10 @@
 cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
 set( CMAKE_VERBOSE_MAKEFILE ON )
+set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
 project( pepr3d )
 
-add_subdirectory(lib/cinder)
+add_subdirectory( lib/cinder )
 
 get_filename_component( CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/cinder" ABSOLUTE )
 get_filename_component( APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE )
