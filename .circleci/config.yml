@@ -13,7 +13,9 @@ jobs:
           command: date
       - run:
           name: Checkout submodules
-          command: git submodule update --init --recursive
+          command: |
+            apt-get install -y git
+            git submodule update --init --recursive
       - run:
           name: Install dependencies (apt-get)
           command: |
