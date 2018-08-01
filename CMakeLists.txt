@@ -10,11 +10,16 @@ get_filename_component( APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE )
 
 include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 
+file(GLOB SRC_FILES_IMGUI 
+    ${APP_PATH}/lib/cinder-imgui/src/*
+    ${APP_PATH}/lib/cinder-imgui/lib/imgui/*
+)
+
 ci_make_app(
     APP_NAME    "pepr3d"
     CINDER_PATH ${CINDER_PATH}
-    SOURCES     ${APP_PATH}/src/Pepr3D.cpp
-    INCLUDES    ${APP_PATH}/src
+    SOURCES     ${SRC_FILES_IMGUI} ${APP_PATH}/src/Pepr3D.cpp
+    INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
 #   RESOURCES   ${APP_PATH}/../../data/models/8lbs.obj
 #   ASSETS_PATH
 #   BLOCKS

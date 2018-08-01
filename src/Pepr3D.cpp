@@ -3,6 +3,8 @@
 #include "cinder/gl/TextureFont.h"
 #include "cinder/gl/gl.h"
 
+#include "CinderImGui.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -28,6 +30,8 @@ void Pepr3D::setup() {
     mFont = Font("Arial", 28);
     mTextureFont = gl::TextureFont::create(mFont);
     mFilesAlreadyDropped = false;
+
+    ui::initialize();
 }
 
 void Pepr3D::mouseDown(MouseEvent event) {}
@@ -45,7 +49,10 @@ void Pepr3D::fileDrop(FileDropEvent event) {
 void Pepr3D::update() {}
 
 void Pepr3D::draw() {
-    gl::clear(Color(0.1f, 0.1f, 0.1f));
+    static float gray = 0.1f;
+    gl::clear(ColorA::gray(gray));
+    ui::DragFloat("Background Intensity", &gray, 0.01f, 0.0f, 1.0f);
+
     mTextureFont->drawString("Hello! This is Pepr3D!", vec2(20.f, 40.f));
 
     if(!mFilesAlreadyDropped) {
