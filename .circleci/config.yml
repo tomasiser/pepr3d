@@ -2,54 +2,18 @@ version: 2
 jobs:
   build:
     docker:
-      - image: madduci/docker-linux-cpp
+      - image: tomasiser/docker-cinder:prebuilt
     steps:
       - checkout
       - run:
-          name: Greeting
-          command: echo Hello, world.
-      - run:
-          name: Print the Current Time
-          command: date
-      - run:
-          name: apt-get update
-          command: apt-get update
-      - run:
-          name: Install git, update submodules
-          command: |
-            apt-get install -y git
-            git submodule update --init --recursive
-      - run:
-          name: Install dependencies (apt-get)
-          command: |
-            apt-get install -y libxcursor-dev \
-              libxrandr-dev \
-              libxinerama-dev \
-              libxi-dev \
-              libgl1-mesa-dev \
-              libglu1-mesa-dev \
-              zlib1g-dev \
-              libfontconfig1-dev \
-              libmpg123-dev \
-              libsndfile1 \
-              libsndfile1-dev \
-              libpulse-dev \
-              libasound2-dev \
-              libcurl4-gnutls-dev \
-              libgstreamer1.0-dev \
-              libgstreamer-plugins-bad1.0-dev \
-              libgstreamer-plugins-base1.0-dev \
-              gstreamer1.0-libav \
-              gstreamer1.0-alsa \
-              gstreamer1.0-pulseaudio \
-              gstreamer1.0-plugins-bad \
-              libboost-all-dev
+          name: Update git submodules (except lib/cinder)
+          command: git submodule update --init --recursive ":(exclude)lib/cinder"
       - run:
           name: Prepare build (mkdir, cmake)
           command: |
             mkdir build
             cd build
-            cmake .. -DCINDER_BOOST_USE_SYSTEM=1
+            cmake .. -DPEPR3D_BUILD_CINDER=0 -DPEPR3D_CINDER_PATH="/dockercinder-prebuilt"
       - run:
           name: Run build (make)
           command: |
