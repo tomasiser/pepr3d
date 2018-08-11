@@ -27,12 +27,48 @@ Make sure you have the latest **CMake** and **build tools for Visual Studio 2017
 
 ### 3. Building Pepr3D (including all dependencies)
 
-In order to build Pepr3D and all its dependencies, run **MSBuild Command Prompt for VS2017** or **Developer Command Prompt for VS 2017** in start menu (a command prompt bundled in Visual Studio 2017 that can run `msbuild`), go to the root of the repo, and execute:
+Pepr3D can be built from a command line using the following 4 lines:
 
 ```cmd
 > mkdir build
 > cd build
 build> cmake -G"Visual Studio 15 2017 Win64" ..
+build> msbuild pepr3d.sln /m
+```
+
+#### Explanation
+
+First of all, we use `cmake` to setup the build. The `cmake` command has to be run everytime you change `CMakeLists.txt`, which is a configuration file for CMake. From the root of the repo, execute the following:
+
+```cmd
+> mkdir build
+> cd build
+build> cmake -G"Visual Studio 15 2017 Win64" ..
+```
+
+CMake will generate necessary Visual Studio 2017 projects and a solution file `pepr3d.sln`, which you can either open directly in Visual Studio 2017 and build from the IDE, or you can build it from a command line.
+
+#### Building from a command line
+
+In order to build Pepr3D and all its dependencies from a command line, one has to be able to run `msbuild` of Visual Studio 2017. To use `msbuild`, either run **MSBuild Command Prompt for VS2017** or **Developer Command Prompt for VS 2017** from Start menu, or use the following command (may be different depending on your installation path of Visual Studio 2017):
+
+```cmd
+%comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat"
+```
+
+The following should appear in your command line:
+
+```cmd
+**********************************************************************
+** Visual Studio 2017 Developer Command Prompt v15.7.1
+** Copyright (c) 2017 Microsoft Corporation
+**********************************************************************
+```
+
+
+Now that you have `msbuild` available, go to the root of the repo and execute:
+
+```cmd
 build> msbuild pepr3d.sln /m
 ```
 
