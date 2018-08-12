@@ -4,14 +4,13 @@ jobs:
     docker:
       - image: debian:stretch
     steps:
-      - checkout:
-          path: /pepr3d
+      - checkout
       - run:
           name: Verify that source files conform to clang-format
           command: |
             apt-get update -y
             apt-get install -y clang-format
-            CLANG_FORMAT_FILES_LIST=`find ./pepr3d/src/ -name \*.c -type f -or -name \*.cpp -type f -or -name \*.h -type f -or -name \*.hpp -type f`
+            CLANG_FORMAT_FILES_LIST=`find ./src/ -name \*.c -type f -or -name \*.cpp -type f -or -name \*.h -type f -or -name \*.hpp -type f`
             CLANG_FORMAT_FAILED=false
             for FILE_TO_VERIFY in $CLANG_FORMAT_FILES_LIST
             do
