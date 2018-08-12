@@ -1,5 +1,32 @@
 version: 2
 jobs:
+  clang-format-diff:
+    docker:
+      - image: debian:stretch
+    steps:
+      - checkout:
+        path: /pepr3d
+      - run:
+          name: Verify that source files conform to clang-format
+          command: |
+            apt-get update -y
+            apt-get install -y clang-format
+            CLANG_FORMAT_FILES_LIST=`find ./pepr3d/src/ -name \*.c -type f -or -name \*.cpp -type f -or -name \*.h -type f -or -name \*.hpp -type f`
+            CLANG_FORMAT_FAILED=false
+            for FILE_TO_VERIFY in $CLANG_FORMAT_FILES_LIST
+            do
+              export FORMATTING_ISSUE_COUNT=`clang-format -output-replacements-xml -style=file $FILE_TO_VERIFY | grep offset | wc -l`
+              if [ "$FORMATTING_ISSUE_COUNT" -gt "0" ]; then
+                echo "File $FILE_TO_VERIFY does not conform to clang-format."
+                CLANG_FORMAT_FAILED=true
+              fi
+            done
+            if [ "$CLANG_FORMAT_FAILED" = true ]; then
+              echo "!! There was at least 1 problem with your source files not conforming to clang-format."
+              echo "!! Did you use clang-format before pushing to the repository?"
+              exit 1
+            fi
+            exit 0
   build:
     docker:
       - image: tomasiser/docker-cinder:prebuilt
@@ -19,3 +46,12 @@ jobs:
           command: |
             cd build
             make
+workflows:
+  version: 2
+  verify-and-build:
+    jobs:
+      - clang-format-diff
+      - request-build:
+        type: approval
+      - build:
+        requires: request-build

@@ -34,7 +34,7 @@ void Pepr3D::mouseDown(MouseEvent event) {}
 
 void Pepr3D::fileDrop(FileDropEvent event) {
     mDroppedFiles = "";
-    for(auto path : event.getFiles()) {
+    for (auto path : event.getFiles()) {
         mDroppedFiles += path.string();
         mDroppedFiles += '\n';
         mFilesAlreadyDropped = true;
