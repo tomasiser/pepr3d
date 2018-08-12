@@ -5,7 +5,7 @@ jobs:
       - image: debian:stretch
     steps:
       - checkout:
-        path: /pepr3d
+          path: /pepr3d
       - run:
           name: Verify that source files conform to clang-format
           command: |
@@ -52,6 +52,7 @@ workflows:
     jobs:
       - clang-format-diff
       - request-build:
-        type: approval
+          type: approval
       - build:
-        requires: request-build
+          requires:
+            - request-build
