@@ -1,6 +1,9 @@
 # How to build Pepr3D
 
-## Building on Windows from scratch
+- [Building on Windows](#building-on-windows)
+- [Building on Linux](#building-on-linux)
+
+## Building on Windows
 
 ### 1. Cloning the repo with submodules
 
@@ -79,3 +82,14 @@ build> .\pepr3d\Debug\pepr3d.exe
 ```
 
 ![image](https://user-images.githubusercontent.com/10374559/42907924-a17c08d0-8adf-11e8-8ba1-3b1af237d2a2.png)
+
+## Building on Linux
+
+We have a Linux [Docker container](https://www.docker.com/resources/what-container) set up at [tomasiser/docker-cinder](https://github.com/tomasiser/docker-cinder). Please read the following Dockerfiles to understand what is going on:
+
+- [tomasiser/docker-cinder:latest Dockerfile](https://github.com/tomasiser/docker-cinder/blob/master/Dockerfile),
+- [tomasiser/docker-cinder:prebuilt Dockerfile](https://github.com/tomasiser/docker-cinder/blob/prebuilt/Dockerfile),
+
+where the `latest` image setups a Debian environment to build Cinder applications, and the `prebuilt` image actually builds Cinder on top of the `latest` image.
+
+To build Pepr3D, it is enough to run `cmake` and `make` commands from this Pepr3D repository the usual way. You can get inspired by the [.circleci/config.yml](.circleci/config.yml) CI configuration file.
