@@ -1,0 +1,56 @@
+\chapter{User interface}
+
+In case of Pepr3D, a user interface needs to be an easy-to-use, intuitive, and fast abstraction of the complex 3D geometric algorithms at the backend.
+It is the front-facing part of the application that the users are going to interact with.
+It is the part responsible for getting user input and transforming it into actions, and then providing the user with a feedback from those actions.
+
+\section{Inspiration}
+
+We did not want to reinvent the wheel, so we investigated how existing user interfaces (UI) are implemented in real applications.
+This section provides an overview on what we needed to understand before we could make an actual decision.
+
+\subsection{Existing patterns}
+
+There are many UI architectural patterns.
+A detailed overview of them was written for example by Derek Greer\footnote{https://lostechies.com/derekgreer/2007/08/25/interactive-application-architecture/}.
+The most common pattern is called Model-View-Controller (MVC), where \emph{model} is a state, \emph{views} visualize the state, and \emph{controllers} react to user input to manipulate the model.
+The MVC pattern got so famous that there are a lot of alternatives nowadays based on the similar principles, like Model-View-Viewmodel (MVVM), Model-View-Presenter (MVP), or Presentation-Abstraction-Control (PAC).
+
+But we can go even further: Johannes Norneby says\footnote{http://www.johno.se/book/immvc.html} that there is a dominant paradigm within programming of UI: \emph{``The user interface and / or visualization of any program is inherently stateful.''}
+He objects that this paradigm is broken and devotes his book into explaining the so called \emph{immediate user interface}, which provides a stateless alternative to rendering UI.
+Nowadays, there exist various libraries and frameworks based on this idea, the most well known probably being ImGUI\footnote{https://github.com/ocornut/imgui} supported by large companies such as Blizzard Entertainment.
+
+The main difference between \emph{immediate} and \emph{retained} modes is that in the latter, the visualization library \emph{retains} internally a complete model (state) of objects to be rendered, while the former is procedural and redrawn every frame.\footnote{http://msdn.microsoft.com/en-us/library/windows/desktop/ff684178(v=vs.85).aspx}
+The major benefit of immediate UI is that it is \emph{stateless}, much easier to maintain, and reuse.
+Norneby suggests that every \emph{view} should be as \emph{pure} as possible, meaning that in languages like C++, all views should in fact be \emph{free functions}.
+
+\subsection{Observation 1: Presentation separated from logic}
+
+Nowadays, a lot of UI is being developed for web applications.
+We can investigate the most used frameworks and libraries for single-page applications\footnote{React: https://reactjs.org/, Angular: https://angular.io/, Vue.js: https://vuejs.org/}: React by Facebook, Angular by Google, or Vue.js.
+What we can observe is that these tend to follow the principle that a view should be just a thin front-facing layer only responsible for displaying data.
+All calculations and data manipulation should be done in other parts of the application.
+It is not a surprise that even Qt\footnote{https://www.qt.io/}, a widely used C++ framework for UI, encourages people to eliminate the data consistency problems by using separate \emph{views}.\footnote{http://doc.qt.io/qt-5/modelview.html}
+
+Ironically, even though there are so many different UI libraries and frameworks, they only seem to differ in implementation details.
+That, of course, may be critical for performance and usability, especially in the DOM world of HTML, which is exactly why React overtook Angular, and maybe in the future, Vue.js will overtake React.
+But in the bigger perspective, the frameworks and libraries all seem to share the same common principles about the separation of presentation.
+
+\subsection{Observation 2: Immediate vs. retained}
+
+Even when one sticks to MVC principles, there does not seem to be a consensus for which applications one should prefer the \emph{retained} mode over \emph{immediate} and vice versa.
+At its core, MVC principles can be used in both of them.
+Norneby goes as far as saying that MVC \emph{and} immediate UI are two implicitly connected concepts.
+Arguments were made\footnote{https://gamedev.stackexchange.com/questions/24103/immediate-gui-yae-or-nay} for both approaches without a clear winner.
+
+The main downside of retained UI is the necessity to maintain a UI state.
+This often leads to complex libraries that are difficult to learn to work with and introduces out-of-sync bugs that are hard to fix.
+This is why video game and interactive applications developers (including Blizzard Entertainment) support immediate UI, because it \emph{interlocks} the application data and the current state of the UI, meaning the state and UI never get ouf of sync.
+The libraries are also usually very simple to use.
+
+The main downside of immediate UI is a poor separation of logic and presentation.
+What developers at uiink\footnote{https://uiink.com/articles/data-driven-immediate-mode-ui/} suggest is to just use the best of the both worlds.
+And it is not different from what Norneby actually proposed in his never-finished book.
+We should only use immediate UI in the actual \emph{views}, which are just free functions procedurally explaining how the UI should be rendered each frame.
+The rest of the application should know nothing about immediate UI.
+In theory, we should be able to swap immediate UI and retained UI, or use both of them together without the need to touch the rest of the application.
