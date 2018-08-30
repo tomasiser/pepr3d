@@ -4,10 +4,10 @@ In case of Pepr3D, a user interface needs to be an easy-to-use, intuitive, and f
 It is the front-facing part of the application that the users are going to interact with.
 It is the part responsible for getting user input and transforming it into actions, and then providing the user with a feedback from those actions.
 
-\section{Inspiration}
+\section{Introduction}
 
 We did not want to reinvent the wheel, so we investigated how existing user interfaces (UI) are implemented in real applications.
-This section provides an overview on what we needed to understand before we could make an actual decision.
+This section provides an overview on what we needed to understand before we could start making decisions.
 
 \subsection{Existing patterns}
 
@@ -24,7 +24,7 @@ The main difference between \emph{immediate} and \emph{retained} modes is that i
 The major benefit of immediate UI is that it is \emph{stateless}, much easier to maintain, and reuse.
 Norneby suggests that every \emph{view} should be as \emph{pure} as possible, meaning that in languages like C++, all views should in fact be \emph{free functions}.
 
-\subsection{Observation 1: Presentation separated from logic}
+\subsection{Presentation separated from logic}
 
 Nowadays, a lot of UI is being developed for web applications.
 We can investigate the most used frameworks and libraries for single-page applications\footnote{React: https://reactjs.org/, Angular: https://angular.io/, Vue.js: https://vuejs.org/}: React by Facebook, Angular by Google, or Vue.js.
@@ -36,7 +36,7 @@ Ironically, even though there are so many different UI libraries and frameworks,
 That, of course, may be critical for performance and usability, especially in the DOM world of HTML, which is exactly why React overtook Angular, and maybe in the future, Vue.js will overtake React.
 But in the bigger perspective, the frameworks and libraries all seem to share the same common principles about the separation of presentation.
 
-\subsection{Observation 2: Immediate vs. retained}
+\subsection{Immediate vs. retained}
 
 Even when one sticks to MVC principles, there does not seem to be a consensus for which applications one should prefer the \emph{retained} mode over \emph{immediate} and vice versa.
 At its core, MVC principles can be used in both of them.
@@ -54,3 +54,116 @@ And it is not different from what Norneby actually proposed in his never-finishe
 We should only use immediate UI in the actual \emph{views}, which are just free functions procedurally explaining how the UI should be rendered each frame.
 The rest of the application should know nothing about immediate UI.
 In theory, we should be able to swap immediate UI and retained UI, or use both of them together without the need to touch the rest of the application.
+
+\subsection{Internationalization and accessibility}
+
+There are many other observations one can make when studying existing applications that heavily rely on user interface.
+A lot of energy has been invested into creating standards and guidelines for them.
+It is not in the scope of this work to list all details about building good user interfaces, but we should still mention at least two more concepts: internationalization and accessibility.
+
+Typically, when applications are used by users from different countries, the UI needs to support \emph{internationalization} (abbreviated as \emph{i18n})\footnote{https://blog.mozilla.org/l10n/2011/12/14/i18n-vs-l10n-whats-the-diff/}, i.e., different languages, number formats, time formats, etc.
+
+Applications should also be \emph{accessible} (accessibility, abbr. \emph{a11y}), meaning they should support keyboard navigation for people who cannot use mouse, screen readers for people who are blind, high contrast themes for people with worse eyesight or color blind users, etc.
+Especially in the ``web world'', there exist important accessibility guidelines called WCAG.\footnote{https://www.w3.org/WAI/standards-guidelines/wcag/}
+
+\section{Our requirements}\label{sec:uireqs}
+
+Based on the observations made in the previous section, on the expected usage of our application, and on general advice gathered from Vojtěch Bubník from Prusa Research s.r.o., we decided on the following set of requirements for the user interface of Pepr3D.
+
+The user interface of Pepr3D and the library we are going to use for it should:
+%
+\begin{enumerate}
+\setlength\itemsep{0em}
+\item separate presentation from application logic, i.e., in theory, we should be able to easily replace the UI with another one, should it be necessary,
+\item support OpenGL rendering, i.e., we can render and manipulate the 3D models in the UI,
+\item look visually good and allow us to unify the design of the 3D rendering part (OpenGL) and the rest (toolbar, controls, etc.), e.g., by allowing us to define a custom theme,
+\item be cross-platform at least on desktop (Windows, Mac, Linux), ideally on tablets as well (Android, iOS), i.e., the ``cross-platformity'' of Pepr3D should not be limited by the UI library,
+\item support keyboard navigation, e.g., tabbing to buttons and input elements, using keyboard to enter values,
+\item support high DPI, e.g., Apple Retina displays, Microsoft Windows scaling,
+\item support asynchronous events, e.g., long calculations on background should not affect the UI thread,
+\item support internationalization including plurals, time formats, UTF-8, and
+\item the license of such library should be as least restrictive as possible, e.g., allowing commercial usage and redistribution, should the development of Pepr3D continue after this initial school project is finished.
+\end{enumerate}
+
+\section{Choosing a library}
+
+There are many cross-platform C++ libraries for creating user interface.
+Picking the right one for Pepr3D is not an easy task.
+Fortunately, as we built a list of requirements in the previous section, we can easily disregard the libraries that do not conform to our requirements.
+
+\subsection{Why not wxWidgets nor GTK$+$}
+
+We should definitely mention retained UI libraries wxWidgets\footnote{https://www.wxwidgets.org/} and GTK+\footnote{https://www.gtk.org/}.
+They are cross-platform and used by famous software like GIMP or Audacity.
+
+Unfortunately, regarding wxWidgets, we did not really like its default appearance.
+It uses native controls where possible making theming very limited and also undocumented.
+Hence, we would not be able to easily unify the design of the 3D view and the rest of the application.
+Also, only desktop is supported.
+
+Regarding GTK+, they do support theming up to some degree, they also added OpenGL rendering widgets a few years ago.
+Making Cinder and GTK+ work together would probably cost us some effort as we did not find any already working solution.
+The problem with GTK+ is that a lot of developers who actually use it are not satisfied and warn others about using it.\footnote{https://davmac.wordpress.com/2016/07/05/why-do-we-keep-building-rotten-foundations/}$^{,}$\footnote{https://fosspost.org/opinions/are-gtk-developers-destroying-linux-desktop-with-their-plans}$^{,}$\footnote{https://www.reddit.com/r/linuxmasterrace/comments/7xkcwo/}
+
+They say that GTK+ documentation is very bad and that different versions of GTK+ break existing applications, extensions, and themes, because the API and ABI is changing rapidly providing no guarantees.
+It did not seem that using GTK+ for Pepr3D would be a good long-term idea should anyone continue with its development in the future.
+
+\subsection{Qt}
+
+We have already mentioned Qt on previous pages of this specification.
+It is a rather large actively-developed library providing a lot of features including their own internationalization solutions and so on.
+Qt conforms to all our requirements stated in the previous section.
+There are two major drawbacks with Qt: its controversial licenses\footnote{https://www1.qt.io/licensing-comparison/} and its huge size.
+
+The licensing is controversial because either one can pay for the commercial license, or one can use the LGPLV3 one, but it requires dynamic linking, providing users the ability to relink the application, and also the necessity to deliver complete Qt source codes to users including all changes made if any.
+The huge size is also an issue, because using only the basics of Qt (widgets, GUI, and core) is already around 17 megabytes in libraries, which together with Cinder would lead to a very large size of the final Pepr3D application.
+It is also uncertain whether it would be a good idea to use Cinder together with Qt, so we would possibly need to rely on a different library.
+
+\subsection{UI libraries for OpenGL}
+
+There are also libraries that do not use native controls at all, but rather generate draw instructions and lists that can be used by renderers like OpenGL directly.
+The libraries itself do not handle window creation, native calls to operating systems, etc.
+Users of such a library need to bind the input handling and draw commands of these libraries to their own OpenGL/DirectX/other renderer.
+In our case, we would need to connect the library to Cinder, which handles windows, inputs, and rendering itself.
+
+There are many such libraries, e.g., Dear ImGui, Nuklear, NanoGUI, and FlatUI.\footnote{https://github.com/ocornut/imgui, https://github.com/vurtun/nuklear, https://github.com/wjakob/nanogui, https://github.com/google/flatui}
+While some of them like NanoGUI and FlatUI seem to be rather small, without that many users, and not under active development, Nuklear and Dear ImGui are still under active development and maintenance.
+
+Nuklear is an ANSI C header-only library with a C API and C naming conventions.
+We did not manage to find existing Cinder--Nuklear bindings that we would be able to use, so we would need to develop them ourselves.
+For this reason, we did not continue investigating Nuklear, because we found an alternative.
+
+Dear ImGui (or just ImGui) is a modern bloat-free C++11 library that we already mentioned in the previous sections.
+It is backed by large companies like Blizzard Entertainment or NADEO.
+Its community is very active providing different bindings for different renderers and libraries including Cinder.
+It is easily themable and we have created a prototype with completely custom controls.
+
+\subsection{Final decisions}
+
+For our final decisions, we have selected two libraries: \textbf{Qt} and \textbf{ImGui}.
+When looking at our requirements from Section~\ref{sec:uireqs} (numbering refers to Section~\ref{sec:uireqs}):
+%
+\begin{enumerate}
+\setlength\itemsep{0em}
+\item separation can easily be achieved in both using Views and Models,
+\item OpenGL rendering is implicit in ImGui, there is a widget in Qt,
+\item theming in Qt: QSS stylesheets, in ImGui: styles and custom drawing,
+\item both are cross-platform even on mobile devices,
+\item both support keyboard navigation, ImGui since version 1.60,
+\item high DPI possible in Qt, for ImGui we can use Cinder high DPI support,
+\item Qt has its own thread pool, signals, and promises, for ImGui we can use C++11 and Cinder/ASIO event loop using dispatchAsync,
+\item Qt has its own i18n support, for ImGui we can use Boost.Locale and gettext\footnote{Free i18n system commonly used on Linux, see https://www.gnu.org/software/gettext/} together with a translation editor, e.g., open-source PoEdit\footnote{https://poedit.net/},
+\item Qt is unfortunately commercial or LGPLV3 (see above), ImGui has much less restrictive MIT License.
+\end{enumerate}
+
+As we can see, there is no clear winner: both libraries have positive and negative attributes.
+In fact, Qt and ImGui are very different.
+Qt is a large retained UI library and ImGui is a small bloat-free immediate UI library.
+
+Using Qt together with Cinder is rather questionable as they both overlap in certain areas like window management and event handling.
+Whereas ImGui needs a renderer and a window handler anyway, so using it with Cinder seems to be a good idea.
+ImGui is much closer related to the actual OpenGL rendering and offers us quite a bit more flexibility.
+It also has a very simple source code that one can read in an evening, meaning we can actually learn a lot about how such a library is made.
+
+We think that Qt would probably be an unecessary huge piece of middleware that we would have to learn just for the sake of this project.
+We have decided to use \textbf{ImGui} for the Pepr3D user interface.
