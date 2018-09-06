@@ -128,10 +128,11 @@ Again, there are famous cross-platform libraries that already exist for these pu
 
 \subsection{Why not wxWidgets nor GTK$+$}
 
-We should definitely mention retained UI libraries wxWidgets\footnote{https://www.wxwidgets.org/} and GTK+\footnote{https://www.gtk.org/}.
-They are cross-platform and used by famous software like GIMP or Audacity.
+We should definitely mention retained UI libraries wxWidgets and GTK+.\footnote{https://www.wxwidgets.org/, https://www.gtk.org/}
+They are both cross-platform and used by famous software like GIMP or Audacity.
+Unfortunately, we found major flaws with both of them.
 
-Unfortunately, regarding wxWidgets, we did not really like its default appearance.
+Regarding wxWidgets, we did not really like its default appearance.
 It uses native controls where possible making theming very limited and also undocumented.
 Hence, we would not be able to easily unify the design of the 3D view and the rest of the application.
 Also, only desktop is supported.
@@ -187,7 +188,7 @@ When looking at our requirements from Section~\ref{sec:uireqs} (numbering refers
 \item both support keyboard navigation, ImGui since version 1.60,
 \item high DPI possible in Qt, for ImGui we can use Cinder high DPI support,
 \item Qt has its own thread pool, signals, and promises, for ImGui we can use C++11 and Cinder/ASIO event loop using dispatchAsync,
-\item Qt has its own i18n support, for ImGui we can use Boost.Locale and gettext\footnote{Free i18n system commonly used on Linux, see https://www.gnu.org/software/gettext/} together with a translation editor, e.g., open-source PoEdit\footnote{https://poedit.net/},
+\item Qt has its own i18n support, for ImGui we can use PO files and gettext\footnote{Free i18n system commonly used on Linux, see https://www.gnu.org/software/gettext/} together with a translation editor, e.g., open-source PoEdit\footnote{https://poedit.net/},
 \item Qt is unfortunately commercial or LGPLV3 (see above), ImGui has much less restrictive MIT License.
 \end{enumerate}
 
@@ -202,3 +203,58 @@ It also has a very simple source code that one can read in an evening, meaning w
 
 We think that Qt would probably be an unecessary huge piece of middleware that we would have to learn just for the sake of this project.
 We have decided to use \textbf{ImGui} for the Pepr3D user interface.
+
+\section{Final proposal}
+
+In Section~\ref{sec:wireframe} and in Figure~\ref{fig:wireframe}, we have already proposed a wireframe of Pepr3D and explained why we find it reasonable and easy to use.
+In this chapter, we explained our requirements and investigated existing patterns for actually implementing the UI.
+Let us now propose how we can use these together.
+
+\subsection{Overview}
+
+We propose to divide the Pepr3D UI into the following main parts that correspond to the wireframe in Figure~\ref{fig:wireframe} and to Figure~\ref{fig:uioverview}:
+%
+\begin{itemize}
+\setlength\itemsep{0em}
+\item a \textbf{toolbar} with toggleable buttons representing tools, undo/redo, etc., implemented as an ImGui widget rendered with Cinder,
+\item a \textbf{side pane} with buttons, checkboxes, sliders, etc., representing configuration of the currently selected tool, also implemented as an ImGui widget rendered with Cinder,
+\item and a \textbf{model view} with the 3D model which the user can rotate, zoom, paint on it, etc., implemented in OpenGL using Cinder.
+\end{itemize}
+
+Even though the toolbar and side pane are to be implemented in ImGui, they will in fact be rendered using Cinder and OpenGL as well.
+The whole window is managed by Cinder and has a single large OpenGL drawing context.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.65]{images/uioverview.eps}
+	\caption{An overview of the Pepr3D UI.}
+	\label{fig:uioverview}
+\end{figure}
+
+\vspace{-1em}
+\subsection{Stateless views / widgets}
+
+Inspired by the immediate UI advice, we propose to use \emph{stateless views} that will be responsible for drawing the UI.
+We can implement these views as C++ free functions without encapsulating them in any classes.
+This is a common pattern in C++, e.g., in the standard library, because unlike in languages like Java and C\#, functions in C++ do not need to be enclosed in classes.
+
+Having stateless views means that we do not have to program any explicit synchronization between the UI and the backend.
+Whenever we rerender the UI, it will be rendered with the newest data.
+We should try to avoid retained state in the UI as much as possible, but it might be necessary in specific situations, e.g., for scrollbar positions or complex calculations that we do not want to do each frame.
+The ImGui library provides ways for retaining states.
+Where necessary, we can also use regular C++ classes and their instances.
+
+There is also a huge ImGui community at GitHub, where we can find both simple and complex widgets available from other users of the library.
+We should aim at making our UI composed of reusable ImGui widgets.
+
+\subsection{Internationalization and accessibility}
+
+It should be possible to change a language of the application.
+For this purpose, we propose to use PO files that are used by a lot of Linux distributions and applications including PHP.
+There exist lightweight libraries like sporit-po\footnote{https://github.com/cbeck88/spirit-po} for loading the PO files.
+The files themselves can be generated from source codes and translated using for example the already mentioned PoEdit.
+
+The UI should provide basic keyboard navigation including hotkeys (shortcuts).
+It is especially important that the currently selected tool can be changed by pressing a single key on a keyboard.
+We also considered adding a radial menu to a specific mouse button (e.g., middle button click), but it is not a top priority.
+The default theme of Pepr3D should provide sufficient contrast and it should be easy to see which tool is selected and what options are enabled.
