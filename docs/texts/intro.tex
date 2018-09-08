@@ -8,7 +8,7 @@ FDM printing is a relatively simple process - a printer head melts the plastic f
 
 \section{Prusa environment}
 
-The Prusa environment is very similar to the general description we provided in the section 1.1. For the puprose of our project, the most important concept in the Prusa environment is the slicer. The slicer is a program that receives the 3d model the user wishes to print out and creates the instructions for the Prusa 3d Printer - a G-code file. The file is then transfered to the printer, which then executes the commands in the G-code file. The slicer has to plan the movement of the head for the whole print. This includes several crucial things:
+The Prusa environment is very similar to the general description we provided in the section 1.1. For the puprose of our project, the most important concept in the Prusa environment is the slicer. The slicer is a program that receives the 3D model the user wishes to print out and creates the instructions for the Prusa 3D Printer -- a G-code file. The file is then transfered to the printer, which then executes the commands in the G-code file. The slicer has to plan the movement of the head for the whole print. This includes several crucial things:
 
 \begin{itemize}
 \item Covering the whole area of each layer
@@ -44,6 +44,8 @@ The closest existing software is Autodesk Meshmixer \footnote{http://www.meshmix
 
 Microsoft 3D Builder \footnote{https://www.microsoft.com/en-us/p/3d-builder/9wzdncrfj3t6?activetab=pivot\%3Aoverviewtab} is another application that handles 3D models but we have not found a way to make it create anything remotely applicable to FDM printing.
 
+Any 3D computer graphics program designed to handle 3D models which allows for the model to be created or split by colors manually. This section would include software as 3ds Max, Maya or Cinema4D. Using these applications, however, would be very time comsuming for the user and practically unusable on a larger scale.
+
 \section{Challenges in this project}
 
 This section should briefly familiarize the reader with some of the parts of the application we think will be difficult to implement correctly, before we present the full program specification.
@@ -58,7 +60,7 @@ After the user is done painting, the application will have to separate the desig
 
 \subsection{Performance}
 
-Handling complex geometry is a very taxing task for the user's computer. This application is targeted on beginner-level customers of simple and non-expensive 3D printers. Therefore the application cannot be too hardware demanding - it has to run smoothly on an average 3 year old PC or Notebook. We expect it is going to be hard to ensure this is the case.
+Handling complex geometry is a very taxing task for the user's computer. This application is targeted on beginner-level customers of simple and non-expensive 3D printers. Therefore the application cannot be too hardware demanding -- it has to run smoothly on an average 3 year old PC or laptop. We expect it is going to be hard to ensure this is the case.
 
 
 
