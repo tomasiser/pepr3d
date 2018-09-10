@@ -2,17 +2,20 @@
 
 A \emph{user interface} (UI) is the front-facing part of Pepr3D that the users are going to interact with.
 It is responsible for managing windows, showing buttons, texts, rendering the 3D model, handling mouse clicks, and much more.
-In case of Pepr3D, it needs to be a cross-platform, easy-to-use, intuitive, and fast abstraction of the complex 3D geometric algorithms at the backend.
+In case of Pepr3D, it needs to be a cross-platform, easy-to-use, intuitive, and fast abstraction of the complex 3D geometric algorithms at the backend, see Figure~\ref{fig:architecture_ui}.
 
-\medskip
-
-In this chapter, we explain how we decided to handle UI.
-There are two major parts which we handle separately: \emph{3D rendering}, i.e., displaying the 3D model, and \emph{UI widgets}, i.e., the windows, buttons, check boxes, text labels, etc.
-
+\begin{figure}[h]
+	\centering
+	\centerline{\includegraphics[scale=0.9]{images/architecture_ui.eps}}
+	\caption{An overview of the Pepr3D UI architecture, based on Figure~\ref{fig:architecture}.}
+	\label{fig:architecture_ui}
+\end{figure}
+\vspace{-1.5em}
 \section{Introduction}
 
 We did not want to reinvent the wheel, so we investigated how other developers recommend to implement user interfaces.
-This section provides a brief overview on what we found important to understand.
+In our case, we have \emph{3D rendering}, i.e., displaying the 3D model, and \emph{UI widgets}, i.e., the windows, buttons, check boxes, text labels, etc.
+Here we describe what we found important to understand.
 
 \subsection{Existing patterns}
 
