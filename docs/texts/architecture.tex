@@ -93,5 +93,34 @@ Hence, we decided to choose \textbf{C++} as a primary language for Pepr3D.
 
 \section{Dependencies}
 
-Libraries that the modules depend on.
-Explanations do \emph{not} belong in this section!
+In software development, it is a good idea \emph{not} to reinvent the wheel.
+It means that if there is a library available for a certain task that we would like to do, it makes sense to consider using such library.
+
+\subsection{Why yes, why not}
+
+Libraries are useful for solving complex error-prone tasks that might be too difficult to implement ourselves.
+As libraries typically have other users, there is a chance they have already spotted important bugs and reported them.
+Hence there is a high chance they have already been fixed, which is not the case when we decide to develop our brand new custom solution.
+Also, when a library is actively developed, it can keep improving and we do not even need to touch it.
+
+Obviously, for certain tasks, a library might not exist, it might be too old and not maintained anymore, or it might not be in a good condition in general.
+Using third party libraries makes maintenance of the project more difficult.
+We need to keep checking if our dependencies are up to date, if there are known bugs or security issues in them.
+Also in case we need to modify the library, we need to keep our custom fork of it and keep merging latest changes.
+Different libraries also tend to use their own classes and structures for the same thing, which makes the source codes more difficult to understand.
+
+\subsection{Libraries used by Pepr3D modules}
+
+We have made a list of libraries that we would like to use to implement Pepr3D.
+Details about why we have decided to use exactly \emph{these} libraries are available in specific chapters related to the modules.
+This is just a brief overview:
+%
+\begin{itemize}
+\item \textbf{Assimp}\footnote{http://www.assimp.org/} library should be used for importing and exporting 3D models for the \emph{Geometry Model} module.
+\item \textbf{Cereal}\footnote{https://uscilab.github.io/cereal/} library should be used for (de)serialization of \emph{Geometry Model} and \emph{Application} data.
+\item \textbf{CGAL}\footnote{https://www.cgal.org/} library is considered for complex 3D geometry and topology calculations in the \emph{Tools} commands affecting the \emph{Geometry Model}.
+\item \textbf{Cinder}\footnote{https://libcinder.org/} library will be used in the \emph{UI Application} for managing cross-platform windows, input handling, asynchronous event loop, \textbf{OpenGL} context handling, and other related tasks.
+\item \textbf{Dear ImGui}\footnote{https://github.com/ocornut/imgui} library will be used in \emph{Views} as a UI widgets library for managing buttons, text inputs, checkboxes, and other UI widgets.
+\item This list of dependencies may not be final.
+      Other libraries are also considered, such as \textbf{spirit-po}\footnote{https://github.com/cbeck88/spirit-po} for translating UI into different languages.
+\end{itemize}
