@@ -1,4 +1,4 @@
-\chapter{Commands, Command Stack, and Tools}
+\chapter{Core modules}
 
 \begin{figure}[b]
 	\centering
@@ -12,7 +12,7 @@ This chapter takes a closer look at the portion of the architecture higlighted i
 % TODO: WARNING: CAREFUL, JE UI NEXT NEBO PREVIOUS CHAPTER?
 
 \section{Commands}
-Commands are the primary means of changing the geometry model. Each of them gets executed and placed on the command stack, which allows for the \textit{Undo and Redo} operations to function correctly. The commands then interact with the geometry model (this interaction will be explained in greater detail in the chapter regarding the geometry model) to modify it according to the user's wishes.
+Commands are the primary means of altering the geometry model. Each of them gets executed and placed on the command stack, which allows for the \textit{Undo and Redo} operations to function correctly. The commands then interact with the geometry model (this interaction will be explained in greater detail in the chapter regarding the geometry model) to modify it according to the user's wishes.
 
 Because each command gets put on the command stack, and each Undo step removes one command from the stack, each command has to have a visual impact on the user's work. This means that internal computations, such as geometry queries, cannot be represented as commands, because pressing the Undo button would not have any visual effect and would confuse the user. Examples of commands include: coloring a single triangle (triangle painter tool), adding a brush stroke (as in semi-automatic segmentation we looked at in Chapter 2) or a single step of triangle mesh subdivision.
 
@@ -77,3 +77,25 @@ The tool now generates the final command to complete the segmentation and passes
 
 
 If the user presses Ctrl + Z now, only the segmentation will get removed, with the strokes still remaining on the object.
+
+\section{Geometry model}
+
+The geometry model is responsible for keeping the geometry data (triangles of the model) in memory and implementing geometric operations, that then get used in commands, to perform the tasks specified by the tools.
+
+\subsection{Implementation variants}
+
+There are two main approaches to programming the geometry model. One approach is to look at the model as a state-less chunk of data. The functions that operate on the model (e.g. \textit{return the triangle that intersects this ray}) are free functions that just get called on the geometry model. The second approach is to implement the model as a full object. This means that the model has its private data -- the triangles of the user's model, and it has its methods -- the geometric operations it allows the user (i.e. the programmer of the commands and tools) to perform upon the private data.
+
+Both solutions have their pros and cons and we, at the time of writing, do not know which will shape up to be a better fit to the application. We will briefly mention some of the reasons we might choose either one. The state-less \textit{struct} version is better for handling the data. We will need to make some kinds of copies both for saving the model on the disc and for the \textit{undo Undo and Redo} operations. This approach would allow us to simply copy the struct and not waste any space or time. The object-oriented approach is easier to work with and probably less confusing for new programmers trying to implement a new tool or other extensions to the application.
+
+\subsection{Libraries}
+
+There are several libraries that the geometry model could benefit from. We have been searching on the internet and did research and we found the following libraries that we will try to use to augment the geometry model.
+
+\begin{itemize}
+\item \textbf{Assimp\footnote{http://www.assimp.org/}} -- a portable Open Source library to import various well-known 3D model formats in a uniform manner\footnote{Description taken from http://www.assimp.org/}. This library is very important to our application as it will allow us to support a plethora of 3D formats for the users to use. This should help the less experienced users by not forcing them to convert their objects to different formats before our program can import them.
+
+\item \textbf{cereal\footnote{https://uscilab.github.io/cereal/}} -- cereal is a header-only C++11 serialization library. cereal takes arbitrary data types and reversibly turns them into different representations, such as compact binary encodings\footnote{Description taken from https://uscilab.github.io/cereal/}. We need to serialize data to enable saving the current state of the user's project on disc, and then be able to de-serialize them when the user wishes to continue working on the saved project and presses \textit{load existing project}. We have had positive experience with cereal and that is the reason we chose this library.
+
+\item \textbf{The Computational Geometry Algorithms Library or CGAL\footnote{https://www.cgal.org/}} -- a software project that provides easy access to efficient and reliable geometric algorithms in the form of a C++ library\footnote{Description taken from https://www.cgal.org/}. We have heard very positive feedback on CGAL and therefore will attempt to use the library for the more complex geometry problems. We have, however, not had any previous experiences with CGAL, so we are unsure as to how well it will fulfill our requirements and might drop the use of it if it does not meet our expectations.
+\end{itemize}
