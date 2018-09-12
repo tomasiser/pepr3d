@@ -1,13 +1,13 @@
 \chapter{Core modules}
 
-\begin{figure}[b]
+This chapter takes a closer look at the portion of the architecture higlighted in Figure \ref{fig:architecture_commandstack}. We will explain how each task is performed once the UI element has received the input from the user. The UI portion of the architecture will be covered in the next chapter.
+
+\begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.9]{images/architecture_commandstack}
+	\includegraphics[scale=0.9]{images/architecture_core}
 	\caption{The part of architecture covered in this chapter.}
 	\label{fig:architecture_commandstack}
 \end{figure}
-
-This chapter takes a closer look at the portion of the architecture higlighted in Figure \ref{fig:architecture_commandstack}. We will explain how each task is performed once the UI element has received the input from the user. The UI portion of the architecture will be covered in the next chapter.
 
 % TODO: WARNING: CAREFUL, JE UI NEXT NEBO PREVIOUS CHAPTER?
 
@@ -29,7 +29,7 @@ A command will be a class with three primary methods.
 
 \subsection{Command Stack}
 
-As the name suggests, the Command Stack is a \textit{LIFO} type structure, its main purpose to store the executed commands to allow for the \textit{Undo and Redo} operations to be performed. As we have outlined in the previous section, each command carries all neccessary information to perform both actions. This means that the Command Stack can be a simple container without any significant logic behind it.
+As the name suggests, the Command Stack is a \textit{LIFO} type structure, its main purpose to store the executed commands to allow for the \textit{Undo and Redo} operations to be performed. As we have outlined in the previous section, each command carries all neccessary information to perform both actions. Hence the Command Stack can be a simple container without any significant logic behind it.
 
 \subsection{Command Manager}
 
@@ -38,6 +38,8 @@ The command manager is a object to manage the command stack. It receives the com
 \section{Tools}
 
 A tool is the main programable component which connects the low-level command structure we outlined above and the high-level UI components (such as color-pickers, the user performing brush strokes and file operations like exporting the file). This design should also allow for later advancements of the software easily -- adding a tool to the software should be a matter of writing the new tool's Tool class, unless the tool is advanced and needs some complicated custom geometry processing functions.
+
+\medskip
 
 Each tool is composed of two main components:
 \begin{itemize}
