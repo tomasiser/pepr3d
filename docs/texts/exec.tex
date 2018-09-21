@@ -7,7 +7,7 @@ These are rough estimates of difficulty. We count with approx. 8 hours a week of
 
 \subsection{Research}
 
-It has been done during winter and then during spring 2018 with all team members.
+This part has been completed during winter and spring 2018 with all team members.
 
 \begin{itemize}
 \item Comunication with Prusa Research s.r.o., visiting the company, consultation.
@@ -36,7 +36,7 @@ About a month and a half, 6 MD for each team member.
 \begin{itemize}
 \item \textbf{Basic application with UI:} OpenGL graphical pipeline (3D model view, basic shaders), connection with user inteface -- must be possible to add buttons, texts and text fields, mouse control must work (rotation, zoom).
 \item \textbf{Basic module for models:} Import of at least one 3D object file format (.obj, .stl), data structures to represent a multi-color model, support working history (undo/redo), custom file format for loading/storing model -- (de)serialization, export of multi-color model compatible with 3D print slicer (.stl).
-\item \textbf{Basic computational geometry:} Geometric data structures (e.g. BVH tree), mouse position detection on model, triangle selection tool, usage of computational libraries (OpenMesh, CGAL, ...).
+\item \textbf{Basic computational geometry:} Geometric data structures (e.g. BVH tree), mouse position detection on model, basic triangle painter tool, usage of computational libraries (OpenMesh, CGAL, ...).
 \item Synchronization between members: plugging modules into UI, preparing UI for other tools, printing bugs and exceptions in UI.
 \end{itemize}
 
@@ -77,49 +77,92 @@ Approximately 6 MD for each member. Ideally with project defense. We will try to
 
 \chapter{Minimal implementation}
 
-This chapter contains minimal project implementation and several possible extensions of tools and features. Not all extended features will be implemented, it very depends on how simple the minimal version will be. We also explicitly mention features that will not be supported in our application.
+This chapter contains minimal project implementation and several possible extensions of tools and features. This chapter serves two purposes -- if a serious problem is encountered, for example a member of the team leaving or a difficult programming roadblock is hit, we still want to deliver a product that is somewhat useable. This minimal usability is described in the \textit{minimal implementation} section and should be extendable into the complete product we specified earlier in Part I -- Functional Requirements.
 
+The second purpose of this chapter is to show how the difficulty of several tools we set to implement can be scaled up and down, depending on our time schedule. Not all extensions of all features will be implemented, the final product depends on how fast the team is able to implement the minimal implementation. We also explicitly mention features that will not be supported in our application, to avoid any confusion now or later.
 
-\section{Implementation extension}
+\section{Minimal implementation features}
 
-Some project features and tools can be added or extended. This section if focused on minimal and extended states of these features.
+The following tools and features are required for the application to fullfil its purpose on the simplest level:
+
+\begin{itemize}
+\item Load a model from a basic 3D format (like .OBJ).
+\item Export a multi-colored .STL file, which can be entered into the slicer.
+\item Triangle painter -- the simplest tool for coloring each triangle by hand.
+\item Bucket painter with only the normal criterion (sharpness of the angle of two neighbouring triangles)
+\item A basic form of edit history with at least a few \textit{Undo and Redo} steps (ideally infinite amount).
+\end{itemize}
+
+Now we sort the remaining features by importance to the resulting product, with the most important features uptop:
+\begin{enumerate}
+\item Semi-automatic segmentation -- as our goal is to simplify the multicolor printing, this feature is very important since it should speed up the process significantly and make it overall easier and more accessible.
+\item Text tool -- writing text on a model in the existing applications is difficult, so this tools is very important to finish, at least in a basic form (which will be discussed in the following section).
+\item Brush tool with full support of subsampling the geometry -- a potentially difficult feature to implement, however it is the most intuitive and again offers something the other editors do not.
+\item Pepr3D projects -- saving a project and interrupting the work in the middle is a handy feature, but not critical to the application's functionality.
+\item Automatic segmentation
+\item Triangle subdivision/decimation
+\end{enumerate}
+
+Both of the last two features will probably only see use by a smaller userbase than the other tools and therefore are not the top priority in case difficulties are encountered.
+
+\section{Feature extension}
+
+Some project features and tools can be extended or reduced in scope. This section highlights some of the room for reducing and increasing the complexity of a few features in several steps.
 
 
 \subsection{Menu}
 
-Minimal implementation of menu is a horizontal toolbar at the top of the application. In addition we were thinking of radial menu around cursor, which would show after specific mouse button click. The radial menu has the advantage that the user does not have to move the cursor off the model.
+The basic version that is included in the minimal implementation scope is exactly as it was highlighted in the chapter about user interface -- a horizontal tool selection panel and a vertical tool properties panel.
+
+In addition we were thinking of radial menu around cursor, which would appear after a specific mouse button is pressed. The radial menu has the advantage that the user does not have to move the cursor off the model, however, a decent percentage of users either does not use the radial menu or finds it obstructive.
+
+\subsection{Customizable key-bindings}
+We expect that the vast majority of the userbase probably will not use keyboard shortcuts at all, as the program is targeted on the customer level users. However we still want to implement basic shortcuts (e.g. B for Brush, T for Text, etc.).
+
+An extension of this feature is to make these shortcuts customizable in a settings panel. This allows the proffesional power users of other 3D applications (such as 3ds Max or Maya) to customize Pepr's shortcuts to match their already developed muscle-memory and increase the comfort of using Pepr3D. Again, this feature is not required for the minimal implementation because we expect that only a fraction of the userbase will benefit from it.
 
 
 \subsection{Text projection}
 
-In addition to simple planar projection of a text onto a model we considered some more complex projection. For example, cylindrical or spherical projection.
+In addition to simple planar projection of a text onto a model we considered some more complex projections like a cylindrical or a spherical projection. Adding these projections simplifies the process of writing a big inscription along the object, in big letters.
 
+With only the planar projections in the X/Y/Z axes, writing "Coca Cola" around a plastic bottle is not possible and the user has to manually position each letter due to the cylindrical distortion. Using a cylindrical projection, the task becomes trivial.
+
+These various projections, on the other hand, will confuse the less experienced users so a solid UI is paramount.
+
+Other options to make this feature more user-friendly include to have the tool automatically switch projections if some criteria is met -- for example, if the user sets the font size so that each letter is almost as tall as the model itself, a cylindrical projection makes a lot more sense than planar.
+
+As you can see, this feature has a lot of room for extension or reduction in complexity and we will have to find the most-user friendly combination of these extensions.
+
+\subsection{Text fonts}
+
+No members of our team have any experience with text fonts, so we do not know how difficult it is to support an arbitrary font. As such, we mention the feature as an extension. At the basic level, the application should use a pre-selected and hardwired font. However supporting multiple fonts significantly increases the power of this tool -- importing a font full of symbols \footnote{https://www.1001fonts.com/glyphyx-one-nf-font.html\#gallery} allows the user to paint a lot of different and popular symbols for free (e.g. a WiFi sign, vehicle signs for public transport, etc.).
 
 \subsection{3D text collision}
 
-Since we allow the extrusion of the text above the surface itself, the collision between text and another part of the model may occur. To prevent unwanted text extrusion we could add collision detection feature.
+Since we allow the extrusion of the text above the surface itself, the collision between text and another part of the model (or text) may occur. To prevent unwanted text extrusion we can a add collision detection feature.
 
 
 \subsection{Model exporting}
 
-Complexity of model exporting can be very different. Minimal implementation will be somehow usable in all situations. We could try to extend it to a possible optimal solution.
+Complexity of model exporting can be very different. Minimal implementation will be somehow usable in all situations. We can try to extend it closer to a possible optimal solution.
 
 
 \subsection{Subdivision and decimation}
 
-Minimal implementation will include simple triangle subdivision/decimation. As extension we can implement any more sophisticated algorithm for that.
+The geometry of this feature is very hard and finding the optimal solution is not easy. As such, there is almost an arbitrary room for improvement in implementing different and more complicated algorithms. Since the feature does not have the highest priority, we mention the advanced algorithms as an extension.
 
 \subsection{Adaptive triangulation}
 
-As mentioned in tool section (Brush) this feature can be arbitrarily difficult. The minimal implementation will contain usable version of adaptive triangulation. Extension may include any better adaptive triangulation.
+As mentioned in tool section (Brush) this feature can be arbitrarily difficult. Our goal is to make this tool intuitive and safe to use, which means the user should not be able to easily create a model that is too complicated for his computer to handle. However, as is the case with Subdivision and decimation, the geometry problem of adaptive triangulation is very difficult and we are not sure how robustly we can implement it.
 
 
-\section{Not supported features}
+\section{Nonsupported features}
 
-In order to avoid any misunderstandings in functionality of our application, there are features that will not be supported. Most of these features can be found in various 3D modeling application for 3D printers.
+In order to avoid any misunderstandings in functionality of our application, there are features that will not be supported. Most of these features can be found in various 3D modeling applications for 3D printers.
 
 \begin{itemize}
-\item 3D object modelling, sculpting, adding vertices/traingles; there are many other programs that can do it.
+\item 3D object modelling, sculpting, adding vertices/traingles; there are many other programs (such as Maya or Z-brush) that can peform this task better than Pepr3D.
 \item Repairing 3D model (e.g., filling holes, avoiding model intersection); our model splitting should not break the model or make holes in it.
 \item Creating any model support for better 3D printing or generating model infill.
 \item Solving any printing problems or setting printer settings.
