@@ -1,6 +1,6 @@
 \chapter{Core modules}
 
-This chapter takes a closer look at the portion of the architecture higlighted in Figure \ref{fig:architecture_commandstack}. We will explain how each task is performed once the UI element has received the input from the user. The UI portion of the architecture will be covered in the next chapter.
+This chapter takes a closer look at the portion of the architecture highlighted in Figure \ref{fig:architecture_commandstack}. We will explain how each task is performed once the UI element has received the input from the user. The UI portion of the architecture will be covered in the next chapter.
 
 \begin{figure}[h]
 	\centering
@@ -27,7 +27,7 @@ One variant of the implementation requires each command to be able to perform th
 \item \textit{undo()} -- This method will take the state of the model saved by the constructor of the command and apply it to the current geometry model, effectively reversing the command.
 \end{itemize}
 
-This variant is mostly desireable if the operations can be undone easily (e.g. deleting a single letter is a very easy operation to undo). For our purpose, this approach might not be the best beceause geometric operations usually do not have an easy inverse operation. This means that each command would have to save the whole state of the geometric model, which might prove too straining on the computer's memory.
+This variant is mostly desirable if the operations can be undone easily (e.g. deleting a single letter is a very easy operation to undo). For our purpose, this approach might not be the best because geometric operations usually do not have an easy inverse operation. This means that each command would have to save the whole state of the geometric model, which might prove too straining on the computer's memory.
 
 The other possible variant of implementation is snapshotting the model every few commands, and when the user requests an undo, simply restoring the previous snapshot, and re-applying every but the last command. This version is a bit more CPU-intensive but should result in much less memory being used.
 
@@ -37,7 +37,7 @@ In this version of the implementation, the only method of the command class that
 
 \subsection{Command Stack}
 
-As the name suggests, the Command Stack is a \textit{LIFO} type structure, its main purpose to store the executed commands to allow for the \textit{Undo and Redo} operations to be performed. As we have outlined in the previous section, either each command carries all neccessary information to perform both actions (in the first variant) or the command manager remembers the snapshots and is able to perform the \textit{Undo and Redo} actions. Hence the Command Stack can only be a simple container without any significant logic behind it.
+As the name suggests, the Command Stack is a \textit{LIFO} type structure, its main purpose to store the executed commands to allow for the \textit{Undo and Redo} operations to be performed. As we have outlined in the previous section, either each command carries all necessary information to perform both actions (in the first variant) or the command manager remembers the snapshots and is able to perform the \textit{Undo and Redo} actions. Hence the Command Stack can only be a simple container without any significant logic behind it.
 
 \subsection{Command Manager}
 
@@ -57,7 +57,7 @@ Each tool is composed of two main components:
 \begin{itemize}
 \item \textit{properties} -- a methodless object holding the tool's properties which can be customized by the user. This includes, for example, the color which gets assigned to the triangles in the triangle painter tool, the number of colors for automatic-segmentation, the subdivision level or the gradient thresholds for region detection in bucket painting. The information in this object gets changed directly when the user interacts with the UI.
 
-\item \textit{commands} -- Each tool generates at least one command, which it creates, fills with all neccessary information the command needs to execute itself, and passes it to the command manager. More complicated tools can create more commands, as we will illustrate in the following section. The tool is able to do some pre-processing before a command is issued, in case the pre-processing isn't visible on the screen, as shown in example 4.1.
+\item \textit{commands} -- Each tool generates at least one command, which it creates, fills with all necessary information the command needs to execute itself, and passes it to the command manager. More complicated tools can create more commands, as we will illustrate in the following section. The tool is able to do some pre-processing before a command is issued, in case the pre-processing isn't visible on the screen, as shown in example 4.1.
 
 \end{itemize}
 

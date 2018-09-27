@@ -10,9 +10,9 @@ These are rough estimates of difficulty. We count with approx. 8 hours a week of
 This part has been completed during winter and spring 2018 with all team members.
 
 \begin{itemize}
-\item Comunication with Prusa Research s.r.o., visiting the company, consultation.
-\item Comunication and consultation with the supervisor.
-\item Familiarization with 3D printing technologies, limitations, existing and similar software, printing first multi mterail models etc. 
+\item Communication with Prusa Research s.r.o., visiting the company, consultation.
+\item Communication and consultation with the supervisor.
+\item Familiarization with 3D printing technologies, limitations, existing and similar software, printing first multi-material models etc. 
 \item Preparation of the project assignment.
 \end{itemize}
 
@@ -24,8 +24,8 @@ During summer, approximately 8 MD for every team member.
 \begin{itemize}
 \item Detailed survey of technologies, continuous consultation with Prusa Research and with the supervisor.
 \item Consideration of specific implementation of all tools, studying the necessary topics of computational geometry.
-\item Writing detailed binding specification: UI mockups, data structures design, connection of particular modules, design of module inteface, etc.; text correction, printing and submitting the specifiation.
-\item Preparation of the repository and division of tasks among team members, icluding time estimation.
+\item Writing detailed binding specification: UI mockups, data structures design, connection of particular modules, design of module interface, etc.; text correction, printing and submitting the specification.
+\item Preparation of the repository and division of tasks among team members, including time estimation.
 \end{itemize}
 
 
@@ -34,7 +34,7 @@ During summer, approximately 8 MD for every team member.
 About a month and a half, 6 MD for each team member.
 
 \begin{itemize}
-\item \textbf{Basic application with UI:} OpenGL graphical pipeline (3D model view, basic shaders), connection with user inteface -- must be possible to add buttons, texts and text fields, mouse control must work (rotation, zoom).
+\item \textbf{Basic application with UI:} OpenGL graphical pipeline (3D model view, basic shaders), connection with user interface -- must be possible to add buttons, texts and text fields, mouse control must work (rotation, zoom).
 \item \textbf{Basic module for models:} Import of at least one 3D object file format (.obj, .stl), data structures to represent a multi-color model, support working history (undo/redo), custom file format for loading/storing model -- (de)serialization, export of multi-color model compatible with 3D print slicer (.stl).
 \item \textbf{Basic computational geometry:} Geometric data structures (e.g. BVH tree), mouse position detection on model, basic triangle painter tool, usage of computational libraries (OpenMesh, CGAL, ...).
 \item Synchronization between members: plugging modules into UI, preparing UI for other tools, printing bugs and exceptions in UI.
@@ -49,13 +49,13 @@ Approximately three months, 12 MD for every team member.
 \item \textbf{Production UI:} Toolbar with icons, taskbar with tool settings, keyboard shortcut support, display current colors on model, option to change printer colors, system windows to load/save files, menu to save file before closing window, opening window before loading model, resize window correctly (scrollbars for content that does not fit or resize fonts, etc.), fullscreen mode, etc.
 \item \textbf{Preparing to locate the UI}.
 \item \textbf{Multi-color .stl export:} In order that the model could actually be printed is necessary to sufficiently divide it to multiple .stl files by color. It will be necessary to prepare "ddep cut" of the model at least for some elementary shapes, so the slicer can handle it for FDM printing (needs to be experimentally verified).  This task can be arbitrary large, it is almost impossible to produce such a robust export to work for any model -- the greater the robustness, the better.
-\item \textbf{Basic tool for triangle painting:} Including back face filtering, UI vizualization, adjustable brush size, etc.
+\item \textbf{Basic tool for triangle painting:} Including back face filtering, UI visualization, adjustable brush size, etc.
 \item \textbf{Flood-fill tools:} Paint bucket tool, automatic and semi-automatic segmentation. It will be needed to implement practical UI for segmentation, so the user could choose the specific colors applied to the model.
 \item \textbf{Adaptive triangulation:} See the brush tool section.  This task can be also arbitrarily hard and can be extended because sufficiently robust triangulation is a considerably non-trivial task.
 \item \textbf{Brush tool based on triangulation:} See the brush tool section. Also can be arbitrarily hard and can be extended.
 \item \textbf{Flat text tool:} See text tool section. The task can also be extended, for example, by different projection of the text (plane, cylinder, circle, etc.) that can by useful in different shapes of models.  Sufficient robustness for different fonts may also be non-trivial (such as fine Japanese characters, UTF-32 symbols, etc. -- may require very fine triangulation, which may cause modification of the implementation).
 \item \textbf{Support for 3D text:} Add the option that 2D designed text (see previous tool) can be transferred to 3D. Optionally, add collision detection (so that text does not intersect the model).
-\item \textbf{Triangle subdivion/decimation:} See triangle subdivion/decimation section. It can be also exteded, The task has no trivial robust solution.
+\item \textbf{Triangle subdivion/decimation:} See triangle subdivion/decimation section. It can be also extended. The task has no trivial robust solution.
 \end{itemize}
 
 
@@ -66,7 +66,7 @@ Approximately 6 MD for each member. Ideally with project defense. We will try to
 
 \begin{itemize}
 \item Final version of UI: Ensure that the UI actually matches the mockups, that tools have unified UI, error messages should be meaningful, etc. 
-\item Try to compile a project for other platforms (Mac OS, Linux), verify funcionality; eventually, write documentation of/repair platform-dependent bugs (primarily the application have to work on Windows 8/10, but it is appropriate at least make documentation of what should be corrected for functionality on other platforms).
+\item Try to compile a project for other platforms (Mac OS, Linux), verify functionality; eventually, write documentation of/repair platform-dependent bugs (primarily the application have to work on Windows 8/10, but it is appropriate at least make documentation of what should be corrected for functionality on other platforms).
 \item Some more time for missing features, bug fixes, extensions
 \item Preparation of the final development documentation (ideally, it should copy this specification).
 \item Final project testing, preparation of nice examples for demonstration.
@@ -77,23 +77,23 @@ Approximately 6 MD for each member. Ideally with project defense. We will try to
 
 \chapter{Minimal implementation}
 
-This chapter contains minimal project implementation and several possible extensions of tools and features. This chapter serves two purposes -- if a serious problem is encountered, for example a member of the team leaving or a difficult programming roadblock is hit, we still want to deliver a product that is somewhat useable. This minimal usability is described in the \textit{minimal implementation} section and should be extendable into the complete product we specified earlier in Part I -- Functional Requirements.
+This chapter contains minimal project implementation and several possible extensions of tools and features. This chapter serves two purposes -- if a serious problem is encountered, for example a member of the team leaving or a difficult programming roadblock is hit, we still want to deliver a product that is somewhat usable. This minimal usability is described in the \textit{minimal implementation} section and should be extendable into the complete product we specified earlier in Part I -- Functional Requirements.
 
 The second purpose of this chapter is to show how the difficulty of several tools we set to implement can be scaled up and down, depending on our time schedule. Not all extensions of all features will be implemented, the final product depends on how fast the team is able to implement the minimal implementation. We also explicitly mention features that will not be supported in our application, to avoid any confusion now or later.
 
 \section{Minimal implementation features}
 
-The following tools and features are required for the application to fullfil its purpose on the simplest level:
+The following tools and features are required for the application to fulfill its purpose on the simplest level:
 
 \begin{itemize}
 \item Load a model from a basic 3D format (like .OBJ).
 \item Export a multi-colored .STL file, which can be entered into the slicer.
 \item Triangle painter -- the simplest tool for coloring each triangle by hand.
-\item Bucket painter with only the normal criterion (sharpness of the angle of two neighbouring triangles)
+\item Bucket painter with only the normal criterion (sharpness of the angle of two neighboring triangles)
 \item A basic form of edit history with at least a few \textit{Undo and Redo} steps (ideally infinite amount).
 \end{itemize}
 
-Now we sort the remaining features by importance to the resulting product, with the most important features uptop:
+Now we sort the remaining features by importance to the resulting product, with the most important features up top:
 \begin{enumerate}
 \item Semi-automatic segmentation -- as our goal is to simplify the multicolor printing, this feature is very important since it should speed up the process significantly and make it overall easier and more accessible.
 \item Text tool -- writing text on a model in the existing applications is difficult, so this tools is very important to finish, at least in a basic form (which will be discussed in the following section).
@@ -119,7 +119,7 @@ In addition we were thinking of radial menu around cursor, which would appear af
 \subsection{Customizable key-bindings}
 We expect that the vast majority of the userbase probably will not use keyboard shortcuts at all, as the program is targeted on the customer level users. However we still want to implement basic shortcuts (e.g. B for Brush, T for Text, etc.).
 
-An extension of this feature is to make these shortcuts customizable in a settings panel. This allows the proffesional power users of other 3D applications (such as 3ds Max or Maya) to customize Pepr's shortcuts to match their already developed muscle-memory and increase the comfort of using Pepr3D. Again, this feature is not required for the minimal implementation because we expect that only a fraction of the userbase will benefit from it.
+An extension of this feature is to make these shortcuts customizable in a settings panel. This allows the professional power users of other 3D applications (such as 3ds Max or Maya) to customize Pepr3D's shortcuts to match their already developed muscle-memory and increase the comfort of using Pepr3D. Again, this feature is not required for the minimal implementation because we expect that only a fraction of the userbase will benefit from it.
 
 
 \subsection{Text projection}
@@ -162,7 +162,7 @@ As mentioned in tool section (Brush) this feature can be arbitrarily difficult. 
 In order to avoid any misunderstandings in functionality of our application, there are features that will not be supported. Most of these features can be found in various 3D modeling applications for 3D printers.
 
 \begin{itemize}
-\item 3D object modelling, sculpting, adding vertices/traingles; there are many other programs (such as Maya or Z-brush) that can peform this task better than Pepr3D.
+\item 3D object modelling, sculpting, adding vertices/triangles; there are many other programs (such as Maya or Z-brush) that can perform this task better than Pepr3D.
 \item Repairing 3D model (e.g., filling holes, avoiding model intersection); our model splitting should not break the model or make holes in it.
 \item Creating any model support for better 3D printing or generating model infill.
 \item Solving any printing problems or setting printer settings.

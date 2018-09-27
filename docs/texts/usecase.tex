@@ -33,7 +33,7 @@ After the model is loaded, it will be rendered in the 3D preview window. The win
 
 The user then selects one of the tools from the toolbar. This will bring up the \textit{Tool options} menu on the right hand side allowing the user to customize the tool.
 
-Our application should support the \textit{Drag \& Drop} feature, so importing both the model and an already existing Pepr3D project is possible by dragging the file directily onto the viewport.
+Our application should support the \textit{Drag \& Drop} feature, so importing both the model and an already existing Pepr3D project is possible by dragging the file directly onto the viewport.
 
 \subsection{Tools}
 
@@ -52,7 +52,7 @@ Export the file into a slicer-compatible format. This file is then handed to the
 \subsubsection{Triangle painter}
 After selecting a color, the user can assign said color to triangles he clicks on. Backside filtering is always on, so the user can only ever color a visible triangle, which should prevent a lot of accidents a lesser experienced user might make.
 
-This is the simplest way to color the user's model and may be desireable as a quick way to correct any small errors made by either the user or the automatic segmentation itself. This tool also allows for very quick and easy coloring of very simple models (like a cube) that have a very low triangle count when the user wishes for a simple outcome -- for example a playing dice with six differently colored sides.
+This is the simplest way to color the user's model and may be desirable as a quick way to correct any small errors made by either the user or the automatic segmentation itself. This tool also allows for very quick and easy coloring of very simple models (like a cube) that have a very low triangle count when the user wishes for a simple outcome -- for example a playing dice with six differently colored sides.
 
 The \textit{properties} of this tool are very simple -- the user chooses a color to assign to the triangles that he clicks on. Depending on testing and remaining time, this tool could be expanded to include a radius and instead of coloring the single triangle the user clicks on, we could color all triangles in the vicinity of the clicked triangle instead.
 
@@ -61,7 +61,7 @@ The user selects a color and by clicking anywhere on the model paints all triang
 
 A little more complex but a very intuitive tool that allows the user to get a quick initial paint on the model, which can later be adjusted with the Triangle painter tool, or made more complex with the finer Brush tool.
 
-We already mentioned the main \textit{property} of the tool --- the edge criterion. A color-picker is, of course, neccessary as well.
+We already mentioned the main \textit{property} of the tool --- the edge criterion. A color-picker is, of course, necessary as well.
 
 \subsubsection{Automatic segmentation}
 Pepr3D fully automatically colors the whole model using the selected colors, according to a edge criterion as discussed in the \textit{Bucket painting} section. The user can then decide if he wants to merge some segments together, reducing the number of colors.
@@ -113,4 +113,4 @@ The user selects a section of triangles and then presses either subdivide or dec
 	\label{fig:decimated}
 \end{figure}
 
-We anticipate this to be a niche tool, used only by the more experienced users. We chose to include it, since it allows the proffesional printers to fine-tune their models for better performance or more precise coloring or printing.
+We anticipate this to be a niche tool, used only by the more experienced users. We chose to include it, since it allows the professional printers to fine-tune their models for better performance or more precise coloring or printing.
