@@ -1,5 +1,7 @@
 \chapter{Introduction}
 
+In this project, we hope to create an intuitive application that allows the user to interactively color a 3D model and export it in a 3D printable format. This chapter will provide a brief summary of the 3D printing environment, the related work, the goals of the project and the challenges we will have to overcome.
+
 \section{3D printing basics}
 
 3D printing is a new technology that has seen rapid developement in the last years. It comes in many different forms, melting plastic, fusing metals, shining UV on photopolymers, etc. Fused Deposition Modelling (FDM) is the most popular and accessible to the general public and for the purpose of this project, when we talk about 3D printing, we will always mean FDM printers, unless stated otherwise.
@@ -32,9 +34,9 @@ This model splitting has to be done in a full 3D editing software like Blender o
 
 Our project aims to make printing a multi-colored object a lot easier, by developing an application that will allow the user to simply paint on the 3D model (i.e. the dragon) with different colors (i.e. color the teeth white), then simply click export and generate the files of the split-off models automatically.
 
-Our application should allow for free hand painting as well as some forms of guided painting - bucket fill and some smarter tools, for example a bucket fill that studies the object's geometry and stops the filling if it detects a sharp edge (i.e. the transition of the tooth into the dragon).
+Our application will allow for free hand painting as well as some forms of guided painting -- bucket fill and some smarter tools, for example a bucket fill that studies the object's geometry and stops the filling if it detects a sharp edge (i.e. the transition of the tooth into the dragon).
 
-Our aim is to make the application for desktop PCs, with main developement time being focused on the Windows operating system. However, we are trying to use software engineering tools that can also be ported to a plethora of other platforms like Linux based OS, Mac OS and mobile, if the need should arise.
+The main goal is to make the application for desktop PCs, with main developement time being focused on the Windows operating system. We are, however, trying to use software engineering tools that can also be ported to a plethora of other platforms like Linux based OS, Mac OS and mobile, if the need should arise.
 
 \section{Related works}
 
@@ -52,11 +54,11 @@ This section should briefly familiarize the reader with some of the parts of the
 
 \subsection{Handling the geometry during editing}
 
-We want our application to be able to emboss text on the surface of the object, detect edges and stop painting the color during bucket fills, allow the user to paint fine details on a rough triangle mesh. All of these things require some degree of subdividing the triangle mesh to allow the user to create small details. We think that this potentially could involve some difficult problems - we have to allow the user to subdivide the triangle mesh enough to actually allow him to create fine details on the surface. However, the if the user goes overboard with the subdivision, the model will be too complex to print or even handle inside a desktop PC.
+We want our application to be able to emboss text on the surface of the object, detect edges and stop painting the color during bucket fills, allow the user to paint fine details on a rough triangle mesh. All of these things require some degree of subdividing the triangle mesh to allow the user to create small details. We think that this will involve some difficult problems -- we have to allow the user to subdivide the triangle mesh enough to actually allow him to create fine details on the surface. However, the if the user goes overboard with the subdivision, the model will be too complex to print or even handle inside a desktop PC.
 
 \subsection{Exporting the finished objects}
 
-After the user is done painting, the application will have to separate the designated objects and areas into distinct meshes. This is potentially a very complicated task to do correctly for non-convex meshes. For example: if we are writing a text on a ball, we really only want the text to be carved deep enough into the ball for the printed material to hold firmly, we do not want it to be too deep. However, if we want the dragon's teeth to be white, we would prefer the whole tooth to be white, not just its surface. The distinction between these two cases could be non-trivial.
+After the user is done painting, the application will have to separate the designated objects and areas into distinct meshes. This is potentially a very complicated task to do correctly for non-convex meshes. For example: if we are writing a text on a ball, we really only want the text to be carved deep enough into the ball for the printed material to hold firmly, we do not want it to be too deep. However, if we want the dragon's teeth to be white, we would prefer the whole tooth to be white, not just its surface. The distinction between these two cases is non-trivial.
 
 \subsection{Performance}
 
