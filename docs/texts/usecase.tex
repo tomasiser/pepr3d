@@ -33,6 +33,8 @@ After the model is loaded, it will be rendered in the 3D preview window. The win
 
 The user then selects one of the tools from the toolbar. This will bring up the \textit{Tool options} menu on the right hand side allowing the user to customize the tool.
 
+Our application should support the \textit{Drag \& Drop} feature, so importing both the model and an already existing Pepr3D project is possible by dragging the file directily onto the viewport.
+
 \subsection{Tools}
 
 In this section we present the list of tools we think are best suited for our task. For each tool we provide the basic overview of its function, a simple reasoning why the tool is valuable for the user and a general sketch of the tool's properties.
@@ -48,7 +50,7 @@ Saves the current project as a Pepr3D project file. Upon re-opening Pepr3D, the 
 Export the file into a slicer-compatible format. This file is then handed to the slicing program (e.g. Slic3r Prusa Edition we mentioned earlier) and can be printed directly.
 
 \subsubsection{Triangle painter}
-After selecting a color, the user can assign said color to triangles he clicks on. Backside filtering is always on, so the user can only ever color a triangle that faces towards him, which should prevent a lot of accidents a lesser experienced user might make.
+After selecting a color, the user can assign said color to triangles he clicks on. Backside filtering is always on, so the user can only ever color a visible triangle, which should prevent a lot of accidents a lesser experienced user might make.
 
 This is the simplest way to color the user's model and may be desireable as a quick way to correct any small errors made by either the user or the automatic segmentation itself. This tool also allows for very quick and easy coloring of very simple models (like a cube) that have a very low triangle count when the user wishes for a simple outcome -- for example a playing dice with six differently colored sides.
 
