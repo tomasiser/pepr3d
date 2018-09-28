@@ -2,24 +2,30 @@
 
 \section{Time schedule}
 
-These are rough estimates of difficulty. We count with approx. 8 hours a week of work for every team member (1 MD = 8 hour of work). The final product should be ready within 7-9 months from the project start.
+These are rough estimates of difficulty.
+During the summer months (August, September), we count approx. 8 hours a week of work for every team member (1~MD = 8 hours of work).
+Since October, i.e., during the rest of the project, we count approx. 16 hours (2 MD) a week per member.
+
+For detailed estimates see the following subsections.
+The final product should be ready within 6 months from the project start.
+Considering we started in August 2018, we expect to finish around January 2019.
 
 
 \subsection{Research}
 
-This part has been completed during winter and spring 2018 with all team members.
+This part was completed during winter 2017 and spring 2018 by all team members.
 
 \begin{itemize}
 \item Communication with Prusa Research s.r.o., visiting the company, consultation.
 \item Communication and consultation with the supervisor.
-\item Familiarization with 3D printing technologies, limitations, existing and similar software, printing first multi-material models etc. 
+\item Familiarization with 3D printing technologies, limitations, existing and similar software, printing first multi-material models, etc. 
 \item Preparation of the project assignment.
 \end{itemize}
 
 
 \subsection{Detailed specification}
 
-During summer, approximately 8 MD for every team member.
+During summer, approx. 8 MD for every team member, i.e., two summer months.
 
 \begin{itemize}
 \item Detailed survey of technologies, continuous consultation with Prusa Research and with the supervisor.
@@ -31,24 +37,24 @@ During summer, approximately 8 MD for every team member.
 
 \subsection{Basic application}
 
-About a month and a half, 6 MD for each team member.
+Approx. 8 MD for each team member, i.e., a month.
 
 \begin{itemize}
 \item \textbf{Basic application with UI:} OpenGL graphical pipeline (3D model view, basic shaders), connection with user interface -- must be possible to add buttons, texts and text fields, mouse control must work (rotation, zoom).
-\item \textbf{Basic module for models:} Import of at least one 3D object file format (.obj, .stl), data structures to represent a multi-color model, support working history (undo/redo), custom file format for loading/storing model -- (de)serialization, export of multi-color model compatible with 3D print slicer (.stl).
+\item \textbf{Basic module for models:} Import of at least one 3D object file format (.obj, .stl), data structures to represent a multi-color model, support working history (undo/redo), custom file format for loading/storing model -- (de)serialization, exporting multi-color models to 3D print slicers (.stl).
 \item \textbf{Basic computational geometry:} Geometric data structures (e.g. BVH tree), mouse position detection on model, basic triangle painter tool, usage of computational libraries (OpenMesh, CGAL, ...).
-\item Synchronization between members: plugging modules into UI, preparing UI for other tools, printing bugs and exceptions in UI.
+\item Synchronization between members: plugging modules into UI, preparing UI for other tools, printing errors and exceptions in UI.
 \end{itemize}
 
 
 \subsection{Complete UI and painting tools}
 
-Approximately three months, 12 MD for every team member.
+Approx. 16 MD for each team member, i.e., two months.
 
 \begin{itemize}
-\item \textbf{Production UI:} Toolbar with icons, taskbar with tool settings, keyboard shortcut support, display current colors on model, option to change printer colors, system windows to load/save files, menu to save file before closing window, opening window before loading model, resize window correctly (scrollbars for content that does not fit or resize fonts, etc.), fullscreen mode, etc.
+\item \textbf{Production UI:} Toolbar with icons, taskbar with tool settings, keyboard shortcut support, display current colors on model, option to change printer colors, system windows to load/save files, menu to save file before closing window, opening window before loading model, resize window correctly (scrollbars for content that does not fit or resize fonts, etc.), etc.
 \item \textbf{Preparing to locate the UI}.
-\item \textbf{Multi-color .stl export:} In order that the model could actually be printed is necessary to sufficiently divide it to multiple .stl files by color. It will be necessary to prepare "ddep cut" of the model at least for some elementary shapes, so the slicer can handle it for FDM printing (needs to be experimentally verified).  This task can be arbitrary large, it is almost impossible to produce such a robust export to work for any model -- the greater the robustness, the better.
+\item \textbf{Multi-color .stl export:} In order to be able to actually print the model, it is necessary to sufficiently divide it to multiple .stl files by color. It will be necessary to prepare ``deep cut'' of the model at least for some elementary shapes, so the slicer can handle it for FDM printing (needs to be experimentally verified).  This task can be arbitrarily large, it is almost impossible to produce such a robust export to work for any model -- the greater the robustness, the better.
 \item \textbf{Basic tool for triangle painting:} Including back face filtering, UI visualization, adjustable brush size, etc.
 \item \textbf{Flood-fill tools:} Paint bucket tool, automatic and semi-automatic segmentation. It will be needed to implement practical UI for segmentation, so the user could choose the specific colors applied to the model.
 \item \textbf{Adaptive triangulation:} See the brush tool section.  This task can be also arbitrarily hard and can be extended because sufficiently robust triangulation is a considerably non-trivial task.
@@ -62,12 +68,12 @@ Approximately three months, 12 MD for every team member.
 
 \subsection{Finalization}
 
-Approximately 6 MD for each member. Ideally with project defense. We will try to finish the project as soon as possible.
+Approx. 5 MD for each member, i.e., around a month, ideally with project defense. We will try to finish the project as soon as possible.
 
 \begin{itemize}
-\item Final version of UI: Ensure that the UI actually matches the mockups, that tools have unified UI, error messages should be meaningful, etc. 
-\item Try to compile a project for other platforms (Mac OS, Linux), verify functionality; eventually, write documentation of/repair platform-dependent bugs (primarily the application have to work on Windows 8/10, but it is appropriate at least make documentation of what should be corrected for functionality on other platforms).
-\item Some more time for missing features, bug fixes, extensions
+\item Final version of UI: ensure that UI conforms to specification, that tools have unified UI, error messages are meaningful, etc. 
+\item Try to compile a project for other platforms (Mac OS, Linux), verify functionality; eventually, write documentation of/repair platform-dependent bugs (primarily the application have to work on Windows 8/10, but it is appropriate to at least make documentation of what should be corrected for functionality on other platforms).
+\item Some more time for missing features, bug fixes, extensions.
 \item Preparation of the final development documentation (ideally, it should copy this specification).
 \item Final project testing, preparation of nice examples for demonstration.
 \item Preparation of installation packages and user documentation.
@@ -89,23 +95,24 @@ The following tools and features are required for the application to fulfill its
 \item Load a model from a basic 3D format (like .OBJ).
 \item Export a multi-colored .STL file, which can be entered into the slicer.
 \item Triangle painter -- the simplest tool for coloring each triangle by hand.
-\item Bucket painter with only the normal criterion (sharpness of the angle of two neighboring triangles)
-\item A basic form of edit history with at least a few \textit{Undo and Redo} steps (ideally infinite amount).
+\item Bucket painter with a simple criterion (sharpness of the angle of two neighboring triangles).
+\item A basic form of edit history with at least a few \textit{Undo} and \textit{Redo} steps (ideally infinite amount).
+\item Functional 3D user interface allowing zooming and rotating the 3D model and using the tools mentioned above.
 \end{itemize}
 
 Now we sort the remaining features by importance to the resulting product, with the most important features up top:
 \begin{enumerate}
-\item Semi-automatic segmentation -- as our goal is to simplify the multicolor printing, this feature is very important since it should speed up the process significantly and make it overall easier and more accessible.
+\item Semi-automatic segmentation -- as our goal is to simplify the multi-color printing, this feature is very important since it should speed up the process significantly and make it overall easier and more accessible.
 \item Text tool -- writing text on a model in the existing applications is difficult, so this tools is very important to finish, at least in a basic form (which will be discussed in the following section).
 \item Brush tool with full support of subsampling the geometry -- a potentially difficult feature to implement, however it is the most intuitive and again offers something the other editors do not.
 \item Pepr3D projects -- saving a project and interrupting the work in the middle is a handy feature, but not critical to the application's functionality.
-\item Automatic segmentation
-\item Triangle subdivision/decimation
+\item Fully automatic segmentation.
+\item Triangle subdivision/decimation.
 \end{enumerate}
 
 Both of the last two features will probably only see use by a smaller userbase than the other tools and therefore are not the top priority in case difficulties are encountered.
 
-\section{Feature extension}
+\section{Feature extensions}
 
 Some project features and tools can be extended or reduced in scope. This section highlights some of the room for reducing and increasing the complexity of a few features in several steps.
 
@@ -117,7 +124,8 @@ The basic version that is included in the minimal implementation scope is exactl
 In addition we were thinking of radial menu around cursor, which would appear after a specific mouse button is pressed. The radial menu has the advantage that the user does not have to move the cursor off the model, however, a decent percentage of users either does not use the radial menu or finds it obstructive.
 
 \subsection{Customizable key-bindings}
-We expect that the vast majority of the userbase probably will not use keyboard shortcuts at all, as the program is targeted on the customer level users. However we still want to implement basic shortcuts (e.g. B for Brush, T for Text, etc.).
+
+We expect that the vast majority of the userbase probably will not use keyboard shortcuts at all, as the program is primarily targeted at basic level users. However we still want to implement basic shortcuts (e.g. B for Brush, T for Text, etc.).
 
 An extension of this feature is to make these shortcuts customizable in a settings panel. This allows the professional power users of other 3D applications (such as 3ds Max or Maya) to customize Pepr3D's shortcuts to match their already developed muscle-memory and increase the comfort of using Pepr3D. Again, this feature is not required for the minimal implementation because we expect that only a fraction of the userbase will benefit from it.
 
@@ -136,11 +144,11 @@ As you can see, this feature has a lot of room for extension or reduction in com
 
 \subsection{Text fonts}
 
-No members of our team have any experience with text fonts, so we do not know how difficult it is to support an arbitrary font. As such, we mention the feature as an extension. At the basic level, the application should use a pre-selected and hardwired font. However supporting multiple fonts significantly increases the power of this tool -- importing a font full of symbols \footnote{https://www.1001fonts.com/glyphyx-one-nf-font.html\#gallery} allows the user to paint a lot of different and popular symbols for free (e.g. a WiFi sign, vehicle signs for public transport, etc.).
+No members of our team have any experience with text fonts, so we do not know how difficult it is to support an arbitrary font. As such, we mention the feature as an extension. At the basic level, the application should use a pre-selected and hardwired font. However, supporting multiple fonts significantly increases the power of this tool -- importing a font full of symbols \footnote{https://www.1001fonts.com/glyphyx-one-nf-font.html\#gallery} allows the user to paint a lot of different and popular symbols for free (e.g. a WiFi sign, vehicle signs for public transport, etc.).
 
 \subsection{3D text collision}
 
-Since we allow the extrusion of the text above the surface itself, the collision between text and another part of the model (or text) may occur. To prevent unwanted text extrusion we can a add collision detection feature.
+Since we allow the extrusion of the text above the surface itself, the collision between text and another part of the model (or text) may occur. To prevent unwanted text extrusion we can add a collision detection feature.
 
 
 \subsection{Model exporting}
@@ -154,7 +162,7 @@ The geometry of this feature is very hard and finding the optimal solution is no
 
 \subsection{Adaptive triangulation}
 
-As mentioned in tool section (Brush) this feature can be arbitrarily difficult. Our goal is to make this tool intuitive and safe to use, which means the user should not be able to easily create a model that is too complicated for his computer to handle. However, as is the case with Subdivision and decimation, the geometry problem of adaptive triangulation is very difficult and we are not sure how robustly we can implement it.
+As mentioned in the tools section (Brush), this feature can also be arbitrarily difficult. Our goal is to make this tool intuitive and safe to use, which means the user should not be able to easily create a model that is too complicated for his computer to handle. However, as is the case with Subdivision and decimation, the geometry problem of adaptive triangulation is very difficult and we are not sure how robustly we can implement it.
 
 
 \section{Nonsupported features}
