@@ -18,18 +18,18 @@ Because each command gets put on the command stack, and each Undo step removes o
 
 \subsection*{Implementation details}
 
-There are several ways of implementing a command stack for \textit{Undo and Redo} operations, here we highlight two, each with its pros and cons. We expect to test both variants and see which works better.
+There are several ways of implementing a command stack for \textit{Undo and Redo} operations, here we highlight two, each with its pros and cons. We expect to test both variants and see which works better. We will use $A$ to refer to the object \textbf{after} applying the newest command, and $B$ as the object \textbf{before} the latest command was applied.
 
-One variant of the implementation requires each command to be able to perform the \textit{Undo} step by itself. This is usually done by remembering the state the obejct was before applying the command, and if \textit{Undo} is pressed, replacing the current object with the saved one. A command in this variant is a class with three primary methods.
+One variant of the implementation requires each command to be able to perform the \textit{Undo} step by itself. This is usually done by remembering the state the object was before applying the command ($B$), and if \textit{Undo} is pressed, replacing the current object $A$ with the saved $B$. A command in this variant is a class with three primary methods.
 \begin{itemize}
-\item \textit{constructor} -- Once the command gets created, the main thing to do is remember the state the geometry model was in before the command modified it. This will allow for the command to restore the model if \textit{Undo} is pressed. The advantage of saving the state in the constructor and not in the execute function itself is because of the \textit{Redo} mechanism -- if the user repeatedly presses the combination of \textit{Undo + Redo}, the model gets saved only once as opposed to each execute.
-\item \textit{execute()} -- The execute function will perform the task the command is created to do. This will typically get called immediately before the command gets placed onto the command stack.
-\item \textit{undo()} -- This method will take the state of the model saved by the constructor of the command and apply it to the current geometry model, effectively reversing the command.
+\item \textit{constructor} -- Once the command gets created, the main thing to do is remember the state the geometry model was in before the command modified it -- $B$. This will allow for the command to restore the model if \textit{Undo} is pressed. The advantage of saving the state in the constructor and not in the execute function itself is because of the \textit{Redo} mechanism -- if the user repeatedly presses the combination of \textit{Undo + Redo}, the model gets saved only once as opposed to each execute.
+\item \textit{execute()} -- The execute function will perform the task the command is created to do. This will typically get called immediately before the command gets placed onto the command stack. This will change the object $B$ into the object $A$.
+\item \textit{undo()} -- This method will take the state of the model saved by the constructor of the command and apply it to the current geometry model $A$, effectively reversing the command and obtaining $B$. In other words, this method will change the object $A$ into the object $B$.
 \end{itemize}
 
 This variant is mostly desirable if the operations can be undone easily (e.g. deleting a single letter is a very easy operation to undo). For our purpose, this approach might not be the best because geometric operations usually do not have an easy inverse operation. This means that each command would have to save the whole state of the geometric model, which might prove too straining on the computer's memory.
 
-The other possible variant of implementation is snapshotting the model every few commands, and when the user requests an undo, simply restoring the previous snapshot, and re-applying every but the last command. This version is a bit more CPU-intensive but should result in much less memory being used.
+The other possible variant of implementation is snapshotting the model every few commands (with the latest snapshot called $S$), and when the user requests an undo, simply restoring the previous snapshot $S$, and re-applying every but the last command $L$. This version is a bit more CPU-intensive but should result in much less memory being used.
 
 In this version of the implementation, the only method of the command class that remains from the previous list is \textbf{execute()}, as all others are managed by the command manager.
 
@@ -43,9 +43,9 @@ As the name suggests, the Command Stack is a \textit{LIFO} type structure, its m
 
 The command manager is a object to manage the command stack. It receives the commands from tools, executes them and stores them in the command stack.
 
-In the first variant of the implementation, when the user wishes to \textit{Undo} an operation, the command manager retrieves the top command from the stack and invokes its undo() method.
+In the first variant of the implementation, when the user wishes to \textit{Undo} an operation, the command manager retrieves the top command from the stack ($L$) and invokes its undo() method, replacing the current $A$ with the original $B$.
 
-In the second variant of the implementation, the command manager also saves the complete geometric data every $N$ steps (we expect $N < 5$) -- so called \textit{snapshots}. The snapshotting is invoked during after the \textit{execute()} method of the incoming command gets called. When the user wishes to \textit{Undo} an operation, the command manager retrieves the last snapshot, $i$ commands behind the current model. It then re-applies all commands from $i+1$ to the next to last command, effectively \textit{undoing} the operation.
+In the second variant of the implementation, the command manager also saves the complete geometric data every $N$ steps (we expect $N < 5$) -- so called \textit{snapshots}. The snapshotting is invoked during after the \textit{execute()} method of the incoming command gets called. When the user wishes to \textit{Undo} an operation, the command manager retrieves the last snapshot $S$, $i$ commands behind the current model. It then re-applies all commands from $i+1$ to the next to last command (ending before applying $L$), effectively \textit{undoing} the operation and replacing the current $A$ with the original $B$. Unlike the previous version, the state $B$ is not saved anywhere but it is re-constructed from the last $i-1$ commands that originally transformed $S$ into $B$.
 
 \section{Tools}
 
