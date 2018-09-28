@@ -12,7 +12,7 @@ This chapter takes a closer look at the portion of the architecture highlighted 
 % TODO: WARNING: CAREFUL, JE UI NEXT NEBO PREVIOUS CHAPTER?
 
 \section{Commands}
-Commands are the primary means of altering the geometry model. Each of them gets executed and placed on the command stack, which allows for the \textit{Undo and Redo} operations to function correctly. The commands then interact with the geometry model (this interaction will be explained in greater detail in the chapter regarding the geometry model) to modify it according to the user's wishes.
+Commands are the primary means of altering the geometry model. Each of them gets executed and placed on the command stack, which allows for the \textit{Undo and Redo} operations to function correctly. The commands then interact with the geometry model (this interaction will be explained in greater detail in section \ref{geometrymodel}) to modify it according to the user's wishes.
 
 Because each command gets put on the command stack, and each Undo step removes one command from the stack, each command has to have a visual impact on the user's work. This means that internal computations, such as geometry queries, cannot be represented as commands, because pressing the Undo button would not have any visual effect and would confuse the user. Examples of commands include: coloring a single triangle (triangle painter tool), adding a brush stroke (as in semi-automatic segmentation we looked at in Chapter 2) or a single step of triangle mesh subdivision.
 
@@ -92,7 +92,7 @@ The tool now generates the final command to complete the segmentation and passes
 
 If the user presses Ctrl + Z now, only the segmentation will get removed, with the strokes still remaining on the object.
 
-\section{Geometry model}
+\section{Geometry model} \label{geometrymodel}
 
 The geometry model is responsible for keeping the geometry data (triangles of the model) in memory and implementing geometric operations, that then get used in commands, to perform the tasks specified by the tools.
 
