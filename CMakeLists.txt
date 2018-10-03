@@ -4,6 +4,7 @@ set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
 project( pepr3d )
 
+
 set( PEPR3D_BUILD_CINDER ON CACHE BOOL "Enable if Cinder should be built together with Pepr3D" )
 set( PEPR3D_CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/cinder" CACHE STRING "Path to Cinder" )
 
@@ -31,3 +32,12 @@ ci_make_app(
 #   BLOCKS
 #   LIBRARIES
 )
+
+if(MSVC)
+  target_compile_options(pepr3d PRIVATE /W4)
+  target_compile_options(cinder PRIVATE /W0)
+  set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT pepr3d)
+else(MSVC)
+  target_compile_options(pepr3d PRIVATE -Wall -Wextra -pedantic)
+  target_compile_options(cinder PRIVATE -w)
+endif(MSVC)
