@@ -34,7 +34,7 @@ ci_make_app(
 )
 
 if(MSVC)
-  target_compile_options(pepr3d PRIVATE /W4)
+  target_compile_options(pepr3d PRIVATE /W3)
   target_compile_options(cinder PRIVATE /W0)
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT pepr3d)
 else(MSVC)
