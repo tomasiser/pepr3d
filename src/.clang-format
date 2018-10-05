@@ -6,7 +6,7 @@ AllowShortIfStatementsOnASingleLine: 'false'
 AllowShortLoopsOnASingleLine: 'false'
 AlwaysBreakAfterReturnType: None
 BreakBeforeBinaryOperators: None
-ColumnLimit: '100'
+ColumnLimit: '120'
 IndentCaseLabels: 'false'
 IndentWidth: '4'
 Language: Cpp
