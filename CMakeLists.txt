@@ -4,6 +4,13 @@ set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
 project( pepr3d )
 
+# Make Cinder use local boost on unix platforms, this fixes missing -fpic compile switch on Ubuntu 16+
+if(UNIX)
+   set(CINDER_BOOST_USE_SYSTEM 1)
+endif()
+
+# Setting openGL preference to GLVND hides CMake warning and falls back to legacy library if not available
+set(OpenGL_GL_PREFERENCE GLVND)
 
 set( PEPR3D_BUILD_CINDER ON CACHE BOOL "Enable if Cinder should be built together with Pepr3D" )
 set( PEPR3D_CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/cinder" CACHE STRING "Path to Cinder" )
@@ -58,12 +65,30 @@ foreach(_source IN ITEMS ${_source_list})
 endforeach()
 
 
+
 # Set build args for each platform
 if(MSVC)
   target_compile_options(pepr3d PRIVATE /W3 /std:c++17)
   target_compile_options(cinder PRIVATE /W0)
+
+  # Replace c++14 flag forced by Cinder with c++17
+  get_target_property(CINDER_COMPILE_FLAGS cinder INTERFACE_COMPILE_OPTIONS)
+  list(REMOVE_ITEM CINDER_COMPILE_FLAGS /std:c++14)
+  list(APPEND CINDER_COMPILE_FLAGS /std:c++17)
+  set_target_properties(cinder PROPERTIES INTERFACE_COMPILE_OPTIONS "${CINDER_COMPILE_FLAGS}")
+
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT pepr3d)
-else(MSVC)
+else()
   target_compile_options(pepr3d PRIVATE -Wall -Wextra -pedantic -std=c++17)
-  target_compile_options(cinder PRIVATE -w)
-endif(MSVC)
+
+  get_target_property(TMP_VAR pepr3d COMPILE_OPTIONS)
+  message("${CMAKE_CXX_FLAGS}")
+
+  # Replace c++14 flag forced by Cinder with c++17
+  get_target_property(CINDER_COMPILE_FLAGS cinder INTERFACE_COMPILE_OPTIONS)
+  list(REMOVE_ITEM CINDER_COMPILE_FLAGS -std=c++14)
+  list(APPEND CINDER_COMPILE_FLAGS -std=c++17)
+  set_target_properties(cinder PROPERTIES INTERFACE_COMPILE_OPTIONS "${CINDER_COMPILE_FLAGS}")
+
+  target_compile_options(cinder PRIVATE -w -fpic)
+endif()
