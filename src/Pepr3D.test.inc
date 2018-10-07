@@ -1,5 +1,3 @@
-
-#ifdef _TEST_
 #include <gtest/gtest.h>
 
 #if _WIN32 || _WIN64
@@ -27,5 +25,4 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     return RUN_ALL_TESTS();
 }
 
-#endif
 #endif
