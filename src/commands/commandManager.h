@@ -1,11 +1,10 @@
 #pragma once
-#include "commands/command.h"
 #include <cassert>
+#include <memory>
 #include <stdexcept>
 #include <type_traits>
-#include <memory>
 #include <vector>
-
+#include "commands/command.h"
 
 /**
 CommandManager handles all undoable operations on target in the form of commands See @see
@@ -137,7 +136,7 @@ void CommandManager<Target>::clearFutureState() {
 
         // Clear all future snapshots
         const size_t maxSnapshots = (mCommandHistory.size() + SNAPSHOT_FREQUENCY - 1) / SNAPSHOT_FREQUENCY;
-        mTargetSnapshots.erase(std::next(mTargetSnapshots.begin(),maxSnapshots), mTargetSnapshots.end());
+        mTargetSnapshots.erase(std::next(mTargetSnapshots.begin(), maxSnapshots), mTargetSnapshots.end());
 
         mPosFromEnd = 0;
     }
@@ -147,6 +146,6 @@ template <typename Target>
 size_t CommandManager<Target>::getPrevSnapshotIdx() {
     assert(canUndo());
 
-    const size_t prevCommandIdx = mCommandHistory.size() - mPosFromEnd -1;
+    const size_t prevCommandIdx = mCommandHistory.size() - mPosFromEnd - 1;
     return prevCommandIdx / SNAPSHOT_FREQUENCY;
 }
