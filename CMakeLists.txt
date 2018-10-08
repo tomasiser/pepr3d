@@ -94,5 +94,5 @@ else()
   list(APPEND CINDER_COMPILE_FLAGS -std=c++17)
   set_target_properties(cinder PROPERTIES INTERFACE_COMPILE_OPTIONS "${CINDER_COMPILE_FLAGS}")
 
-  target_compile_options(cinder PRIVATE -w -fpic)
+#   target_compile_options(cinder PRIVATE -w -fpic)
 endif()
