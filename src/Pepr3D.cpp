@@ -5,7 +5,6 @@
 
 #include "CinderImGui.h"
 
-#ifndef _TEST_
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -66,5 +65,3 @@ void Pepr3D::draw() {
 }
 
 CINDER_APP(Pepr3D, RendererGl)
-
-#endif
