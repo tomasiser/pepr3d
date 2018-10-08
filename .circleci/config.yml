@@ -45,6 +45,21 @@ jobs:
           command: |
             cd build
             make
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - build/*
+  test:
+    docker:
+      - image: tomasiser/docker-cinder:prebuilt
+    steps:
+      - attach_workspace:
+          at: /root/project
+      - run:
+          name: Run tests
+          command: |
+            cd build
+            ./pepr3dtests
 workflows:
   version: 2
   verify-and-build:
@@ -55,3 +70,6 @@ workflows:
       - build:
           requires:
             - request-build
+      - test:
+          requires:
+            - build
