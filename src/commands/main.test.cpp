@@ -5,10 +5,10 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 
-#include <windows.h>
-#include <winnt.h>
 #include <WinBase.h>
 #include <shellapi.h>
+#include <windows.h>
+#include <winnt.h>
 
 #include <memory>
 #include <vector>
