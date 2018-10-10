@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
-#include "commands/command.h"
+#include "commands/Command.h"
 
 /**
 CommandManager handles all undoable operations on target in the form of commands See @see
