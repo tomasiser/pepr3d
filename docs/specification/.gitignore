@@ -1,0 +1,7 @@
+*.log
+*.aux
+*.gz
+*.toc
+*.fls
+*.fdb_latexmk
+*-eps-converted-to.pdf

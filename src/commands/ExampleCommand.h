@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CinderImGui.h"
-#include "command.h"
-#include "commandManager.h"
+#include "Command.h"
+#include "CommandManager.h"
 
 namespace pepr3d {
 

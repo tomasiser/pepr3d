@@ -1,4 +1,4 @@
-#include "commands/commandManager.h"
+#include "commands/CommandManager.h"
 #ifdef _TEST_
 #include <gtest/gtest.h>
 #include <vector>

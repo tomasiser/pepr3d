@@ -1,0 +1,94 @@
+%% Settings for single-side (simplex) printing
+% Margins: left 40mm, right 25mm, top and bottom 25mm
+% (but beware, LaTeX adds 1in implicitly)
+\documentclass[12pt,a4paper]{report}
+\setlength\textwidth{145mm}
+\setlength\textheight{247mm}
+\setlength\oddsidemargin{7.5mm}
+\setlength\evensidemargin{7.5mm}
+\setlength\topmargin{0mm}
+\setlength\headsep{0mm}
+\setlength\headheight{0mm}
+% \openright makes the following text appear on a right-hand page
+\let\openright=\clearpage
+
+%% Character encoding: usually latin2, cp1250 or utf8:
+\usepackage[utf8]{inputenc}
+
+%% Prefer Latin Modern fonts
+\usepackage{lmodern}
+
+\usepackage{amsmath}        % extensions for typesetting of math
+\usepackage{amsfonts}       % math fonts
+\usepackage{amsthm}         % theorems, definitions, etc.
+\usepackage{bbding}         % various symbols (squares, asterisks, scissors, ...)
+\usepackage{bm}             % boldface symbols (\bm)
+\usepackage{graphicx}       % embedding of pictures
+\usepackage{fancyvrb}       % improved verbatim environment
+\usepackage{natbib}         % citation style AUTHOR (YEAR), or AUTHOR [NUMBER]
+\usepackage[nottoc]{tocbibind} % makes sure that bibliography and the lists
+			    % of figures/tables are included in the table
+			    % of contents
+\usepackage{dcolumn}        % improved alignment of table columns
+\usepackage{booktabs}       % improved horizontal lines in tables
+\usepackage{paralist}       % improved enumerate and itemize
+\usepackage[usnames]{xcolor}  % typesetting in color
+\usepackage{float}
+\usepackage[boxruled]{algorithm2e}
+\usepackage{gensymb}
+
+\usepackage{enumitem}
+\usepackage{courier}
+\usepackage{epstopdf}
+\begin{document}
+
+% TITLE PAGE
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+        
+        \Huge
+        \textbf{Pepr3D}
+
+        \LARGE
+        
+        \vspace{12cm}
+        
+		\Large
+        \textbf{Authors}:
+        Bc.~Štěpán Hojdar,
+        Bc.~Tomáš Iser,
+        Bc.~Jindřich Pikora,
+		Bc.~Luis Sanchez
+		\\
+		\textbf{Supervisor}: Mgr.~Oskár Elek, Ph.D.
+		\\
+		\textbf{Consultants}: doc.~Ing.~Jaroslav Křivánek, Ph.D., Ing.~Vojtěch Bubník (Prusa Research~s.r.o.)
+        
+        \vfill
+
+		Faculty of Mathematics and Physics \\	
+		Charles University		               
+    \end{center}
+\end{titlepage}
+
+%% TOC
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+% TODO: Stepan
+\part{Introduction and Functional Requirements}
+\include{texts/intro}
+\include{texts/usecase}
+
+
+\part{Non-Functional Requirements}
+\include{texts/architecture}
+\include{texts/tools}
+\include{texts/ui}
+
+% TODO: Jindra
+\part{Execution and minimal implementation}
+\include{texts/exec}
+
+\end{document}
