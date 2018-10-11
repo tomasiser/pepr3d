@@ -23,7 +23,7 @@ inline void drawToolbarButton(std::size_t index, const char* text, ToolbarState&
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0x017BDA));
     }
     ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.76f));
-    ImGui::Button(text, glm::ivec2(state.height));
+    ImGui::Button(text, glm::ivec2(static_cast<int>(state.height)));
     if(ImGui::IsItemActive()) {
         state.selectedButtonIndex = index;
     }
@@ -42,7 +42,7 @@ inline void drawDemoWindowButton(UiStateStore& state) {
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0x017BDA));
     }
     ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.76f));
-    if(ImGui::Button(ICON_MD_CHILD_FRIENDLY, glm::ivec2(state.toolbar.height))) {
+    if(ImGui::Button(ICON_MD_CHILD_FRIENDLY, glm::ivec2(static_cast<int>(state.toolbar.height)))) {
         state.mainWindow.showDemoWindow = !state.mainWindow.showDemoWindow;
     }
     ImGui::PopStyleVar();
@@ -78,20 +78,20 @@ inline void drawToolbar(UiStateStore& state) {
     ImGui::Begin("##toolbar", nullptr, window_flags);
 
     drawToolbarButton(0, ICON_MD_FOLDER_OPEN, state.toolbar);
-    drawToolbarSeparator(size.y);
+    drawToolbarSeparator(static_cast<float>(size.y));
     drawToolbarButton(1, ICON_MD_UNDO, state.toolbar);
     drawToolbarButton(2, ICON_MD_REDO, state.toolbar);
-    drawToolbarSeparator(size.y);
+    drawToolbarSeparator(static_cast<float>(size.y));
     drawToolbarButton(3, ICON_MD_NETWORK_CELL, state.toolbar);
     drawToolbarButton(4, ICON_MD_BRUSH, state.toolbar);
     drawToolbarButton(5, ICON_MD_FORMAT_COLOR_FILL, state.toolbar);
     drawToolbarButton(6, ICON_MD_TEXT_FIELDS, state.toolbar);
     drawToolbarButton(7, ICON_MD_TEXTURE, state.toolbar);
-    drawToolbarSeparator(size.y);
+    drawToolbarSeparator(static_cast<float>(size.y));
     drawToolbarButton(8, ICON_MD_VISIBILITY, state.toolbar);
     drawToolbarButton(9, ICON_MD_SETTINGS, state.toolbar);
     drawToolbarButton(10, ICON_MD_INFO_OUTLINE, state.toolbar);
-    drawToolbarSeparator(size.y);
+    drawToolbarSeparator(static_cast<float>(size.y));
     drawDemoWindowButton(state);
 
     ImGui::End();
