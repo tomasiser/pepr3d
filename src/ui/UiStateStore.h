@@ -2,8 +2,8 @@
 
 #include "cinder/Arcball.h"
 #include "cinder/CameraUi.h"
-#include "glm/glm.hpp"
 #include "commands/ExampleCommand.h"
+#include "glm/glm.hpp"
 
 namespace pepr3d {
 
@@ -41,4 +41,4 @@ struct UiStateStore {
     UiStateStore() : integerManager(integerState) {}
 };
 
-}
+}  // namespace pepr3d

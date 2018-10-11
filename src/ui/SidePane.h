@@ -32,7 +32,8 @@ inline void drawSidePane(UiStateStore& state) {
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
-    drawList->AddLine(cursorPos + glm::ivec2(0, 49), cursorPos + glm::ivec2(size.x, 49), ImColor(ci::ColorA::hex(0xEDEDED)));
+    drawList->AddLine(cursorPos + glm::ivec2(0, 49), cursorPos + glm::ivec2(size.x, 49),
+                      ImColor(ci::ColorA::hex(0xEDEDED)));
 
     ImGui::SetCursorPos(glm::ivec2(12, 22));
     ImGui::Text(ICON_MD_BUILD);
@@ -53,4 +54,4 @@ inline void drawSidePane(UiStateStore& state) {
     ImGui::PopStyleColor(6);
 }
 
-}
+}  // namespace pepr3d

@@ -16,11 +16,9 @@ inline void setupModelView(UiStateStore& state) {
     modelView.camera.lookAt(glm::vec3(3, 2, 2), glm::vec3(0, 0, 0));
 }
 
-inline void onModelViewMouseDown(UiStateStore& state, ci::app::MouseEvent event) {
-}
+inline void onModelViewMouseDown(UiStateStore& state, ci::app::MouseEvent event) {}
 
-inline void onModelViewMouseDrag(UiStateStore& state, ci::app::MouseEvent event) {
-}
+inline void onModelViewMouseDrag(UiStateStore& state, ci::app::MouseEvent event) {}
 
 inline void drawModelView(UiStateStore& state) {
     auto originalViewport = ci::gl::getViewport();
@@ -35,7 +33,7 @@ inline void drawModelView(UiStateStore& state) {
     ci::gl::setMatrices(state.modelView.camera);
 
     ImGui::Begin("##sidepane-debug");
-    static float color[] = {255.f/256.f, 134.f/256.f, 37.f/256.f};
+    static float color[] = {255.f / 256.f, 134.f / 256.f, 37.f / 256.f};
     ImGui::ColorPicker3("##objectcolor", color);
     ImGui::End();
 

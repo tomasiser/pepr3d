@@ -57,14 +57,12 @@ void MainApplication::resize() {
     mState.mainWindow.size = glm::vec2(getWindowSize());
 }
 
-void MainApplication::mouseDown( MouseEvent event )
-{
+void MainApplication::mouseDown(MouseEvent event) {
     // onModelViewMouseDown(mState, event);
 }
 
-void MainApplication::mouseDrag( MouseEvent event )
-{
-	// onModelViewMouseDrag(mState, event);
+void MainApplication::mouseDrag(MouseEvent event) {
+    // onModelViewMouseDrag(mState, event);
 }
 
 void MainApplication::update() {}
