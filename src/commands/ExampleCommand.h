@@ -34,4 +34,4 @@ class AddValueCommand : public ICommandBase<IntegerState> {
     int mAddedValue;
 };
 
-}
+}  // namespace pepr3d

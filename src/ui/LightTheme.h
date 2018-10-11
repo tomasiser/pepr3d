@@ -56,4 +56,4 @@ inline void applyLightTheme(ImGuiStyle& style) {
     applyColors(style.Colors);
 }
 
-}
+}  // namespace pepr3d
