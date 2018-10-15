@@ -27,7 +27,7 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 # Gather source files
 set(PEPR3D_SRC_PATH ${APP_PATH}/src)
 set(PEPR3D_TEST_MAIN_FILE ${PEPR3D_SRC_PATH}/main.test.cpp)
-set(PEPR3D_MAIN_FILE ${PEPR3D_SRC_PATH}/Pepr3D.cpp)
+set(PEPR3D_MAIN_FILE ${PEPR3D_SRC_PATH}/main.cpp)
 
 file(GLOB SRC_FILES_IMGUI 
     ${APP_PATH}/lib/cinder-imgui/src/*
