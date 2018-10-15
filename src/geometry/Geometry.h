@@ -88,18 +88,17 @@ class Geometry {
 
     /// Set new triangle color
     void setTriangleColor(const size_t triangleIndex, const cinder::ColorA newColor) {
-        // Vertex buffer has 6 floats for each vertex, each triangle has 3 vertices
-        const size_t vertexPosition = triangleIndex * 6 * 3;
-        assert(mVertexBuffer.size() < vertexPosition + 5);
+        /// Change it in the buffer
+        // Color buffer has 1 ColorA for each vertex, each triangle has 3 vertices
+        const size_t vertexPosition = triangleIndex * 3;
 
-        const size_t rPosition = vertexPosition + 3;
-        const size_t gPosition = vertexPosition + 4;
-        const size_t bPosition = vertexPosition + 5;
+        // Change all vertices of the triangle to the same new color
+        assert(vertexPosition + 2 < mColorBuffer.size());
+        mColorBuffer[vertexPosition] = newColor;
+        mColorBuffer[vertexPosition + 1] = newColor;
+        mColorBuffer[vertexPosition + 2] = newColor;
 
-        /*mVertexBuffer[rPosition] = newColor.r();
-        mVertexBuffer[gPosition] = newColor.g();
-        mVertexBuffer[bPosition] = newColor.b();*/
-
+        /// Change it in the triangle soup
         assert(triangleIndex < mTriangles.size());
         mTriangles[triangleIndex].setColor(newColor);
     }
