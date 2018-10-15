@@ -6,9 +6,9 @@
 
 // #include "Triangle.h" // Uses CGAL
 
-// using Color = CGAL::Color;
+namespace pepr3d {
 
-struct DataTriangle  // Will be changed for DataTriangle from Triangle.h after CGAL
+struct DataTriangle  // Will be changed for DataTriangle from Triangle.h after CGAL is usable.
 {
     glm::vec3 vertices[3];
 
@@ -106,6 +106,9 @@ class Geometry {
     }
 
    private:
+    /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
+    /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing
+    /// is possible.
     void generateVertexBuffer() {
         mVertexBuffer.clear();
         mVertexBuffer.reserve(3 * mTriangles.size());
@@ -117,6 +120,7 @@ class Geometry {
         }
     }
 
+    /// Generating a linear index buffer, since we do not reuse any vertices.
     void generateIndexBuffer() {
         mIndexBuffer.clear();
         mIndexBuffer.reserve(mVertexBuffer.size());
@@ -126,6 +130,7 @@ class Geometry {
         }
     }
 
+    /// Generating triplets of colors, since we only allow a single-colored triangle.
     void generateColorBuffer() {
         mColorBuffer.clear();
         mColorBuffer.reserve(mVertexBuffer.size());
@@ -138,3 +143,5 @@ class Geometry {
         assert(mColorBuffer.size() == mVertexBuffer.size());
     }
 };
+
+}  // namespace pepr3d

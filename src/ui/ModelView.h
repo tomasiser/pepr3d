@@ -20,30 +20,7 @@ inline void onModelViewMouseDown(UiStateStore& state, ci::app::MouseEvent event)
 
 inline void onModelViewMouseDrag(UiStateStore& state, ci::app::MouseEvent event) {}
 
-inline void drawModelView(UiStateStore& state) {
-    const auto originalViewport = ci::gl::getViewport();
-    ci::gl::viewport(state.modelView.viewport);
-    ci::gl::enableDepthRead();
-    ci::gl::enableDepthWrite();
-
-    state.modelView.camera.setAspectRatio(static_cast<float>(state.modelView.viewport.second.x) /
-                                          state.modelView.viewport.second.y);
-
-    ci::gl::pushMatrices();
-    ci::gl::setMatrices(state.modelView.camera);
-
-    ImGui::Begin("##sidepane-debug");
-    static float color[] = {255.f / 256.f, 134.f / 256.f, 37.f / 256.f};
-    ImGui::ColorPicker3("##objectcolor", color);
-    ImGui::End();
-
-    const auto lambert = ci::gl::ShaderDef().lambert().color();
-    const auto shader = ci::gl::getStockShader(lambert);
-
-    // ---------- Draw the model ----------
-    // ci::gl::color(ci::ColorA::hex(0xDA017B));
-    ci::gl::color(color[0], color[1], color[2]);
-
+inline void drawModelMesh(UiStateStore& state) {
     // \todo Getting const references to the buffers, might want to use pointers, iterators, whatever.
     // Get vertex buffer
     const std::vector<glm::vec3>& positions = state.geometryData.getVertexBuffer();
@@ -74,8 +51,34 @@ inline void drawModelView(UiStateStore& state) {
     // Create batch and draw
     auto myBatch = ci::gl::Batch::create(myVboMesh, ci::gl::getStockShader(ci::gl::ShaderDef().color()));
     myBatch->draw();
+}
 
-    // ---------- Draw the wireframe plane ----------
+inline void drawModelView(UiStateStore& state) {
+    const auto originalViewport = ci::gl::getViewport();
+    ci::gl::viewport(state.modelView.viewport);
+    ci::gl::enableDepthRead();
+    ci::gl::enableDepthWrite();
+
+    state.modelView.camera.setAspectRatio(static_cast<float>(state.modelView.viewport.second.x) /
+                                          state.modelView.viewport.second.y);
+
+    ci::gl::pushMatrices();
+    ci::gl::setMatrices(state.modelView.camera);
+
+    ImGui::Begin("##sidepane-debug");
+    static float color[] = {255.f / 256.f, 134.f / 256.f, 37.f / 256.f};
+    ImGui::ColorPicker3("##objectcolor", color);
+    ImGui::End();
+
+    const auto lambert = ci::gl::ShaderDef().lambert().color();
+    const auto shader = ci::gl::getStockShader(lambert);
+
+    // Draw the model
+    // ci::gl::color(ci::ColorA::hex(0xDA017B));
+    ci::gl::color(color[0], color[1], color[2]);
+    drawModelMesh(state);
+
+    // Draw the wireframe plane
     auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(16)), shader);
     ci::gl::translate(0, -0.5f, 0);
     plane->draw();
