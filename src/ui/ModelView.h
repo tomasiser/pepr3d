@@ -44,15 +44,15 @@ inline void drawModelView(UiStateStore& state) {
     // ci::gl::color(ci::ColorA::hex(0xDA017B));
     ci::gl::color(color[0], color[1], color[2]);
 
-    // \todo maybe get only iterators, or references to the buffers?
+    // \todo Getting const references to the buffers, might want to use pointers, iterators, whatever.
     // Get vertex buffer
-    const std::vector<glm::vec3> positions = state.geo.getVertexBuffer();
+    const std::vector<glm::vec3>& positions = state.geometryData.getVertexBuffer();
     // Get index buffer
-    const std::vector<uint32_t> indices = state.geo.getIndexBuffer();
+    const std::vector<uint32_t>& indices = state.geometryData.getIndexBuffer();
     // Since we use a new vertex for each triangle, we should have vertices == triangles
     assert(indices.size() == positions.size());
     // Get the color buffer
-    const std::vector<cinder::ColorA> colors = state.geo.getColorBuffer();
+    const std::vector<cinder::ColorA>& colors = state.geometryData.getColorBuffer();
     assert(colors.size() == positions.size());
 
     // Create buffer layout
@@ -64,8 +64,8 @@ inline void drawModelView(UiStateStore& state) {
     const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
     // Create the VBO mesh
-    auto myVboMesh =
-        ci::gl::VboMesh::create(positions.size(), GL_TRIANGLES, {layout}, indices.size(), GL_UNSIGNED_INT, ibo);
+    auto myVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(positions.size()), GL_TRIANGLES, {layout},
+                                             static_cast<uint32_t>(indices.size()), GL_UNSIGNED_INT, ibo);
 
     // Assign the buffers to the attributes
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);

@@ -34,6 +34,8 @@ class Geometry {
     /// Contains position and color data for each vertex.
     std::vector<glm::vec3> mVertexBuffer;
 
+    /// Color buffer, keeping the invariant that every triangle has only one color - all three vertices have to have the
+    /// same color. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
     std::vector<cinder::ColorA> mColorBuffer;
 
     /// Index buffer for OpenGL frontend., specifying the same triangles as in mTriangles.
@@ -57,22 +59,22 @@ class Geometry {
     }
 
     /// Returns a constant iterator to the vertex buffer
-    std::vector<glm::vec3> getVertexBuffer() const {
+    std::vector<glm::vec3>& getVertexBuffer() {
         return mVertexBuffer;
     }
 
     /// Returns a constant iterator to the index buffer
-    std::vector<uint32_t> getIndexBuffer() const {
+    std::vector<uint32_t>& getIndexBuffer() {
         return mIndexBuffer;
     }
 
-    std::vector<cinder::ColorA> getColorBuffer() const {
+    std::vector<cinder::ColorA>& getColorBuffer() {
         return mColorBuffer;
     }
 
     /// Loads new geometry into the private data, rebuilds the vertex and index buffers
     /// automatically.
-    void loadNewGeometry() {
+    void loadNewGeometry(const std::string fileName) {
         /// Load into mTriangles
         // TODO: Loading code goes here, just load the mTriangles, everything else is automatic
 
@@ -108,13 +110,10 @@ class Geometry {
         mVertexBuffer.clear();
         mVertexBuffer.reserve(3 * mTriangles.size());
 
-        for(size_t i = 0; i < mTriangles.size(); ++i) {
-            mVertexBuffer.emplace_back(mTriangles[i].vertices[0].x, mTriangles[i].vertices[0].y,
-                                       mTriangles[i].vertices[0].z);
-            mVertexBuffer.emplace_back(mTriangles[i].vertices[1].x, mTriangles[i].vertices[1].y,
-                                       mTriangles[i].vertices[1].z);
-            mVertexBuffer.emplace_back(mTriangles[i].vertices[2].x, mTriangles[i].vertices[2].y,
-                                       mTriangles[i].vertices[2].z);
+        for(const auto& mTriangle : mTriangles) {
+            mVertexBuffer.push_back(mTriangle.vertices[0]);
+            mVertexBuffer.push_back(mTriangle.vertices[1]);
+            mVertexBuffer.push_back(mTriangle.vertices[2]);
         }
     }
 
@@ -122,7 +121,7 @@ class Geometry {
         mIndexBuffer.clear();
         mIndexBuffer.reserve(mVertexBuffer.size());
 
-        for(size_t i = 0; i < mVertexBuffer.size(); ++i) {
+        for(uint32_t i = 0; i < mVertexBuffer.size(); ++i) {
             mIndexBuffer.push_back(i);
         }
     }
@@ -131,10 +130,10 @@ class Geometry {
         mColorBuffer.clear();
         mColorBuffer.reserve(mVertexBuffer.size());
 
-        for(size_t k = 0; k < mTriangles.size(); k++) {
-            mColorBuffer.push_back(mTriangles[k].color);
-            mColorBuffer.push_back(mTriangles[k].color);
-            mColorBuffer.push_back(mTriangles[k].color);
+        for(const auto& mTriangle : mTriangles) {
+            mColorBuffer.push_back(mTriangle.color);
+            mColorBuffer.push_back(mTriangle.color);
+            mColorBuffer.push_back(mTriangle.color);
         }
         assert(mColorBuffer.size() == mVertexBuffer.size());
     }

@@ -39,7 +39,7 @@ struct UiStateStore {
     IntegerState integerState;
     CommandManager<IntegerState> integerManager;
 
-    Geometry geo;
+    Geometry geometryData;
 
     UiStateStore() : integerManager(integerState) {}
 };
