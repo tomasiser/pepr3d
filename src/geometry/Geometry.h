@@ -1,44 +1,28 @@
 #pragma once
 
 // #include <CGAL/IO/Color.h>
-#include <vector>
 #include <cassert>
+#include <vector>
 
 // #include "Triangle.h" // Uses CGAL
 
 // using Color = CGAL::Color;
 
-struct PeprColor // Will be changed for CGAL::Color when CGAL is operational
-{
-    float rgb[3];
-
-    float r() const { return rgb[0]; }
-    float g() const { return rgb[1]; }
-    float b() const { return rgb[2]; }
-};
-
-
-struct DataTriangle // Will be changed for DataTriangle from Triangle.h after CGAL
+struct DataTriangle  // Will be changed for DataTriangle from Triangle.h after CGAL
 {
     glm::vec3 vertices[3];
 
-    PeprColor color;
+    cinder::ColorA color;
 
-    void setColor(PeprColor col)
-    {
+    void setColor(cinder::ColorA col) {
         color = col;
     }
 
-    DataTriangle(glm::vec3 x, glm::vec3 y, glm::vec3 z)
-    {
+    DataTriangle(glm::vec3 x, glm::vec3 y, glm::vec3 z, cinder::ColorA col) {
         vertices[0] = x;
         vertices[1] = y;
         vertices[2] = z;
-        PeprColor red;
-        red.rgb[0] = 1;
-        red.rgb[1] = 0;
-        red.rgb[2] = 0;
-        color = red;
+        color = col;
     }
 };
 
@@ -50,20 +34,26 @@ class Geometry {
     /// Contains position and color data for each vertex.
     std::vector<glm::vec3> mVertexBuffer;
 
+    std::vector<cinder::ColorA> mColorBuffer;
+
     /// Index buffer for OpenGL frontend., specifying the same triangles as in mTriangles.
     std::vector<uint32_t> mIndexBuffer;
 
    public:
     /// Empty constructor rendering a triangle to debug
-    Geometry()
-    {
-        mTriangles.emplace_back(glm::vec3(-1,-1,0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));        
+    Geometry() {
+        const cinder::ColorA red(1, 0, 0, 1);
+        const cinder::ColorA green(0, 1, 0, 1);
+
+        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), red);
+        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1), green);
 
         generateVertexBuffer();
         generateIndexBuffer();
+        generateColorBuffer();
 
         assert(mIndexBuffer.size() == mVertexBuffer.size());
-        assert(mVertexBuffer.size() == 3);
+        assert(mVertexBuffer.size() == 6);
     }
 
     /// Returns a constant iterator to the vertex buffer
@@ -74,6 +64,10 @@ class Geometry {
     /// Returns a constant iterator to the index buffer
     std::vector<uint32_t> getIndexBuffer() const {
         return mIndexBuffer;
+    }
+
+    std::vector<cinder::ColorA> getColorBuffer() const {
+        return mColorBuffer;
     }
 
     /// Loads new geometry into the private data, rebuilds the vertex and index buffers
@@ -87,15 +81,17 @@ class Geometry {
 
         /// Generate new index buffer
         generateIndexBuffer();
+
+        /// Generate new color buffer from triangle color data
+        generateColorBuffer();
     }
 
     /// Set new triangle color
-    void setTriangleColor(const size_t triangleIndex, const PeprColor newColor)
-    {
+    void setTriangleColor(const size_t triangleIndex, const cinder::ColorA newColor) {
         // Vertex buffer has 6 floats for each vertex, each triangle has 3 vertices
         const size_t vertexPosition = triangleIndex * 6 * 3;
         assert(mVertexBuffer.size() < vertexPosition + 5);
-        
+
         const size_t rPosition = vertexPosition + 3;
         const size_t gPosition = vertexPosition + 4;
         const size_t bPosition = vertexPosition + 5;
@@ -109,27 +105,38 @@ class Geometry {
     }
 
    private:
-    void generateVertexBuffer()
-    {
+    void generateVertexBuffer() {
         mVertexBuffer.clear();
         mVertexBuffer.reserve(3 * mTriangles.size());
 
-        for(size_t i = 0; i < mTriangles.size(); ++i)
-        {
-            mVertexBuffer.emplace_back(mTriangles[i].vertices[0].x, mTriangles[i].vertices[0].y, mTriangles[i].vertices[0].z);           
-            mVertexBuffer.emplace_back(mTriangles[i].vertices[1].x, mTriangles[i].vertices[1].y, mTriangles[i].vertices[1].z);           
-            mVertexBuffer.emplace_back(mTriangles[i].vertices[2].x, mTriangles[i].vertices[2].y, mTriangles[i].vertices[2].z);           
+        for(size_t i = 0; i < mTriangles.size(); ++i) {
+            mVertexBuffer.emplace_back(mTriangles[i].vertices[0].x, mTriangles[i].vertices[0].y,
+                                       mTriangles[i].vertices[0].z);
+            mVertexBuffer.emplace_back(mTriangles[i].vertices[1].x, mTriangles[i].vertices[1].y,
+                                       mTriangles[i].vertices[1].z);
+            mVertexBuffer.emplace_back(mTriangles[i].vertices[2].x, mTriangles[i].vertices[2].y,
+                                       mTriangles[i].vertices[2].z);
         }
     }
 
-    void generateIndexBuffer()
-    {
+    void generateIndexBuffer() {
         mIndexBuffer.clear();
         mIndexBuffer.reserve(mVertexBuffer.size());
 
-        for(size_t i = 0; i < mVertexBuffer.size(); ++i)
-        {
+        for(size_t i = 0; i < mVertexBuffer.size(); ++i) {
             mIndexBuffer.push_back(i);
         }
+    }
+
+    void generateColorBuffer() {
+        mColorBuffer.clear();
+        mColorBuffer.reserve(mVertexBuffer.size());
+
+        for(size_t k = 0; k < mTriangles.size(); k++) {
+            mColorBuffer.push_back(mTriangles[k].color);
+            mColorBuffer.push_back(mTriangles[k].color);
+            mColorBuffer.push_back(mTriangles[k].color);
+        }
+        assert(mColorBuffer.size() == mVertexBuffer.size());
     }
 };
