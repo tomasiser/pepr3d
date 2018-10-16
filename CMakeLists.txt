@@ -1,11 +1,51 @@
 cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
+set (CMAKE_SKIP_INSTALL_RULES ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+cmake_policy(SET CMP0074 NEW) # use ProjectName_ROOT for find_package
 
 project( pepr3d )
 
-# Make Cinder use local boost on unix platforms, this fixes missing -fpic compile switch on Ubuntu 16+
+# ------------------------------------------------------------------------
+# ----------------------------- DEPENDENCIES -----------------------------
+# ------------------------------------------------------------------------
+
+# -- CGAL --
+set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE flags")
+set(CGAL_NO_BLANKET_LINKING TRUE CACHE BOOL "Prevent CGAL_USE_FILE from linking to CGAL in every project")
+
+find_package(CGAL REQUIRED COMPONENTS Core)
+if ( NOT CGAL_FOUND )
+  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  return()  
+endif()
+if ( NOT CGAL_DIR )
+  message(STATUS "CGAL_DIR must be set to the root CGAL directory.") # need to find the include files
+  return()  
+endif()
+
+include(${CGAL_USE_FILE})
+link_directories(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
+
+
+if(WIN32)
+ # Copy cgal 3rd party .dlls into the working directory of the project
+ file(COPY ${CGAL_DIR}/auxiliary/gmp/lib/libgmp-10.dll ${CGAL_DIR}/auxiliary/gmp/lib/libmpfr-4.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+endif()
+
+# -- Boost --
+find_package( Boost REQUIRED )
+if ( NOT Boost_FOUND )
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+  return()  
+endif()
+
+
+# -- Cinder --
 if(UNIX)
+	# Make Cinder use local boost on unix platforms
    set(CINDER_BOOST_USE_SYSTEM 1)
 endif()
 
@@ -23,6 +63,10 @@ get_filename_component( CINDER_PATH "${PEPR3D_CINDER_PATH}" ABSOLUTE )
 get_filename_component( APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE )
 
 include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
+
+# ------------------------------------------------------------------------
+# ------------------------------- SOURCES --------------------------------
+# ------------------------------------------------------------------------
 
 # Gather source files
 set(PEPR3D_SRC_PATH ${APP_PATH}/src)
@@ -54,6 +98,10 @@ ci_make_app(
 #   LIBRARIES
 )
 
+
+target_link_libraries(pepr3d ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+add_dependencies(pepr3d CGAL::CGAL CGAL::CGAL_Core)
+
 # Group source files into filters (for MSVC)
 foreach(_source IN ITEMS ${SRC_FILES_PEPR3D})
     get_filename_component(_source_path "${_source}" PATH)
@@ -62,16 +110,25 @@ foreach(_source IN ITEMS ${SRC_FILES_PEPR3D})
     source_group("${_group_path}" FILES "${_source}")
 endforeach()
 
+
+
 # --- Tests ---
 # Create separate project for tests
 # (do not link to cinder or imgui)
-add_subdirectory(${APP_PATH}/lib/googletest)
+add_subdirectory(${APP_PATH}/lib/googletest EXCLUDE_FROM_ALL)
 add_executable(pepr3dtests ${SRC_FILES_PEPR3D} ${PEPR3D_TEST_MAIN_FILE})
-add_dependencies(pepr3dtests gtest)
-target_link_libraries(pepr3dtests gtest)
-target_include_directories(pepr3dtests PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui ${APP_PATH}/lib/googletest/googletest/include)
+add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
 
-# Set build args for each platform
+target_include_directories(pepr3dtests PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui ${APP_PATH}/lib/googletest/googletest/include)
+target_link_libraries(pepr3dtests gtest ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+
+# Set folders for targets
+set_target_properties(cinder Continuous Experimental gmock gmock_main gtest gtest_main Nightly NightlyMemoryCheck PROPERTIES FOLDER Dependencies)
+
+
+# ------------------------------------------------------------------------
+# --------------------------- COMPILER FLAGS -----------------------------
+# ------------------------------------------------------------------------
 if(MSVC)
   target_compile_options(pepr3d PRIVATE /W3 /std:c++17)
   target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_)
