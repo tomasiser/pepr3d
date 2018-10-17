@@ -55,9 +55,7 @@ void MainApplication::setup() {
 
 void MainApplication::resize() {
     mState.mainWindow.size = glm::vec2(getWindowSize());
-    mState.modelView.viewport = std::make_pair(
-        glm::ivec2(0),
-        glm::ivec2(mState.mainWindow.size.x - mState.sidePane.width, mState.mainWindow.size.y - mState.toolbar.height));
+    setupModelView(mState);
 }
 
 void MainApplication::mouseDown(MouseEvent event) {
