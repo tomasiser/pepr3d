@@ -3,8 +3,24 @@
 #include "CinderImGui.h"
 #include "IconsMaterialDesign.h"
 #include "UiStateStore.h"
+// #include "MainApplication.h"
 
 namespace pepr3d {
+
+class MainApplication;
+
+class Toolbar {
+   public:
+    MainApplication& app;
+    Toolbar(MainApplication& app) : app(app) {}
+
+    float foo() {
+        return app.getWindow()->getAspectRatio();
+    }
+
+   private:
+    int number;
+};
 
 namespace {
 void drawToolbarSeparator(float height) {

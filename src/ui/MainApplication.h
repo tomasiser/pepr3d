@@ -31,8 +31,13 @@ class MainApplication : public App {
     void mouseDown(MouseEvent event) override;
     void mouseDrag(MouseEvent event) override;
 
+    MainApplication() : mToolbar(*this) {
+
+    }
+
    private:
     UiStateStore mState;
+    Toolbar mToolbar;
 };
 
 void MainApplication::setup() {
@@ -51,6 +56,7 @@ void MainApplication::setup() {
     setupModelView(mState);
     mState.modelView.cameraUi = ci::CameraUi(&mState.modelView.camera, getWindow());
     mState.modelView.cameraUi.setWindowSize(mState.modelView.viewport.second);
+    mState.modelView.cameraUi.setMouseWheelMultiplier(-mState.modelView.cameraUi.getMouseWheelMultiplier() * mToolbar.foo());
 }
 
 void MainApplication::resize() {
