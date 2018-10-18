@@ -55,7 +55,7 @@ void MainApplication::setup() {
 
 void MainApplication::resize() {
     mState.mainWindow.size = glm::vec2(getWindowSize());
-    setupModelView(mState);
+    onModelViewResize(mState);
 }
 
 void MainApplication::mouseDown(MouseEvent event) {
