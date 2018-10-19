@@ -9,7 +9,11 @@ class MainApplication;
 class SidePane {
    public:
     SidePane(MainApplication& app) : mApplication(app) {}
-    float getWidth() { return mWidth; }
+
+    float getWidth() {
+        return mWidth;
+    }
+
     void draw();
 
    private:

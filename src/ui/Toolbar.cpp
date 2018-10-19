@@ -94,5 +94,4 @@ void Toolbar::drawDemoWindowButton() {
         ImGui::PopStyleColor(3);
     }
 }
-
 }

@@ -32,12 +32,25 @@ class MainApplication : public App {
 
     MainApplication();
 
-    Toolbar& getToolbar() { return mToolbar; }
-    SidePane& getSidePane() { return mSidePane; }
-    ModelView& getModelView() { return mModelView; }
+    Toolbar& getToolbar() {
+        return mToolbar;
+    }
 
-    bool isDemoWindowShown() { return mShowDemoWindow; }
-    void showDemoWindow(bool show = true) { mShowDemoWindow = show; }
+    SidePane& getSidePane() {
+        return mSidePane;
+    }
+
+    ModelView& getModelView() {
+        return mModelView;
+    }
+
+    bool isDemoWindowShown() {
+        return mShowDemoWindow;
+    }
+
+    void showDemoWindow(bool show = true) {
+        mShowDemoWindow = show;
+    }
 
    private:
     Toolbar mToolbar;

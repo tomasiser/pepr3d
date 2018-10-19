@@ -10,7 +10,11 @@ class MainApplication;
 class Toolbar {
    public:
     Toolbar(MainApplication& app) : mApplication(app) {}
-    float getHeight() { return mHeight; }
+
+    float getHeight() {
+        return mHeight;
+    }
+
     void draw();
 
    private:
