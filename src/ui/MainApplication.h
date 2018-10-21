@@ -13,7 +13,12 @@
 #include "ModelView.h"
 #include "SidePane.h"
 #include "Toolbar.h"
+
 #include "commands/ExampleCommand.h"
+
+#include "tools/Tool.h"
+#include "tools/TrianglePainter.h"
+#include "tools/Brush.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -52,6 +57,25 @@ class MainApplication : public App {
         mShowDemoWindow = show;
     }
 
+    using ToolsVector = std::vector<std::unique_ptr<ITool>>;
+
+    ToolsVector::iterator getToolsBegin() {
+        return mTools.begin();
+    }
+
+    ToolsVector::iterator getToolsEnd() {
+        return mTools.end();
+    }
+
+    ToolsVector::iterator getCurrentToolIterator() {
+        return mCurrentToolIterator;
+    }
+
+    void setCurrentToolIterator(ToolsVector::iterator tool) {
+        assert(tool != mTools.end());
+        mCurrentToolIterator = tool;
+    }
+
    private:
     Toolbar mToolbar;
     SidePane mSidePane;
@@ -60,6 +84,9 @@ class MainApplication : public App {
 
     IntegerState mIntegerState;
     CommandManager<IntegerState> mIntegerManager;
+
+    ToolsVector mTools;
+    ToolsVector::iterator mCurrentToolIterator;
 };
 
 }  // namespace pepr3d

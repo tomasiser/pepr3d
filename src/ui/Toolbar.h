@@ -3,6 +3,7 @@
 #include "CinderImGui.h"
 #include "IconsMaterialDesign.h"
 #include "imgui_internal.h"
+#include "tools/Tool.h"
 
 namespace pepr3d {
 
@@ -39,6 +40,10 @@ class Toolbar {
     void drawFileDropDown();
     void drawUndoRedo();
     void drawDemoWindowToggle();
+
+    using ToolsVector = std::vector<std::unique_ptr<ITool>>;
+    void drawToolButtons();
+    void drawToolButton(ToolsVector::iterator tool);
 };
 
 template <typename Callback>

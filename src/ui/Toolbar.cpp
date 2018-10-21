@@ -37,6 +37,8 @@ void Toolbar::draw() {
     drawUndoRedo();
     ImGui::SameLine(0.0f, 0.0f);
     drawSeparator();
+    drawToolButtons();
+    ImGui::SameLine(0.0f, 0.0f);
     drawButton(3, ICON_MD_NETWORK_CELL);
     drawButton(4, ICON_MD_BRUSH);
     drawButton(5, ICON_MD_FORMAT_COLOR_FILL);
@@ -132,6 +134,23 @@ void Toolbar::drawDemoWindowToggle() {
     drawButton(props, [&]() {
         props.isToggled = !props.isToggled;
         mApplication.showDemoWindow(props.isToggled);
+    });
+}
+
+void Toolbar::drawToolButtons() {
+    for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit) {
+        ImGui::SameLine(0.0f, 0.0f);
+        drawToolButton(toolit);
+    }
+}
+
+void Toolbar::drawToolButton(ToolsVector::iterator tool) {
+    ButtonProperties props;
+    props.label = (*tool)->getIcon();
+    props.isToggled = (tool == mApplication.getCurrentToolIterator());
+    drawButton(props, [&]() {
+        props.isToggled = true;
+        mApplication.setCurrentToolIterator(tool);
     });
 }
 
