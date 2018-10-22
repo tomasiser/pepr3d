@@ -27,7 +27,7 @@ Make sure you have the latest **CMake** and **build tools for Visual Studio 2017
 
  1. Download and install CGAL https://www.cgal.org/download/windows.html
 
-    Make sure CGAL_DIR environment variable is set (optional when using the installer)
+    Make sure CGAL_DIR environment variable is set (default when using the installer)
 
  2. Download and install Boost https://www.boost.org/
 
@@ -36,11 +36,12 @@ Make sure you have the latest **CMake** and **build tools for Visual Studio 2017
 
 #### Linux
 
- 1. Install CGAL
+ 1. Install **CGAL**
  
 	`sudo apt-get install libcgal-dev # install the CGAL library`
 	
- 2. Install Boost
+ 2. Install **Boost**
+ 
 	`sudo apt-get install libboost-all-dev`
 
 
