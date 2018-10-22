@@ -69,10 +69,8 @@ set(assimp_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp/code/${CMAKE_BUILD
 set(assimp_LIBRARY assimp)
 
 # -- Cinder --
-if(UNIX)
-  # Make Cinder use local boost on unix platforms
-  set(CINDER_BOOST_USE_SYSTEM 1)
-endif()
+set(CINDER_BOOST_USE_SYSTEM 1)
+
 
 # Setting openGL preference to GLVND hides CMake warning and falls back to legacy library if not
 # available
