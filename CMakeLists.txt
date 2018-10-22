@@ -1,51 +1,46 @@
-cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
-set( CMAKE_VERBOSE_MAKEFILE ON )
-set( CMAKE_POSITION_INDEPENDENT_CODE ON )
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+
+set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 cmake_policy(SET CMP0074 NEW) # use ProjectName_ROOT for find_package
 
-project( pepr3d )
+project(pepr3d)
 
 # ------------------------------------------------------------------------
 # ----------------------------- DEPENDENCIES -----------------------------
 # ------------------------------------------------------------------------
-get_filename_component( APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE )
+get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 
-#-- Boost --
-find_package( Boost REQUIRED )
-if ( NOT Boost_FOUND )
+# -- Boost --
+find_package(Boost REQUIRED)
+if(NOT Boost_FOUND)
   message(STATUS "This project requires the Boost library!")
-  return()  
+  return()
 endif()
 
-#-- gtest --
-# Note: Gtest must be added as soon as possible to prevent other dependencies from including their own version with custom settings.
-set( INSTALL_GTEST OFF CACHE BOOL "Disable installation of gtest" )
+# -- gtest --
+# Note: Gtest must be added as soon as possible to prevent other dependencies from
+# including their own version with custom settings.
+set(INSTALL_GTEST OFF CACHE BOOL "Disable installation of gtest")
 add_subdirectory(${APP_PATH}/lib/googletest EXCLUDE_FROM_ALL)
 set_target_properties(gtest gtest_main PROPERTIES FOLDER Dependencies)
 
 # -- CGAL --
-# set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE flags")
-# set(CGAL_NO_BLANKET_LINKING TRUE CACHE BOOL "Prevent CGAL_USE_FILE from linking to CGAL in every project")
+# set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE
+# flags") set(CGAL_NO_BLANKET_LINKING TRUE CACHE BOOL "Prevent CGAL_USE_FILE from linking to CGAL in
+# every project")
 
-# find_package(CGAL REQUIRED COMPONENTS Core)
-# if ( NOT CGAL_FOUND )
-  # message(STATUS "This project requires the CGAL library!")
-  # return()  
-# endif()
-# if ( NOT CGAL_DIR )
-  # message(STATUS "CGAL_DIR must be set to the root CGAL directory.") # need to find the include files
-  # return()  
-# endif()
+# find_package(CGAL REQUIRED COMPONENTS Core) if ( NOT CGAL_FOUND ) message(STATUS "This project
+# requires the CGAL library!") return() endif() if ( NOT CGAL_DIR ) message(STATUS "CGAL_DIR must be
+# set to the root CGAL directory.") # need to find the include files return() endif()
 
-# include(${CGAL_USE_FILE})
-# link_directories(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
+# include(${CGAL_USE_FILE}) link_directories(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
 
-
-# if(WIN32)
- #Copy cgal 3rd party .dlls into the working directory of the project
- # file(COPY ${CGAL_DIR}/auxiliary/gmp/lib/libgmp-10.dll ${CGAL_DIR}/auxiliary/gmp/lib/libmpfr-4.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# if(WIN32) Copy cgal 3rd party .dlls into the working directory of the project file(COPY
+# ${CGAL_DIR}/auxiliary/gmp/lib/libgmp-10.dll ${CGAL_DIR}/auxiliary/gmp/lib/libmpfr-4.dll
+# DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # endif()
 
@@ -53,7 +48,16 @@ set_target_properties(gtest gtest_main PROPERTIES FOLDER Dependencies)
 # Note: find_package(assimp) on Windows breaks on second run
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Do not build assimp tests")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp)
-set_target_properties(assimp assimp_cmd IrrXML uninstall UpdateAssimpLibsDebugSymbolsAndDLLs zlib zlibstatic PROPERTIES FOLDER Dependencies)
+set_target_properties(assimp assimp_cmd IrrXML uninstall PROPERTIES FOLDER Dependencies)
+if(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs)
+  set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER Dependencies)
+endif()
+if(TARGET zlib)
+  set_target_properties(zlib PROPERTIES FOLDER Dependencies)
+endif()
+if(TARGET zlibstatic)
+  set_target_properties(zlibstatic PROPERTIES FOLDER Dependencies)
+endif()
 set(assimp_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp/include)
 set(assimp_BUILD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp/include)
 set(assimp_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp/code/${CMAKE_BUILD_TYPE})
@@ -61,25 +65,25 @@ set(assimp_LIBRARY assimp)
 
 # -- Cinder --
 if(UNIX)
-	# Make Cinder use local boost on unix platforms
-   set(CINDER_BOOST_USE_SYSTEM 1)
+  # Make Cinder use local boost on unix platforms
+  set(CINDER_BOOST_USE_SYSTEM 1)
 endif()
 
-# Setting openGL preference to GLVND hides CMake warning and falls back to legacy library if not available
+# Setting openGL preference to GLVND hides CMake warning and falls back to legacy library if not
+# available
 set(OpenGL_GL_PREFERENCE GLVND)
 
-set( PEPR3D_BUILD_CINDER ON CACHE BOOL "Enable if Cinder should be built together with Pepr3D" )
-set( PEPR3D_CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/cinder" CACHE STRING "Path to Cinder" )
+set(PEPR3D_BUILD_CINDER ON CACHE BOOL "Enable if Cinder should be built together with Pepr3D")
+set(PEPR3D_CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/cinder" CACHE STRING "Path to Cinder")
 
-if( PEPR3D_BUILD_CINDER )
-    add_subdirectory( lib/cinder )
-	set_target_properties(cinder PROPERTIES FOLDER Dependencies)
+if(PEPR3D_BUILD_CINDER)
+  add_subdirectory(lib/cinder)
+  set_target_properties(cinder PROPERTIES FOLDER Dependencies)
 endif()
 
-get_filename_component( CINDER_PATH "${PEPR3D_CINDER_PATH}" ABSOLUTE )
+get_filename_component(CINDER_PATH "${PEPR3D_CINDER_PATH}" ABSOLUTE)
 
-
-include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
+include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
 # ------------------------------------------------------------------------
 # ------------------------------- SOURCES --------------------------------
@@ -90,63 +94,60 @@ set(PEPR3D_SRC_PATH ${APP_PATH}/src)
 set(PEPR3D_TEST_MAIN_FILE ${PEPR3D_SRC_PATH}/main.test.cpp)
 set(PEPR3D_MAIN_FILE ${PEPR3D_SRC_PATH}/main.cpp)
 
-file(GLOB SRC_FILES_IMGUI 
-    ${APP_PATH}/lib/cinder-imgui/src/*
-    ${APP_PATH}/lib/cinder-imgui/lib/imgui/*
-)
+file(GLOB SRC_FILES_IMGUI ${APP_PATH}/lib/cinder-imgui/src/*
+          ${APP_PATH}/lib/cinder-imgui/lib/imgui/*)
 
-
-file(GLOB_RECURSE SRC_FILES_PEPR3D
-	LIST_DIRECTORES false
-	"${PEPR3D_SRC_PATH}/*.cpp"
-	"${PEPR3D_SRC_PATH}/*.h"
-	)
+file(GLOB_RECURSE SRC_FILES_PEPR3D LIST_DIRECTORES false "${PEPR3D_SRC_PATH}/*.cpp"
+                  "${PEPR3D_SRC_PATH}/*.h")
 list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_TEST_MAIN_FILE})
 list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_MAIN_FILE})
-	
-ci_make_app(
-    APP_NAME    "pepr3d"
-    CINDER_PATH ${CINDER_PATH}
-    SOURCES     ${SRC_FILES_IMGUI} ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE}
-    INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
-#   RESOURCES   ${APP_PATH}/../../data/models/8lbs.obj
-#   ASSETS_PATH
-#   BLOCKS
-#   LIBRARIES
-)
+
+ci_make_app(APP_NAME "pepr3d"
+            CINDER_PATH ${CINDER_PATH}
+            SOURCES  ${SRC_FILES_IMGUI} ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE}
+            INCLUDES ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
+            # RESOURCES   ${APP_PATH}/../../data/models/8lbs.obj
+            # ASSETS_PATH
+            # BLOCKS
+            # LIBRARIES
+            )
 
 target_include_directories(pepr3d PRIVATE ${assimp_INCLUDE_DIR} ${assimp_BUILD_INCLUDE_DIR})
 target_link_libraries(pepr3d ${assimp_LIBRARY})
 
-#target_link_libraries(pepr3d ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-#add_dependencies(pepr3d CGAL::CGAL CGAL::CGAL_Core)
+# target_link_libraries(pepr3d ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+# add_dependencies(pepr3d CGAL::CGAL CGAL::CGAL_Core)
 
 # Group source files into filters (for MSVC)
 foreach(_source IN ITEMS ${SRC_FILES_PEPR3D})
-    get_filename_component(_source_path "${_source}" PATH)
-    file(RELATIVE_PATH _source_path_rel "${PEPR3D_SRC_PATH}" "${_source_path}")
-    string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
-    source_group("${_group_path}" FILES "${_source}")
+  get_filename_component(_source_path "${_source}" PATH)
+  file(RELATIVE_PATH _source_path_rel "${PEPR3D_SRC_PATH}" "${_source_path}")
+  string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
+  source_group("${_group_path}" FILES "${_source}")
 endforeach()
-
-
 
 # --- Tests ---
 # Create separate project for tests
 add_executable(pepr3dtests ${SRC_FILES_PEPR3D} ${PEPR3D_TEST_MAIN_FILE})
-#add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
+# add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
 
-target_include_directories(pepr3dtests PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui ${APP_PATH}/lib/googletest/googletest/include)
+target_include_directories(pepr3dtests
+                           PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include
+                                   ${APP_PATH}/lib/cinder-imgui/lib/imgui
+                                   ${APP_PATH}/lib/googletest/googletest/include)
 target_include_directories(pepr3dtests PRIVATE ${assimp_INCLUDE_DIR} ${assimp_BUILD_INCLUDE_DIR})
 target_link_libraries(pepr3dtests gtest ${assimp_LIBRARY})
-#target_link_libraries(pepr3dtests ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+# target_link_libraries(pepr3dtests ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
 # copy dlls into working directory on Windows
 if(WIN32)
-add_custom_command(TARGET pepr3d POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:assimp> ${CMAKE_CURRENT_BINARY_DIR})
-add_custom_command(TARGET pepr3dtests POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:assimp> ${CMAKE_CURRENT_BINARY_DIR})
+  add_custom_command(TARGET pepr3d POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:assimp>
+                             ${CMAKE_CURRENT_BINARY_DIR})
+  add_custom_command(TARGET pepr3dtests POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:assimp>
+                             ${CMAKE_CURRENT_BINARY_DIR})
 endif()
-
 
 # ------------------------------------------------------------------------
 # --------------------------- COMPILER FLAGS -----------------------------
@@ -155,12 +156,13 @@ if(MSVC)
   target_compile_options(pepr3d PRIVATE /W3 /std:c++17)
   target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_)
   target_compile_options(cinder PRIVATE /W0)
-  
-  # Note: /std:c++14 flag is not present in cinder INTERFACE_COMPILE_OPTIONS for some reason for MSVC
-  
+
+  # Note: /std:c++14 flag is not present in cinder INTERFACE_COMPILE_OPTIONS for some reason for
+  # MSVC
+
   # Set MSVC startup project
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT pepr3d)
-  
+
   # Copy resharper settings
   file(COPY ${APP_PATH}/pepr3d.sln.DotSettings DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 else()
@@ -173,5 +175,5 @@ else()
   list(APPEND CINDER_COMPILE_FLAGS -std=c++17)
   set_target_properties(cinder PROPERTIES INTERFACE_COMPILE_OPTIONS "${CINDER_COMPILE_FLAGS}")
 
-#   target_compile_options(cinder PRIVATE -w -fpic)
+  # target_compile_options(cinder PRIVATE -w -fpic)
 endif()
