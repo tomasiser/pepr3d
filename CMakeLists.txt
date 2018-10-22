@@ -28,21 +28,26 @@ add_subdirectory(${APP_PATH}/lib/googletest EXCLUDE_FROM_ALL)
 set_target_properties(gtest gtest_main PROPERTIES FOLDER Dependencies)
 
 # -- CGAL --
-# set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE
-# flags") set(CGAL_NO_BLANKET_LINKING TRUE CACHE BOOL "Prevent CGAL_USE_FILE from linking to CGAL in
-# every project")
+set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE flags")
+set(CGAL_NO_BLANKET_LINKING TRUE CACHE BOOL "Prevent CGAL_USE_FILE from linking to CGAL in every project")
 
-# find_package(CGAL REQUIRED COMPONENTS Core) if ( NOT CGAL_FOUND ) message(STATUS "This project
-# requires the CGAL library!") return() endif() if ( NOT CGAL_DIR ) message(STATUS "CGAL_DIR must be
-# set to the root CGAL directory.") # need to find the include files return() endif()
+find_package(CGAL REQUIRED COMPONENTS Core)
+if(NOT CGAL_FOUND )
+  message(STATUS "This project requires the CGAL library!")
+  return()
+endif()
+if(NOT CGAL_DIR)
+  message(STATUS "CGAL_DIR must be set to the root CGAL directory.") # need to find the include files
+  return()
+endif()
 
-# include(${CGAL_USE_FILE}) link_directories(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
+include(${CGAL_USE_FILE})
+link_directories(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
 
-# if(WIN32) Copy cgal 3rd party .dlls into the working directory of the project file(COPY
-# ${CGAL_DIR}/auxiliary/gmp/lib/libgmp-10.dll ${CGAL_DIR}/auxiliary/gmp/lib/libmpfr-4.dll
-# DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-# endif()
+if(WIN32) # Copy cgal 3rd party .dlls into the working directory of the project
+  file(COPY ${CGAL_DIR}/auxiliary/gmp/lib/libgmp-10.dll ${CGAL_DIR}/auxiliary/gmp/lib/libmpfr-4.dll
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 # -- Assimp --
 # Note: find_package(assimp) on Windows breaks on second run
@@ -115,8 +120,8 @@ ci_make_app(APP_NAME "pepr3d"
 target_include_directories(pepr3d PRIVATE ${assimp_INCLUDE_DIR} ${assimp_BUILD_INCLUDE_DIR})
 target_link_libraries(pepr3d ${assimp_LIBRARY})
 
-# target_link_libraries(pepr3d ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-# add_dependencies(pepr3d CGAL::CGAL CGAL::CGAL_Core)
+target_link_libraries(pepr3d ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+#add_dependencies(pepr3d CGAL::CGAL CGAL::CGAL_Core)
 
 # Group source files into filters (for MSVC)
 foreach(_source IN ITEMS ${SRC_FILES_PEPR3D})
@@ -129,7 +134,7 @@ endforeach()
 # --- Tests ---
 # Create separate project for tests
 add_executable(pepr3dtests ${SRC_FILES_PEPR3D} ${PEPR3D_TEST_MAIN_FILE})
-# add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
+#add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
 
 target_include_directories(pepr3dtests
                            PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include
@@ -137,7 +142,7 @@ target_include_directories(pepr3dtests
                                    ${APP_PATH}/lib/googletest/googletest/include)
 target_include_directories(pepr3dtests PRIVATE ${assimp_INCLUDE_DIR} ${assimp_BUILD_INCLUDE_DIR})
 target_link_libraries(pepr3dtests gtest ${assimp_LIBRARY})
-# target_link_libraries(pepr3dtests ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries(pepr3dtests ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
 # copy dlls into working directory on Windows
 if(WIN32)
