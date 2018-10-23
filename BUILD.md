@@ -33,6 +33,9 @@ Make sure you have the latest **CMake** and **build tools for Visual Studio 2017
 
 	Either build Boost yourself or download pre-built binaries for 14.1 toolset
     Make sure BOOST_ROOT environtment variable points to the boost directory.
+    
+ 3. Download and install Assimp http://www.assimp.org/. Set ASSIMP_ROOT environment variable to point to the assimp directory.
+    
 
 #### Linux
 
@@ -43,6 +46,10 @@ Make sure you have the latest **CMake** and **build tools for Visual Studio 2017
  2. Install **Boost**
  
 	`sudo apt-get install libboost-all-dev`
+  
+ 3. Install **Assimp**
+ 
+	`sudo apt-get install libassimp-dev`
 
 
 #### FAQ:

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 cmake_policy(SET CMP0074 NEW) # use ProjectName_ROOT for find_package
 
@@ -33,11 +33,11 @@ set(CGAL_NO_BLANKET_LINKING TRUE CACHE BOOL "Prevent CGAL_USE_FILE from linking 
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 if(NOT CGAL_FOUND )
-  message(STATUS "This project requires the CGAL library!")
+  message(FATAL_ERROR "This project requires the CGAL library!")
   return()
 endif()
 if(NOT CGAL_DIR)
-  message(STATUS "CGAL_DIR must be set to the root CGAL directory.") # need to find the include files
+  message(FATAL_ERROR "CGAL_DIR must be set to the root CGAL directory.") # need to find the include files
   return()
 endif()
 
@@ -51,22 +51,11 @@ endif()
 
 # -- Assimp --
 # Note: find_package(assimp) on Windows breaks on second run
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Do not build assimp tests")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp)
-set_target_properties(assimp assimp_cmd IrrXML uninstall PROPERTIES FOLDER Dependencies)
-if(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs)
-  set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER Dependencies)
+find_package(Assimp REQUIRED)
+if(NOT ASSIMP_FOUND )
+  message(FATAL_ERROR "This project requires the Assimp library!")
+  return()
 endif()
-if(TARGET zlib)
-  set_target_properties(zlib PROPERTIES FOLDER Dependencies)
-endif()
-if(TARGET zlibstatic)
-  set_target_properties(zlibstatic PROPERTIES FOLDER Dependencies)
-endif()
-set(assimp_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp/include)
-set(assimp_BUILD_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp/include)
-set(assimp_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp/code/${CMAKE_BUILD_TYPE})
-set(assimp_LIBRARY assimp)
 
 # -- Cinder --
 set(CINDER_BOOST_USE_SYSTEM 1)
@@ -115,8 +104,8 @@ ci_make_app(APP_NAME "pepr3d"
             # LIBRARIES
             )
 
-target_include_directories(pepr3d PRIVATE ${assimp_INCLUDE_DIR} ${assimp_BUILD_INCLUDE_DIR})
-target_link_libraries(pepr3d ${assimp_LIBRARY})
+target_include_directories(pepr3d PRIVATE ${ASSIMP_INCLUDE_DIR})
+target_link_libraries(pepr3d ${ASSIMP_LIBRARY_RELEASE})
 
 target_link_libraries(pepr3d ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 #add_dependencies(pepr3d CGAL::CGAL CGAL::CGAL_Core)
@@ -138,18 +127,16 @@ target_include_directories(pepr3dtests
                            PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include
                                    ${APP_PATH}/lib/cinder-imgui/lib/imgui
                                    ${APP_PATH}/lib/googletest/googletest/include)
-target_include_directories(pepr3dtests PRIVATE ${assimp_INCLUDE_DIR} ${assimp_BUILD_INCLUDE_DIR})
-target_link_libraries(pepr3dtests gtest ${assimp_LIBRARY})
+target_include_directories(pepr3dtests PRIVATE ${ASSIMP_INCLUDE_DIR})
+target_link_libraries(pepr3dtests gtest ${ASSIMP_LIBRARY_RELEASE})
 target_link_libraries(pepr3dtests ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
 # copy dlls into working directory on Windows
 if(WIN32)
-  add_custom_command(TARGET pepr3d POST_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:assimp>
-                             ${CMAKE_CURRENT_BINARY_DIR})
-  add_custom_command(TARGET pepr3dtests POST_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:assimp>
-                             ${CMAKE_CURRENT_BINARY_DIR})
+  #assimp
+  if(ASSIMP_DLL_FILE)
+    file(COPY ${ASSIMP_DLL_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})      
+  endif()
 endif()
 
 # ------------------------------------------------------------------------
