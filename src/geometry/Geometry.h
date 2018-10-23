@@ -6,6 +6,8 @@
 #include <optional>
 
 // #include "Triangle.h" // Uses CGAL
+#include "geometry/Triangle.h"
+#include "geometry/ModelImporter.h"
 
 namespace pepr3d {
 
@@ -17,24 +19,6 @@ class Ray;
 // using My_AABB_traits = CGAL::AABB_traits<K, DataTriangleAABBPrimitive>;
 // using Tree = CGAL::AABB_tree<My_AABB_traits>;
 // using Ray_intersection = boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>;
-
-struct DataTriangle  // Will be changed for DataTriangle from Triangle.h after CGAL is usable.
-{
-    glm::vec3 vertices[3];
-
-    cinder::ColorA color;
-
-    void setColor(cinder::ColorA col) {
-        color = col;
-    }
-
-    DataTriangle(glm::vec3 x, glm::vec3 y, glm::vec3 z, cinder::ColorA col) {
-        vertices[0] = x;
-        vertices[1] = y;
-        vertices[2] = z;
-        color = col;
-    }
-};
 
 class Geometry {
     /// Triangle soup of the model mesh, containing CGAL::Triangle_3 data for AABB tree.
@@ -48,6 +32,10 @@ class Geometry {
     /// same color. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
     std::vector<cinder::ColorA> mColorBuffer;
 
+    /// Normal buffer, the triangle has same normal for its every vertex.
+    /// It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
+    std::vector<glm::vec3> mNormalBuffer;
+
     /// Index buffer for OpenGL frontend., specifying the same triangles as in mTriangles.
     std::vector<uint32_t> mIndexBuffer;
 
@@ -57,18 +45,19 @@ class Geometry {
    public:
     /// Empty constructor rendering a triangle to debug
     Geometry() {
+
         const cinder::ColorA red(1, 0, 0, 1);
         const cinder::ColorA green(0, 1, 0, 1);
-
-        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), red);
-        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1), green);
+        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1),  glm::vec3(0, 0, -1), red);
+        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1),  glm::vec3(0, 0, -1), green);
 
         generateVertexBuffer();
-        generateIndexBuffer();
         generateColorBuffer();
+        generateIndexBuffer();
+        
+        loadNewGeometry("D:/dog.stl");
 
         assert(mIndexBuffer.size() == mVertexBuffer.size());
-        assert(mVertexBuffer.size() == 6);
 
         // mTree(mTriangles); // \todo Uncomment this when CGAL is in.
         // assert(mTree.size() == mTriangles.size());
@@ -88,11 +77,16 @@ class Geometry {
         return mColorBuffer;
     }
 
+    std::vector<glm::vec3>& getNormalBuffer() {
+        return mNormalBuffer;
+    }
+
     /// Loads new geometry into the private data, rebuilds the vertex and index buffers
     /// automatically.
-    void loadNewGeometry(const std::string fileName) {
+    void loadNewGeometry(const std::string& fileName) {
         /// Load into mTriangles
-        // TODO: Loading code goes here, just load the mTriangles, everything else is automatic
+        ModelImporter modelImporter(fileName);  // only first mesh [0]
+        mTriangles = modelImporter.getTriangles();
 
         /// Generate new vertex buffer
         generateVertexBuffer();
@@ -102,6 +96,9 @@ class Geometry {
 
         /// Generate new color buffer from triangle color data
         generateColorBuffer();
+
+        /// Generate new normal buffer, copying the triangle normal to each vertex
+        generateNormalBuffer();
 
         /// Rebuild the AABB tree
         // mTree.rebuild(mTriangles); // \todo Uncomment this when CGAL is in.
@@ -190,6 +187,17 @@ class Geometry {
             mColorBuffer.push_back(mTriangle.color);
             mColorBuffer.push_back(mTriangle.color);
             mColorBuffer.push_back(mTriangle.color);
+        }
+        assert(mColorBuffer.size() == mVertexBuffer.size());
+    }
+
+    void generateNormalBuffer() {
+        mNormalBuffer.clear();
+        mNormalBuffer.reserve(mVertexBuffer.size());
+        for(const auto& mTriangle : mTriangles) {
+            mNormalBuffer.push_back(mTriangle.normal);
+            mNormalBuffer.push_back(mTriangle.normal);
+            mNormalBuffer.push_back(mTriangle.normal);
         }
         assert(mColorBuffer.size() == mVertexBuffer.size());
     }

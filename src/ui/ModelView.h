@@ -20,7 +20,7 @@ inline void onModelViewMouseDown(UiStateStore& state, ci::app::MouseEvent event)
 
 inline void onModelViewMouseDrag(UiStateStore& state, ci::app::MouseEvent event) {}
 
-inline void drawModelMesh(UiStateStore& state) {
+inline void drawModelMesh(UiStateStore& state, const cinder::gl::GlslProgRef& shader) {
     // \todo Getting const references to the buffers, might want to use pointers, iterators, whatever.
     // Get vertex buffer
     const std::vector<glm::vec3>& positions = state.geometryData.getVertexBuffer();
@@ -32,9 +32,12 @@ inline void drawModelMesh(UiStateStore& state) {
     const std::vector<cinder::ColorA>& colors = state.geometryData.getColorBuffer();
     assert(colors.size() == positions.size());
 
+    const std::vector<glm::vec3>& normals = state.geometryData.getNormalBuffer();
+
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::POSITION, 3),
+        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::NORMAL, 3),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::COLOR, 4)};
 
     // Create elementary buffer of indices
@@ -46,10 +49,11 @@ inline void drawModelMesh(UiStateStore& state) {
 
     // Assign the buffers to the attributes
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);
+    myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, normals);
     myVboMesh->bufferAttrib<cinder::ColorA>(ci::geom::Attrib::COLOR, colors);
 
     // Create batch and draw
-    auto myBatch = ci::gl::Batch::create(myVboMesh, ci::gl::getStockShader(ci::gl::ShaderDef().color()));
+    auto myBatch = ci::gl::Batch::create(myVboMesh, shader);
     myBatch->draw();
 }
 
@@ -76,7 +80,7 @@ inline void drawModelView(UiStateStore& state) {
     // Draw the model
     // ci::gl::color(ci::ColorA::hex(0xDA017B));
     ci::gl::color(color[0], color[1], color[2]);
-    drawModelMesh(state);
+    drawModelMesh(state, shader);
 
     // Draw the wireframe plane
     auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(16)), shader);
