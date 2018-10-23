@@ -19,6 +19,13 @@
 #include "tools/Tool.h"
 #include "tools/TrianglePainter.h"
 #include "tools/Brush.h"
+#include "tools/PaintBucket.h"
+#include "tools/TextEditor.h"
+#include "tools/Segmentation.h"
+#include "tools/DisplayOptions.h"
+#include "tools/Settings.h"
+#include "tools/Information.h"
+#include "tools/LiveDebug.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -68,10 +75,13 @@ class MainApplication : public App {
     }
 
     ToolsVector::iterator getCurrentToolIterator() {
+        assert(mTools.size() > 0);
+        assert(mCurrentToolIterator != mTools.end());
         return mCurrentToolIterator;
     }
 
     void setCurrentToolIterator(ToolsVector::iterator tool) {
+        assert(mTools.size() > 0);
         assert(tool != mTools.end());
         mCurrentToolIterator = tool;
     }
@@ -81,9 +91,6 @@ class MainApplication : public App {
     SidePane mSidePane;
     ModelView mModelView;
     bool mShowDemoWindow = false;
-
-    IntegerState mIntegerState;
-    CommandManager<IntegerState> mIntegerManager;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;

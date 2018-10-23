@@ -38,19 +38,10 @@ void Toolbar::draw() {
     ImGui::SameLine(0.0f, 0.0f);
     drawSeparator();
     drawToolButtons();
-    ImGui::SameLine(0.0f, 0.0f);
-    drawButton(3, ICON_MD_NETWORK_CELL);
-    drawButton(4, ICON_MD_BRUSH);
-    drawButton(5, ICON_MD_FORMAT_COLOR_FILL);
-    drawButton(6, ICON_MD_TEXT_FIELDS);
-    drawButton(7, ICON_MD_TEXTURE);
-    drawSeparator();
-    drawButton(8, ICON_MD_VISIBILITY);
-    drawButton(9, ICON_MD_SETTINGS);
-    drawButton(10, ICON_MD_INFO_OUTLINE);
-    drawSeparator();
-    ImGui::SameLine(0.0f, 0.0f);
-    drawDemoWindowToggle();
+    // ImGui::SameLine(0.0f, 0.0f);
+    // drawSeparator();
+    // ImGui::SameLine(0.0f, 0.0f);
+    // drawDemoWindowToggle();
 
     ImGui::End();
 
@@ -138,9 +129,14 @@ void Toolbar::drawDemoWindowToggle() {
 }
 
 void Toolbar::drawToolButtons() {
-    for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit) {
+    std::size_t index = 0;
+    for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit, ++index) {
         ImGui::SameLine(0.0f, 0.0f);
         drawToolButton(toolit);
+        if (index == 4 || index == 7) {
+            ImGui::SameLine(0.0f, 0.0f);
+            drawSeparator();
+        }
     }
 }
 

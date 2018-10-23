@@ -5,14 +5,14 @@
 
 namespace pepr3d {
 
-class TrianglePainter : public ITool {
+class TextEditor : public ITool {
 public:
     virtual std::string getName() const override {
-        return "Triangle Painter";
+        return "Text Editor";
     }
 
     virtual std::string getIcon() const override {
-        return ICON_MD_NETWORK_CELL;
+        return ICON_MD_TEXT_FIELDS;
     }
 };
 

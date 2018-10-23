@@ -16,6 +16,10 @@ class SidePane {
 
     void draw();
 
+    void drawText(std::string text);
+    bool drawButton(std::string label);
+    void drawSeparator();
+
    private:
     MainApplication& mApplication;
     float mWidth = 235.0f;

@@ -3,7 +3,7 @@
 namespace pepr3d {
 
 MainApplication::MainApplication()
-    : mToolbar(*this), mSidePane(*this), mModelView(*this), mIntegerManager(mIntegerState) {}
+    : mToolbar(*this), mSidePane(*this), mModelView(*this) {}
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
@@ -20,7 +20,14 @@ void MainApplication::setup() {
 
     mTools.emplace_back(make_unique<TrianglePainter>());
     mTools.emplace_back(make_unique<Brush>());
-    mCurrentToolIterator = mTools.begin();
+    mTools.emplace_back(make_unique<PaintBucket>());
+    mTools.emplace_back(make_unique<TextEditor>());
+    mTools.emplace_back(make_unique<Segmentation>());
+    mTools.emplace_back(make_unique<DisplayOptions>());
+    mTools.emplace_back(make_unique<pepr3d::Settings>());
+    mTools.emplace_back(make_unique<Information>());
+    mTools.emplace_back(make_unique<LiveDebug>(*this));
+    mCurrentToolIterator = --mTools.end();
 
     mModelView.setup();
 }
@@ -46,30 +53,9 @@ void MainApplication::draw() {
         ImGui::ShowDemoWindow();
     }
 
-    // drawToolbar(mState);
     mToolbar.draw();
     mSidePane.draw();
     mModelView.draw();
-
-    ImGui::Begin("##sidepane-debug");
-    static int addedValue = 1;
-    ImGui::Text("Current value: %i", mIntegerState.mInnerValue);
-    if(mIntegerManager.canUndo()) {
-        if(ImGui::Button("Undo")) {
-            mIntegerManager.undo();
-        }
-    }
-    if(mIntegerManager.canRedo()) {
-        if(ImGui::Button("Redo")) {
-            mIntegerManager.redo();
-        }
-    }
-    ImGui::SliderInt("##addedvalue", &addedValue, 1, 10);
-    ImGui::SameLine();
-    if(ImGui::Button("Add")) {
-        mIntegerManager.execute(make_unique<AddValueCommand>(addedValue));
-    }
-    ImGui::End();
 }
 
 }  // namespace pepr3d

@@ -56,4 +56,19 @@ inline void applyLightTheme(ImGuiStyle& style) {
     applyColors(style.Colors);
 }
 
+// enum class StyleColor: std::size_t {
+//     Front,
+//     Back
+// };
+
+// std::vector<ImVec4> styleColors;
+
+// ImVec4 getStyleColor(StyleColor selector) {
+//     return styleColors[static_cast<std::size_t>(selector)];
+// }
+
+// void drawblah() {
+//     getStyleColor(StyleColor::Front);
+// }
+
 }  // namespace pepr3d

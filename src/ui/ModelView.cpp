@@ -27,10 +27,10 @@ void ModelView::draw() {
     ci::gl::pushMatrices();
     ci::gl::setMatrices(mCamera);
 
-    ImGui::Begin("##sidepane-debug");
+    // ImGui::Begin("##sidepane-livedebug");
     static float color[] = {255.f / 256.f, 134.f / 256.f, 37.f / 256.f};
-    ImGui::ColorPicker3("##objectcolor", color);
-    ImGui::End();
+    // ImGui::ColorPicker3("##objectcolor", color);
+    // ImGui::End();
 
     auto lambert = ci::gl::ShaderDef().lambert().color();
     auto shader = ci::gl::getStockShader(lambert);
