@@ -20,6 +20,9 @@ if(NOT Boost_FOUND)
   return()
 endif()
 
+
+include_directories(BEFORE ${Boost_INCLUDE_DIR})
+
 # -- gtest --
 # Note: Gtest must be added as soon as possible to prevent other dependencies from
 # including their own version with custom settings.
@@ -143,7 +146,7 @@ endif()
 # --------------------------- COMPILER FLAGS -----------------------------
 # ------------------------------------------------------------------------
 if(MSVC)
-  target_compile_options(pepr3d PRIVATE /W3 /std:c++17)
+  target_compile_options(pepr3d PRIVATE /W3 /std:c++17 )
   target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_)
   target_compile_options(cinder PRIVATE /W0)
 
