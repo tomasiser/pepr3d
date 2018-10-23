@@ -90,15 +90,15 @@ void Toolbar::drawFileDropDown() {
 
     if(props.isToggled) {
         ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
-        ImGui::SetNextWindowSize(glm::ivec2(300, 250));
+        ImGui::SetNextWindowSize(glm::ivec2(175, 250));
         if(ImGui::BeginPopup(filePopupId)) {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
-            ImGui::Button("Open", glm::ivec2(300, 50));
-            ImGui::Button("Save", glm::ivec2(300, 50));
-            ImGui::Button("Save as", glm::ivec2(300, 50));
-            ImGui::Button("Export", glm::ivec2(300, 50));
-            if(ImGui::Button("Exit", glm::ivec2(300, 50))) {
+            ImGui::Button("Open", glm::ivec2(175, 50));
+            ImGui::Button("Save", glm::ivec2(175, 50));
+            ImGui::Button("Save as", glm::ivec2(175, 50));
+            ImGui::Button("Export", glm::ivec2(175, 50));
+            if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
                 mApplication.quit();
             }
             ImGui::PopStyleVar(2);
