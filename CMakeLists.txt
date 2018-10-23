@@ -58,7 +58,7 @@ if(NOT ASSIMP_FOUND )
 endif()
 
 # -- Cinder --
-set(CINDER_BOOST_USE_SYSTEM 1)
+set(CINDER_BOOST_USE_SYSTEM TRUE CACHE BOOL "Use system boost for Cinder")
 
 
 # Setting openGL preference to GLVND hides CMake warning and falls back to legacy library if not
