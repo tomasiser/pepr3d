@@ -38,7 +38,8 @@ void ModelView::draw() {
     // ci::gl::color(ci::ColorA::hex(0xDA017B));
     ci::gl::color(color[0], color[1], color[2]);
     cube->draw();
-    auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(16)), shader);
+    auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(16)), ci::gl::getStockShader(ci::gl::ShaderDef().color()));
+    ci::gl::color(ci::ColorA::black());
     ci::gl::translate(0, -0.5f, 0);
     plane->draw();
 
