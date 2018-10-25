@@ -28,7 +28,7 @@ jobs:
             exit 0
   build:
     docker:
-      - image: tomasiser/docker-cinder:prebuilt
+      - image: tomasiser/docker-cinder:pepr3d
     steps:
       - checkout
       - run:
@@ -51,7 +51,7 @@ jobs:
             - build/*
   test:
     docker:
-      - image: tomasiser/docker-cinder:prebuilt
+      - image: tomasiser/docker-cinder:pepr3d
     steps:
       - attach_workspace:
           at: /root/project
