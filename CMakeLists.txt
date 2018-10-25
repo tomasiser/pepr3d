@@ -94,7 +94,13 @@ file(GLOB SRC_FILES_IMGUI ${APP_PATH}/lib/cinder-imgui/src/*
 
 file(GLOB_RECURSE SRC_FILES_PEPR3D LIST_DIRECTORES false "${PEPR3D_SRC_PATH}/*.cpp"
                   "${PEPR3D_SRC_PATH}/*.h")
-list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_TEST_MAIN_FILE})
+
+file(GLOB_RECURSE SRC_FILES_PEPR3DTESTS LIST_DIRECTORES false "${PEPR3D_SRC_PATH}/*.test.cpp")
+# Remove test files from pepr3d sources
+foreach(_source IN ITEMS ${SRC_FILES_PEPR3DTESTS})
+  list(REMOVE_ITEM SRC_FILES_PEPR3D ${_source})
+endforeach()
+
 list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_MAIN_FILE})
 
 ci_make_app(APP_NAME "pepr3d"
@@ -123,7 +129,7 @@ endforeach()
 
 # --- Tests ---
 # Create separate project for tests
-add_executable(pepr3dtests ${SRC_FILES_PEPR3D} ${PEPR3D_TEST_MAIN_FILE})
+add_executable(pepr3dtests ${SRC_FILES_PEPR3D} ${SRC_FILES_PEPR3DTESTS})
 #add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
 
 target_include_directories(pepr3dtests
