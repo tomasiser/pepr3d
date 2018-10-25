@@ -17,6 +17,13 @@ class ModelView {
     void resize();
     void draw();
 
+    void onMouseDown(ci::app::MouseEvent event);
+    void onMouseDrag(ci::app::MouseEvent event);
+    void onMouseUp(ci::app::MouseEvent event);
+    void onMouseWheel(ci::app::MouseEvent event);
+
+    ci::Ray getRayFromWindowCoordinates(glm::ivec2 windowCoords) const;
+
    private:
     MainApplication& mApplication;
     std::pair<glm::ivec2, glm::ivec2> mViewport;

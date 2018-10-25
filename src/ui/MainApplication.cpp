@@ -37,11 +37,19 @@ void MainApplication::resize() {
 }
 
 void MainApplication::mouseDown(MouseEvent event) {
-    // onModelViewMouseDown(mState, event);
+    mModelView.onMouseDown(event);
 }
 
 void MainApplication::mouseDrag(MouseEvent event) {
-    // onModelViewMouseDrag(mState, event);
+    mModelView.onMouseDrag(event);
+}
+
+void MainApplication::mouseUp(MouseEvent event) {
+    mModelView.onMouseUp(event);
+}
+
+void MainApplication::mouseWheel(MouseEvent event) {
+    mModelView.onMouseWheel(event);
 }
 
 void MainApplication::update() {}

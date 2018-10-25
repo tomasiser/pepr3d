@@ -41,6 +41,8 @@ class MainApplication : public App {
     void resize() override;
     void mouseDown(MouseEvent event) override;
     void mouseDrag(MouseEvent event) override;
+    void mouseUp(MouseEvent event) override;
+    void mouseWheel(MouseEvent event) override;
 
     MainApplication();
 
@@ -78,6 +80,13 @@ class MainApplication : public App {
         assert(mTools.size() > 0);
         assert(mCurrentToolIterator != mTools.end());
         return mCurrentToolIterator;
+    }
+
+    ITool* getCurrentTool() {
+        if (mTools.size() < 1 || mCurrentToolIterator == mTools.end()) {
+            return nullptr;
+        }
+        return (*mCurrentToolIterator).get();
     }
 
     void setCurrentToolIterator(ToolsVector::iterator tool) {
