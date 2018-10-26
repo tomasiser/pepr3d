@@ -129,15 +129,16 @@ endforeach()
 
 # --- Tests ---
 # Create separate project for tests
-add_executable(pepr3dtests ${SRC_FILES_PEPR3D} ${SRC_FILES_PEPR3DTESTS})
+add_executable(pepr3dtests ${SRC_FILES_IMGUI} ${SRC_FILES_PEPR3D} ${SRC_FILES_PEPR3DTESTS})
 #add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
 
 target_include_directories(pepr3dtests
                            PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include
                                    ${APP_PATH}/lib/cinder-imgui/lib/imgui
+                                   ${APP_PATH}/lib/cinder/include
                                    ${APP_PATH}/lib/googletest/googletest/include)
 target_include_directories(pepr3dtests PRIVATE ${ASSIMP_INCLUDE_DIR})
-target_link_libraries(pepr3dtests gtest ${ASSIMP_LIBRARY_RELEASE})
+target_link_libraries(pepr3dtests gtest ${ASSIMP_LIBRARY_RELEASE} cinder)
 target_link_libraries(pepr3dtests ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
 # copy dlls into working directory on Windows
