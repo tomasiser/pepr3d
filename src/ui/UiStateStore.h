@@ -3,6 +3,7 @@
 #include "cinder/Arcball.h"
 #include "cinder/CameraUi.h"
 #include "commands/ExampleCommand.h"
+#include "geometry/Geometry.h"
 #include "glm/glm.hpp"
 
 namespace pepr3d {
@@ -37,6 +38,8 @@ struct UiStateStore {
 
     IntegerState integerState;
     CommandManager<IntegerState> integerManager;
+
+    Geometry geometryData;
 
     UiStateStore() : integerManager(integerState) {}
 };
