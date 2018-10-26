@@ -14,6 +14,7 @@
 #include "SidePane.h"
 #include "Toolbar.h"
 #include "commands/ExampleCommand.h"
+#include "geometry/Geometry.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -52,6 +53,10 @@ class MainApplication : public App {
         mShowDemoWindow = show;
     }
 
+    Geometry* getCurrentGeometry() {
+        return mGeometry.get();
+    }
+
    private:
     Toolbar mToolbar;
     SidePane mSidePane;
@@ -60,6 +65,8 @@ class MainApplication : public App {
 
     IntegerState mIntegerState;
     CommandManager<IntegerState> mIntegerManager;
+
+    std::unique_ptr<Geometry> mGeometry;
 };
 
 }  // namespace pepr3d

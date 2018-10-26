@@ -6,6 +6,8 @@
 
 #include "CinderImGui.h"
 
+#include "geometry/Geometry.h"
+
 namespace pepr3d {
 
 class MainApplication;
@@ -16,6 +18,7 @@ class ModelView {
     void setup();
     void resize();
     void draw();
+    void drawGeometry();
 
    private:
     MainApplication& mApplication;

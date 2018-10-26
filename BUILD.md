@@ -23,6 +23,35 @@ git submodule update --init --recursive
 
 Make sure you have the latest **CMake** and **build tools for Visual Studio 2017** installed.
 
+#### Windows
+
+ 1. Download and install CGAL https://www.cgal.org/download/windows.html
+
+    Make sure CGAL_DIR environment variable is set (default when using the installer)
+
+ 2. Download and install Boost https://www.boost.org/
+
+	Either build Boost yourself or download pre-built binaries for 14.1 toolset
+    Make sure BOOST_ROOT environtment variable points to the boost directory.
+    
+ 3. Download and install Assimp http://www.assimp.org/. Set ASSIMP_ROOT environment variable to point to the assimp directory.
+    
+
+#### Linux
+
+ 1. Install **CGAL**
+ 
+	`sudo apt-get install libcgal-dev # install the CGAL library`
+	
+ 2. Install **Boost**
+ 
+	`sudo apt-get install libboost-all-dev`
+  
+ 3. Install **Assimp**
+ 
+	`sudo apt-get install libassimp-dev`
+
+
 #### FAQ:
 - Do I need to install a whole Visual Studio IDE?
   

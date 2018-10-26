@@ -19,6 +19,8 @@ void MainApplication::setup() {
     applyLightTheme(ImGui::GetStyle());
 
     mModelView.setup();
+
+    mGeometry = std::make_unique<Geometry>();
 }
 
 void MainApplication::resize() {
@@ -48,6 +50,7 @@ void MainApplication::draw() {
     mModelView.draw();
 
     ImGui::Begin("##sidepane-debug");
+    ImGui::Text((std::string("Geometry is ") + ((mGeometry == nullptr) ? "not loaded" : "loaded")).c_str());
     static int addedValue = 1;
     ImGui::Text("Current value: %i", mIntegerState.mInnerValue);
     if(mIntegerManager.canUndo()) {
