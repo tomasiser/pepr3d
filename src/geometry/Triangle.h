@@ -1,8 +1,8 @@
 #pragma once
 
 // #include <CGAL/Simple_cartesian.h>
-#include <vector>
 #include <cinder/Color.h>
+#include <vector>
 
 namespace pepr3d {
 
@@ -25,12 +25,12 @@ struct DataTriangle  // Will be changed for DataTriangle from Triangle.h after C
     }
 };
 
-//using K = CGAL::Simple_cartesian<double>;
-//using Point = K::Point_3;
-//using Triangle = K::Triangle_3;
+// using K = CGAL::Simple_cartesian<double>;
+// using Point = K::Point_3;
+// using Triangle = K::Triangle_3;
 //
 ///// Custom Triangle type holding the CGAL::Triangle_3 and additional data
-//class DataTriangle {
+// class DataTriangle {
 //    /// Geometry data in CGAL format to allow for usage in AABB tree
 //    Triangle mTriangleCgal;
 //
@@ -53,11 +53,11 @@ struct DataTriangle  // Will be changed for DataTriangle from Triangle.h after C
 //    }
 //};
 
-//using Iterator = std::vector<DataTriangle>::const_iterator;
+// using Iterator = std::vector<DataTriangle>::const_iterator;
 //
 ///// Provides the conversion facilities between the custom triangle DataTriangle and the CGAL
 ///// Triangle_3 class. Taken from CGAL/examples/AABB_tree/custom_example.cpp, modified.
-//struct DataTriangleAABBPrimitive {
+// struct DataTriangleAABBPrimitive {
 //   public:
 //    // this is the type of data that the queries returns
 //    using Id = std::vector<DataTriangle>::const_iterator;

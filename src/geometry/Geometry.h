@@ -2,12 +2,12 @@
 
 // #include <CGAL/IO/Color.h>
 #include <cassert>
-#include <vector>
 #include <optional>
+#include <vector>
 
 // #include "Triangle.h" // Uses CGAL
-#include "geometry/Triangle.h"
 #include "geometry/ModelImporter.h"
+#include "geometry/Triangle.h"
 
 namespace pepr3d {
 
@@ -45,16 +45,16 @@ class Geometry {
    public:
     /// Empty constructor rendering a triangle to debug
     Geometry() {
-
         const cinder::ColorA red(1, 0, 0, 1);
         const cinder::ColorA green(0, 1, 0, 1);
-        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1),  glm::vec3(0, 0, -1), red);
-        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1),  glm::vec3(0, 0, -1), green);
+        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec3(0, 0, -1), red);
+        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1), glm::vec3(0, 0, -1),
+                                green);
 
         generateVertexBuffer();
         generateColorBuffer();
         generateIndexBuffer();
-        
+
         loadNewGeometry("D:/dog.stl");
 
         assert(mIndexBuffer.size() == mVertexBuffer.size());
@@ -128,10 +128,10 @@ class Geometry {
         assert(false);  // Method not implemented yet
 
         ////\todo Uncomment this when CGAL is in.
-        //assert(!mTree.empty());
+        // assert(!mTree.empty());
         //// Find the two intersection parameters - place and triangle
-        //Ray_intersection intersection = tree.first_intersection(ray_query);
-        //if(intersection) {
+        // Ray_intersection intersection = tree.first_intersection(ray_query);
+        // if(intersection) {
         //    // The intersection point
         //    if(boost::get<Point>(&(intersection->first))) {
         //        const Point* p = boost::get<Point>(&(intersection->first));
