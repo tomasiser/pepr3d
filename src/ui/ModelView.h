@@ -7,12 +7,16 @@
 
 namespace pepr3d {
 
-inline void setupModelView(UiStateStore& state) {
+inline void onModelViewResize(UiStateStore& state) {
     ModelViewState& modelView = state.modelView;
-
     modelView.viewport = std::make_pair(glm::ivec2(0), glm::ivec2(state.mainWindow.size.x - state.sidePane.width,
                                                                   state.mainWindow.size.y - state.toolbar.height));
     modelView.camera.setAspectRatio(static_cast<float>(modelView.viewport.second.x) / modelView.viewport.second.y);
+}
+
+inline void setupModelView(UiStateStore& state) {
+    ModelViewState& modelView = state.modelView;
+    onModelViewResize(state);
     modelView.camera.lookAt(glm::vec3(3, 2, 2), glm::vec3(0, 0, 0));
 }
 
