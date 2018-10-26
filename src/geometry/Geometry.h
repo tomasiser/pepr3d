@@ -47,15 +47,15 @@ class Geometry {
     Geometry() {
         const cinder::ColorA red(1, 0, 0, 1);
         const cinder::ColorA green(0, 1, 0, 1);
-        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec3(0, 0, -1), red);
-        mTriangles.emplace_back(glm::vec3(-1, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1), glm::vec3(0, 0, -1),
+        mTriangles.emplace_back(glm::vec3(-1, 0, -1), glm::vec3(-1, 0, 1), glm::vec3(1, 0, -1), glm::vec3(0, 1, 0),
+                                red);
+        mTriangles.emplace_back(glm::vec3(1, 0, -1), glm::vec3(1, 0, 1), glm::vec3(-1, 0, 1), glm::vec3(0, 1, 0),
                                 green);
 
         generateVertexBuffer();
         generateColorBuffer();
+        generateNormalBuffer();
         generateIndexBuffer();
-
-        loadNewGeometry("D:/dog.stl");
 
         assert(mIndexBuffer.size() == mVertexBuffer.size());
 

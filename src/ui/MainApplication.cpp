@@ -35,6 +35,13 @@ void MainApplication::mouseDrag(MouseEvent event) {
     // onModelViewMouseDrag(mState, event);
 }
 
+void MainApplication::fileDrop(FileDropEvent event) {
+    if(mGeometry == nullptr || event.getFiles().size() < 1) {
+        return;
+    }
+    mGeometry->loadNewGeometry(event.getFile(0).string());
+}
+
 void MainApplication::update() {}
 
 void MainApplication::draw() {

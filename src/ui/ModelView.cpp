@@ -47,7 +47,7 @@ void ModelView::draw() {
 }
 
 void ModelView::drawGeometry() {
-    if (mApplication.getCurrentGeometry() == nullptr) {
+    if(mApplication.getCurrentGeometry() == nullptr) {
         return;
     }
 
