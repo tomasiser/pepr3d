@@ -1,0 +1,2 @@
+#include "cinder/CinderResources.h"
+CINDER_RESOURCE(./, icon.ico, 101, ICON)

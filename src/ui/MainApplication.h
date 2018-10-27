@@ -59,6 +59,8 @@ class MainApplication : public App {
     }
 
    private:
+    void setupIcon();
+
     Toolbar mToolbar;
     SidePane mSidePane;
     ModelView mModelView;
