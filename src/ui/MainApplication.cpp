@@ -24,7 +24,7 @@ void MainApplication::setup() {
     ImGui::initialize(uiOptions);
     applyLightTheme(ImGui::GetStyle());
 
-    mTools.emplace_back(make_unique<TrianglePainter>());
+    mTools.emplace_back(make_unique<TrianglePainter>(*this));
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<PaintBucket>());
     mTools.emplace_back(make_unique<TextEditor>());

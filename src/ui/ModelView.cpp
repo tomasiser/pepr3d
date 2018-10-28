@@ -50,7 +50,10 @@ void ModelView::onMouseDrag(MouseEvent event) {
     if(tool) {
         tool->onModelViewMouseDrag(*this, event);
     }
-    mCameraUi.mouseDrag(event.getPos(), event.isRightDown() || event.isMiddleDown(), false, false);
+    bool isMouseDown = event.isMiddleDown() || event.isRightDown();
+    bool shouldPan = event.isControlDown() && isMouseDown;
+    bool shouldTumble = !shouldPan && isMouseDown;
+    mCameraUi.mouseDrag(event.getPos(), shouldTumble, shouldPan, false /* should zoom */);
 }
 
 void ModelView::onMouseUp(MouseEvent event) {

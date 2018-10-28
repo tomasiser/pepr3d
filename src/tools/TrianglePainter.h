@@ -6,8 +6,12 @@
 
 namespace pepr3d {
 
+class MainApplication;
+
 class TrianglePainter : public ITool {
    public:
+    TrianglePainter(MainApplication& app) : mApplication(app) {}
+
     virtual std::string getName() const override {
         return "Triangle Painter";
     }
@@ -18,9 +22,13 @@ class TrianglePainter : public ITool {
 
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
 
    private:
+    MainApplication& mApplication;
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
+    ci::ColorA mSelectedTriangleOriginalColor = ci::ColorA::zero();
+    std::optional<std::size_t> mSelectedTriangleId = {};
 };
 }
