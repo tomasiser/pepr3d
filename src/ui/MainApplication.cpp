@@ -10,7 +10,7 @@ MainApplication::MainApplication() : mToolbar(*this), mSidePane(*this), mModelVi
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
-    getWindow()->setTitle("Pepr3D");
+    getWindow()->setTitle("Pepr3D - Unsaved project");
     setupIcon();
 
     auto uiOptions = ImGui::Options();
@@ -64,7 +64,9 @@ void MainApplication::fileDrop(FileDropEvent event) {
     if(mGeometry == nullptr || event.getFiles().size() < 1) {
         return;
     }
-    mGeometry->loadNewGeometry(event.getFile(0).string());
+    mGeometryFileName = event.getFile(0).string();
+    mGeometry->loadNewGeometry(mGeometryFileName);
+    getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
 }
 
 void MainApplication::update() {}

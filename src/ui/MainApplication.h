@@ -113,6 +113,7 @@ class MainApplication : public App {
     ToolsVector::iterator mCurrentToolIterator;
 
     std::unique_ptr<Geometry> mGeometry;
+    std::string mGeometryFileName;
 };
 
 }  // namespace pepr3d
