@@ -55,8 +55,9 @@ void Toolbar::drawButton(ButtonProperties& props, Callback onPressed) {
     const ImGuiID id = ImGui::GetCurrentWindow()->GetID((props.label + "##toolbar").c_str());
 
     ImVec2 pos = ImGui::GetCursorPos();
-    ImVec2 size = ImGui::CalcItemSize(glm::ivec2(mHeight * (props.isDropDown ? 1.5f : 1.0f), mHeight), label_size.x + style.FramePadding.x * 2.0f,
-                                      label_size.y + style.FramePadding.y * 2.0f);
+    ImVec2 size =
+        ImGui::CalcItemSize(glm::ivec2(mHeight * (props.isDropDown ? 1.5f : 1.0f), mHeight),
+                            label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
 
     const ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
     ImGui::ItemSize(bb, style.FramePadding.y);
@@ -70,8 +71,8 @@ void Toolbar::drawButton(ButtonProperties& props, Callback onPressed) {
     }
 
     // Render
-    ImU32 col = ImGui::GetColorU32((isHovered && isHeld) ? ImGuiCol_ButtonActive
-                                                         : isHovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+    ImU32 col = ImGui::GetColorU32((isHovered && isHeld) ? ImGuiCol_ButtonActive : isHovered ? ImGuiCol_ButtonHovered
+                                                                                             : ImGuiCol_Button);
     if(props.isToggled) {
         col = ImGui::ColorConvertFloat4ToU32(ci::ColorA::hex(0x017BDA));
         ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
@@ -83,8 +84,8 @@ void Toolbar::drawButton(ButtonProperties& props, Callback onPressed) {
     ImGui::RenderNavHighlight(bb, id);
     ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
     ImGui::RenderTextClipped(ImVec2(bb.Min.x + style.FramePadding.x, bb.Min.y + style.FramePadding.y),
-                             ImVec2(bb.Max.x - style.FramePadding.x, bb.Max.y - style.FramePadding.y),
-                             label.c_str(), nullptr, &label_size, style.ButtonTextAlign, &bb);
+                             ImVec2(bb.Max.x - style.FramePadding.x, bb.Max.y - style.FramePadding.y), label.c_str(),
+                             nullptr, &label_size, style.ButtonTextAlign, &bb);
     if(props.isToggled) {
         ImGui::PopStyleColor();
     }

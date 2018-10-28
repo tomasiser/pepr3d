@@ -1,12 +1,12 @@
 #pragma once
 #include "tools/Tool.h"
-#include "ui/SidePane.h"
 #include "ui/IconsMaterialDesign.h"
+#include "ui/SidePane.h"
 
 namespace pepr3d {
 
 class PaintBucket : public ITool {
-public:
+   public:
     virtual std::string getName() const override {
         return "Paint Bucket";
     }
@@ -15,5 +15,4 @@ public:
         return ICON_MD_FORMAT_COLOR_FILL;
     }
 };
-
 }

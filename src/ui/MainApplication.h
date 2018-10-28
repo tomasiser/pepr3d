@@ -17,16 +17,16 @@
 #include "commands/ExampleCommand.h"
 #include "geometry/Geometry.h"
 
-#include "tools/Tool.h"
-#include "tools/TrianglePainter.h"
 #include "tools/Brush.h"
-#include "tools/PaintBucket.h"
-#include "tools/TextEditor.h"
-#include "tools/Segmentation.h"
 #include "tools/DisplayOptions.h"
-#include "tools/Settings.h"
 #include "tools/Information.h"
 #include "tools/LiveDebug.h"
+#include "tools/PaintBucket.h"
+#include "tools/Segmentation.h"
+#include "tools/Settings.h"
+#include "tools/TextEditor.h"
+#include "tools/Tool.h"
+#include "tools/TrianglePainter.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -85,7 +85,7 @@ class MainApplication : public App {
     }
 
     ITool* getCurrentTool() {
-        if (mTools.size() < 1 || mCurrentToolIterator == mTools.end()) {
+        if(mTools.size() < 1 || mCurrentToolIterator == mTools.end()) {
             return nullptr;
         }
         return (*mCurrentToolIterator).get();
@@ -96,7 +96,7 @@ class MainApplication : public App {
         assert(tool != mTools.end());
         mCurrentToolIterator = tool;
     }
-    
+
     Geometry* getCurrentGeometry() {
         return mGeometry.get();
     }

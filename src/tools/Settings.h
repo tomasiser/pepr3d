@@ -1,12 +1,12 @@
 #pragma once
 #include "tools/Tool.h"
-#include "ui/SidePane.h"
 #include "ui/IconsMaterialDesign.h"
+#include "ui/SidePane.h"
 
 namespace pepr3d {
 
 class Settings : public ITool {
-public:
+   public:
     virtual std::string getName() const override {
         return "Settings";
     }
@@ -15,5 +15,4 @@ public:
         return ICON_MD_SETTINGS;
     }
 };
-
 }

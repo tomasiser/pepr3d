@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 #include "tools/Tool.h"
-#include "ui/SidePane.h"
 #include "ui/IconsMaterialDesign.h"
+#include "ui/SidePane.h"
 
 #include "commands/CommandManager.h"
 #include "commands/ExampleCommand.h"

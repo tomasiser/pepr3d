@@ -1,13 +1,13 @@
 #pragma once
 #include "tools/Tool.h"
-#include "ui/SidePane.h"
-#include "ui/ModelView.h"
 #include "ui/IconsMaterialDesign.h"
+#include "ui/ModelView.h"
+#include "ui/SidePane.h"
 
 namespace pepr3d {
 
 class TrianglePainter : public ITool {
-public:
+   public:
     virtual std::string getName() const override {
         return "Triangle Painter";
     }
@@ -19,9 +19,8 @@ public:
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
 
-private:
+   private:
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
 };
-
 }

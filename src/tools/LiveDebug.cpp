@@ -7,13 +7,13 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     ImGui::BeginChild("##sidepane-livedebug");
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-    if (sidePane.drawButton("Toggle ImGui demo window")) {
+    if(sidePane.drawButton("Toggle ImGui demo window")) {
         mApplication.showDemoWindow(!mApplication.isDemoWindowShown());
     }
     ImGui::PopItemWidth();
 
     sidePane.drawSeparator();
-    
+
     static int addedValue = 1;
     ImGui::Text("Current value: %i", mIntegerState.mInnerValue);
     if(mIntegerManager.canUndo()) {
@@ -34,5 +34,4 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
 
     ImGui::EndChild();
 }
-
 }

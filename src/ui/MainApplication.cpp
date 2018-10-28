@@ -6,8 +6,7 @@
 
 namespace pepr3d {
 
-MainApplication::MainApplication()
-    : mToolbar(*this), mSidePane(*this), mModelView(*this) {}
+MainApplication::MainApplication() : mToolbar(*this), mSidePane(*this), mModelView(*this) {}
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
