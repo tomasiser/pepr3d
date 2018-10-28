@@ -1,5 +1,9 @@
 #include "ui/MainApplication.h"
 
+#if defined(CINDER_MSW_DESKTOP)
+#include "windows.h"
+#endif
+
 namespace pepr3d {
 
 MainApplication::MainApplication()
@@ -7,6 +11,9 @@ MainApplication::MainApplication()
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
+    getWindow()->setTitle("Pepr3D");
+    setupIcon();
+
     auto uiOptions = ImGui::Options();
     std::vector<ImWchar> textRange = {0x0001, 0x00BF, 0};
     std::vector<ImWchar> iconsRange = {ICON_MIN_MD, ICON_MAX_MD, 0};
@@ -30,6 +37,8 @@ void MainApplication::setup() {
     mCurrentToolIterator = --mTools.end();
 
     mModelView.setup();
+
+    mGeometry = std::make_unique<Geometry>();
 }
 
 void MainApplication::resize() {
@@ -52,6 +61,13 @@ void MainApplication::mouseWheel(MouseEvent event) {
     mModelView.onMouseWheel(event);
 }
 
+void MainApplication::fileDrop(FileDropEvent event) {
+    if(mGeometry == nullptr || event.getFiles().size() < 1) {
+        return;
+    }
+    mGeometry->loadNewGeometry(event.getFile(0).string());
+}
+
 void MainApplication::update() {}
 
 void MainApplication::draw() {
@@ -64,6 +80,16 @@ void MainApplication::draw() {
     mToolbar.draw();
     mSidePane.draw();
     mModelView.draw();
+}
+
+void MainApplication::setupIcon() {
+#if defined(CINDER_MSW_DESKTOP)
+    auto dc = getWindow()->getDc();
+    auto wnd = WindowFromDC(dc);
+    auto icon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(101));  // see resources/Resources.rc
+    SendMessage(wnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+    SendMessage(wnd, WM_SETICON, ICON_BIG, (LPARAM)icon);
+#endif
 }
 
 }  // namespace pepr3d

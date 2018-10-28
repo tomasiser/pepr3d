@@ -15,6 +15,7 @@
 #include "Toolbar.h"
 
 #include "commands/ExampleCommand.h"
+#include "geometry/Geometry.h"
 
 #include "tools/Tool.h"
 #include "tools/TrianglePainter.h"
@@ -43,6 +44,7 @@ class MainApplication : public App {
     void mouseDrag(MouseEvent event) override;
     void mouseUp(MouseEvent event) override;
     void mouseWheel(MouseEvent event) override;
+    void fileDrop(FileDropEvent event) override;
 
     MainApplication();
 
@@ -94,8 +96,14 @@ class MainApplication : public App {
         assert(tool != mTools.end());
         mCurrentToolIterator = tool;
     }
+    
+    Geometry* getCurrentGeometry() {
+        return mGeometry.get();
+    }
 
    private:
+    void setupIcon();
+
     Toolbar mToolbar;
     SidePane mSidePane;
     ModelView mModelView;
@@ -103,6 +111,8 @@ class MainApplication : public App {
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
+
+    std::unique_ptr<Geometry> mGeometry;
 };
 
 }  // namespace pepr3d
