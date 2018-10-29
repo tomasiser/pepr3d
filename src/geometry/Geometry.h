@@ -6,12 +6,11 @@
 #include <vector>
 
 // #include "Triangle.h" // Uses CGAL
+#include "cinder/Ray.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/Triangle.h"
 
 namespace pepr3d {
-
-class Ray;
 
 // \todo Uncomment this when CGAL is in.
 // using Ft = K::FT;
@@ -122,10 +121,30 @@ class Geometry {
         mTriangles[triangleIndex].setColor(newColor);
     }
 
+    ci::ColorA getTriangleColor(const size_t triangleIndex) {
+        assert(triangleIndex < mTriangles.size());
+        return mTriangles[triangleIndex].color;
+    }
+
     /// Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists.
     /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
-    std::optional<size_t> intersectMesh(const Ray& ray) const {
-        assert(false);  // Method not implemented yet
+    std::optional<size_t> intersectMesh(const ci::Ray& ray) const {
+        // unoptimized Cinder triangle intersection:
+        float minDistance = FLT_MAX, distance = 0.0f;
+        std::size_t resultId, currentId = 0;
+        for(auto& triangle : mTriangles) {
+            if(ray.calcTriangleIntersection(triangle.vertices[0], triangle.vertices[1], triangle.vertices[2],
+                                            &distance)) {
+                if(distance < minDistance) {
+                    minDistance = distance;
+                    resultId = currentId;
+                }
+            }
+            ++currentId;
+        }
+        if(distance > 0.0f) {  // we had at least 1 hit
+            return resultId;
+        }
 
         ////\todo Uncomment this when CGAL is in.
         // assert(!mTree.empty());

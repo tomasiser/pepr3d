@@ -1,5 +1,6 @@
 #include "Toolbar.h"
 #include "MainApplication.h"
+#include "imgui_internal.h"
 
 namespace pepr3d {
 
@@ -21,33 +22,30 @@ void Toolbar::draw() {
     ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
     ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0x017BDA));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.76f));
 
     ImGui::Begin("##toolbar", nullptr, window_flags);
 
-    drawButton(0, ICON_MD_FOLDER_OPEN);
+    drawFileDropDown();
+    ImGui::SameLine(0.0f, 0.0f);
     drawSeparator();
-    drawButton(1, ICON_MD_UNDO);
-    drawButton(2, ICON_MD_REDO);
+    ImGui::SameLine(0.0f, 0.0f);
+    drawUndoRedo();
+    ImGui::SameLine(0.0f, 0.0f);
     drawSeparator();
-    drawButton(3, ICON_MD_NETWORK_CELL);
-    drawButton(4, ICON_MD_BRUSH);
-    drawButton(5, ICON_MD_FORMAT_COLOR_FILL);
-    drawButton(6, ICON_MD_TEXT_FIELDS);
-    drawButton(7, ICON_MD_TEXTURE);
-    drawSeparator();
-    drawButton(8, ICON_MD_VISIBILITY);
-    drawButton(9, ICON_MD_SETTINGS);
-    drawButton(10, ICON_MD_INFO_OUTLINE);
-    drawSeparator();
-    drawDemoWindowButton();
+    drawToolButtons();
+    // ImGui::SameLine(0.0f, 0.0f);
+    // drawSeparator();
+    // ImGui::SameLine(0.0f, 0.0f);
+    // drawDemoWindowToggle();
 
     ImGui::End();
 
-    ImGui::PopStyleVar(3);
+    ImGui::PopStyleVar(4);
     ImGui::PopStyleColor(6);
 }
 
@@ -77,21 +75,79 @@ void Toolbar::drawButton(std::size_t index, const char* text) {
     }
 }
 
-void Toolbar::drawDemoWindowButton() {
-    bool active = mApplication.isDemoWindowShown();
-    if(active) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
-        ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::hex(0x017BDA));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0x017BDA));
+void Toolbar::drawFileDropDown() {
+    static const char* filePopupId = "##filepopup";
+    ButtonProperties props;
+    props.label = ICON_MD_FOLDER_OPEN;
+    props.isDropDown = true;
+    props.isToggled = ImGui::IsPopupOpen(filePopupId);
+    drawButton(props, [&]() {
+        props.isToggled = !props.isToggled;
+        if(props.isToggled) {
+            ImGui::OpenPopup(filePopupId);
+        }
+    });
+
+    if(props.isToggled) {
+        ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
+        ImGui::SetNextWindowSize(glm::ivec2(175, 250));
+        if(ImGui::BeginPopup(filePopupId)) {
+            ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
+            ImGui::Button("Open", glm::ivec2(175, 50));
+            ImGui::Button("Save", glm::ivec2(175, 50));
+            ImGui::Button("Save as", glm::ivec2(175, 50));
+            ImGui::Button("Export", glm::ivec2(175, 50));
+            if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
+                mApplication.quit();
+            }
+            ImGui::PopStyleVar(2);
+            ImGui::EndPopup();
+        }
     }
-    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.76f));
-    if(ImGui::Button(ICON_MD_CHILD_FRIENDLY, glm::ivec2(static_cast<int>(mHeight)))) {
-        mApplication.showDemoWindow(!active);
-    }
-    ImGui::PopStyleVar();
+}
+
+void Toolbar::drawUndoRedo() {
+    ButtonProperties props;
+    props.label = ICON_MD_UNDO;
+    props.isEnabled = false;
+    drawButton(props, []() {});
     ImGui::SameLine(0.f, 0.f);
-    if(active) {
-        ImGui::PopStyleColor(3);
+    props.label = ICON_MD_REDO;
+    props.isEnabled = false;
+    drawButton(props, []() {});
+}
+
+void Toolbar::drawDemoWindowToggle() {
+    ButtonProperties props;
+    props.label = ICON_MD_CHILD_FRIENDLY;
+    props.isToggled = mApplication.isDemoWindowShown();
+    drawButton(props, [&]() {
+        props.isToggled = !props.isToggled;
+        mApplication.showDemoWindow(props.isToggled);
+    });
+}
+
+void Toolbar::drawToolButtons() {
+    std::size_t index = 0;
+    for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit, ++index) {
+        ImGui::SameLine(0.0f, 0.0f);
+        drawToolButton(toolit);
+        if(index == 4 || index == 7) {
+            ImGui::SameLine(0.0f, 0.0f);
+            drawSeparator();
+        }
     }
 }
+
+void Toolbar::drawToolButton(ToolsVector::iterator tool) {
+    ButtonProperties props;
+    props.label = (*tool)->getIcon();
+    props.isToggled = (tool == mApplication.getCurrentToolIterator());
+    drawButton(props, [&]() {
+        props.isToggled = true;
+        mApplication.setCurrentToolIterator(tool);
+    });
 }
+
+}  // namespace pepr3d

@@ -6,12 +6,11 @@
 
 namespace pepr3d {
 
-MainApplication::MainApplication()
-    : mToolbar(*this), mSidePane(*this), mModelView(*this), mIntegerManager(mIntegerState) {}
+MainApplication::MainApplication() : mToolbar(*this), mSidePane(*this), mModelView(*this) {}
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
-    getWindow()->setTitle("Pepr3D");
+    getWindow()->setTitle("Pepr3D - Unsaved project");
     setupIcon();
 
     auto uiOptions = ImGui::Options();
@@ -25,6 +24,17 @@ void MainApplication::setup() {
     ImGui::initialize(uiOptions);
     applyLightTheme(ImGui::GetStyle());
 
+    mTools.emplace_back(make_unique<TrianglePainter>(*this));
+    mTools.emplace_back(make_unique<Brush>());
+    mTools.emplace_back(make_unique<PaintBucket>());
+    mTools.emplace_back(make_unique<TextEditor>());
+    mTools.emplace_back(make_unique<Segmentation>());
+    mTools.emplace_back(make_unique<DisplayOptions>());
+    mTools.emplace_back(make_unique<pepr3d::Settings>());
+    mTools.emplace_back(make_unique<Information>());
+    mTools.emplace_back(make_unique<LiveDebug>(*this));
+    mCurrentToolIterator = --mTools.end();
+
     mModelView.setup();
 
     mGeometry = std::make_unique<Geometry>();
@@ -35,18 +45,28 @@ void MainApplication::resize() {
 }
 
 void MainApplication::mouseDown(MouseEvent event) {
-    // onModelViewMouseDown(mState, event);
+    mModelView.onMouseDown(event);
 }
 
 void MainApplication::mouseDrag(MouseEvent event) {
-    // onModelViewMouseDrag(mState, event);
+    mModelView.onMouseDrag(event);
+}
+
+void MainApplication::mouseUp(MouseEvent event) {
+    mModelView.onMouseUp(event);
+}
+
+void MainApplication::mouseWheel(MouseEvent event) {
+    mModelView.onMouseWheel(event);
 }
 
 void MainApplication::fileDrop(FileDropEvent event) {
     if(mGeometry == nullptr || event.getFiles().size() < 1) {
         return;
     }
-    mGeometry->loadNewGeometry(event.getFile(0).string());
+    mGeometryFileName = event.getFile(0).string();
+    mGeometry->loadNewGeometry(mGeometryFileName);
+    getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
 }
 
 void MainApplication::update() {}
@@ -58,31 +78,9 @@ void MainApplication::draw() {
         ImGui::ShowDemoWindow();
     }
 
-    // drawToolbar(mState);
     mToolbar.draw();
     mSidePane.draw();
     mModelView.draw();
-
-    ImGui::Begin("##sidepane-debug");
-    ImGui::Text((std::string("Geometry is ") + ((mGeometry == nullptr) ? "not loaded" : "loaded")).c_str());
-    static int addedValue = 1;
-    ImGui::Text("Current value: %i", mIntegerState.mInnerValue);
-    if(mIntegerManager.canUndo()) {
-        if(ImGui::Button("Undo")) {
-            mIntegerManager.undo();
-        }
-    }
-    if(mIntegerManager.canRedo()) {
-        if(ImGui::Button("Redo")) {
-            mIntegerManager.redo();
-        }
-    }
-    ImGui::SliderInt("##addedvalue", &addedValue, 1, 10);
-    ImGui::SameLine();
-    if(ImGui::Button("Add")) {
-        mIntegerManager.execute(make_unique<AddValueCommand>(addedValue));
-    }
-    ImGui::End();
 }
 
 void MainApplication::setupIcon() {
