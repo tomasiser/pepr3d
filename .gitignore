@@ -1,3 +1,4 @@
 # Place for all top-level directories that we want to completely ignore:
 /.vscode
 /build
+/resources/*.aps

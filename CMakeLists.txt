@@ -105,13 +105,13 @@ list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_MAIN_FILE})
 
 ci_make_app(APP_NAME "pepr3d"
             CINDER_PATH ${CINDER_PATH}
-            SOURCES  ${SRC_FILES_IMGUI} ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE}
-            INCLUDES ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
-            # RESOURCES   ${APP_PATH}/../../data/models/8lbs.obj
+            SOURCES     ${SRC_FILES_IMGUI} ${APP_PATH}/resources/Resources.rc ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE}
+            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
+            RESOURCES   ${APP_PATH}/resources/icon.ico
             # ASSETS_PATH
             # BLOCKS
             # LIBRARIES
-            )
+)
 
 target_include_directories(pepr3d PRIVATE ${ASSIMP_INCLUDE_DIR})
 target_link_libraries(pepr3d ${ASSIMP_LIBRARY_RELEASE})
