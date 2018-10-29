@@ -99,6 +99,7 @@ class ModelImporter {
             }
 
             /// Obtaining triangle color. Default color is set if there is no color information
+            // \todo create a color palette from the data
             cinder::ColorA color;
             if(mesh->GetNumColorChannels() > 0) {
                 color.r = mesh->mColors[0][face.mIndices[0]][0];  // first color layer from first vertex of triangle
@@ -109,7 +110,7 @@ class ModelImporter {
                 color = ci::ColorA::hex(0x017BDA);
             }
 
-            triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, color);
+            triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, 0);
         }
         return triangles;
     }

@@ -28,7 +28,7 @@ class TrianglePainter : public ITool {
     MainApplication& mApplication;
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
-    ci::ColorA mSelectedTriangleOriginalColor = ci::ColorA::zero();
+    size_t mSelectedTriangleOriginalColor = 0;
     std::optional<std::size_t> mSelectedTriangleId = {};
 };
-}
+}  // namespace pepr3d

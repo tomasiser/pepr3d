@@ -16,18 +16,15 @@ class DataTriangle {
     Triangle mTriangleCgal;
 
     /// Color of the triangle in the final STL file
-    cinder::ColorA mColor;
+    size_t mColor;
 
     /// Normal of the triangle
     glm::vec3 mNormal;
 
    public:
-    DataTriangle() : mColor(ci::ColorA(1, 1, 0, 1)) {}
+    DataTriangle() : mColor(0) {}
 
-    DataTriangle(const Point a, const Point b, const Point c, const glm::vec3 n, const cinder::ColorA col = 0)
-        : mTriangleCgal(a, b, c), mColor(col), mNormal(n) {}
-
-    DataTriangle(const glm::vec3 x, const glm::vec3 y, const glm::vec3 z, const glm::vec3 n, const cinder::ColorA col)
+    DataTriangle(const glm::vec3 x, const glm::vec3 y, const glm::vec3 z, const glm::vec3 n, const size_t col = 0)
         : mColor(col) {
         mTriangleCgal = Triangle(Point(x.x, x.y, x.z), Point(y.x, y.y, y.z), Point(z.x, z.y, z.z));
         mNormal = n;
@@ -43,11 +40,11 @@ class DataTriangle {
         return glm::vec3(v.x(), v.y(), v.z());
     }
 
-    void setColor(const cinder::ColorA newColor) {
+    void setColor(const size_t newColor) {
         mColor = newColor;
     }
 
-    ci::ColorA getColor() const {
+    size_t getColor() const {
         return mColor;
     }
 
