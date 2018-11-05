@@ -7,7 +7,10 @@
 #include <assimp/scene.h>        // Output data structure
 #include <assimp/Importer.hpp>   // C++ importer interface
 
+#include <unordered_set>
 #include "geometry/Triangle.h"
+
+#include <boost/functional/hash.hpp>
 
 namespace pepr3d {
 
@@ -16,6 +19,7 @@ class ModelImporter {
     const aiScene *scene;
     std::vector<aiMesh *> meshes;
     std::vector<DataTriangle> triangles;
+    std::vector<ci::ColorA> palette;
 
    public:
     ModelImporter(std::string path) {
@@ -23,12 +27,19 @@ class ModelImporter {
         loadModel(path);
     }
 
-    std::vector<DataTriangle> getTriangles() {
+    std::vector<DataTriangle> getTriangles() const {
         return triangles;
+    }
+
+    std::vector<ci::ColorA> getColorPalette() const {
+        assert(!palette.empty());
+        return palette;
     }
 
    private:
     bool loadModel(const std::string &path) {
+        palette.clear();
+
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
 
@@ -46,6 +57,14 @@ class ModelImporter {
         processNode(scene->mRootNode);
 
         triangles = processFirstMesh(meshes[0]);
+
+        if(palette.empty()) {
+            const ci::ColorA defaultColor = ci::ColorA::hex(0x017BDA);
+            palette.push_back(defaultColor);
+            palette.emplace_back(0, 1, 0, 1);
+            palette.emplace_back(0, 1, 1, 1);
+            palette.emplace_back(0.4, 0.4, 0.4, 1);
+        }
 
         // Everything will be cleaned up by the importer destructor
         return true;
@@ -99,18 +118,32 @@ class ModelImporter {
             }
 
             /// Obtaining triangle color. Default color is set if there is no color information
-            // \todo create a color palette from the data
+            std::unordered_map<std::array<float, 3>, size_t, boost::hash<std::array<float, 3>>> colorLookup;
+
             cinder::ColorA color;
+            size_t returnColor = 0;
             if(mesh->GetNumColorChannels() > 0) {
                 color.r = mesh->mColors[0][face.mIndices[0]][0];  // first color layer from first vertex of triangle
                 color.g = mesh->mColors[0][face.mIndices[0]][1];
                 color.b = mesh->mColors[0][face.mIndices[0]][2];
                 color.a = 1;
-            } else {
-                color = ci::ColorA::hex(0x017BDA);
+
+                const std::array<float, 3> rgbArray = {color.r, color.g, color.b};
+                const auto result = colorLookup.find(rgbArray);
+                if(result != colorLookup.end()) {
+                    assert(result->second < palette.size());
+                    assert(result->second > 0);
+                    returnColor = result->second;
+                } else {
+                    palette.push_back(color);
+                    colorLookup.insert({rgbArray, palette.size() - 1});
+                    returnColor = palette.size() - 1;
+                    assert(colorLookup.find(rgbArray) != colorLookup.end());
+                }
             }
 
-            triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, 0);
+            /// Place the constructed triangle
+            triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
         }
         return triangles;
     }

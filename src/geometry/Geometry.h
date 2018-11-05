@@ -103,6 +103,10 @@ class Geometry {
         /// Rebuild the AABB tree
         mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
         assert(mTree->size() == mTriangles.size());
+
+        auto palette = modelImporter.getColorPalette();
+        assert(!palette.empty());
+        replaceColors(palette.begin(), palette.end());
     }
 
     /// Set new triangle color
