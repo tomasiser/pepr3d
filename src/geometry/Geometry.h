@@ -3,6 +3,9 @@
 // #include <CGAL/IO/Color.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <cassert>
 #include <optional>
 #include <vector>
@@ -20,6 +23,45 @@ using Ray = K::Ray_3;
 using My_AABB_traits = CGAL::AABB_traits<K, DataTriangleAABBPrimitive>;
 using Tree = CGAL::AABB_tree<My_AABB_traits>;
 using Ray_intersection = boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>;
+typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3> Polyhedron;
+typedef Polyhedron::HalfedgeDS HalfedgeDS;
+
+template <class HDS>
+class Build_triangle : public CGAL::Modifier_base<HDS> {
+private:
+     const std::vector<std::array<size_t, 3>>& mTriangles;
+     const std::vector<glm::vec3>& mVertices;
+
+public:
+    Build_triangle(const std::vector<std::array<size_t, 3>>& tris, const std::vector<glm::vec3>& verts)
+        : mTriangles(tris), mVertices(verts) {}
+
+    void operator()(HDS& hds) {
+        // Postcondition: hds is a valid polyhedral surface.
+        CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
+
+        // We will create a surface with <triangle-size> faces and <vertex-size> vertices
+        B.begin_surface(mVertices.size(), mTriangles.size());
+
+        typedef typename HDS::Vertex Vertex;
+        typedef typename Vertex::Point Point;
+
+        // Add all vertices
+        for(const auto& vertex : mVertices) {
+            B.add_vertex(Point(vertex.x, vertex.y, vertex.z));
+        }
+
+        for(const auto& tri : mTriangles) {
+            B.begin_facet();
+            B.add_vertex_to_facet(tri[0]);
+            B.add_vertex_to_facet(tri[1]);
+            B.add_vertex_to_facet(tri[2]);
+            B.end_facet();
+        }
+
+        B.end_surface();
+    }
+};
 
 class Geometry {
     /// Triangle soup of the model mesh, containing CGAL::Triangle_3 data for AABB tree.
@@ -45,6 +87,10 @@ class Geometry {
 
     /// A vector based map mapping size_t into ci::ColorA
     ColorManager mColorManager;
+
+    std::vector<glm::vec3> vertices;
+
+    std::vector<std::array<size_t, 3>> indices;
 
    public:
     /// Empty constructor rendering a triangle to debug
@@ -87,6 +133,11 @@ class Geometry {
         /// Load into mTriangles
         ModelImporter modelImporter(fileName);  // only first mesh [0]
         mTriangles = modelImporter.getTriangles();
+
+        vertices.clear();
+        indices.clear();
+        vertices = modelImporter.getVertexBuffer();
+        indices = modelImporter.getIndexBuffer();
 
         /// Generate new vertex buffer
         generateVertexBuffer();

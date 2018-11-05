@@ -15,15 +15,16 @@
 namespace pepr3d {
 
 class ModelImporter {
-    std::string path;
-    const aiScene *scene;
-    std::vector<aiMesh *> meshes;
+    const std::string path;
+
     std::vector<DataTriangle> triangles;
     std::vector<ci::ColorA> palette;
 
+    std::vector<glm::vec3> vertBuffer;
+    std::vector<std::array<size_t, 3>> indBuffer;
+
    public:
-    ModelImporter(std::string path) {
-        this->path = path;
+    ModelImporter(const std::string p) : path(p) {
         loadModel(path);
     }
 
@@ -36,15 +37,48 @@ class ModelImporter {
         return palette;
     }
 
+    std::vector<glm::vec3> getVertexBuffer() const {
+        return vertBuffer;
+    }
+
+    std::vector<std::array<size_t, 3>> getIndexBuffer() const {
+        return indBuffer;
+    }
+
    private:
+    static std::vector<glm::vec3> calculateVertexBuffer(aiMesh *mesh) {
+        std::vector<glm::vec3> vertices;
+        vertices.reserve(mesh->mNumVertices);
+        for(size_t i = 0; i < mesh->mNumVertices; i++) {
+            vertices.emplace_back(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+        }
+        assert(vertices.size() == mesh->mNumVertices);
+        return vertices;
+    }
+
+    static std::vector<std::array<size_t, 3>> calculateIndexBuffer(aiMesh *mesh) {
+        std::vector<std::array<size_t, 3>> indices;
+        indices.reserve(mesh->mNumFaces);
+
+        for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
+            // We should only have triangles
+            assert(mesh->mFaces[i].mNumIndices == 3);
+            indices.push_back({mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
+        }
+        assert(indices.size() == mesh->mNumFaces);
+        return indices;
+    }
+
     bool loadModel(const std::string &path) {
+        std::vector<aiMesh *> meshes;
+
         palette.clear();
 
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
 
         /// Scene with some postprocessing
-        scene =
+        const aiScene *scene =
             importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
         // If the import failed, report it
@@ -54,9 +88,12 @@ class ModelImporter {
         }
 
         /// Access the file's contents
-        processNode(scene->mRootNode);
+        processNode(scene->mRootNode, scene, meshes);
 
         triangles = processFirstMesh(meshes[0]);
+
+        vertBuffer = calculateVertexBuffer(meshes[0]);
+        indBuffer = calculateIndexBuffer(meshes[0]);
 
         if(palette.empty()) {
             const ci::ColorA defaultColor = ci::ColorA::hex(0x017BDA);
@@ -67,11 +104,12 @@ class ModelImporter {
         }
 
         // Everything will be cleaned up by the importer destructor
+        meshes.clear();
         return true;
     }
 
     /// Processes scene tree recursively. Retrieving meshes from file.
-    void processNode(aiNode *node) {
+    static void processNode(aiNode *node, const aiScene *scene, std::vector<aiMesh *> &meshes) {
         /// Process all the node's meshes (if any).
         for(unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
@@ -80,7 +118,7 @@ class ModelImporter {
 
         /// Recursively do the same for each of its children.
         for(unsigned int i = 0; i < node->mNumChildren; i++) {
-            processNode(node->mChildren[i]);
+            processNode(node->mChildren[i], scene, meshes);
         }
     }
 
