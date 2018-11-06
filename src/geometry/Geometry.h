@@ -28,17 +28,27 @@ typedef Polyhedron::HalfedgeDS HalfedgeDS;
 
 template <class HDS>
 class Build_triangle : public CGAL::Modifier_base<HDS> {
-private:
-     const std::vector<std::array<size_t, 3>>& mTriangles;
-     const std::vector<glm::vec3>& mVertices;
+   private:
+    const std::vector<std::array<size_t, 3>>& mTriangles;
+    const std::vector<glm::vec3>& mVertices;
 
-public:
+    std::vector<typename CGAL::Polyhedron_incremental_builder_3<HDS>::Face_handle> mFacetsCreated;
+
+   public:
     Build_triangle(const std::vector<std::array<size_t, 3>>& tris, const std::vector<glm::vec3>& verts)
         : mTriangles(tris), mVertices(verts) {}
+
+    std::vector<typename CGAL::Polyhedron_incremental_builder_3<HDS>::Face_handle> getFacetArray() {
+        assert(mFacetsCreated.size() > 0 && mFacetsCreated.size() == mTriangles.size());
+        return mFacetsCreated;
+    }
 
     void operator()(HDS& hds) {
         // Postcondition: hds is a valid polyhedral surface.
         CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
+
+        mFacetsCreated.clear();
+        mFacetsCreated.reserve(mTriangles.size());
 
         // We will create a surface with <triangle-size> faces and <vertex-size> vertices
         B.begin_surface(mVertices.size(), mTriangles.size());
@@ -52,7 +62,8 @@ public:
         }
 
         for(const auto& tri : mTriangles) {
-            B.begin_facet();
+            auto facetBeingAdded = B.begin_facet();
+            mFacetsCreated.push_back(facetBeingAdded);
             B.add_vertex_to_facet(tri[0]);
             B.add_vertex_to_facet(tri[1]);
             B.add_vertex_to_facet(tri[2]);
@@ -60,6 +71,8 @@ public:
         }
 
         B.end_surface();
+
+        assert(mFacetsCreated.size() == mTriangles.size());
     }
 };
 
@@ -88,9 +101,17 @@ class Geometry {
     /// A vector based map mapping size_t into ci::ColorA
     ColorManager mColorManager;
 
-    std::vector<glm::vec3> vertices;
+    struct PolyhedronData {
+        std::vector<glm::vec3> vertices;
 
-    std::vector<std::array<size_t, 3>> indices;
+        std::vector<std::array<size_t, 3>> indices;
+
+        Polyhedron P;
+
+        std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle> faceHandles;
+
+        bool closeCheck = false;
+    } mPolyhedronData;
 
    public:
     /// Empty constructor rendering a triangle to debug
@@ -114,6 +135,14 @@ class Geometry {
         return mVertexBuffer;
     }
 
+    bool polyClosedCheck() const {
+        return mPolyhedronData.closeCheck;
+    }
+
+    size_t polyVertCount() const {
+        return mPolyhedronData.vertices.size();
+    }
+
     /// Returns a constant iterator to the index buffer
     std::vector<uint32_t>& getIndexBuffer() {
         return mIndexBuffer;
@@ -134,10 +163,10 @@ class Geometry {
         ModelImporter modelImporter(fileName);  // only first mesh [0]
         mTriangles = modelImporter.getTriangles();
 
-        vertices.clear();
-        indices.clear();
-        vertices = modelImporter.getVertexBuffer();
-        indices = modelImporter.getIndexBuffer();
+        mPolyhedronData.vertices.clear();
+        mPolyhedronData.indices.clear();
+        mPolyhedronData.vertices = modelImporter.getVertexBuffer();
+        mPolyhedronData.indices = modelImporter.getIndexBuffer();
 
         /// Generate new vertex buffer
         generateVertexBuffer();
@@ -155,9 +184,13 @@ class Geometry {
         mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
         assert(mTree->size() == mTriangles.size());
 
+        /// Get the generated color palette of the model, replace the current one
         auto palette = modelImporter.getColorPalette();
         assert(!palette.empty());
         replaceColors(palette.begin(), palette.end());
+
+        /// Build the polyhedron data structure
+        buildPolyhedron();
     }
 
     /// Set new triangle color
@@ -234,6 +267,31 @@ class Geometry {
         return mColorManager.size();
     }
 
+    void bucket(const std::size_t startTriangle) {
+        if(mPolyhedronData.P.is_empty()) {
+            return;
+        }
+
+        std::deque<size_t> toVisit;
+        const size_t startingFace = startTriangle;
+        toVisit.push_back(startingFace);
+
+        std::unordered_set<size_t> alreadyVisited;
+
+        while(!toVisit.empty()) {
+            // Remove yourself from queue and mark visited
+            size_t currentVertex = toVisit.front();
+            toVisit.pop_front();
+            alreadyVisited.insert(currentVertex);
+
+            // Manage neighbours and grow the queue
+            addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit);
+
+            // Do the operation
+            setTriangleColor(currentVertex, mColorManager.size() - 2);
+        }
+    }
+
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
     /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing
@@ -284,6 +342,65 @@ class Geometry {
             mNormalBuffer.push_back(mTriangle.getNormal());
         }
         assert(mColorBuffer.size() == mVertexBuffer.size());
+    }
+
+    void buildPolyhedron() {
+        Build_triangle<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
+        mPolyhedronData.P.clear();
+        mPolyhedronData.P.delegate(triangle);
+        mPolyhedronData.faceHandles = triangle.getFacetArray();
+
+        assert(!mPolyhedronData.P.is_empty());
+        assert(mPolyhedronData.P.size_of_facets() == mPolyhedronData.indices.size());
+        assert(mPolyhedronData.P.size_of_vertices() == mPolyhedronData.vertices.size());
+
+        // Use the facetsCreated from the incremental builder, set the ids linearly
+        for(int facetId = 0; facetId < mPolyhedronData.faceHandles.size(); ++facetId) {
+            mPolyhedronData.faceHandles[facetId]->id() = facetId;
+        }
+
+        mPolyhedronData.closeCheck = mPolyhedronData.P.is_closed();
+    }
+
+    static std::array<int, 3> gatherNeighbours(
+        const size_t triIndex,
+        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) {
+        const Polyhedron::Facet_iterator& facet = faceHandles[triIndex];
+        std::array<int, 3> returnValue = {-1, -1, -1};
+        assert(facet->is_triangle());
+
+        const auto edgeIteratorStart = facet->facet_begin();
+        auto edgeIter = edgeIteratorStart;
+
+        for(int i = 0; i < 3; ++i) {
+            const auto eFace = edgeIter->facet();
+            if(edgeIter->opposite()->facet() != nullptr) {
+                const size_t idd = edgeIter->opposite()->facet()->id();
+                returnValue[i] = static_cast<int>(idd);
+            }
+            ++edgeIter;
+        }
+        assert(edgeIter == edgeIteratorStart);
+
+        return returnValue;
+    }
+
+    static void addNeighboursToQueue(
+        const size_t currentVertex,
+        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
+        std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit) {
+        const std::array<int, 3> neighbours = gatherNeighbours(currentVertex, faceHandles);
+        for(int i = 0; i < 3; ++i) {
+            if(neighbours[i] == -1) {
+                continue;
+            } else {
+                if(alreadyVisited.find(neighbours[i]) == alreadyVisited.end()) {
+                    // New vertex -> visit it.
+                    toVisit.push_back(neighbours[i]);
+                    std::cout << "At triangle " << currentVertex << " queued up triangle " << neighbours[i] << "\n";
+                }
+            }
+        }
     }
 };
 
