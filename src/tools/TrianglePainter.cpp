@@ -5,6 +5,11 @@ namespace pepr3d {
 
 void TrianglePainter::drawToSidePane(SidePane& sidePane) {
     sidePane.drawText("Last click:\nX: " + std::to_string(mLastClick.x) + "\nY: " + std::to_string(mLastClick.y));
+    const size_t triSize = mApplication.getCurrentGeometry()->getTriangleCount();
+    sidePane.drawText("Number of triangles: " + std::to_string(triSize) + "\n");
+    if(mSelectedTriangleId) {
+        sidePane.drawText("Selected triangle ID: " + std::to_string(*mSelectedTriangleId) + "\n");
+    }
 }
 
 void TrianglePainter::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
