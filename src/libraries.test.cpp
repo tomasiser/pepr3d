@@ -37,7 +37,7 @@ TEST(Libraries, CGAL) {
     points.push_back(Point_2(6, 5));
     points.push_back(Point_2(4, 1));
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(result));
-    std::cout << result.size() << " points on the convex hull" << std::endl;
+    EXPECT_EQ(result.size(), 3);
 }
 
 #endif

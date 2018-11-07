@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cinder/Color.h>
+#include <random>
 #include <vector>
 
 namespace pepr3d {
@@ -20,6 +21,16 @@ class ColorManager {
     ColorManager(const std::vector<ci::ColorA>::const_iterator start,
                  const std::vector<ci::ColorA>::const_iterator end) {
         replaceColors(start, end);
+    }
+
+    ColorManager(const size_t number) {
+        std::random_device rd;   // Will be used to obtain a seed for the random number engine
+        std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
+        std::uniform_real_distribution<> randomGen(0.0, 1.0);
+
+        for(int i = 0; i < number; ++i) {
+            mColorMap.emplace_back(randomGen(gen), randomGen(gen), randomGen(gen), 1);
+        }
     }
 
     /// Return the i-th color
