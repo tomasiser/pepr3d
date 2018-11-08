@@ -26,6 +26,7 @@ class ModelImporter {
    public:
     ModelImporter(const std::string p) : path(p) {
         loadModel(path);
+        loadModelWithJoinedVertices(path);
     }
 
     std::vector<DataTriangle> getTriangles() const {
@@ -38,14 +39,17 @@ class ModelImporter {
     }
 
     std::vector<glm::vec3> getVertexBuffer() const {
+        assert(!vertBuffer.empty());
         return vertBuffer;
     }
 
     std::vector<std::array<size_t, 3>> getIndexBuffer() const {
+        assert(!indBuffer.empty());
         return indBuffer;
     }
 
    private:
+    /// Pull the correct Vertex buffer (correct as in vertices are re-used for multiple triangles) from the mesh
     static std::vector<glm::vec3> calculateVertexBuffer(aiMesh *mesh) {
         std::vector<glm::vec3> vertices;
         vertices.reserve(mesh->mNumVertices);
@@ -56,6 +60,7 @@ class ModelImporter {
         return vertices;
     }
 
+    /// Pull the correct index buffer (correct as in different than 0-N) from the mesh
     static std::vector<std::array<size_t, 3>> calculateIndexBuffer(aiMesh *mesh) {
         std::vector<std::array<size_t, 3>> indices;
         indices.reserve(mesh->mNumFaces);
@@ -69,6 +74,39 @@ class ModelImporter {
         return indices;
     }
 
+    /// A method which loads the model with ALL vertex information apart from position removed. This is done to
+    /// correctly merge all vertices and receive a closed mesh, which can't be done if more than one vertex per position
+    /// exists.
+    bool loadModelWithJoinedVertices(const std::string &path) {
+        std::vector<aiMesh *> meshes;
+
+        /// Creates an instance of the Importer class
+        Assimp::Importer importer;
+        importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS | aiComponent_TANGENTS_AND_BITANGENTS |
+                                                                aiComponent_COLORS | aiComponent_TEXCOORDS |
+                                                                aiComponent_BONEWEIGHTS);
+
+        /// Scene with some postprocessing
+        const aiScene *scene = importer.ReadFile(path, aiProcess_RemoveComponent | aiProcess_JoinIdenticalVertices);
+
+        // If the import failed, report it
+        if(!scene) {
+            std::cout << "fail: " << importer.GetErrorString() << std::endl;  // TODO: write out error somewhere
+            return false;
+        }
+
+        /// Access the file's contents
+        processNode(scene->mRootNode, scene, meshes);
+
+        vertBuffer = calculateVertexBuffer(meshes[0]);
+        indBuffer = calculateIndexBuffer(meshes[0]);
+
+        meshes.clear();
+
+        return true;
+    }
+
+    /// A method which loads the model we will use for rendering - with duplicated vertices for normals, colors, etc.
     bool loadModel(const std::string &path) {
         std::vector<aiMesh *> meshes;
 
@@ -92,9 +130,6 @@ class ModelImporter {
 
         triangles = processFirstMesh(meshes[0]);
 
-        vertBuffer = calculateVertexBuffer(meshes[0]);
-        indBuffer = calculateIndexBuffer(meshes[0]);
-
         if(palette.empty()) {
             const ci::ColorA defaultColor = ci::ColorA::hex(0x017BDA);
             palette.push_back(defaultColor);
@@ -103,7 +138,8 @@ class ModelImporter {
             palette.emplace_back(0.4, 0.4, 0.4, 1);
         }
 
-        // Everything will be cleaned up by the importer destructor
+        // Everything will be cleaned up by the importer destructor.
+        // WARNING: Every ASSIMP POINTER will be DELETED beyond this point.
         meshes.clear();
         return true;
     }
