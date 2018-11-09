@@ -1,8 +1,9 @@
 #pragma once
 
 #include "IconsMaterialDesign.h"
-#include "imgui_internal.h"
 #include "peprimgui.h"
+
+#include "imgui_internal.h"  // must be included after peprimgui.h! beware of clang-format, keep the empty line above!
 #include "tools/Tool.h"
 
 namespace pepr3d {
