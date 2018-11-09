@@ -19,7 +19,7 @@ class ModelImporter {
     const aiScene *scene;
     std::vector<aiMesh *> meshes;
     std::vector<DataTriangle> triangles;
-    std::vector<ci::ColorA> palette;
+    std::vector<glm::vec4> palette;
 
    public:
     ModelImporter(std::string path) {
@@ -31,7 +31,7 @@ class ModelImporter {
         return triangles;
     }
 
-    std::vector<ci::ColorA> getColorPalette() const {
+    std::vector<glm::vec4> getColorPalette() const {
         assert(!palette.empty());
         return palette;
     }
@@ -59,7 +59,7 @@ class ModelImporter {
         triangles = processFirstMesh(meshes[0]);
 
         if(palette.empty()) {
-            const ci::ColorA defaultColor = ci::ColorA::hex(0x017BDA);
+            const glm::vec4 defaultColor = ci::ColorA::hex(0x017BDA);
             palette.push_back(defaultColor);
             palette.emplace_back(0, 1, 0, 1);
             palette.emplace_back(0, 1, 1, 1);
@@ -120,7 +120,7 @@ class ModelImporter {
             /// Obtaining triangle color. Default color is set if there is no color information
             std::unordered_map<std::array<float, 3>, size_t, boost::hash<std::array<float, 3>>> colorLookup;
 
-            cinder::ColorA color;
+            glm::vec4 color;
             size_t returnColor = 0;
             if(mesh->GetNumColorChannels() > 0) {
                 color.r = mesh->mColors[0][face.mIndices[0]][0];  // first color layer from first vertex of triangle
