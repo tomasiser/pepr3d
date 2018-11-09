@@ -5,10 +5,10 @@ uniform mat3 ciNormalMatrix;
 
 in vec4 ciPosition;
 in vec3 ciNormal;
-in float aColorIndex;
+in uint aColorIndex;
 
 out highp vec3 Normal;
-out highp float ColorIndex;
+flat out uint ColorIndex;
 
 void main() {
     Normal = ciNormalMatrix * ciNormal;

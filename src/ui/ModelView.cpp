@@ -100,7 +100,7 @@ void ModelView::drawGeometry() {
     // Since we use a new vertex for each triangle, we should have vertices == triangles
     assert(indices.size() == positions.size());
     // Get the color buffer
-    const std::vector<float>& colors = mApplication.getCurrentGeometry()->getColorBuffer();
+    const std::vector<Geometry::ColorIndex>& colors = mApplication.getCurrentGeometry()->getColorBuffer();
     assert(colors.size() == positions.size());
 
     const std::vector<glm::vec3>& normals = mApplication.getCurrentGeometry()->getNormalBuffer();
@@ -121,7 +121,7 @@ void ModelView::drawGeometry() {
     // Assign the buffers to the attributes
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, normals);
-    myVboMesh->bufferAttrib<float>(ci::geom::Attrib::CUSTOM_0, colors);
+    myVboMesh->bufferAttrib<Geometry::ColorIndex>(ci::geom::Attrib::CUSTOM_0, colors);
 
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();

@@ -3,7 +3,7 @@
 #define PEPR3D_MAX_PALETTE_COLORS 4
 
 in vec3 Normal;
-in float ColorIndex;
+flat in uint ColorIndex;
 
 out vec4 oColor;
 
@@ -15,5 +15,5 @@ void main() {
     float lambert = max(0.0, dot(N, L));
     float ambient = 0.2;
     float lightIntensity = lambert + ambient;
-    oColor = uColorPalette[int(ColorIndex)] * vec4(vec3(lightIntensity), 1.0);
+    oColor = uColorPalette[ColorIndex] * vec4(vec3(lightIntensity), 1.0);
 }

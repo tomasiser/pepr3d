@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "cinder/Ray.h"
+#include "cinder/gl/gl.h"
 #include "geometry/ColorManager.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/Triangle.h"
@@ -22,6 +23,10 @@ using Tree = CGAL::AABB_tree<My_AABB_traits>;
 using Ray_intersection = boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>;
 
 class Geometry {
+   public:
+    using ColorIndex = GLuint;
+
+   private:
     /// Triangle soup of the model mesh, containing CGAL::Triangle_3 data for AABB tree.
     std::vector<DataTriangle> mTriangles;
 
@@ -31,7 +36,7 @@ class Geometry {
 
     /// Color buffer, keeping the invariant that every triangle has only one color - all three vertices have to have the
     /// same color. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
-    std::vector<float> mColorBuffer;
+    std::vector<ColorIndex> mColorBuffer;
 
     /// Normal buffer, the triangle has same normal for its every vertex.
     /// It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
@@ -73,7 +78,7 @@ class Geometry {
         return mIndexBuffer;
     }
 
-    std::vector<float>& getColorBuffer() {
+    std::vector<ColorIndex>& getColorBuffer() {
         return mColorBuffer;
     }
 
@@ -118,7 +123,7 @@ class Geometry {
         // Change all vertices of the triangle to the same new color
         assert(vertexPosition + 2 < mColorBuffer.size());
 
-        float newColorIndex = static_cast<float>(newColor);
+        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
         mColorBuffer[vertexPosition] = newColorIndex;
         mColorBuffer[vertexPosition + 1] = newColorIndex;
         mColorBuffer[vertexPosition + 2] = newColorIndex;
@@ -205,7 +210,7 @@ class Geometry {
         mColorBuffer.reserve(mVertexBuffer.size());
 
         for(const auto& mTriangle : mTriangles) {
-            const float triColorIndex = static_cast<float>(mTriangle.getColor());
+            const ColorIndex triColorIndex = static_cast<ColorIndex>(mTriangle.getColor());
             mColorBuffer.push_back(triColorIndex);
             mColorBuffer.push_back(triColorIndex);
             mColorBuffer.push_back(triColorIndex);

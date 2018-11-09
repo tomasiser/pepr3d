@@ -26,7 +26,7 @@ TEST(Geometry, getColor) {
 
     const auto colorBuffer = geo.getColorBuffer();
     EXPECT_EQ(colorBuffer.size(), 6);
-    float colorIndex = colorBuffer.at(0);
+    pepr3d::Geometry::ColorIndex colorIndex = colorBuffer.at(0);
 
     for(int i = 1; i < 6; ++i) {
         EXPECT_EQ(colorIndex, colorBuffer.at(i));
@@ -41,12 +41,12 @@ TEST(Geometry, setColor) {
 
     auto& colorBuffer = geo.getColorBuffer();
     EXPECT_EQ(colorBuffer.size(), 6);
-    const float colorIndex = colorBuffer.at(0);
+    const pepr3d::Geometry::ColorIndex colorIndex = colorBuffer.at(0);
 
     geo.setTriangleColor(1, 3);
 
     EXPECT_NE(colorBuffer.at(0), colorBuffer.at(4));
-    const float newColorIndex = colorBuffer.at(4);
+    const pepr3d::Geometry::ColorIndex newColorIndex = colorBuffer.at(4);
 
     for(int i = 0; i < 3; ++i) {
         EXPECT_EQ(colorBuffer.at(i), colorIndex);
