@@ -89,7 +89,7 @@ set(PEPR3D_SRC_PATH ${APP_PATH}/src)
 set(PEPR3D_TEST_MAIN_FILE ${PEPR3D_SRC_PATH}/main.test.cpp)
 set(PEPR3D_MAIN_FILE ${PEPR3D_SRC_PATH}/main.cpp)
 
-file(GLOB SRC_FILES_IMGUI ${APP_PATH}/lib/cinder-imgui/src/*
+file(GLOB SRC_FILES_IMGUI ${APP_PATH}/lib/peprimgui/peprimgui.cpp
           ${APP_PATH}/lib/cinder-imgui/lib/imgui/*)
 
 file(GLOB_RECURSE SRC_FILES_PEPR3D LIST_DIRECTORES false "${PEPR3D_SRC_PATH}/*.cpp"
@@ -106,7 +106,7 @@ list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_MAIN_FILE})
 ci_make_app(APP_NAME "pepr3d"
             CINDER_PATH ${CINDER_PATH}
             SOURCES     ${SRC_FILES_IMGUI} ${APP_PATH}/resources/Resources.rc ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE}
-            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
+            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/peprimgui ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
             RESOURCES   ${APP_PATH}/resources/icon.ico
             # ASSETS_PATH
             # BLOCKS
@@ -134,6 +134,7 @@ add_executable(pepr3dtests ${SRC_FILES_IMGUI} ${SRC_FILES_PEPR3D} ${SRC_FILES_PE
 
 target_include_directories(pepr3dtests
                            PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include
+                                   ${APP_PATH}/lib/peprimgui
                                    ${APP_PATH}/lib/cinder-imgui/lib/imgui
                                    ${APP_PATH}/lib/cinder/include
                                    ${APP_PATH}/lib/googletest/googletest/include)
@@ -153,8 +154,8 @@ endif()
 # --------------------------- COMPILER FLAGS -----------------------------
 # ------------------------------------------------------------------------
 if(MSVC)
-  target_compile_options(pepr3d PRIVATE /W3 /std:c++17 )
-  target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_)
+  target_compile_options(pepr3d PRIVATE /W3 /std:c++17 /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
+  target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_ /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
   target_compile_options(cinder PRIVATE /W0)
 
   # Note: /std:c++14 flag is not present in cinder INTERFACE_COMPILE_OPTIONS for some reason for
