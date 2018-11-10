@@ -52,7 +52,7 @@ class ColorManager {
 
     /// Returns true iff no colors are currently used
     bool empty() const {
-        return size() <= 0;
+        return mColorMap.empty();
     }
 
     /// Clears all colors and becomes empty
