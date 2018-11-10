@@ -8,6 +8,7 @@
 #include <assimp/Importer.hpp>   // C++ importer interface
 
 #include <unordered_set>
+#include "geometry/ColorManager.h"
 #include "geometry/Triangle.h"
 
 #include <cinder/Log.h>
@@ -20,7 +21,7 @@ class ModelImporter {
     const aiScene *scene;
     std::vector<aiMesh *> meshes;
     std::vector<DataTriangle> triangles;
-    std::vector<glm::vec4> palette;
+    ColorManager palette;
 
    public:
     ModelImporter(std::string path) {
@@ -32,7 +33,7 @@ class ModelImporter {
         return triangles;
     }
 
-    std::vector<glm::vec4> getColorPalette() const {
+    ColorManager getColorManager() const {
         assert(!palette.empty());
         return palette;
     }
@@ -60,11 +61,7 @@ class ModelImporter {
         triangles = processFirstMesh(meshes[0]);
 
         if(palette.empty()) {
-            const glm::vec4 defaultColor = ci::ColorA::hex(0x017BDA);
-            palette.push_back(defaultColor);
-            palette.emplace_back(0, 1, 0, 1);
-            palette.emplace_back(0, 1, 1, 1);
-            palette.emplace_back(0.4, 0.4, 0.4, 1);
+            palette = ColorManager();  // create new palette with default colors
         }
 
         // Everything will be cleaned up by the importer destructor
@@ -136,7 +133,7 @@ class ModelImporter {
                     assert(result->second > 0);
                     returnColor = result->second;
                 } else {
-                    palette.push_back(color);
+                    palette.addColor(color);
                     colorLookup.insert({rgbArray, palette.size() - 1});
                     returnColor = palette.size() - 1;
                     assert(colorLookup.find(rgbArray) != colorLookup.end());

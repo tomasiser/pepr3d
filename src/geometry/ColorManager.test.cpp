@@ -29,6 +29,29 @@ TEST(ColorManager, setColor) {
     EXPECT_EQ(cm.getColor(3), color3);
 }
 
+TEST(ColorManager, empty_and_clear) {
+    pepr3d::ColorManager cm;
+    EXPECT_FALSE(cm.empty());
+    cm.clear();
+    EXPECT_TRUE(cm.empty());
+}
+
+TEST(ColorManager, addColor) {
+    pepr3d::ColorManager cm;
+    cm.clear();
+
+    std::vector<glm::vec4> newColors;
+    newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 1);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 1; ++i) {
+        newColors.emplace_back(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 1), 0, 0, 1);
+        cm.addColor(newColors[i]);
+    }
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        EXPECT_EQ(cm.getColor(i), newColors[i]);
+    }
+}
+
 TEST(ColorManager, constructor_iterator) {
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
