@@ -23,10 +23,11 @@ class CommandManager {
     static const int SNAPSHOT_FREQUENCY = 10;
 
     /// Create a command manager that will be operating around a snapshottable target
-    CommandManager(Target& target) : mTarget(target) {}
+    explicit CommandManager(Target& target) : mTarget(target) {}
 
     /// Execute a command, saving it into a history and removing all currently redoable commands.
-    void execute(std::unique_ptr<CommandBase>&& command);
+    /// @param join Try to join this command into the last one
+    void execute(std::unique_ptr<CommandBase>&& command, bool join = false);
 
     /// Undo a single command operation
     void undo();
@@ -70,6 +71,11 @@ class CommandManager {
     /// Should we save state before next command
     bool shouldSaveState() const;
 
+    /// Join this command with the last one
+    bool joinWithLastCommand(CommandBase& command);
+
+    size_t getNumOfCommandsSinceSnapshot() const;
+
     CommandBase& getLastCommand() {
         // allow non const access for command manager
         const auto* constThis = static_cast<const decltype(this)>(this);
@@ -93,17 +99,23 @@ auto CommandManager<Target>::getPrevSnapshotIterator() const {
 }
 
 template <typename Target>
-void CommandManager<Target>::execute(std::unique_ptr<CommandBase>&& command) {
+void CommandManager<Target>::execute(std::unique_ptr<CommandBase>&& command, bool join) {
     clearFutureState();
 
-    // Save target's state every few commands
-    if(shouldSaveState()) {
-        const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
-        mTargetSnapshots.push_back({mTarget.saveState(), nextCommandIdx});
-    }
+    // Command is either stored in history or joined to the last one
 
-    command->run(mTarget);
-    mCommandHistory.emplace_back(std::move(command));
+    if(!join || !joinWithLastCommand(*command)) {
+        // Save target's state every few commands
+        if(shouldSaveState()) {
+            const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
+            mTargetSnapshots.push_back({mTarget.saveState(), nextCommandIdx});
+        }
+
+        command->run(mTarget);
+        mCommandHistory.emplace_back(std::move(command));
+    } else {
+        command->run(mTarget);
+    }
 }
 
 template <typename Target>
@@ -177,11 +189,32 @@ bool CommandManager<Target>::shouldSaveState() const {
         return true;
     }
 
-    const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
-    const size_t commandsSinceSnapshot = nextCommandIdx - getPrevSnapshotIterator()->nextCommandIdx;
+    const size_t commandsSinceSnapshot = getNumOfCommandsSinceSnapshot();
 
     return (canUndo() && getLastCommand().isSlowCommand() && commandsSinceSnapshot != 0) ||
            commandsSinceSnapshot >= SNAPSHOT_FREQUENCY;
+}
+
+template <typename Target>
+bool CommandManager<Target>::joinWithLastCommand(CommandBase& command) {
+    if(!canUndo() || getLastCommand().getCommandType() != command.getCommandType() || command.getCommandType() == 0)
+        return false;
+
+    if(getLastCommand().joinCommand(command)) {
+        // If the command that got modified has a valid snapshot in front of it destroy it
+        if(getNumOfCommandsSinceSnapshot() == 0) {
+            mTargetSnapshots.erase(std::prev(mTargetSnapshots.end()), mTargetSnapshots.end());
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+template <typename Target>
+size_t CommandManager<Target>::getNumOfCommandsSinceSnapshot() const {
+    const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
+    return nextCommandIdx - (getPrevSnapshotIterator()->nextCommandIdx - 1);
 }
 
 }  // namespace pepr3d

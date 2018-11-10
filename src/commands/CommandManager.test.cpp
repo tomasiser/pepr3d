@@ -24,7 +24,7 @@ class CmdAddValue : public CommandBase<MockTarget> {
         return "IncreaseVal";
     }
 
-    CmdAddValue(int addedValue = 1) : mAddedValue(addedValue) {}
+    explicit CmdAddValue(int addedValue = 1) : mAddedValue(addedValue) {}
 
    protected:
     virtual void run(MockTarget& target) const override {
@@ -40,11 +40,71 @@ class CmdAddValueSlow : public CommandBase<MockTarget> {
         return "IncreaseVal";
     }
 
-    CmdAddValueSlow(int addedValue = 1) : CommandBase(true), mAddedValue(addedValue) {}
+    explicit CmdAddValueSlow(int addedValue = 1) : CommandBase(true), mAddedValue(addedValue) {}
 
    protected:
     virtual void run(MockTarget& target) const override {
         target.mInnerValue += mAddedValue;
+    }
+
+    int mAddedValue;
+};
+
+class CmdAddValueJoinable : public CommandBase<MockTarget> {
+   public:
+    virtual std::string_view getDescription() const override {
+        return "IncreaseVal";
+    }
+
+    explicit CmdAddValueJoinable(int addedValue = 1) : CommandBase(false, 0xdeadbeef), mAddedValue(addedValue) {}
+
+   protected:
+    virtual void run(MockTarget& target) const override {
+        target.mInnerValue += mAddedValue;
+    }
+
+    // Join this command with other of the same type
+    virtual bool joinCommand(const CommandBase<MockTarget>& otherBase) override {
+        // Dynamic casting a reference may throw exception
+        // If you want to avoid exception handling get pointer from the reference
+
+        try {
+            const CmdAddValueJoinable& other = dynamic_cast<const CmdAddValueJoinable&>(otherBase);
+            mAddedValue += other.mAddedValue;
+            return true;
+        } catch(std::bad_cast&) {
+            return false;
+        }
+    }
+
+    int mAddedValue;
+};
+
+class CmdAddValueJoinableSlow : public CommandBase<MockTarget> {
+   public:
+    virtual std::string_view getDescription() const override {
+        return "IncreaseVal";
+    }
+
+    explicit CmdAddValueJoinableSlow(int addedValue = 1) : CommandBase(true, 0xfeedbeef), mAddedValue(addedValue) {}
+
+   protected:
+    virtual void run(MockTarget& target) const override {
+        target.mInnerValue += mAddedValue;
+    }
+
+    // Join this command with other of the same type
+    virtual bool joinCommand(const CommandBase<MockTarget>& otherBase) override {
+        // Dynamic casting a reference may throw exception
+        // If you want to avoid exception handling get pointer from the reference
+
+        try {
+            const CmdAddValueJoinableSlow& other = dynamic_cast<const CmdAddValueJoinableSlow&>(otherBase);
+            mAddedValue += other.mAddedValue;
+            return true;
+        } catch(std::bad_cast&) {
+            return false;
+        }
     }
 
     int mAddedValue;
@@ -215,6 +275,65 @@ TEST(CommandManager, SlowCommandsFutureClear) {
     }
 
     EXPECT_FALSE(cm.canUndo());
+}
+
+TEST(CommandManager, Joinable) {
+    /**
+     * Test that joinable commands are combined into one command that is undoable whole
+     */
+
+    MockTarget target{};
+    CommandManager<MockTarget> cm(target);
+
+    EXPECT_FALSE(cm.canUndo());
+
+    int counter = target.mInnerValue;
+
+    const auto maxSteps = 5 * CommandManager<MockTarget>::SNAPSHOT_FREQUENCY + 1;
+
+    // run a few commands, making sure to do more than one snapshot
+    for(int i = 0; i < maxSteps; i++) {
+        cm.execute(make_unique<CmdAddValueJoinable>(i), true);
+        counter += i;
+
+        EXPECT_EQ(target.mInnerValue, counter);
+        EXPECT_TRUE(cm.canUndo());
+
+        cm.undo();
+        EXPECT_EQ(target.mInnerValue, 0);
+
+        EXPECT_FALSE(cm.canUndo());
+        EXPECT_TRUE(cm.canRedo());
+
+        cm.redo();
+        EXPECT_EQ(target.mInnerValue, counter);
+    }
+}
+
+TEST(CommandManager, JoinRemovesSnapshot) {
+    /*
+     *Test that joining into command that is snapshoted correctly removes the now invalid snapshot
+     */
+
+    MockTarget target{};
+    CommandManager<MockTarget> cm(target);
+
+    int counter = 0;
+    cm.execute(make_unique<CmdAddValueJoinableSlow>(1));  // this will create snapshot at next command
+    counter++;
+
+    cm.execute(make_unique<CmdAddValue>(50000));  // Snapshot created before executing this
+    cm.undo();
+
+    // This command will be joined to the first one.
+    cm.execute(make_unique<CmdAddValueJoinableSlow>(10), true);
+
+    // Make sure that the old snapshot got deleted by stepping forward and returning back
+    cm.execute(make_unique<CmdAddValue>(50000));
+    cm.undo();
+
+    // The value restored from the snapshot should be equal to the combined value of both commands
+    EXPECT_EQ(target.mInnerValue, 11);
 }
 
 }  // namespace pepr3d
