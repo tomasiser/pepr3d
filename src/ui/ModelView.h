@@ -5,7 +5,7 @@
 #include "cinder/gl/gl.h"
 #include "glm/glm.hpp"
 
-#include "CinderImGui.h"
+#include "peprimgui.h"
 
 namespace pepr3d {
 

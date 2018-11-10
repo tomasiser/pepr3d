@@ -5,8 +5,7 @@
 #include "cinder/gl/TextureFont.h"
 #include "cinder/gl/gl.h"
 
-#define CINDER_IMGUI_NO_NAMESPACE_ALIAS
-#include "CinderImGui.h"
+#include "peprimgui.h"
 
 #include "ModelView.h"
 #include "SidePane.h"
