@@ -1,5 +1,6 @@
 #include "tools/TrianglePainter.h"
 #include <random>
+#include "geometry/Geometry.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
@@ -29,11 +30,11 @@ void TrianglePainter::drawToSidePane(SidePane& sidePane) {
     uniform_real_distribution<> dis(0.0, 1.0);
 
     if(ImGui::Button("Randomize Colors")) {
-        std::vector<ci::ColorA> newColors;
+        std::vector<glm::vec4> newColors;
         for(int i = 0; i < 4; ++i) {
             newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
         }
-        mApplication.getCurrentGeometry()->replaceColors(std::move(newColors));
+        mApplication.getCurrentGeometry()->getColorManager().replaceColors(std::move(newColors));
     }
 }
 
@@ -57,7 +58,7 @@ void TrianglePainter::onModelViewMouseDown(ModelView& modelView, ci::app::MouseE
     }
     if(mSelectedTriangleId) {
         mSelectedTriangleOriginalColor = geometry->getTriangleColor(*mSelectedTriangleId);
-        const size_t colorCount = geometry->getColorSize();
+        const size_t colorCount = geometry->getColorManager().size();
         /*auto inverseColor = ci::ColorA::white() - mSelectedTriangleOriginalColor;
         inverseColor[3] = 1.0f;*/
 

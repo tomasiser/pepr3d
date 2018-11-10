@@ -7,13 +7,14 @@
 TEST(ColorManager, constructor_basic) {
     pepr3d::ColorManager cm;
     EXPECT_EQ(cm.size(), 4);
+    EXPECT_LE(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
     EXPECT_EQ(cm.getColor(0).r, 1);
 }
 
 TEST(ColorManager, setColor) {
     pepr3d::ColorManager cm;
-    const cinder::ColorA red(1, 0, 0, 1);
-    const cinder::ColorA yellow(1, 1, 0, 1);
+    const glm::vec4 red(1, 0, 0, 1);
+    const glm::vec4 yellow(1, 1, 0, 1);
     EXPECT_EQ(cm.getColor(0), red);
 
     const auto color1 = cm.getColor(1);
@@ -28,28 +29,45 @@ TEST(ColorManager, setColor) {
     EXPECT_EQ(cm.getColor(3), color3);
 }
 
-TEST(ColorManger, constructor_iterator) {
-    std::vector<cinder::ColorA> newColors;
-    newColors.reserve(5);
-    for(int i = 0; i < 5; ++i) {
-        newColors.emplace_back(i / 5.f, 0, 0, 1);
+TEST(ColorManager, constructor_iterator) {
+    std::vector<glm::vec4> newColors;
+    newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        newColors.emplace_back(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS), 0, 0, 1);
     }
 
     pepr3d::ColorManager cm(newColors.begin(), newColors.end());
 
-    EXPECT_EQ(cm.size(), 5);
-    for(int i = 0; i < 5; ++i) {
-        EXPECT_EQ(cm.getColor(i), cinder::ColorA(i / 5.f, 0, 0, 1));
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        EXPECT_EQ(cm.getColor(i), glm::vec4(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS), 0, 0, 1));
     }
 
-    EXPECT_EQ(newColors.size(), 5);
+    EXPECT_EQ(newColors.size(), PEPR3D_MAX_PALETTE_COLORS);
+}
+
+TEST(ColorManager, constructor_iterator_above_limit) {
+    std::vector<glm::vec4> newColors;
+    newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 1);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 1; ++i) {
+        newColors.emplace_back(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 1), 0, 0, 1);
+    }
+
+    pepr3d::ColorManager cm(newColors.begin(), newColors.end());
+
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        EXPECT_EQ(cm.getColor(i), glm::vec4(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 1), 0, 0, 1));
+    }
+
+    EXPECT_EQ(newColors.size(), PEPR3D_MAX_PALETTE_COLORS + 1);
 }
 
 TEST(ColorManager, replaceColors_iterators) {
-    std::vector<cinder::ColorA> newColors;
-    newColors.reserve(5);
-    for(int i = 0; i < 5; ++i) {
-        newColors.emplace_back(i / 5.f, 0, 0, 1);
+    std::vector<glm::vec4> newColors;
+    newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        newColors.emplace_back(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS), 0, 0, 1);
     }
 
     pepr3d::ColorManager cm;
@@ -57,19 +75,39 @@ TEST(ColorManager, replaceColors_iterators) {
 
     cm.replaceColors(newColors.begin() + 1, newColors.end() - 1);
 
-    EXPECT_EQ(cm.size(), 3);
-    for(int i = 0; i < 3; ++i) {
-        EXPECT_EQ(cm.getColor(i), cinder::ColorA((i + 1) / 5.f, 0, 0, 1));
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS - 2);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS - 2; ++i) {
+        EXPECT_EQ(cm.getColor(i), glm::vec4((i + 1) / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS), 0, 0, 1));
     }
 
-    EXPECT_EQ(newColors.size(), 5);
+    EXPECT_EQ(newColors.size(), PEPR3D_MAX_PALETTE_COLORS);
+}
+
+TEST(ColorManager, replaceColors_iterators_above_limit) {
+    std::vector<glm::vec4> newColors;
+    newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 3);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 3; ++i) {
+        newColors.emplace_back(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 3), 0, 0, 1);
+    }
+
+    pepr3d::ColorManager cm;
+    EXPECT_EQ(cm.size(), 4);
+
+    cm.replaceColors(newColors.begin() + 1, newColors.end() - 1);
+
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS - 2; ++i) {
+        EXPECT_EQ(cm.getColor(i), glm::vec4((i + 1) / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 3), 0, 0, 1));
+    }
+
+    EXPECT_EQ(newColors.size(), PEPR3D_MAX_PALETTE_COLORS + 3);
 }
 
 TEST(ColorManager, replaceColors_move_semantics) {
-    std::vector<cinder::ColorA> newColors;
-    newColors.reserve(5);
-    for(int i = 0; i < 5; ++i) {
-        newColors.emplace_back(i / 5.f, 0, 0, 1);
+    std::vector<glm::vec4> newColors;
+    newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        newColors.emplace_back(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS), 0, 0, 1);
     }
 
     pepr3d::ColorManager cm;
@@ -77,16 +115,36 @@ TEST(ColorManager, replaceColors_move_semantics) {
 
     cm.replaceColors(std::move(newColors));
 
-    EXPECT_EQ(cm.size(), 5);
-    for(int i = 0; i < 5; ++i) {
-        EXPECT_EQ(cm.getColor(i), cinder::ColorA(i / 5.f, 0, 0, 1));
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        EXPECT_EQ(cm.getColor(i), glm::vec4(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS), 0, 0, 1));
+    }
+
+    EXPECT_EQ(newColors.size(), 0);
+}
+
+TEST(ColorManager, replaceColors_move_semantics_above_limit) {
+    std::vector<glm::vec4> newColors;
+    newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 1);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 1; ++i) {
+        newColors.emplace_back(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 1), 0, 0, 1);
+    }
+
+    pepr3d::ColorManager cm;
+    EXPECT_EQ(cm.size(), 4);
+
+    cm.replaceColors(std::move(newColors));
+
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
+    for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
+        EXPECT_EQ(cm.getColor(i), glm::vec4(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 1), 0, 0, 1));
     }
 
     EXPECT_EQ(newColors.size(), 0);
 }
 
 TEST(ColorManager, constructor_color_generation) {
-    pepr3d::ColorManager cm(10);
-    EXPECT_EQ(cm.size(), 10);
+    pepr3d::ColorManager cm(PEPR3D_MAX_PALETTE_COLORS);
+    EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
 }
 #endif

@@ -1,5 +1,6 @@
 #include "ModelView.h"
 #include "MainApplication.h"
+#include "geometry/Geometry.h"
 
 namespace pepr3d {
 
@@ -7,6 +8,12 @@ void ModelView::setup() {
     mCamera.lookAt(glm::vec3(3, 2, 2), glm::vec3(0, 0, 0));
     mCameraUi = ci::CameraUi(&mCamera);
     resize();
+
+    mModelShader =
+        ci::gl::GlslProg::create(ci::gl::GlslProg::Format()
+                                     .vertex(ci::loadString(mApplication.loadAsset("shaders/ModelView.vert")))
+                                     .fragment(ci::loadString(mApplication.loadAsset("shaders/ModelView.frag")))
+                                     .attrib(ci::geom::Attrib::CUSTOM_0, "aColorIndex"));
 }
 
 void ModelView::resize() {
@@ -93,7 +100,7 @@ void ModelView::drawGeometry() {
     // Since we use a new vertex for each triangle, we should have vertices == triangles
     assert(indices.size() == positions.size());
     // Get the color buffer
-    const std::vector<cinder::ColorA>& colors = mApplication.getCurrentGeometry()->getColorBuffer();
+    const std::vector<Geometry::ColorIndex>& colors = mApplication.getCurrentGeometry()->getColorBuffer();
     assert(colors.size() == positions.size());
 
     const std::vector<glm::vec3>& normals = mApplication.getCurrentGeometry()->getNormalBuffer();
@@ -102,7 +109,7 @@ void ModelView::drawGeometry() {
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::POSITION, 3),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::NORMAL, 3),
-        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::COLOR, 4)};
+        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::CUSTOM_0, 1)};  // color index
 
     // Create elementary buffer of indices
     const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
@@ -114,10 +121,14 @@ void ModelView::drawGeometry() {
     // Assign the buffers to the attributes
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, normals);
-    myVboMesh->bufferAttrib<cinder::ColorA>(ci::geom::Attrib::COLOR, colors);
+    myVboMesh->bufferAttrib<Geometry::ColorIndex>(ci::geom::Attrib::CUSTOM_0, colors);
+
+    // Assign color palette
+    auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
+    mModelShader->uniform("uColorPalette", &colorMap[0], static_cast<int>(colorMap.size()));
 
     // Create batch and draw
-    auto myBatch = ci::gl::Batch::create(myVboMesh, ci::gl::getStockShader(ci::gl::ShaderDef().lambert().color()));
+    auto myBatch = ci::gl::Batch::create(myVboMesh, mModelShader);
     myBatch->draw();
 }
 

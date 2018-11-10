@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
 #include "ui/ModelView.h"

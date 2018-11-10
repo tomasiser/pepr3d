@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "cinder/Ray.h"
+#include "cinder/gl/gl.h"
 #include "geometry/ColorManager.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/Triangle.h"
@@ -22,6 +23,10 @@ using Tree = CGAL::AABB_tree<My_AABB_traits>;
 using Ray_intersection = boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>;
 
 class Geometry {
+   public:
+    using ColorIndex = GLuint;
+
+   private:
     /// Triangle soup of the model mesh, containing CGAL::Triangle_3 data for AABB tree.
     std::vector<DataTriangle> mTriangles;
 
@@ -31,7 +36,7 @@ class Geometry {
 
     /// Color buffer, keeping the invariant that every triangle has only one color - all three vertices have to have the
     /// same color. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
-    std::vector<cinder::ColorA> mColorBuffer;
+    std::vector<ColorIndex> mColorBuffer;
 
     /// Normal buffer, the triangle has same normal for its every vertex.
     /// It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
@@ -73,7 +78,7 @@ class Geometry {
         return mIndexBuffer;
     }
 
-    std::vector<cinder::ColorA>& getColorBuffer() {
+    std::vector<ColorIndex>& getColorBuffer() {
         return mColorBuffer;
     }
 
@@ -106,7 +111,7 @@ class Geometry {
 
         auto palette = modelImporter.getColorPalette();
         assert(!palette.empty());
-        replaceColors(palette.begin(), palette.end());
+        mColorManager.replaceColors(palette.begin(), palette.end());
     }
 
     /// Set new triangle color
@@ -117,11 +122,11 @@ class Geometry {
 
         // Change all vertices of the triangle to the same new color
         assert(vertexPosition + 2 < mColorBuffer.size());
-        const ci::ColorA cinderColor = mColorManager.getColor(newColor);
 
-        mColorBuffer[vertexPosition] = cinderColor;
-        mColorBuffer[vertexPosition + 1] = cinderColor;
-        mColorBuffer[vertexPosition + 2] = cinderColor;
+        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
+        mColorBuffer[vertexPosition] = newColorIndex;
+        mColorBuffer[vertexPosition + 1] = newColorIndex;
+        mColorBuffer[vertexPosition + 2] = newColorIndex;
 
         /// Change it in the triangle soup
         assert(triangleIndex < mTriangles.size());
@@ -166,21 +171,12 @@ class Geometry {
         return mTriangles.size();
     }
 
-    /// Replace the color table with a new color table
-    void replaceColors(const std::vector<ci::ColorA>::const_iterator start,
-                       const std::vector<ci::ColorA>::const_iterator end) {
-        mColorManager.replaceColors(start, end);
-        generateColorBuffer();
+    const ColorManager& getColorManager() const {
+        return mColorManager;
     }
 
-    /// Replace the color table with a new color table
-    void replaceColors(std::vector<ci::ColorA>&& newColors) {
-        mColorManager.replaceColors(std::move(newColors));
-        generateColorBuffer();
-    }
-
-    size_t getColorSize() const {
-        return mColorManager.size();
+    ColorManager& getColorManager() {
+        return mColorManager;
     }
 
    private:
@@ -214,11 +210,10 @@ class Geometry {
         mColorBuffer.reserve(mVertexBuffer.size());
 
         for(const auto& mTriangle : mTriangles) {
-            const size_t triColorIndex = mTriangle.getColor();
-            const ci::ColorA cinderColor = mColorManager.getColor(triColorIndex);
-            mColorBuffer.push_back(cinderColor);
-            mColorBuffer.push_back(cinderColor);
-            mColorBuffer.push_back(cinderColor);
+            const ColorIndex triColorIndex = static_cast<ColorIndex>(mTriangle.getColor());
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
         }
         assert(mColorBuffer.size() == mVertexBuffer.size());
     }
@@ -232,7 +227,7 @@ class Geometry {
             mNormalBuffer.push_back(mTriangle.getNormal());
             mNormalBuffer.push_back(mTriangle.getNormal());
         }
-        assert(mColorBuffer.size() == mVertexBuffer.size());
+        assert(mNormalBuffer.size() == mVertexBuffer.size());
     }
 };
 

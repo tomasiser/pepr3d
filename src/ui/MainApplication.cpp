@@ -1,5 +1,22 @@
 #include "ui/MainApplication.h"
 
+#include "IconsMaterialDesign.h"
+#include "LightTheme.h"
+
+#include "commands/ExampleCommand.h"
+#include "geometry/Geometry.h"
+
+#include "tools/Brush.h"
+#include "tools/DisplayOptions.h"
+#include "tools/Information.h"
+#include "tools/LiveDebug.h"
+#include "tools/PaintBucket.h"
+#include "tools/Segmentation.h"
+#include "tools/Settings.h"
+#include "tools/TextEditor.h"
+#include "tools/Tool.h"
+#include "tools/TrianglePainter.h"
+
 #if defined(CINDER_MSW_DESKTOP)
 #include "windows.h"
 #endif

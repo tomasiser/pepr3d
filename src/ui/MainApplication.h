@@ -8,31 +8,18 @@
 #define CINDER_IMGUI_NO_NAMESPACE_ALIAS
 #include "CinderImGui.h"
 
-#include "IconsMaterialDesign.h"
-#include "LightTheme.h"
 #include "ModelView.h"
 #include "SidePane.h"
 #include "Toolbar.h"
-
-#include "commands/ExampleCommand.h"
-#include "geometry/Geometry.h"
-
-#include "tools/Brush.h"
-#include "tools/DisplayOptions.h"
-#include "tools/Information.h"
-#include "tools/LiveDebug.h"
-#include "tools/PaintBucket.h"
-#include "tools/Segmentation.h"
-#include "tools/Settings.h"
-#include "tools/TextEditor.h"
-#include "tools/Tool.h"
-#include "tools/TrianglePainter.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
 namespace pepr3d {
+
+class ITool;
+class Geometry;
 
 class MainApplication : public App {
    public:
