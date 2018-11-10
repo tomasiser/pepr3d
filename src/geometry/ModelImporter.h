@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include "geometry/Triangle.h"
 
+#include <cinder/Log.h>
 #include <boost/functional/hash.hpp>
 
 namespace pepr3d {
@@ -142,8 +143,14 @@ class ModelImporter {
                 }
             }
 
-            /// Place the constructed triangle
-            triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
+            /// Check for degenerate triangles which we do not want in the representation
+            const bool zeroAreaCheck =
+                vertices[0] != vertices[1] && vertices[0] != vertices[2] && vertices[1] != vertices[2];
+            CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from geometry data.");
+            if(zeroAreaCheck) {
+                /// Place the constructed triangle
+                triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
+            }
         }
         return triangles;
     }
