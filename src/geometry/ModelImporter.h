@@ -157,7 +157,7 @@ class ModelImporter {
         }
         return triangles;
     }
-    
+
     /// Calculates triangle normal from its vertices with orientation of original vertex normals.
     static glm::vec3 calculateNormal(const glm::vec3 vertices[3], const glm::vec3 normals[3]) {
         const glm::vec3 p0 = vertices[1] - vertices[0];
@@ -169,6 +169,8 @@ class ModelImporter {
 
         return (dot < 0.0f) ? -faceNormal : faceNormal;
     }
+
+    bool sameColor() {}
 };
 
 }  // namespace pepr3d

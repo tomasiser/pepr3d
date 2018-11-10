@@ -93,26 +93,26 @@ class Geometry {
         ModelImporter modelImporter(fileName);  // only first mesh [0]
 
         if(modelImporter.isModelLoaded()) {
-        mTriangles = modelImporter.getTriangles();
+            mTriangles = modelImporter.getTriangles();
 
-        /// Generate new vertex buffer
-        generateVertexBuffer();
+            /// Generate new vertex buffer
+            generateVertexBuffer();
 
-        /// Generate new index buffer
-        generateIndexBuffer();
+            /// Generate new index buffer
+            generateIndexBuffer();
 
-        /// Generate new color buffer from triangle color data
-        generateColorBuffer();
+            /// Generate new color buffer from triangle color data
+            generateColorBuffer();
 
-        /// Generate new normal buffer, copying the triangle normal to each vertex
-        generateNormalBuffer();
+            /// Generate new normal buffer, copying the triangle normal to each vertex
+            generateNormalBuffer();
 
-        /// Rebuild the AABB tree
-        mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
-        assert(mTree->size() == mTriangles.size());
+            /// Rebuild the AABB tree
+            mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
+            assert(mTree->size() == mTriangles.size());
 
-        mColorManager = modelImporter.getColorManager();
-        assert(!mColorManager.empty());
+            mColorManager = modelImporter.getColorManager();
+            assert(!mColorManager.empty());
         } else {
             CI_LOG_E("Model not loaded --> write out message for user");
         }
