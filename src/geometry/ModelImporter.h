@@ -10,8 +10,8 @@
 #include <unordered_set>
 #include "geometry/Triangle.h"
 
-#include <boost/functional/hash.hpp>
 #include <cinder/Log.h>
+#include <boost/functional/hash.hpp>
 
 namespace pepr3d {
 
