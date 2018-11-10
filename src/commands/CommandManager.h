@@ -16,7 +16,7 @@ must have a saveState() and loadState(State) methods
 template <typename Target>
 class CommandManager {
    public:
-    using CommandBase = CommandBase<Target>;
+    using CommandBaseType = CommandBase<Target>;
     using StateType = decltype(std::declval<const Target>().saveState());
 
     /// How often snapshots of the target should be saved (at minimum)
@@ -27,7 +27,7 @@ class CommandManager {
 
     /// Execute a command, saving it into a history and removing all currently redoable commands.
     /// @param join Try to join this command into the last one
-    void execute(std::unique_ptr<CommandBase>&& command, bool join = false);
+    void execute(std::unique_ptr<CommandBaseType>&& command, bool join = false);
 
     /// Undo a single command operation
     void undo();
@@ -42,15 +42,15 @@ class CommandManager {
     bool canRedo() const;
 
     /// Get last command that was executed (ie the command to be undoed) @see canUndo()
-    const CommandBase& getLastCommand() const;
+    const CommandBaseType& getLastCommand() const;
 
     /// Get next command to be redoed if it exists @see canRedo()
-    const CommandBase& getNextCommand() const;
+    const CommandBaseType& getNextCommand() const;
 
    private:
     Target& mTarget;
     /// Executed and possibly future commands
-    std::vector<std::unique_ptr<CommandBase>> mCommandHistory;
+    std::vector<std::unique_ptr<CommandBaseType>> mCommandHistory;
 
     /// Saved states of the target and commandId after them
     struct SnapshotPair {
@@ -72,14 +72,14 @@ class CommandManager {
     bool shouldSaveState() const;
 
     /// Join this command with the last one
-    bool joinWithLastCommand(CommandBase& command);
+    bool joinWithLastCommand(CommandBaseType& command);
 
     size_t getNumOfCommandsSinceSnapshot() const;
 
-    CommandBase& getLastCommand() {
+    CommandBaseType& getLastCommand() {
         // allow non const access for command manager
         const auto* constThis = static_cast<const decltype(this)>(this);
-        return const_cast<CommandBase&>(constThis->getLastCommand());
+        return const_cast<CommandBaseType&>(constThis->getLastCommand());
     }
 };
 
@@ -99,7 +99,7 @@ auto CommandManager<Target>::getPrevSnapshotIterator() const {
 }
 
 template <typename Target>
-void CommandManager<Target>::execute(std::unique_ptr<CommandBase>&& command, bool join) {
+void CommandManager<Target>::execute(std::unique_ptr<CommandBaseType>&& command, bool join) {
     clearFutureState();
 
     // Command is either stored in history or joined to the last one
@@ -154,7 +154,7 @@ bool CommandManager<Target>::canRedo() const {
 }
 
 template <typename Target>
-const typename CommandManager<Target>::CommandBase& CommandManager<Target>::getLastCommand() const {
+const typename CommandManager<Target>::CommandBaseType& CommandManager<Target>::getLastCommand() const {
     if(!canUndo()) {
         throw std::logic_error("No last command exists");
     }
@@ -163,7 +163,7 @@ const typename CommandManager<Target>::CommandBase& CommandManager<Target>::getL
 }
 
 template <typename Target>
-const typename CommandManager<Target>::CommandBase& CommandManager<Target>::getNextCommand() const {
+const typename CommandManager<Target>::CommandBaseType& CommandManager<Target>::getNextCommand() const {
     if(!canRedo()) {
         throw std::logic_error("No next command exists");
     }
@@ -196,7 +196,7 @@ bool CommandManager<Target>::shouldSaveState() const {
 }
 
 template <typename Target>
-bool CommandManager<Target>::joinWithLastCommand(CommandBase& command) {
+bool CommandManager<Target>::joinWithLastCommand(CommandBaseType& command) {
     if(!canUndo() || getLastCommand().getCommandType() != command.getCommandType() || command.getCommandType() == 0)
         return false;
 

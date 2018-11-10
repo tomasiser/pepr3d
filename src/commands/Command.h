@@ -42,7 +42,7 @@ class CommandBase {
      * Join this command with other command of the same commandType, uniting both commands into this command's contents.
      * @return true on successful join
      */
-    virtual bool joinCommand(const CommandBase& other) {
+    virtual bool joinCommand(const CommandBase&) {
         return false;
     }
 
