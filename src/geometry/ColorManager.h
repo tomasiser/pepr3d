@@ -50,13 +50,31 @@ class ColorManager {
         return mColorMap.size();
     }
 
+    /// Returns true iff no colors are currently used
+    bool empty() const {
+        return mColorMap.empty();
+    }
+
+    /// Clears all colors and becomes empty
+    void clear() {
+        mColorMap.clear();
+    }
+
+    /// Adds a new color if not above limit
+    void addColor(const glm::vec4 newColor) {
+        if(size() < PEPR3D_MAX_PALETTE_COLORS) {
+            mColorMap.push_back(newColor);
+        }
+        assert(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
+    }
+
     /// Set the i-th color to a new color
     void setColor(const size_t i, const glm::vec4 newColor) {
         assert(i < mColorMap.size());
         mColorMap[i] = newColor;
     }
 
-    /// Replace the current colors with this list
+    /// Replace the current colors with this list, trims if above limit
     void replaceColors(const ColorMap::const_iterator start, const ColorMap::const_iterator end) {
         auto it = start;
         mColorMap.clear();
@@ -67,7 +85,7 @@ class ColorManager {
         }
     }
 
-    /// Replace the current colors with this new vector of colors
+    /// Replace the current colors with this new vector of colors, trims if above limit
     void replaceColors(ColorMap&& newColors) {
         mColorMap = std::move(newColors);
         if(mColorMap.size() > PEPR3D_MAX_PALETTE_COLORS) {

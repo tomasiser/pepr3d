@@ -109,9 +109,8 @@ class Geometry {
         mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
         assert(mTree->size() == mTriangles.size());
 
-        auto palette = modelImporter.getColorPalette();
-        assert(!palette.empty());
-        mColorManager.replaceColors(palette.begin(), palette.end());
+        mColorManager = modelImporter.getColorManager();
+        assert(!mColorManager.empty());
     }
 
     /// Set new triangle color
