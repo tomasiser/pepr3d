@@ -18,34 +18,34 @@
 namespace pepr3d {
 
 class ModelImporter {
-    std::string path;
-    std::vector<aiMesh *> meshes;
-    std::vector<DataTriangle> triangles;
-    ColorManager palette;
-    bool modelLoaded = false;
+    std::string mPath;
+    std::vector<aiMesh *> mMeshes;
+    std::vector<DataTriangle> mTriangles;
+    ColorManager mPalette;
+    bool mModelLoaded = false;
 
    public:
     ModelImporter(std::string path) {
-        this->path = path;
-        this->modelLoaded = loadModel(path);
+        this->mPath = path;
+        this->mModelLoaded = loadModel(path);
     }
 
     std::vector<DataTriangle> getTriangles() const {
-        return triangles;
+        return mTriangles;
     }
 
     ColorManager getColorManager() const {
-        assert(!palette.empty());
-        return palette;
+        assert(!mPalette.empty());
+        return mPalette;
     }
 
     bool isModelLoaded() {
-        return modelLoaded;
+        return mModelLoaded;
     }
 
    private:
     bool loadModel(const std::string &path) {
-        palette.clear();
+        mPalette.clear();
 
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
@@ -67,10 +67,10 @@ class ModelImporter {
         /// Access the file's contents
         processNode(scene->mRootNode, scene);
 
-        triangles = processFirstMesh(meshes[0]);
+        mTriangles = processFirstMesh(mMeshes[0]);
 
-        if(palette.empty()) {
-            palette = ColorManager();  // create new palette with default colors
+        if(mPalette.empty()) {
+            mPalette = ColorManager();  // create new palette with default colors
         }
 
         // Everything will be cleaned up by the importer destructor
@@ -82,7 +82,7 @@ class ModelImporter {
         /// Process all the node's meshes (if any).
         for(unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-            meshes.push_back(mesh);
+            mMeshes.push_back(mesh);
         }
 
         /// Recursively do the same for each of its children.
@@ -134,13 +134,13 @@ class ModelImporter {
                 const std::array<float, 3> rgbArray = {color.r, color.g, color.b};
                 const auto result = colorLookup.find(rgbArray);
                 if(result != colorLookup.end()) {
-                    assert(result->second < palette.size());
+                    assert(result->second < mPalette.size());
                     assert(result->second > 0);
                     returnColor = result->second;
                 } else {
-                    palette.addColor(color);
-                    colorLookup.insert({rgbArray, palette.size() - 1});
-                    returnColor = palette.size() - 1;
+                    mPalette.addColor(color);
+                    colorLookup.insert({rgbArray, mPalette.size() - 1});
+                    returnColor = mPalette.size() - 1;
                     assert(colorLookup.find(rgbArray) != colorLookup.end());
                 }
             }
