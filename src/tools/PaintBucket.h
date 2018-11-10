@@ -1,4 +1,5 @@
 #pragma once
+#include "geometry/Geometry.h"
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
 #include "ui/SidePane.h"
@@ -23,5 +24,29 @@ class PaintBucket : public ITool {
 
    private:
     MainApplication& mApplication;
+
+    struct DoNotStop {
+        const Geometry* geo;
+
+        DoNotStop(const Geometry* g) : geo(g) {}
+
+        bool operator()(const size_t a, const size_t b) const {
+            return true;
+        }
+    };
+
+    struct ColorStopping {
+        const Geometry* geo;
+
+        ColorStopping(const Geometry* g) : geo(g) {}
+
+        bool operator()(const size_t a, const size_t b) const {
+            if(geo->getTriangle(a).getColor() == geo->getTriangle(b).getColor()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
 };
 }  // namespace pepr3d

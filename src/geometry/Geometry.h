@@ -77,6 +77,10 @@ class Geometry {
         assert(mTree->size() == mTriangles.size());
     }
 
+    const DataTriangle& getTriangle(const size_t i) const {
+        return mTriangles[i];
+    }
+
     /// Returns a constant iterator to the vertex buffer
     std::vector<glm::vec3>& getVertexBuffer() {
         return mVertexBuffer;
@@ -216,7 +220,8 @@ class Geometry {
     }
 
     /// Spreads color starting from startTriangle to wherever it can reach.
-    void bucket(const std::size_t startTriangle) {
+    template <typename StoppingCondition>
+    void bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
         if(mPolyhedronData.P.is_empty()) {
             return;
         }
@@ -239,9 +244,9 @@ class Geometry {
             assert(toVisit.size() < mTriangles.size());
 
             // Manage neighbours and grow the queue
-            addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit);
+            addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit, stopFunctor);
 
-            // Do the operation
+            // Set the color
             setTriangleColor(currentVertex, mColorManager.size() - 2);
         }
     }
@@ -318,9 +323,10 @@ class Geometry {
 
     /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL
     /// Polyhedron construct.
-    static std::array<int, 3> gatherNeighbours(
+    std::array<int, 3> gatherNeighbours(
         const size_t triIndex,
-        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) {
+        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const {
+        assert(triIndex < faceHandles.size());
         const Polyhedron::Facet_iterator& facet = faceHandles[triIndex];
         std::array<int, 3> returnValue = {-1, -1, -1};
         assert(facet->is_triangle());
@@ -343,10 +349,12 @@ class Geometry {
     }
 
     /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
-    static void addNeighboursToQueue(
+    template <typename StoppingCondition>
+    void addNeighboursToQueue(
         const size_t currentVertex,
         const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
-        std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit) {
+        std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
+        const StoppingCondition& stopFunctor) const {
         const std::array<int, 3> neighbours = gatherNeighbours(currentVertex, faceHandles);
         for(int i = 0; i < 3; ++i) {
             if(neighbours[i] == -1) {
@@ -354,7 +362,9 @@ class Geometry {
             } else {
                 if(alreadyVisited.find(neighbours[i]) == alreadyVisited.end()) {
                     // New vertex -> visit it.
-                    toVisit.push_back(neighbours[i]);
+                    if(stopFunctor(neighbours[i], currentVertex)) {
+                        toVisit.push_back(neighbours[i]);
+                    }
                     alreadyVisited.insert(neighbours[i]);
                 }
             }

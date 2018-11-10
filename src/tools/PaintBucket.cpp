@@ -25,10 +25,8 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     std::optional<std::size_t> selectedTriangleId = geometry->intersectMesh(lastRay);
 
     if(selectedTriangleId) {
-        /*const size_t colorCount = geometry->getColorSize();
-        geometry->setTriangleColor(*selectedTriangleId, colorCount - 1);*/
-
-        geometry->bucket(*selectedTriangleId);
+        const ColorStopping ftor(geometry);
+        geometry->bucket(*selectedTriangleId, ftor);
     }
 }
 
