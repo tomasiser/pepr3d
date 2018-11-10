@@ -91,6 +91,8 @@ class Geometry {
     void loadNewGeometry(const std::string& fileName) {
         /// Load into mTriangles
         ModelImporter modelImporter(fileName);  // only first mesh [0]
+
+        if(modelImporter.isModelLoaded()) {
         mTriangles = modelImporter.getTriangles();
 
         /// Generate new vertex buffer
@@ -111,6 +113,9 @@ class Geometry {
 
         mColorManager = modelImporter.getColorManager();
         assert(!mColorManager.empty());
+        } else {
+            CI_LOG_E("Model not loaded --> write out message for user");
+        }
     }
 
     /// Set new triangle color

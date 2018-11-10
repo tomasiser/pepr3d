@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 
+#include <assimp/cimport.h>
 #include <assimp/postprocess.h>  // Post processing flags
 #include <assimp/scene.h>        // Output data structure
 #include <assimp/Importer.hpp>   // C++ importer interface
@@ -18,15 +19,15 @@ namespace pepr3d {
 
 class ModelImporter {
     std::string path;
-    const aiScene *scene;
     std::vector<aiMesh *> meshes;
     std::vector<DataTriangle> triangles;
     ColorManager palette;
+    bool modelLoaded = false;
 
    public:
     ModelImporter(std::string path) {
         this->path = path;
-        loadModel(path);
+        this->modelLoaded = loadModel(path);
     }
 
     std::vector<DataTriangle> getTriangles() const {
@@ -38,6 +39,10 @@ class ModelImporter {
         return palette;
     }
 
+    bool isModelLoaded() {
+        return modelLoaded;
+    }
+
    private:
     bool loadModel(const std::string &path) {
         palette.clear();
@@ -45,18 +50,22 @@ class ModelImporter {
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
 
+        importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
+        importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
+
         /// Scene with some postprocessing
-        scene =
-            importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+        const aiScene *scene =
+            importer.ReadFile(path, aiProcess_FixInfacingNormals | aiProcess_Triangulate | aiProcess_SortByPType |
+                                        aiProcess_GenNormals | aiProcess_RemoveComponent | aiProcess_FindDegenerates);
 
         // If the import failed, report it
         if(!scene) {
-            std::cout << "fail: " << importer.GetErrorString() << std::endl;  // TODO: write out error somewhere
+            CI_LOG_E(importer.GetErrorString());  // TODO: write out error message somewhere
             return false;
         }
 
         /// Access the file's contents
-        processNode(scene->mRootNode);
+        processNode(scene->mRootNode, scene);
 
         triangles = processFirstMesh(meshes[0]);
 
@@ -69,7 +78,7 @@ class ModelImporter {
     }
 
     /// Processes scene tree recursively. Retrieving meshes from file.
-    void processNode(aiNode *node) {
+    void processNode(aiNode *node, const aiScene *scene) {
         /// Process all the node's meshes (if any).
         for(unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
@@ -78,7 +87,7 @@ class ModelImporter {
 
         /// Recursively do the same for each of its children.
         for(unsigned int i = 0; i < node->mNumChildren; i++) {
-            processNode(node->mChildren[i]);
+            processNode(node->mChildren[i], scene);
         }
     }
 
@@ -109,11 +118,7 @@ class ModelImporter {
             }
 
             /// Calculation of surface normals from vertices and vertex normals or only from vertices.
-            if(mesh->HasNormals()) {
-                normal = calculateNormal(vertices, normals);
-            } else {
-                normal = calculateNormal(vertices);
-            }
+            normal = calculateNormal(vertices, normals);
 
             /// Obtaining triangle color. Default color is set if there is no color information
             std::unordered_map<std::array<float, 3>, size_t, boost::hash<std::array<float, 3>>> colorLookup;
@@ -143,28 +148,16 @@ class ModelImporter {
             /// Check for degenerate triangles which we do not want in the representation
             const bool zeroAreaCheck =
                 vertices[0] != vertices[1] && vertices[0] != vertices[2] && vertices[1] != vertices[2];
-            CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from geometry data.");
             if(zeroAreaCheck) {
                 /// Place the constructed triangle
                 triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
+            } else {
+                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from geometry data.");
             }
         }
         return triangles;
     }
-
-    /// Calculates triangle normal from its vertices.
-    static glm::vec3 calculateNormal(glm::vec3 *v) {  // hoping for correct direction
-        const glm::vec3 V1 = (v[1] - v[0]);
-        const glm::vec3 V2 = (v[2] - v[0]);
-        glm::vec3 faceNormal;
-        faceNormal.x = (V1.y * V2.z) - (V1.z - V2.y);
-        faceNormal.y = -((V2.z * V1.x) - (V2.x * V1.z));
-        faceNormal.z = (V1.x - V2.y) - (V1.y - V2.x);
-
-        faceNormal = glm::normalize(faceNormal);
-        return faceNormal;
-    }
-
+    
     /// Calculates triangle normal from its vertices with orientation of original vertex normals.
     static glm::vec3 calculateNormal(const glm::vec3 vertices[3], const glm::vec3 normals[3]) {
         const glm::vec3 p0 = vertices[1] - vertices[0];
@@ -176,8 +169,6 @@ class ModelImporter {
 
         return (dot < 0.0f) ? -faceNormal : faceNormal;
     }
-
-    bool sameColor() {}
 };
 
 }  // namespace pepr3d
