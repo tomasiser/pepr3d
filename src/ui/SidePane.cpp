@@ -45,8 +45,6 @@ void SidePane::draw() {
 
     ImGui::End();
 
-    // ImGui::PopStyleVar(1);
-
     ImGui::SetNextWindowPos(glm::ivec2(mApplication.getWindowSize().x - size.x, 49));
     ImGui::SetNextWindowSize(glm::ivec2(size.x + 1.0f, size.y - mApplication.getToolbar().getHeight() + 1.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
@@ -140,16 +138,12 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + boxWidth), static_cast<int>(boxHeight + 1)),
             (ImColor)color);
         if(isSelected) {
-            // ImColor inverseColor = glm::vec4(glm::vec3(1.0) - glm::vec3(colorManager.getColor(i)), 1.0f);
             float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
             glm::vec4 selectColor = (brightness > 0.75f) ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC);
             drawList->AddRect(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + 2), 1 + 2),
                               cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + boxWidth - 2),
                                                      static_cast<int>(boxHeight + 1 - 2)),
                               (ImColor)selectColor, 0.0f, 15, 5.0f);
-            // drawList->AddCircleFilled(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + (boxWidth / 2.0f)),
-            //                                                  static_cast<int>(1 + (boxHeight / 2))),
-            //                           boxHeight / 2.0f, (ImColor)colorManager.getColor(i), 32);
         }
 
         ImGui::SetNextWindowPos(cursorPos + glm::ivec2(0, static_cast<int>(boxHeight) + 2));
@@ -160,16 +154,6 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
                 colorManager.setColor(i, color);
             }
             ImGui::PopItemWidth();
-            // ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
-            // ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
-            // ImGui::Button("Open", glm::ivec2(175, 50));
-            // ImGui::Button("Save", glm::ivec2(175, 50));
-            // ImGui::Button("Save as", glm::ivec2(175, 50));
-            // ImGui::Button("Export", glm::ivec2(175, 50));
-            // if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
-            //     mApplication.quit();
-            // }
-            // ImGui::PopStyleVar(2);
             ImGui::EndPopup();
         }
 

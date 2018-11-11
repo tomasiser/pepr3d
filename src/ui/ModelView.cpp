@@ -163,7 +163,6 @@ void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
     ci::gl::drawLine(triangle.getVertex(0), triangle.getVertex(1));
     ci::gl::drawLine(triangle.getVertex(1), triangle.getVertex(2));
     ci::gl::drawLine(triangle.getVertex(2), triangle.getVertex(0));
-    // ci::gl::drawSolidTriangle(triangle.getVertex(0), triangle.getVertex(1), triangle.getVertex(2));
 }
 
 }  // namespace pepr3d
