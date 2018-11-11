@@ -364,8 +364,8 @@ class Geometry {
                     // New vertex -> visit it.
                     if(stopFunctor(neighbours[i], currentVertex)) {
                         toVisit.push_back(neighbours[i]);
+                        alreadyVisited.insert(neighbours[i]);
                     }
-                    alreadyVisited.insert(neighbours[i]);
                 }
             }
         }

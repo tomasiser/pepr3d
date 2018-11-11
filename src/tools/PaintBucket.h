@@ -48,5 +48,24 @@ class PaintBucket : public ITool {
             }
         }
     };
+
+    struct NormalStopping {
+        const Geometry* geo;
+        const double threshold;
+
+        NormalStopping(const Geometry* g, const double thresh) : geo(g), threshold(thresh) {}
+
+        bool operator()(const size_t a, const size_t b) const {
+            const auto& normal1 = geo->getTriangle(a).getNormal();
+            const auto& normal2 = geo->getTriangle(b).getNormal();
+
+            const double cosAngle = glm::dot(glm::normalize(normal1), glm::normalize(normal2));
+            if(cosAngle < threshold) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    };
 };
 }  // namespace pepr3d
