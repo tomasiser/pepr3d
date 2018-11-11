@@ -55,6 +55,7 @@ void MainApplication::setup() {
     mModelView.setup();
 
     mGeometry = std::make_unique<Geometry>();
+    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string());
 }
 
 void MainApplication::resize() {

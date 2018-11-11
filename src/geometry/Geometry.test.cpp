@@ -4,8 +4,38 @@
 
 #include "geometry/Geometry.h"
 
+pepr3d::Geometry getGeometryWithCube() {
+    std::vector<pepr3d::DataTriangle> triangles;
+    // cube
+    triangles.emplace_back(glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5), glm::vec3(0.5, 0.5, -0.5),
+                           glm::vec3(0, 1, 0), 0);  // top
+    triangles.emplace_back(glm::vec3(0.5, 0.5, -0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
+                           glm::vec3(0, 1, 0), 0);
+    triangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, -0.5),
+                           glm::vec3(0, -1, 0), 0);  // bottom
+    triangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(-0.5, -0.5, 0.5),
+                           glm::vec3(0, -1, 0), 0);
+    triangles.emplace_back(glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, 0.5),
+                           glm::vec3(1, 0, 0), 0);  // front
+    triangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, -0.5), glm::vec3(0.5, 0.5, 0.5),
+                           glm::vec3(1, 0, 0), 0);
+    triangles.emplace_back(glm::vec3(-0.5, -0.5, 0.5), glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5),
+                           glm::vec3(-1, 0, 0), 0);  // back
+    triangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5),
+                           glm::vec3(-1, 0, 0), 0);
+    triangles.emplace_back(glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
+                           glm::vec3(0, 0, 1), 0);  // left
+    triangles.emplace_back(glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
+                           glm::vec3(0, 0, 1), 0);
+    triangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5),
+                           glm::vec3(0, 0, -1), 0);  // right
+    triangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5),
+                           glm::vec3(0, 0, -1), 0);
+    return pepr3d::Geometry(std::move(triangles));
+}
+
 TEST(Geometry, initialize) {
-    pepr3d::Geometry geo;
+    pepr3d::Geometry geo(getGeometryWithCube());
     EXPECT_EQ(geo.getTriangleCount(), 12);
 
     const auto vertexBuffer = geo.getVertexBuffer();
@@ -19,7 +49,7 @@ TEST(Geometry, initialize) {
 }
 
 TEST(Geometry, getColor) {
-    pepr3d::Geometry geo;
+    pepr3d::Geometry geo(getGeometryWithCube());
 
     EXPECT_EQ(geo.getTriangleColor(0), 0);
     EXPECT_EQ(geo.getTriangleColor(1), 0);
@@ -34,7 +64,7 @@ TEST(Geometry, getColor) {
 }
 
 TEST(Geometry, setColor) {
-    pepr3d::Geometry geo;
+    pepr3d::Geometry geo(getGeometryWithCube());
 
     EXPECT_EQ(geo.getTriangleColor(0), 0);
     EXPECT_EQ(geo.getTriangleColor(1), 0);

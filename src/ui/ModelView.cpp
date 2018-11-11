@@ -148,15 +148,15 @@ void ModelView::drawGeometry() {
 }
 
 void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
-    auto geometry = mApplication.getCurrentGeometry();
+    const Geometry* const geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         return;
     }
 
-    auto triangle = geometry->getTriangle(triangleIndex);
-    auto color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleIndex));
-    float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
-    bool isDarkHighlight = mIsWireframeEnabled ? (brightness <= 0.75f) : (brightness > 0.75f);
+    const DataTriangle& triangle = geometry->getTriangle(triangleIndex);
+    const glm::vec4 color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleIndex));
+    const float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+    const bool isDarkHighlight = mIsWireframeEnabled ? (brightness <= 0.75f) : (brightness > 0.75f);
     ci::gl::ScopedColor drawColor(isDarkHighlight ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC));
     ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
     gl::ScopedDepth depth(false);

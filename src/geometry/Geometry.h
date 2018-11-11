@@ -52,41 +52,17 @@ class Geometry {
     ColorManager mColorManager;
 
    public:
-    /// Empty constructor rendering a triangle to debug
+    /// Empty constructor
     Geometry() {
-        // cube
-        mTriangles.emplace_back(glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5), glm::vec3(0.5, 0.5, -0.5),
-                                glm::vec3(0, 1, 0), 0);  // top
-        mTriangles.emplace_back(glm::vec3(0.5, 0.5, -0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
-                                glm::vec3(0, 1, 0), 0);
-        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, -0.5),
-                                glm::vec3(0, -1, 0), 0);  // bottom
-        mTriangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(-0.5, -0.5, 0.5),
-                                glm::vec3(0, -1, 0), 0);
-        mTriangles.emplace_back(glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, 0.5),
-                                glm::vec3(1, 0, 0), 0);  // front
-        mTriangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, -0.5), glm::vec3(0.5, 0.5, 0.5),
-                                glm::vec3(1, 0, 0), 0);
-        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, 0.5), glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5),
-                                glm::vec3(-1, 0, 0), 0);  // back
-        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5),
-                                glm::vec3(-1, 0, 0), 0);
-        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
-                                glm::vec3(0, 0, 1), 0);  // left
-        mTriangles.emplace_back(glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
-                                glm::vec3(0, 0, 1), 0);
-        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5),
-                                glm::vec3(0, 0, -1), 0);  // right
-        mTriangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5),
-                                glm::vec3(0, 0, -1), 0);
+        mTree = std::make_unique<Tree>();
+    }
 
+    Geometry(std::vector<DataTriangle>&& triangles) : mTriangles(std::move(triangles)) {
         generateVertexBuffer();
+        generateIndexBuffer();
         generateColorBuffer();
         generateNormalBuffer();
-        generateIndexBuffer();
-
         assert(mIndexBuffer.size() == mVertexBuffer.size());
-
         mTree = std::make_unique<Tree>(mTriangles.begin(), mTriangles.end());
         assert(mTree->size() == mTriangles.size());
     }
@@ -156,7 +132,7 @@ class Geometry {
     }
 
     /// Get the color of the indexed triangle
-    size_t getTriangleColor(const size_t triangleIndex) {
+    size_t getTriangleColor(const size_t triangleIndex) const {
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex].getColor();
     }
@@ -164,7 +140,10 @@ class Geometry {
     /// Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists.
     /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
     std::optional<size_t> intersectMesh(const ci::Ray& ray) const {
-        assert(!mTree->empty());
+        if(mTree->empty()) {
+            return {};
+        }
+
         const glm::vec3 source = ray.getOrigin();
         const glm::vec3 direction = ray.getDirection();
 

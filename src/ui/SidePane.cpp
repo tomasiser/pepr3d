@@ -98,11 +98,11 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
 
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     glm::ivec2 initialCursorPos = ImGui::GetCursorScreenPos();
-    auto* drawList = ImGui::GetWindowDrawList();
+    ImDrawList* const drawList = ImGui::GetWindowDrawList();
 
-    size_t boxesPerRow = std::min<size_t>(colorManager.size(), 4);
-    float boxHeight = 38.0f;  // without border
-    float boxWidth =          // without border
+    const size_t boxesPerRow = std::min<size_t>(colorManager.size(), 4);
+    const float boxHeight = 38.0f;  // without border
+    const float boxWidth =          // without border
         (ImGui::GetContentRegionAvailWidth() - (static_cast<float>(boxesPerRow) + 1.0f)) /
         static_cast<float>(boxesPerRow);  // subtract 1px per each separator and boundary and divide by number of boxes
     size_t rowCount = 1;
@@ -114,9 +114,9 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
             leftCornerX = 0;
         }
 
-        bool isSelected = i == colorManager.getActiveColorIndex();
-        std::string colorEditPopupId = std::string("##colorPaletteEditPopup") + std::to_string(i);
-        std::string colorPickerId = std::string("##colorPalettePicker") + std::to_string(i);
+        const bool isSelected = i == colorManager.getActiveColorIndex();
+        const std::string colorEditPopupId = std::string("##colorPaletteEditPopup") + std::to_string(i);
+        const std::string colorPickerId = std::string("##colorPalettePicker") + std::to_string(i);
 
         ImGui::SetCursorScreenPos(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1), 1));
         if(ImGui::InvisibleButton((std::string("colorPaletteButton") + std::to_string(i)).c_str(),
