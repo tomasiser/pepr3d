@@ -8,14 +8,12 @@ TEST(ColorManager, constructor_basic) {
     pepr3d::ColorManager cm;
     EXPECT_EQ(cm.size(), 4);
     EXPECT_LE(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
-    EXPECT_EQ(cm.getColor(0).r, 1);
 }
 
 TEST(ColorManager, setColor) {
     pepr3d::ColorManager cm;
-    const glm::vec4 red(1, 0, 0, 1);
     const glm::vec4 yellow(1, 1, 0, 1);
-    EXPECT_EQ(cm.getColor(0), red);
+    EXPECT_EQ(cm.getColor(0), static_cast<glm::vec4>(ci::ColorA::hex(0x017BDA)));
 
     const auto color1 = cm.getColor(1);
     const auto color2 = cm.getColor(2);

@@ -35,9 +35,8 @@ class TrianglePainter : public ITool {
     CommandManager<class Geometry>& mCommandManager;
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
+
     bool mGroupCommands = false;
-    // size_t mSelectedTriangleOriginalColor = 0;
-    // std::optional<std::size_t> mSelectedTriangleId = {};
     std::optional<std::size_t> mHoveredTriangleId = {};
 };
 }  // namespace pepr3d

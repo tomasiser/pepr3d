@@ -140,6 +140,7 @@ void ModelView::drawGeometry() {
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
     mModelShader->uniform("uColorPalette", &colorMap[0], static_cast<int>(colorMap.size()));
+    mModelShader->uniform("uShowWireframe", mIsWireframeEnabled);
 
     // Create batch and draw
     auto myBatch = ci::gl::Batch::create(myVboMesh, mModelShader);
@@ -147,21 +148,21 @@ void ModelView::drawGeometry() {
 }
 
 void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
-    auto geometry = mApplication.getCurrentGeometry();
+    const Geometry* const geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         return;
     }
 
-    auto triangle = geometry->getTriangle(triangleIndex);
-    auto color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleIndex));
-    float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
-    ci::gl::ScopedColor drawColor((brightness > 0.75f) ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC));
-    ci::gl::ScopedLineWidth drawWidth(1.0f);
+    const DataTriangle& triangle = geometry->getTriangle(triangleIndex);
+    const glm::vec4 color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleIndex));
+    const float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+    const bool isDarkHighlight = mIsWireframeEnabled ? (brightness <= 0.75f) : (brightness > 0.75f);
+    ci::gl::ScopedColor drawColor(isDarkHighlight ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC));
+    ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
     gl::ScopedDepth depth(false);
     ci::gl::drawLine(triangle.getVertex(0), triangle.getVertex(1));
     ci::gl::drawLine(triangle.getVertex(1), triangle.getVertex(2));
     ci::gl::drawLine(triangle.getVertex(2), triangle.getVertex(0));
-    // ci::gl::drawSolidTriangle(triangle.getVertex(0), triangle.getVertex(1), triangle.getVertex(2));
 }
 
 }  // namespace pepr3d

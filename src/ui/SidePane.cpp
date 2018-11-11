@@ -45,8 +45,6 @@ void SidePane::draw() {
 
     ImGui::End();
 
-    // ImGui::PopStyleVar(1);
-
     ImGui::SetNextWindowPos(glm::ivec2(mApplication.getWindowSize().x - size.x, 49));
     ImGui::SetNextWindowSize(glm::ivec2(size.x + 1.0f, size.y - mApplication.getToolbar().getHeight() + 1.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
@@ -82,27 +80,43 @@ void SidePane::drawSeparator() {
 void SidePane::drawColorPalette(ColorManager& colorManager) {
     drawText("Color");
 
+    // TODO: https://github.com/tomasiser/pepr3d/issues/41
+
+    // int colorCount = colorManager.size();
+    // if (ImGui::DragInt("##colorPaletteAmount", &colorCount, 0.05f, 1, PEPR3D_MAX_PALETTE_COLORS)) {
+    //     int diff = colorManager.size() - colorCount;
+    //     while (diff != 0) {
+    //         if (diff > 0) {
+    //             colorManager.popColor();
+    //             --diff;
+    //         } else {
+    //             colorManager.addColor(colorManager.getColor(colorManager.size() - 1));
+    //             ++diff;
+    //         }
+    //     }
+    // }
+
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     glm::ivec2 initialCursorPos = ImGui::GetCursorScreenPos();
-    auto* drawList = ImGui::GetWindowDrawList();
+    ImDrawList* const drawList = ImGui::GetWindowDrawList();
 
-    size_t boxesPerRow = std::min<size_t>(colorManager.size(), 4);
-    float boxHeight = 38.0f;  // without border
-    float boxWidth =          // without border
+    const size_t boxesPerRow = std::min<size_t>(colorManager.size(), 4);
+    const float boxHeight = 38.0f;  // without border
+    const float boxWidth =          // without border
         (ImGui::GetContentRegionAvailWidth() - (static_cast<float>(boxesPerRow) + 1.0f)) /
         static_cast<float>(boxesPerRow);  // subtract 1px per each separator and boundary and divide by number of boxes
     size_t rowCount = 1;
     float leftCornerX = 0;
     for(size_t i = 0; i < colorManager.size(); ++i) {
         if(i != 0 && i % boxesPerRow == 0) {
-            cursorPos += glm::ivec2(0, static_cast<int>(boxHeight) + 2);
+            cursorPos += glm::ivec2(0, static_cast<int>(boxHeight) + 1);
             ++rowCount;
             leftCornerX = 0;
         }
 
-        bool isSelected = i == colorManager.getActiveColorIndex();
-        std::string colorEditPopupId = std::string("##colorPaletteEditPopup") + std::to_string(i);
-        std::string colorPickerId = std::string("##colorPalettePicker") + std::to_string(i);
+        const bool isSelected = i == colorManager.getActiveColorIndex();
+        const std::string colorEditPopupId = std::string("##colorPaletteEditPopup") + std::to_string(i);
+        const std::string colorPickerId = std::string("##colorPalettePicker") + std::to_string(i);
 
         ImGui::SetCursorScreenPos(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1), 1));
         if(ImGui::InvisibleButton((std::string("colorPaletteButton") + std::to_string(i)).c_str(),
@@ -124,16 +138,12 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + boxWidth), static_cast<int>(boxHeight + 1)),
             (ImColor)color);
         if(isSelected) {
-            // ImColor inverseColor = glm::vec4(glm::vec3(1.0) - glm::vec3(colorManager.getColor(i)), 1.0f);
             float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
             glm::vec4 selectColor = (brightness > 0.75f) ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC);
             drawList->AddRect(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + 2), 1 + 2),
                               cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + boxWidth - 2),
                                                      static_cast<int>(boxHeight + 1 - 2)),
                               (ImColor)selectColor, 0.0f, 15, 5.0f);
-            // drawList->AddCircleFilled(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + (boxWidth / 2.0f)),
-            //                                                  static_cast<int>(1 + (boxHeight / 2))),
-            //                           boxHeight / 2.0f, (ImColor)colorManager.getColor(i), 32);
         }
 
         ImGui::SetNextWindowPos(cursorPos + glm::ivec2(0, static_cast<int>(boxHeight) + 2));
@@ -144,16 +154,6 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
                 colorManager.setColor(i, color);
             }
             ImGui::PopItemWidth();
-            // ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
-            // ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
-            // ImGui::Button("Open", glm::ivec2(175, 50));
-            // ImGui::Button("Save", glm::ivec2(175, 50));
-            // ImGui::Button("Save as", glm::ivec2(175, 50));
-            // ImGui::Button("Export", glm::ivec2(175, 50));
-            // if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
-            //     mApplication.quit();
-            // }
-            // ImGui::PopStyleVar(2);
             ImGui::EndPopup();
         }
 
@@ -168,10 +168,10 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
         uniform_real_distribution<> dis(0.0, 1.0);
         std::vector<glm::vec4> newColors;
-        for(int i = 0; i < 4; ++i) {
+        for(int i = 0; i < colorManager.size(); ++i) {
             newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
         }
-        mApplication.getCurrentGeometry()->getColorManager().replaceColors(std::move(newColors));
+        colorManager.replaceColors(std::move(newColors));
     }
 }
 

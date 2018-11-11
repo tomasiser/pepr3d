@@ -42,6 +42,8 @@ void MainApplication::setup() {
     applyLightTheme(ImGui::GetStyle());
 
     mGeometry = std::make_unique<Geometry>();
+    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string());
+
     mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
     mToolbar.setCommandManager(mCommandManager.get());
 
@@ -50,7 +52,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
     mTools.emplace_back(make_unique<Segmentation>());
-    mTools.emplace_back(make_unique<DisplayOptions>());
+    mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>());
     mTools.emplace_back(make_unique<Information>());
     mTools.emplace_back(make_unique<LiveDebug>(*this));

@@ -57,18 +57,17 @@ class Geometry {
     };
 
    public:
-    /// Empty constructor rendering a triangle to debug
+    /// Empty constructor
     Geometry() {
-        mTriangles.emplace_back(glm::vec3(-1, 0, -1), glm::vec3(-1, 0, 1), glm::vec3(1, 0, -1), glm::vec3(0, 1, 0), 0);
-        mTriangles.emplace_back(glm::vec3(1, 0, -1), glm::vec3(1, 0, 1), glm::vec3(-1, 0, 1), glm::vec3(0, 1, 0), 0);
+        mTree = std::make_unique<Tree>();
+    }
 
+    Geometry(std::vector<DataTriangle>&& triangles) : mTriangles(std::move(triangles)) {
         generateVertexBuffer();
+        generateIndexBuffer();
         generateColorBuffer();
         generateNormalBuffer();
-        generateIndexBuffer();
-
         assert(mIndexBuffer.size() == mVertexBuffer.size());
-
         mTree = std::make_unique<Tree>(mTriangles.begin(), mTriangles.end());
         assert(mTree->size() == mTriangles.size());
     }
@@ -96,26 +95,31 @@ class Geometry {
     void loadNewGeometry(const std::string& fileName) {
         /// Load into mTriangles
         ModelImporter modelImporter(fileName);  // only first mesh [0]
-        mTriangles = modelImporter.getTriangles();
 
-        /// Generate new vertex buffer
-        generateVertexBuffer();
+        if(modelImporter.isModelLoaded()) {
+            mTriangles = modelImporter.getTriangles();
 
-        /// Generate new index buffer
-        generateIndexBuffer();
+            /// Generate new vertex buffer
+            generateVertexBuffer();
 
-        /// Generate new color buffer from triangle color data
-        generateColorBuffer();
+            /// Generate new index buffer
+            generateIndexBuffer();
 
-        /// Generate new normal buffer, copying the triangle normal to each vertex
-        generateNormalBuffer();
+            /// Generate new color buffer from triangle color data
+            generateColorBuffer();
 
-        /// Rebuild the AABB tree
-        mTree->rebuild(mTriangles.begin(), mTriangles.end());
-        assert(mTree->size() == mTriangles.size());
+            /// Generate new normal buffer, copying the triangle normal to each vertex
+            generateNormalBuffer();
 
-        mColorManager = modelImporter.getColorManager();
-        assert(!mColorManager.empty());
+            /// Rebuild the AABB tree
+            mTree->rebuild(mTriangles.begin(), mTriangles.end());
+            assert(mTree->size() == mTriangles.size());
+
+            mColorManager = modelImporter.getColorManager();
+            assert(!mColorManager.empty());
+        } else {
+            CI_LOG_E("Model not loaded --> write out message for user");
+        }
     }
 
     /// Set new triangle color
@@ -138,7 +142,7 @@ class Geometry {
     }
 
     /// Get the color of the indexed triangle
-    size_t getTriangleColor(const size_t triangleIndex) {
+    size_t getTriangleColor(const size_t triangleIndex) const {
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex].getColor();
     }
@@ -146,7 +150,10 @@ class Geometry {
     /// Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists.
     /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
     std::optional<size_t> intersectMesh(const ci::Ray& ray) const {
-        assert(!mTree->empty());
+        if(mTree->empty()) {
+            return {};
+        }
+
         const glm::vec3 source = ray.getOrigin();
         const glm::vec3 direction = ray.getDirection();
 

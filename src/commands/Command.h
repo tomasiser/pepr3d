@@ -16,6 +16,7 @@ class CommandBase {
     /**
      * @param isSlow Mark command as slow. CommandManager will create a snapshot after a slow command.
      * attempt will be made.
+     * @param canBeJoined can this command be joined together with the command of the same type
      */
     CommandBase(bool isSlow = false, bool canBeJoined = false) : mIsSlow(isSlow), mCanBeJoined(canBeJoined) {}
     virtual ~CommandBase() = default;

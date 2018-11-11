@@ -5,7 +5,7 @@
 #include "cinder/Color.h"
 #include "glm/glm.hpp"
 
-#define PEPR3D_MAX_PALETTE_COLORS 4
+#define PEPR3D_MAX_PALETTE_COLORS 8
 
 namespace pepr3d {
 
