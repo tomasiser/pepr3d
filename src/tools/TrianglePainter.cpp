@@ -13,7 +13,7 @@ class CmdPaintSingleTriangle : public CommandBase<Geometry> {
     }
 
     CmdPaintSingleTriangle(size_t triangleId, size_t colorId)
-        : CommandBase(false, 0xC4E9741F2935D241), mTriangleIds{triangleId}, mColorId(colorId) {}
+        : CommandBase(false, true), mTriangleIds{triangleId}, mColorId(colorId) {}
 
    protected:
     void run(Geometry& target) const override {

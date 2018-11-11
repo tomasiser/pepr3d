@@ -56,7 +56,7 @@ class CmdAddValueJoinable : public CommandBase<MockTarget> {
         return "IncreaseVal";
     }
 
-    explicit CmdAddValueJoinable(int addedValue = 1) : CommandBase(false, 0xdeadbeef), mAddedValue(addedValue) {}
+    explicit CmdAddValueJoinable(int addedValue = 1) : CommandBase(false, true), mAddedValue(addedValue) {}
 
    protected:
     virtual void run(MockTarget& target) const override {
@@ -86,7 +86,7 @@ class CmdAddValueJoinableSlow : public CommandBase<MockTarget> {
         return "IncreaseVal";
     }
 
-    explicit CmdAddValueJoinableSlow(int addedValue = 1) : CommandBase(true, 0xfeedbeef), mAddedValue(addedValue) {}
+    explicit CmdAddValueJoinableSlow(int addedValue = 1) : CommandBase(true, true), mAddedValue(addedValue) {}
 
    protected:
     virtual void run(MockTarget& target) const override {

@@ -199,7 +199,7 @@ bool CommandManager<Target>::shouldSaveState() const {
 
 template <typename Target>
 bool CommandManager<Target>::joinWithLastCommand(CommandBaseType& command) {
-    if(!canUndo() || getLastCommand().getCommandType() != command.getCommandType() || command.getCommandType() == 0)
+    if(!canUndo() || !getLastCommand().canBeJoined())
         return false;
 
     if(getLastCommand().joinCommand(command)) {
