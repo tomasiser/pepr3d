@@ -91,26 +91,31 @@ class Geometry {
     void loadNewGeometry(const std::string& fileName) {
         /// Load into mTriangles
         ModelImporter modelImporter(fileName);  // only first mesh [0]
-        mTriangles = modelImporter.getTriangles();
 
-        /// Generate new vertex buffer
-        generateVertexBuffer();
+        if(modelImporter.isModelLoaded()) {
+            mTriangles = modelImporter.getTriangles();
 
-        /// Generate new index buffer
-        generateIndexBuffer();
+            /// Generate new vertex buffer
+            generateVertexBuffer();
 
-        /// Generate new color buffer from triangle color data
-        generateColorBuffer();
+            /// Generate new index buffer
+            generateIndexBuffer();
 
-        /// Generate new normal buffer, copying the triangle normal to each vertex
-        generateNormalBuffer();
+            /// Generate new color buffer from triangle color data
+            generateColorBuffer();
 
-        /// Rebuild the AABB tree
-        mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
-        assert(mTree->size() == mTriangles.size());
+            /// Generate new normal buffer, copying the triangle normal to each vertex
+            generateNormalBuffer();
 
-        mColorManager = modelImporter.getColorManager();
-        assert(!mColorManager.empty());
+            /// Rebuild the AABB tree
+            mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
+            assert(mTree->size() == mTriangles.size());
+
+            mColorManager = modelImporter.getColorManager();
+            assert(!mColorManager.empty());
+        } else {
+            CI_LOG_E("Model not loaded --> write out message for user");
+        }
     }
 
     /// Set new triangle color
