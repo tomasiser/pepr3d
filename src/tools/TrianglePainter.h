@@ -18,18 +18,21 @@ class TrianglePainter : public ITool {
     }
 
     virtual std::string getIcon() const override {
-        return ICON_MD_NETWORK_CELL;
+        return ICON_MD_EDIT;
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
+    virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
 
    private:
     MainApplication& mApplication;
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
-    size_t mSelectedTriangleOriginalColor = 0;
-    std::optional<std::size_t> mSelectedTriangleId = {};
+    // size_t mSelectedTriangleOriginalColor = 0;
+    // std::optional<std::size_t> mSelectedTriangleId = {};
+    std::optional<std::size_t> mHoveredTriangleId = {};
 };
 }  // namespace pepr3d

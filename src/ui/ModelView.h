@@ -23,8 +23,10 @@ class ModelView {
     void onMouseDrag(ci::app::MouseEvent event);
     void onMouseUp(ci::app::MouseEvent event);
     void onMouseWheel(ci::app::MouseEvent event);
+    void onMouseMove(ci::app::MouseEvent event);
 
     ci::Ray getRayFromWindowCoordinates(glm::ivec2 windowCoords) const;
+    void drawTriangleHighlight(const size_t triangleIndex);
 
    private:
     MainApplication& mApplication;

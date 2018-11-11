@@ -1,5 +1,6 @@
 #pragma once
 
+#include "geometry/ColorManager.h"
 #include "peprimgui.h"
 
 namespace pepr3d {
@@ -19,6 +20,7 @@ class SidePane {
     void drawText(std::string text);
     bool drawButton(std::string label);
     void drawSeparator();
+    void drawColorPalette(ColorManager& colorManager);
 
    private:
     MainApplication& mApplication;

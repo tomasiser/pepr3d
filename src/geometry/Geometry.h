@@ -178,6 +178,12 @@ class Geometry {
         return mColorManager;
     }
 
+    const DataTriangle& getTriangle(const size_t triangleIndex) const {
+        assert(triangleIndex >= 0);
+        assert(triangleIndex < mTriangles.size());
+        return mTriangles[triangleIndex];
+    }
+
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
     /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing

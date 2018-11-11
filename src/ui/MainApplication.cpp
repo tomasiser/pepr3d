@@ -42,15 +42,15 @@ void MainApplication::setup() {
     applyLightTheme(ImGui::GetStyle());
 
     mTools.emplace_back(make_unique<TrianglePainter>(*this));
-    mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<PaintBucket>());
+    mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
     mTools.emplace_back(make_unique<Segmentation>());
     mTools.emplace_back(make_unique<DisplayOptions>());
     mTools.emplace_back(make_unique<pepr3d::Settings>());
     mTools.emplace_back(make_unique<Information>());
     mTools.emplace_back(make_unique<LiveDebug>(*this));
-    mCurrentToolIterator = --mTools.end();
+    mCurrentToolIterator = mTools.begin();
 
     mModelView.setup();
 
@@ -75,6 +75,10 @@ void MainApplication::mouseUp(MouseEvent event) {
 
 void MainApplication::mouseWheel(MouseEvent event) {
     mModelView.onMouseWheel(event);
+}
+
+void MainApplication::mouseMove(MouseEvent event) {
+    mModelView.onMouseMove(event);
 }
 
 void MainApplication::fileDrop(FileDropEvent event) {

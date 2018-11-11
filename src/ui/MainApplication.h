@@ -30,6 +30,7 @@ class MainApplication : public App {
     void mouseDrag(MouseEvent event) override;
     void mouseUp(MouseEvent event) override;
     void mouseWheel(MouseEvent event) override;
+    void mouseMove(MouseEvent event) override;
     void fileDrop(FileDropEvent event) override;
 
     MainApplication();

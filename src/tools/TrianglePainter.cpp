@@ -6,35 +6,20 @@
 namespace pepr3d {
 
 void TrianglePainter::drawToSidePane(SidePane& sidePane) {
+    sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
+    sidePane.drawSeparator();
+
     sidePane.drawText("Last click:\nX: " + std::to_string(mLastClick.x) + "\nY: " + std::to_string(mLastClick.y));
     const size_t triSize = mApplication.getCurrentGeometry()->getTriangleCount();
     sidePane.drawText("Number of triangles: " + std::to_string(triSize) + "\n");
-    if(mSelectedTriangleId) {
-        sidePane.drawText("Selected triangle ID: " + std::to_string(*mSelectedTriangleId) + "\n");
+    if(mHoveredTriangleId) {
+        sidePane.drawText("Hovered triangle ID: " + std::to_string(*mHoveredTriangleId) + "\n");
     }
+}
 
-    if(ImGui::Button("Color RED")) {
-        mApplication.getCurrentGeometry()->setTriangleColor(*mSelectedTriangleId, 0);
-        mSelectedTriangleOriginalColor = 0;
-    }
-    if(ImGui::Button("Color GREEN")) {
-        mApplication.getCurrentGeometry()->setTriangleColor(*mSelectedTriangleId, 1);
-        mSelectedTriangleOriginalColor = 1;
-    }
-    if(ImGui::Button("Color BLUE")) {
-        mApplication.getCurrentGeometry()->setTriangleColor(*mSelectedTriangleId, 2);
-        mSelectedTriangleOriginalColor = 2;
-    }
-    std::random_device rd;   // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-    uniform_real_distribution<> dis(0.0, 1.0);
-
-    if(ImGui::Button("Randomize Colors")) {
-        std::vector<glm::vec4> newColors;
-        for(int i = 0; i < 4; ++i) {
-            newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
-        }
-        mApplication.getCurrentGeometry()->getColorManager().replaceColors(std::move(newColors));
+void TrianglePainter::drawToModelView(ModelView& modelView) {
+    if (mHoveredTriangleId) {
+        modelView.drawTriangleHighlight(*mHoveredTriangleId);
     }
 }
 
@@ -43,31 +28,29 @@ void TrianglePainter::onModelViewMouseDown(ModelView& modelView, ci::app::MouseE
         return;
     }
     mLastClick = event.getPos();
-    mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    if(!mHoveredTriangleId) {
+        return;
+    }
     auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         return;
     }
-    auto previousTriangle = mSelectedTriangleId;
-    mSelectedTriangleId = geometry->intersectMesh(mLastRay);
-    if(previousTriangle == mSelectedTriangleId) {
-        return;  // no change
-    }
-    if(previousTriangle) {
-        geometry->setTriangleColor(*previousTriangle, mSelectedTriangleOriginalColor);
-    }
-    if(mSelectedTriangleId) {
-        mSelectedTriangleOriginalColor = geometry->getTriangleColor(*mSelectedTriangleId);
-        const size_t colorCount = geometry->getColorManager().size();
-        /*auto inverseColor = ci::ColorA::white() - mSelectedTriangleOriginalColor;
-        inverseColor[3] = 1.0f;*/
-
-        geometry->setTriangleColor(*mSelectedTriangleId, colorCount - 1);
-    }
+    geometry->setTriangleColor(*mHoveredTriangleId, geometry->getColorManager().getActiveColorIndex());
 }
 
 void TrianglePainter::onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) {
+    onModelViewMouseMove(modelView, event);
     onModelViewMouseDown(modelView, event);
+}
+
+void TrianglePainter::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
+    mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    auto geometry = mApplication.getCurrentGeometry();
+    if(geometry == nullptr) {
+        mHoveredTriangleId = {};
+        return;
+    }
+    mHoveredTriangleId = geometry->intersectMesh(mLastRay);
 }
 
 }  // namespace pepr3d

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <random>
 #include <vector>
+#include "cinder/Color.h"
+#include "glm/glm.hpp"
 
 #define PEPR3D_MAX_PALETTE_COLORS 4
 
@@ -16,12 +17,15 @@ class ColorManager {
     /// A vector containing all the colors that the application supports at this time
     ColorMap mColorMap;
 
+    /// Index of a currently selected / active color
+    size_t mActiveColorIndex = 0;
+
    public:
     ColorManager() {
-        mColorMap.emplace_back(1, 0, 0, 1);
-        mColorMap.emplace_back(0, 1, 0, 1);
-        mColorMap.emplace_back(0, 0, 1, 1);
-        mColorMap.emplace_back(0.2, 0.2, 0.2, 1);
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0x017BDA)));
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0xEB5757)));
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0xF2994A)));
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0x292E33)));
         assert(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
     }
 
@@ -83,6 +87,9 @@ class ColorManager {
             mColorMap.push_back(*it);
             ++it;
         }
+        if(mActiveColorIndex >= size()) {
+            mActiveColorIndex = size() - 1;
+        }
     }
 
     /// Replace the current colors with this new vector of colors, trims if above limit
@@ -91,6 +98,19 @@ class ColorManager {
         if(mColorMap.size() > PEPR3D_MAX_PALETTE_COLORS) {
             mColorMap.resize(PEPR3D_MAX_PALETTE_COLORS);
         }
+        if(mActiveColorIndex >= size()) {
+            mActiveColorIndex = size() - 1;
+        }
+    }
+
+    /// Gets index of the currently selected / active color
+    size_t getActiveColorIndex() const {
+        return mActiveColorIndex;
+    }
+
+    /// Sets index of the currently selected / active color, safely checks boundaries
+    void setActiveColorIndex(size_t index) {
+        mActiveColorIndex = std::min<size_t>(std::max<size_t>(index, 0), size() - 1);
     }
 
     ColorMap& getColorMap() {
