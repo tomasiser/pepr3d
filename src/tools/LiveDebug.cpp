@@ -13,6 +13,9 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     ImGui::PopItemWidth();
 
     sidePane.drawSeparator();
+    sidePane.drawText("Model view mouse pos:\nX: " + std::to_string(mMousePos.x) + "\nY: " +
+                      std::to_string(mMousePos.y));
+    sidePane.drawSeparator();
 
     static int addedValue = 1;
     ImGui::Text("Current value: %i", mIntegerState.mInnerValue);
@@ -33,5 +36,9 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     }
 
     ImGui::EndChild();
+}
+
+void LiveDebug::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
+    mMousePos = event.getPos();
 }
 }

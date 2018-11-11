@@ -12,7 +12,7 @@ class Segmentation : public ITool {
     }
 
     virtual std::string getIcon() const override {
-        return ICON_MD_TEXTURE;
+        return ICON_MD_DASHBOARD;
     }
 };
 }

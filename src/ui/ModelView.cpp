@@ -1,6 +1,7 @@
 #include "ModelView.h"
 #include "MainApplication.h"
 #include "geometry/Geometry.h"
+#include "tools/Tool.h"
 
 namespace pepr3d {
 
@@ -37,9 +38,15 @@ void ModelView::draw() {
         ci::gl::ScopedModelMatrix modelScope;
         ci::gl::multModelMatrix(glm::translate(glm::vec3(0, -0.5f, 0)));
         ci::gl::ScopedColor colorScope(ci::ColorA::black());
+        ci::gl::ScopedLineWidth widthScope(1.0f);
         auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(16)),
                                            ci::gl::getStockShader(ci::gl::ShaderDef().color()));
         plane->draw();
+    }
+
+    {
+        auto& currentTool = **mApplication.getCurrentToolIterator();
+        currentTool.drawToModelView(*this);
     }
 }
 
@@ -77,6 +84,13 @@ void ModelView::onMouseWheel(MouseEvent event) {
         tool->onModelViewMouseWheel(*this, event);
     }
     mCameraUi.mouseWheel(-event.getWheelIncrement());
+}
+
+void ModelView::onMouseMove(MouseEvent event) {
+    auto* tool = mApplication.getCurrentTool();
+    if(tool) {
+        tool->onModelViewMouseMove(*this, event);
+    }
 }
 
 ci::Ray ModelView::getRayFromWindowCoordinates(glm::ivec2 windowCoords) const {
@@ -126,10 +140,29 @@ void ModelView::drawGeometry() {
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
     mModelShader->uniform("uColorPalette", &colorMap[0], static_cast<int>(colorMap.size()));
+    mModelShader->uniform("uShowWireframe", mIsWireframeEnabled);
 
     // Create batch and draw
     auto myBatch = ci::gl::Batch::create(myVboMesh, mModelShader);
     myBatch->draw();
+}
+
+void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
+    const Geometry* const geometry = mApplication.getCurrentGeometry();
+    if(geometry == nullptr) {
+        return;
+    }
+
+    const DataTriangle& triangle = geometry->getTriangle(triangleIndex);
+    const glm::vec4 color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleIndex));
+    const float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+    const bool isDarkHighlight = mIsWireframeEnabled ? (brightness <= 0.75f) : (brightness > 0.75f);
+    ci::gl::ScopedColor drawColor(isDarkHighlight ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC));
+    ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
+    gl::ScopedDepth depth(false);
+    ci::gl::drawLine(triangle.getVertex(0), triangle.getVertex(1));
+    ci::gl::drawLine(triangle.getVertex(1), triangle.getVertex(2));
+    ci::gl::drawLine(triangle.getVertex(2), triangle.getVertex(0));
 }
 
 }  // namespace pepr3d

@@ -25,10 +25,13 @@ class LiveDebug : public ITool {
 
     virtual void drawToSidePane(SidePane& sidePane) override;
 
+    virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+
    private:
     MainApplication& mApplication;
     IntegerState mIntegerState;
     CommandManager<IntegerState> mIntegerManager;
+    glm::ivec2 mMousePos;
 };
 
 }  // namespace pepr3d
