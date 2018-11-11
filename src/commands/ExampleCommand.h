@@ -17,7 +17,7 @@ struct IntegerState {
     }
 };
 
-class AddValueCommand : public ICommandBase<IntegerState> {
+class AddValueCommand : public CommandBase<IntegerState> {
    public:
     virtual std::string_view getDescription() const override {
         return "Add integer value to a state";
