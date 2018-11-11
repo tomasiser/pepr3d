@@ -41,7 +41,11 @@ void MainApplication::setup() {
     ImGui::initialize(uiOptions);
     applyLightTheme(ImGui::GetStyle());
 
-    mTools.emplace_back(make_unique<TrianglePainter>(*this));
+    mGeometry = std::make_unique<Geometry>();
+    mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
+    mToolbar.setCommandManager(mCommandManager.get());
+
+    mTools.emplace_back(make_unique<TrianglePainter>(*this, *mCommandManager));
     mTools.emplace_back(make_unique<PaintBucket>());
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
@@ -53,8 +57,6 @@ void MainApplication::setup() {
     mCurrentToolIterator = mTools.begin();
 
     mModelView.setup();
-
-    mGeometry = std::make_unique<Geometry>();
 }
 
 void MainApplication::resize() {

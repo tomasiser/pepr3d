@@ -67,7 +67,7 @@ class CommandManager {
 
     /// Get snapshot before current state
     auto getPrevSnapshotIterator() const -> decltype(std::declval<const std::vector<SnapshotPair>>().begin());
-    
+
     /// Should we save state before next command
     bool shouldSaveState() const;
 
@@ -177,7 +177,7 @@ void CommandManager<Target>::clearFutureState() {
     if(mPosFromEnd > 0) {
         // Clear all future snapshots
         mTargetSnapshots.erase(std::next(getPrevSnapshotIterator()), mTargetSnapshots.end());
-        
+
         // Clear all future commands
         mCommandHistory.erase(std::prev(mCommandHistory.end(), mPosFromEnd), mCommandHistory.end());
 

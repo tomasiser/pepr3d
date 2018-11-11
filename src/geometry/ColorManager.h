@@ -116,6 +116,10 @@ class ColorManager {
     ColorMap& getColorMap() {
         return mColorMap;
     }
+
+    const ColorMap& getColorMap() const {
+        return mColorMap;
+    }
 };
 
 }  // namespace pepr3d

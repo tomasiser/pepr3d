@@ -51,6 +51,11 @@ class Geometry {
     /// A vector based map mapping size_t into ci::ColorA
     ColorManager mColorManager;
 
+    struct GeometryState {
+        std::vector<DataTriangle> triangles;
+        ColorManager::ColorMap colorMap;
+    };
+
    public:
     /// Empty constructor rendering a triangle to debug
     Geometry() {
@@ -106,7 +111,7 @@ class Geometry {
         generateNormalBuffer();
 
         /// Rebuild the AABB tree
-        mTree->rebuild(mTriangles.begin(), mTriangles.end());  // \todo Uncomment this when CGAL is in.
+        mTree->rebuild(mTriangles.begin(), mTriangles.end());
         assert(mTree->size() == mTriangles.size());
 
         mColorManager = modelImporter.getColorManager();
@@ -183,6 +188,12 @@ class Geometry {
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex];
     }
+
+    /// Save current state into a struct so that it can be restored later (CommandManager target requirement)
+    GeometryState saveState() const;
+
+    /// Load previous state from a struct (CommandManager target requirement)
+    void loadState(const GeometryState&);
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
