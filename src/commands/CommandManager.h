@@ -66,8 +66,8 @@ class CommandManager {
     void clearFutureState();
 
     /// Get snapshot before current state
-    auto getPrevSnapshotIterator() const;
-
+    auto getPrevSnapshotIterator() const -> decltype(std::declval<const std::vector<SnapshotPair>>().begin());
+    
     /// Should we save state before next command
     bool shouldSaveState() const;
 
@@ -84,7 +84,8 @@ class CommandManager {
 };
 
 template <typename Target>
-auto CommandManager<Target>::getPrevSnapshotIterator() const {
+auto CommandManager<Target>::getPrevSnapshotIterator() const
+    -> decltype(std::declval<const std::vector<SnapshotPair>>().begin()) {
     assert(mPosFromEnd <= mCommandHistory.size());
 
     const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
