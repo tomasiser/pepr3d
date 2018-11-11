@@ -54,8 +54,31 @@ class Geometry {
    public:
     /// Empty constructor rendering a triangle to debug
     Geometry() {
-        mTriangles.emplace_back(glm::vec3(-1, 0, -1), glm::vec3(-1, 0, 1), glm::vec3(1, 0, -1), glm::vec3(0, 1, 0), 0);
-        mTriangles.emplace_back(glm::vec3(1, 0, -1), glm::vec3(1, 0, 1), glm::vec3(-1, 0, 1), glm::vec3(0, 1, 0), 0);
+        // cube
+        mTriangles.emplace_back(glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5), glm::vec3(0.5, 0.5, -0.5),
+                                glm::vec3(0, 1, 0), 0);  // top
+        mTriangles.emplace_back(glm::vec3(0.5, 0.5, -0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
+                                glm::vec3(0, 1, 0), 0);
+        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, -0.5),
+                                glm::vec3(0, -1, 0), 0);  // bottom
+        mTriangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(-0.5, -0.5, 0.5),
+                                glm::vec3(0, -1, 0), 0);
+        mTriangles.emplace_back(glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, 0.5),
+                                glm::vec3(1, 0, 0), 0);  // front
+        mTriangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, -0.5), glm::vec3(0.5, 0.5, 0.5),
+                                glm::vec3(1, 0, 0), 0);
+        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, 0.5), glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5),
+                                glm::vec3(-1, 0, 0), 0);  // back
+        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5),
+                                glm::vec3(-1, 0, 0), 0);
+        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
+                                glm::vec3(0, 0, 1), 0);  // left
+        mTriangles.emplace_back(glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5),
+                                glm::vec3(0, 0, 1), 0);
+        mTriangles.emplace_back(glm::vec3(-0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5),
+                                glm::vec3(0, 0, -1), 0);  // right
+        mTriangles.emplace_back(glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5),
+                                glm::vec3(0, 0, -1), 0);
 
         generateVertexBuffer();
         generateColorBuffer();

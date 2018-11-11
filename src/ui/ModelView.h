@@ -28,12 +28,21 @@ class ModelView {
     ci::Ray getRayFromWindowCoordinates(glm::ivec2 windowCoords) const;
     void drawTriangleHighlight(const size_t triangleIndex);
 
+    bool isWireframeEnabled() const {
+        return mIsWireframeEnabled;
+    }
+
+    void enableWireframe(bool enable = true) {
+        mIsWireframeEnabled = enable;
+    }
+
    private:
     MainApplication& mApplication;
     std::pair<glm::ivec2, glm::ivec2> mViewport;
     ci::CameraPersp mCamera;
     ci::CameraUi mCameraUi;
     ci::gl::GlslProgRef mModelShader;
+    bool mIsWireframeEnabled = false;
 };
 
 }  // namespace pepr3d

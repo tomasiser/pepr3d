@@ -22,6 +22,13 @@ class SidePane {
     void drawSeparator();
     void drawColorPalette(ColorManager& colorManager);
 
+    template <typename Callback>
+    void drawCheckbox(std::string label, bool isChecked, Callback onChanged) {
+        if(ImGui::Checkbox(label.c_str(), &isChecked)) {
+            onChanged(isChecked);
+        }
+    }
+
    private:
     MainApplication& mApplication;
     float mWidth = 235.0f;

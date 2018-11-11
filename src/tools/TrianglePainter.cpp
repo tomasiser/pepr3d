@@ -18,7 +18,7 @@ void TrianglePainter::drawToSidePane(SidePane& sidePane) {
 }
 
 void TrianglePainter::drawToModelView(ModelView& modelView) {
-    if (mHoveredTriangleId) {
+    if(mHoveredTriangleId) {
         modelView.drawTriangleHighlight(*mHoveredTriangleId);
     }
 }

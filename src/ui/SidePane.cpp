@@ -82,6 +82,22 @@ void SidePane::drawSeparator() {
 void SidePane::drawColorPalette(ColorManager& colorManager) {
     drawText("Color");
 
+    // TODO: https://github.com/tomasiser/pepr3d/issues/41
+
+    // int colorCount = colorManager.size();
+    // if (ImGui::DragInt("##colorPaletteAmount", &colorCount, 0.05f, 1, PEPR3D_MAX_PALETTE_COLORS)) {
+    //     int diff = colorManager.size() - colorCount;
+    //     while (diff != 0) {
+    //         if (diff > 0) {
+    //             colorManager.popColor();
+    //             --diff;
+    //         } else {
+    //             colorManager.addColor(colorManager.getColor(colorManager.size() - 1));
+    //             ++diff;
+    //         }
+    //     }
+    // }
+
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     glm::ivec2 initialCursorPos = ImGui::GetCursorScreenPos();
     auto* drawList = ImGui::GetWindowDrawList();
@@ -95,7 +111,7 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
     float leftCornerX = 0;
     for(size_t i = 0; i < colorManager.size(); ++i) {
         if(i != 0 && i % boxesPerRow == 0) {
-            cursorPos += glm::ivec2(0, static_cast<int>(boxHeight) + 2);
+            cursorPos += glm::ivec2(0, static_cast<int>(boxHeight) + 1);
             ++rowCount;
             leftCornerX = 0;
         }
@@ -168,10 +184,10 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
         uniform_real_distribution<> dis(0.0, 1.0);
         std::vector<glm::vec4> newColors;
-        for(int i = 0; i < 4; ++i) {
+        for(int i = 0; i < colorManager.size(); ++i) {
             newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
         }
-        mApplication.getCurrentGeometry()->getColorManager().replaceColors(std::move(newColors));
+        colorManager.replaceColors(std::move(newColors));
     }
 }
 
