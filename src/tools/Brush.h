@@ -15,4 +15,4 @@ class Brush : public ITool {
         return ICON_MD_BRUSH;
     }
 };
-}
+}  // namespace pepr3d

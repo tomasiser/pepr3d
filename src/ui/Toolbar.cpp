@@ -1,7 +1,7 @@
 #include "Toolbar.h"
 #include "MainApplication.h"
-#include "imgui_internal.h"
 #include "geometry/Geometry.h"
+#include "imgui_internal.h"
 
 namespace pepr3d {
 

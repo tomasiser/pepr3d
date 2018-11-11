@@ -13,8 +13,8 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     ImGui::PopItemWidth();
 
     sidePane.drawSeparator();
-    sidePane.drawText("Model view mouse pos:\nX: " + std::to_string(mMousePos.x) + "\nY: " +
-                      std::to_string(mMousePos.y));
+    sidePane.drawText("Model view mouse pos:\nX: " + std::to_string(mMousePos.x) +
+                      "\nY: " + std::to_string(mMousePos.y));
     sidePane.drawSeparator();
 
     static int addedValue = 1;
@@ -41,4 +41,4 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
 void LiveDebug::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     mMousePos = event.getPos();
 }
-}
+}  // namespace pepr3d
