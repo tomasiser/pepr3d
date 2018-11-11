@@ -175,11 +175,12 @@ const typename CommandManager<Target>::CommandBaseType& CommandManager<Target>::
 template <typename Target>
 void CommandManager<Target>::clearFutureState() {
     if(mPosFromEnd > 0) {
+        // Clear all future snapshots
+        mTargetSnapshots.erase(std::next(getPrevSnapshotIterator()), mTargetSnapshots.end());
+        
         // Clear all future commands
         mCommandHistory.erase(std::prev(mCommandHistory.end(), mPosFromEnd), mCommandHistory.end());
 
-        // Clear all future snapshots
-        mTargetSnapshots.erase(std::next(getPrevSnapshotIterator()), mTargetSnapshots.end());
         mPosFromEnd = 0;
     }
 }
