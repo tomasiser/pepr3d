@@ -57,7 +57,7 @@ class Geometry {
         std::vector<DataTriangle> triangles;
         ColorManager::ColorMap colorMap;
     };
-    
+
     struct PolyhedronData {
         std::vector<glm::vec3> vertices;
 
@@ -84,10 +84,6 @@ class Geometry {
         assert(mIndexBuffer.size() == mVertexBuffer.size());
         mTree = std::make_unique<Tree>(mTriangles.begin(), mTriangles.end());
         assert(mTree->size() == mTriangles.size());
-    }
-
-    const DataTriangle& getTriangle(const size_t i) const {
-        return mTriangles[i];
     }
 
     /// Returns a constant iterator to the vertex buffer
@@ -125,10 +121,10 @@ class Geometry {
         if(modelImporter.isModelLoaded()) {
             mTriangles = modelImporter.getTriangles();
 
-        mPolyhedronData.vertices.clear();
-        mPolyhedronData.indices.clear();
-        mPolyhedronData.vertices = modelImporter.getVertexBuffer();
-        mPolyhedronData.indices = modelImporter.getIndexBuffer();
+            mPolyhedronData.vertices.clear();
+            mPolyhedronData.indices.clear();
+            mPolyhedronData.vertices = modelImporter.getVertexBuffer();
+            mPolyhedronData.indices = modelImporter.getIndexBuffer();
 
             /// Generate new vertex buffer
             generateVertexBuffer();

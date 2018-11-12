@@ -24,14 +24,13 @@ class ModelImporter {
     ColorManager mPalette;
     bool mModelLoaded = false;
 
-    std::vector<glm::vec3> vertBuffer;
-    std::vector<std::array<size_t, 3>> indBuffer;
+    std::vector<glm::vec3> mVertexBuffer;
+    std::vector<std::array<size_t, 3>> mIndexBuffer;
 
    public:
-    ModelImporter(const std::string p) : path(p) {
-        this->mPath = path;
-        this->mModelLoaded = loadModel(path);
-        loadModelWithJoinedVertices(path);
+    ModelImporter(const std::string p) : mPath(p) {
+        this->mModelLoaded = loadModel(this->mPath);
+        loadModelWithJoinedVertices(this->mPath);
     }
 
     std::vector<DataTriangle> getTriangles() const {
@@ -48,13 +47,13 @@ class ModelImporter {
     }
 
     std::vector<glm::vec3> getVertexBuffer() const {
-        assert(!vertBuffer.empty());
-        return vertBuffer;
+        assert(!mVertexBuffer.empty());
+        return mVertexBuffer;
     }
 
     std::vector<std::array<size_t, 3>> getIndexBuffer() const {
-        assert(!indBuffer.empty());
-        return indBuffer;
+        assert(!mIndexBuffer.empty());
+        return mIndexBuffer;
     }
 
    private:
@@ -107,8 +106,8 @@ class ModelImporter {
         /// Access the file's contents
         processNode(scene->mRootNode, scene, meshes);
 
-        vertBuffer = calculateVertexBuffer(meshes[0]);
-        indBuffer = calculateIndexBuffer(meshes[0]);
+        mVertexBuffer = calculateVertexBuffer(meshes[0]);
+        mIndexBuffer = calculateIndexBuffer(meshes[0]);
 
         meshes.clear();
 
@@ -140,7 +139,7 @@ class ModelImporter {
         /// Access the file's contents
         processNode(scene->mRootNode, scene, meshes);
 
-        mTriangles = processFirstMesh(mMeshes[0]);
+        mTriangles = processFirstMesh(meshes[0]);
 
         if(mPalette.empty()) {
             mPalette = ColorManager();  // create new palette with default colors
