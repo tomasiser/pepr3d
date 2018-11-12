@@ -5,34 +5,21 @@
 #include "cinder/gl/TextureFont.h"
 #include "cinder/gl/gl.h"
 
-#define CINDER_IMGUI_NO_NAMESPACE_ALIAS
-#include "CinderImGui.h"
+#include "peprimgui.h"
 
-#include "IconsMaterialDesign.h"
-#include "LightTheme.h"
 #include "ModelView.h"
 #include "SidePane.h"
 #include "Toolbar.h"
-
-#include "commands/ExampleCommand.h"
-#include "geometry/Geometry.h"
-
-#include "tools/Brush.h"
-#include "tools/DisplayOptions.h"
-#include "tools/Information.h"
-#include "tools/LiveDebug.h"
-#include "tools/PaintBucket.h"
-#include "tools/Segmentation.h"
-#include "tools/Settings.h"
-#include "tools/TextEditor.h"
-#include "tools/Tool.h"
-#include "tools/TrianglePainter.h"
+#include "commands/CommandManager.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
 namespace pepr3d {
+
+class ITool;
+class Geometry;
 
 class MainApplication : public App {
    public:
@@ -44,6 +31,7 @@ class MainApplication : public App {
     void mouseDrag(MouseEvent event) override;
     void mouseUp(MouseEvent event) override;
     void mouseWheel(MouseEvent event) override;
+    void mouseMove(MouseEvent event) override;
     void fileDrop(FileDropEvent event) override;
 
     MainApplication();
@@ -113,6 +101,8 @@ class MainApplication : public App {
     ToolsVector::iterator mCurrentToolIterator;
 
     std::unique_ptr<Geometry> mGeometry;
+    std::unique_ptr<CommandManager<Geometry>> mCommandManager;
+
     std::string mGeometryFileName;
 };
 

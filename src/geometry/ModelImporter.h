@@ -3,39 +3,48 @@
 #include <iostream>
 #include <vector>
 
+#include <assimp/cimport.h>
 #include <assimp/postprocess.h>  // Post processing flags
 #include <assimp/scene.h>        // Output data structure
 #include <assimp/Importer.hpp>   // C++ importer interface
 
 #include <unordered_set>
+#include "geometry/ColorManager.h"
 #include "geometry/Triangle.h"
 
+#include <cinder/Log.h>
 #include <boost/functional/hash.hpp>
 
 namespace pepr3d {
 
 class ModelImporter {
-    const std::string path;
+    std::string mPath;
+    std::vector<DataTriangle> mTriangles;
 
-    std::vector<DataTriangle> triangles;
-    std::vector<ci::ColorA> palette;
+    ColorManager mPalette;
+    bool mModelLoaded = false;
 
     std::vector<glm::vec3> vertBuffer;
     std::vector<std::array<size_t, 3>> indBuffer;
 
    public:
     ModelImporter(const std::string p) : path(p) {
-        loadModel(path);
+        this->mPath = path;
+        this->mModelLoaded = loadModel(path);
         loadModelWithJoinedVertices(path);
     }
 
     std::vector<DataTriangle> getTriangles() const {
-        return triangles;
+        return mTriangles;
     }
 
-    std::vector<ci::ColorA> getColorPalette() const {
-        assert(!palette.empty());
-        return palette;
+    ColorManager getColorManager() const {
+        assert(!mPalette.empty());
+        return mPalette;
+    }
+
+    bool isModelLoaded() {
+        return mModelLoaded;
     }
 
     std::vector<glm::vec3> getVertexBuffer() const {
@@ -108,34 +117,33 @@ class ModelImporter {
 
     /// A method which loads the model we will use for rendering - with duplicated vertices for normals, colors, etc.
     bool loadModel(const std::string &path) {
+        mPalette.clear();
         std::vector<aiMesh *> meshes;
-
-        palette.clear();
 
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
 
+        importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
+        importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
+
         /// Scene with some postprocessing
         const aiScene *scene =
-            importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+            importer.ReadFile(path, aiProcess_FixInfacingNormals | aiProcess_Triangulate | aiProcess_SortByPType |
+                                        aiProcess_GenNormals | aiProcess_RemoveComponent | aiProcess_FindDegenerates);
 
         // If the import failed, report it
         if(!scene) {
-            std::cout << "fail: " << importer.GetErrorString() << std::endl;  // TODO: write out error somewhere
+            CI_LOG_E(importer.GetErrorString());  // TODO: write out error message somewhere
             return false;
         }
 
         /// Access the file's contents
         processNode(scene->mRootNode, scene, meshes);
 
-        triangles = processFirstMesh(meshes[0]);
+        mTriangles = processFirstMesh(mMeshes[0]);
 
-        if(palette.empty()) {
-            const ci::ColorA defaultColor = ci::ColorA::hex(0x017BDA);
-            palette.push_back(defaultColor);
-            palette.emplace_back(0, 1, 0, 1);
-            palette.emplace_back(0, 1, 1, 1);
-            palette.emplace_back(0.4, 0.4, 0.4, 1);
+        if(mPalette.empty()) {
+            mPalette = ColorManager();  // create new palette with default colors
         }
 
         // Everything will be cleaned up by the importer destructor.
@@ -185,16 +193,12 @@ class ModelImporter {
             }
 
             /// Calculation of surface normals from vertices and vertex normals or only from vertices.
-            if(mesh->HasNormals()) {
-                normal = calculateNormal(vertices, normals);
-            } else {
-                normal = calculateNormal(vertices);
-            }
+            normal = calculateNormal(vertices, normals);
 
             /// Obtaining triangle color. Default color is set if there is no color information
             std::unordered_map<std::array<float, 3>, size_t, boost::hash<std::array<float, 3>>> colorLookup;
 
-            cinder::ColorA color;
+            glm::vec4 color;
             size_t returnColor = 0;
             if(mesh->GetNumColorChannels() > 0) {
                 color.r = mesh->mColors[0][face.mIndices[0]][0];  // first color layer from first vertex of triangle
@@ -205,34 +209,28 @@ class ModelImporter {
                 const std::array<float, 3> rgbArray = {color.r, color.g, color.b};
                 const auto result = colorLookup.find(rgbArray);
                 if(result != colorLookup.end()) {
-                    assert(result->second < palette.size());
+                    assert(result->second < mPalette.size());
                     assert(result->second > 0);
                     returnColor = result->second;
                 } else {
-                    palette.push_back(color);
-                    colorLookup.insert({rgbArray, palette.size() - 1});
-                    returnColor = palette.size() - 1;
+                    mPalette.addColor(color);
+                    colorLookup.insert({rgbArray, mPalette.size() - 1});
+                    returnColor = mPalette.size() - 1;
                     assert(colorLookup.find(rgbArray) != colorLookup.end());
                 }
             }
 
-            /// Place the constructed triangle
-            triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
+            /// Check for degenerate triangles which we do not want in the representation
+            const bool zeroAreaCheck =
+                vertices[0] != vertices[1] && vertices[0] != vertices[2] && vertices[1] != vertices[2];
+            if(zeroAreaCheck) {
+                /// Place the constructed triangle
+                triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
+            } else {
+                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from geometry data.");
+            }
         }
         return triangles;
-    }
-
-    /// Calculates triangle normal from its vertices.
-    static glm::vec3 calculateNormal(glm::vec3 *v) {  // hoping for correct direction
-        const glm::vec3 V1 = (v[1] - v[0]);
-        const glm::vec3 V2 = (v[2] - v[0]);
-        glm::vec3 faceNormal;
-        faceNormal.x = (V1.y * V2.z) - (V1.z - V2.y);
-        faceNormal.y = -((V2.z * V1.x) - (V2.x * V1.z));
-        faceNormal.z = (V1.x - V2.y) - (V1.y - V2.x);
-
-        faceNormal = glm::normalize(faceNormal);
-        return faceNormal;
     }
 
     /// Calculates triangle normal from its vertices with orientation of original vertex normals.

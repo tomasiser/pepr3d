@@ -15,4 +15,4 @@ class Settings : public ITool {
         return ICON_MD_SETTINGS;
     }
 };
-}
+}  // namespace pepr3d

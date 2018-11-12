@@ -1,6 +1,7 @@
 #pragma once
 
-#include "CinderImGui.h"
+#include "geometry/ColorManager.h"
+#include "peprimgui.h"
 
 namespace pepr3d {
 
@@ -19,6 +20,14 @@ class SidePane {
     void drawText(std::string text);
     bool drawButton(std::string label);
     void drawSeparator();
+    void drawColorPalette(ColorManager& colorManager);
+
+    template <typename Callback>
+    void drawCheckbox(std::string label, bool isChecked, Callback onChanged) {
+        if(ImGui::Checkbox(label.c_str(), &isChecked)) {
+            onChanged(isChecked);
+        }
+    }
 
    private:
     MainApplication& mApplication;

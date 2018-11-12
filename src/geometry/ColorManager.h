@@ -1,29 +1,50 @@
 #pragma once
 
-#include <cinder/Color.h>
+#include <random>
 #include <vector>
+#include "cinder/Color.h"
+#include "glm/glm.hpp"
+
+#define PEPR3D_MAX_PALETTE_COLORS 8
 
 namespace pepr3d {
 
 class ColorManager {
+   public:
+    using ColorMap = std::vector<glm::vec4>;
+
+   private:
     /// A vector containing all the colors that the application supports at this time
-    std::vector<ci::ColorA> mColorMap;
+    ColorMap mColorMap;
+
+    /// Index of a currently selected / active color
+    size_t mActiveColorIndex = 0;
 
    public:
     ColorManager() {
-        mColorMap.emplace_back(1, 0, 0, 1);
-        mColorMap.emplace_back(0, 1, 0, 1);
-        mColorMap.emplace_back(0, 0, 1, 1);
-        mColorMap.emplace_back(0.2, 0.2, 0.2, 1);
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0x017BDA)));
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0xEB5757)));
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0xF2994A)));
+        mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0x292E33)));
+        assert(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
     }
 
-    ColorManager(const std::vector<ci::ColorA>::const_iterator start,
-                 const std::vector<ci::ColorA>::const_iterator end) {
+    ColorManager(const ColorMap::const_iterator start, const ColorMap::const_iterator end) {
         replaceColors(start, end);
     }
 
+    ColorManager(const size_t number) {
+        std::random_device rd;   // Will be used to obtain a seed for the random number engine
+        std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
+        std::uniform_real_distribution<> randomGen(0.0, 1.0);
+
+        for(int i = 0; i < number; ++i) {
+            mColorMap.emplace_back(randomGen(gen), randomGen(gen), randomGen(gen), 1);
+        }
+    }
+
     /// Return the i-th color
-    ci::ColorA getColor(const size_t i) const {
+    glm::vec4 getColor(const size_t i) const {
         assert(i < mColorMap.size());
         return mColorMap[i];
     }
@@ -33,27 +54,71 @@ class ColorManager {
         return mColorMap.size();
     }
 
+    /// Returns true iff no colors are currently used
+    bool empty() const {
+        return mColorMap.empty();
+    }
+
+    /// Clears all colors and becomes empty
+    void clear() {
+        mColorMap.clear();
+    }
+
+    /// Adds a new color if not above limit
+    void addColor(const glm::vec4 newColor) {
+        if(size() < PEPR3D_MAX_PALETTE_COLORS) {
+            mColorMap.push_back(newColor);
+        }
+        assert(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
+    }
+
     /// Set the i-th color to a new color
-    void setColor(const size_t i, const ci::ColorA newColor) {
+    void setColor(const size_t i, const glm::vec4 newColor) {
         assert(i < mColorMap.size());
         mColorMap[i] = newColor;
     }
 
-    /// Replace the current colors with this list
-    void replaceColors(const std::vector<ci::ColorA>::const_iterator start,
-                       const std::vector<ci::ColorA>::const_iterator end) {
+    /// Replace the current colors with this list, trims if above limit
+    void replaceColors(const ColorMap::const_iterator start, const ColorMap::const_iterator end) {
         auto it = start;
         mColorMap.clear();
-        mColorMap.reserve(end - start);
-        while(it != end) {
+        mColorMap.reserve(std::min<std::size_t>(end - start, PEPR3D_MAX_PALETTE_COLORS));
+        while(it != end && mColorMap.size() < PEPR3D_MAX_PALETTE_COLORS) {
             mColorMap.push_back(*it);
             ++it;
         }
+        if(mActiveColorIndex >= size()) {
+            mActiveColorIndex = size() - 1;
+        }
     }
 
-    /// Replace the current colors with this new vector of colors
-    void replaceColors(std::vector<ci::ColorA>&& newColors) {
+    /// Replace the current colors with this new vector of colors, trims if above limit
+    void replaceColors(ColorMap&& newColors) {
         mColorMap = std::move(newColors);
+        if(mColorMap.size() > PEPR3D_MAX_PALETTE_COLORS) {
+            mColorMap.resize(PEPR3D_MAX_PALETTE_COLORS);
+        }
+        if(mActiveColorIndex >= size()) {
+            mActiveColorIndex = size() - 1;
+        }
+    }
+
+    /// Gets index of the currently selected / active color
+    size_t getActiveColorIndex() const {
+        return mActiveColorIndex;
+    }
+
+    /// Sets index of the currently selected / active color, safely checks boundaries
+    void setActiveColorIndex(size_t index) {
+        mActiveColorIndex = std::min<size_t>(std::max<size_t>(index, 0), size() - 1);
+    }
+
+    ColorMap& getColorMap() {
+        return mColorMap;
+    }
+
+    const ColorMap& getColorMap() const {
+        return mColorMap;
     }
 };
 

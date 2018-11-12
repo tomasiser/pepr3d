@@ -9,6 +9,7 @@
 
 #include "cinder/Log.h"
 #include "cinder/Ray.h"
+#include "cinder/gl/gl.h"
 #include "geometry/ColorManager.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
@@ -24,6 +25,10 @@ using Tree = CGAL::AABB_tree<My_AABB_traits>;
 using Ray_intersection = boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>;
 
 class Geometry {
+   public:
+    using ColorIndex = GLuint;
+
+   private:
     /// Triangle soup of the model mesh, containing CGAL::Triangle_3 data for AABB tree.
     std::vector<DataTriangle> mTriangles;
 
@@ -33,7 +38,7 @@ class Geometry {
 
     /// Color buffer, keeping the invariant that every triangle has only one color - all three vertices have to have the
     /// same color. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
-    std::vector<cinder::ColorA> mColorBuffer;
+    std::vector<ColorIndex> mColorBuffer;
 
     /// Normal buffer, the triangle has same normal for its every vertex.
     /// It is aligned with the vertex buffer and its size should be always equal to the vertex buffer.
@@ -48,6 +53,11 @@ class Geometry {
     /// A vector based map mapping size_t into ci::ColorA
     ColorManager mColorManager;
 
+    struct GeometryState {
+        std::vector<DataTriangle> triangles;
+        ColorManager::ColorMap colorMap;
+    };
+    
     struct PolyhedronData {
         std::vector<glm::vec3> vertices;
 
@@ -61,18 +71,17 @@ class Geometry {
     } mPolyhedronData;
 
    public:
-    /// Empty constructor rendering a triangle to debug
+    /// Empty constructor
     Geometry() {
-        mTriangles.emplace_back(glm::vec3(-1, 0, -1), glm::vec3(-1, 0, 1), glm::vec3(1, 0, -1), glm::vec3(0, 1, 0), 0);
-        mTriangles.emplace_back(glm::vec3(1, 0, -1), glm::vec3(1, 0, 1), glm::vec3(-1, 0, 1), glm::vec3(0, 1, 0), 0);
+        mTree = std::make_unique<Tree>();
+    }
 
+    Geometry(std::vector<DataTriangle>&& triangles) : mTriangles(std::move(triangles)) {
         generateVertexBuffer();
+        generateIndexBuffer();
         generateColorBuffer();
         generateNormalBuffer();
-        generateIndexBuffer();
-
         assert(mIndexBuffer.size() == mVertexBuffer.size());
-
         mTree = std::make_unique<Tree>(mTriangles.begin(), mTriangles.end());
         assert(mTree->size() == mTriangles.size());
     }
@@ -99,7 +108,7 @@ class Geometry {
         return mIndexBuffer;
     }
 
-    std::vector<cinder::ColorA>& getColorBuffer() {
+    std::vector<ColorIndex>& getColorBuffer() {
         return mColorBuffer;
     }
 
@@ -112,36 +121,40 @@ class Geometry {
     void loadNewGeometry(const std::string& fileName) {
         /// Load into mTriangles
         ModelImporter modelImporter(fileName);  // only first mesh [0]
-        mTriangles = modelImporter.getTriangles();
+
+        if(modelImporter.isModelLoaded()) {
+            mTriangles = modelImporter.getTriangles();
 
         mPolyhedronData.vertices.clear();
         mPolyhedronData.indices.clear();
         mPolyhedronData.vertices = modelImporter.getVertexBuffer();
         mPolyhedronData.indices = modelImporter.getIndexBuffer();
 
-        /// Generate new vertex buffer
-        generateVertexBuffer();
+            /// Generate new vertex buffer
+            generateVertexBuffer();
 
-        /// Generate new index buffer
-        generateIndexBuffer();
+            /// Generate new index buffer
+            generateIndexBuffer();
 
-        /// Generate new color buffer from triangle color data
-        generateColorBuffer();
+            /// Generate new color buffer from triangle color data
+            generateColorBuffer();
 
-        /// Generate new normal buffer, copying the triangle normal to each vertex
-        generateNormalBuffer();
+            /// Generate new normal buffer, copying the triangle normal to each vertex
+            generateNormalBuffer();
 
-        /// Rebuild the AABB tree
-        mTree->rebuild(mTriangles.begin(), mTriangles.end());
-        assert(mTree->size() == mTriangles.size());
+            /// Rebuild the AABB tree
+            mTree->rebuild(mTriangles.begin(), mTriangles.end());
+            assert(mTree->size() == mTriangles.size());
 
-        /// Get the generated color palette of the model, replace the current one
-        auto palette = modelImporter.getColorPalette();
-        assert(!palette.empty());
-        replaceColors(palette.begin(), palette.end());
+            /// Build the polyhedron data structure
+            buildPolyhedron();
 
-        /// Build the polyhedron data structure
-        buildPolyhedron();
+            /// Get the generated color palette of the model, replace the current one
+            mColorManager = modelImporter.getColorManager();
+            assert(!mColorManager.empty());
+        } else {
+            CI_LOG_E("Model not loaded --> write out message for user");
+        }
     }
 
     /// Set new triangle color. Fast, as it directly modifies the color buffer, without requiring a reload.
@@ -152,11 +165,11 @@ class Geometry {
 
         // Change all vertices of the triangle to the same new color
         assert(vertexPosition + 2 < mColorBuffer.size());
-        const ci::ColorA cinderColor = mColorManager.getColor(newColor);
 
-        mColorBuffer[vertexPosition] = cinderColor;
-        mColorBuffer[vertexPosition + 1] = cinderColor;
-        mColorBuffer[vertexPosition + 2] = cinderColor;
+        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
+        mColorBuffer[vertexPosition] = newColorIndex;
+        mColorBuffer[vertexPosition + 1] = newColorIndex;
+        mColorBuffer[vertexPosition + 2] = newColorIndex;
 
         /// Change it in the triangle soup
         assert(triangleIndex < mTriangles.size());
@@ -164,7 +177,7 @@ class Geometry {
     }
 
     /// Get the color of the indexed triangle
-    size_t getTriangleColor(const size_t triangleIndex) {
+    size_t getTriangleColor(const size_t triangleIndex) const {
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex].getColor();
     }
@@ -172,7 +185,10 @@ class Geometry {
     /// Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists.
     /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
     std::optional<size_t> intersectMesh(const ci::Ray& ray) const {
-        assert(!mTree->empty());
+        if(mTree->empty()) {
+            return {};
+        }
+
         const glm::vec3 source = ray.getOrigin();
         const glm::vec3 direction = ray.getDirection();
 
@@ -201,23 +217,25 @@ class Geometry {
         return mTriangles.size();
     }
 
-    /// Replace the color table with a new color table
-    void replaceColors(const std::vector<ci::ColorA>::const_iterator start,
-                       const std::vector<ci::ColorA>::const_iterator end) {
-        mColorManager.replaceColors(start, end);
-        generateColorBuffer();
+    const ColorManager& getColorManager() const {
+        return mColorManager;
     }
 
-    /// Replace the color table with a new color table
-    void replaceColors(std::vector<ci::ColorA>&& newColors) {
-        mColorManager.replaceColors(std::move(newColors));
-        generateColorBuffer();
+    ColorManager& getColorManager() {
+        return mColorManager;
     }
 
-    /// The number of colors in the current palette
-    size_t getColorSize() const {
-        return mColorManager.size();
+    const DataTriangle& getTriangle(const size_t triangleIndex) const {
+        assert(triangleIndex >= 0);
+        assert(triangleIndex < mTriangles.size());
+        return mTriangles[triangleIndex];
     }
+
+    /// Save current state into a struct so that it can be restored later (CommandManager target requirement)
+    GeometryState saveState() const;
+
+    /// Load previous state from a struct (CommandManager target requirement)
+    void loadState(const GeometryState&);
 
     /// Spreads color starting from startTriangle to wherever it can reach.
     template <typename StoppingCondition>
@@ -282,11 +300,10 @@ class Geometry {
         mColorBuffer.reserve(mVertexBuffer.size());
 
         for(const auto& mTriangle : mTriangles) {
-            const size_t triColorIndex = mTriangle.getColor();
-            const ci::ColorA cinderColor = mColorManager.getColor(triColorIndex);
-            mColorBuffer.push_back(cinderColor);
-            mColorBuffer.push_back(cinderColor);
-            mColorBuffer.push_back(cinderColor);
+            const ColorIndex triColorIndex = static_cast<ColorIndex>(mTriangle.getColor());
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
         }
         assert(mColorBuffer.size() == mVertexBuffer.size());
     }
@@ -300,7 +317,7 @@ class Geometry {
             mNormalBuffer.push_back(mTriangle.getNormal());
             mNormalBuffer.push_back(mTriangle.getNormal());
         }
-        assert(mColorBuffer.size() == mVertexBuffer.size());
+        assert(mNormalBuffer.size() == mVertexBuffer.size());
     }
 
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.

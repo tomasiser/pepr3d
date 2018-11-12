@@ -1,8 +1,10 @@
 #pragma once
 
-#include "CinderImGui.h"
 #include "IconsMaterialDesign.h"
-#include "imgui_internal.h"
+#include "peprimgui.h"
+
+#include "commands/CommandManager.h"
+#include "imgui_internal.h"  // must be included after peprimgui.h! beware of clang-format, keep the empty line above!
 #include "tools/Tool.h"
 
 namespace pepr3d {
@@ -17,10 +19,16 @@ class Toolbar {
         return mHeight;
     }
 
+    void setCommandManager(CommandManager<class Geometry>* commandManager) {
+        mCommandManager = commandManager;
+    }
+
     void draw();
 
    private:
     MainApplication& mApplication;
+    CommandManager<class Geometry>* mCommandManager = nullptr;
+
     std::size_t mSelectedButtonIndex = 3;
     float mHeight = 50.0f;
 
@@ -71,8 +79,8 @@ void Toolbar::drawButton(ButtonProperties& props, Callback onPressed) {
     }
 
     // Render
-    ImU32 col = ImGui::GetColorU32((isHovered && isHeld) ? ImGuiCol_ButtonActive : isHovered ? ImGuiCol_ButtonHovered
-                                                                                             : ImGuiCol_Button);
+    ImU32 col = ImGui::GetColorU32((isHovered && isHeld) ? ImGuiCol_ButtonActive
+                                                         : isHovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     if(props.isToggled) {
         col = ImGui::ColorConvertFloat4ToU32(ci::ColorA::hex(0x017BDA));
         ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));

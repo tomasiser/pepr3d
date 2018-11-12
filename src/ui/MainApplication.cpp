@@ -1,5 +1,22 @@
 #include "ui/MainApplication.h"
 
+#include "IconsMaterialDesign.h"
+#include "LightTheme.h"
+
+#include "commands/ExampleCommand.h"
+#include "geometry/Geometry.h"
+
+#include "tools/Brush.h"
+#include "tools/DisplayOptions.h"
+#include "tools/Information.h"
+#include "tools/LiveDebug.h"
+#include "tools/PaintBucket.h"
+#include "tools/Segmentation.h"
+#include "tools/Settings.h"
+#include "tools/TextEditor.h"
+#include "tools/Tool.h"
+#include "tools/TrianglePainter.h"
+
 #if defined(CINDER_MSW_DESKTOP)
 #include "windows.h"
 #endif
@@ -24,20 +41,24 @@ void MainApplication::setup() {
     ImGui::initialize(uiOptions);
     applyLightTheme(ImGui::GetStyle());
 
-    mTools.emplace_back(make_unique<TrianglePainter>(*this));
-    mTools.emplace_back(make_unique<Brush>());
+    mGeometry = std::make_unique<Geometry>();
+    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string());
+
+    mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
+    mToolbar.setCommandManager(mCommandManager.get());
+
+    mTools.emplace_back(make_unique<TrianglePainter>(*this, *mCommandManager));
     mTools.emplace_back(make_unique<PaintBucket>(*this));
+    mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
     mTools.emplace_back(make_unique<Segmentation>());
-    mTools.emplace_back(make_unique<DisplayOptions>());
+    mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>());
     mTools.emplace_back(make_unique<Information>());
     mTools.emplace_back(make_unique<LiveDebug>(*this));
-    mCurrentToolIterator = --mTools.end();
+    mCurrentToolIterator = mTools.begin();
 
     mModelView.setup();
-
-    mGeometry = std::make_unique<Geometry>();
 }
 
 void MainApplication::resize() {
@@ -58,6 +79,10 @@ void MainApplication::mouseUp(MouseEvent event) {
 
 void MainApplication::mouseWheel(MouseEvent event) {
     mModelView.onMouseWheel(event);
+}
+
+void MainApplication::mouseMove(MouseEvent event) {
+    mModelView.onMouseMove(event);
 }
 
 void MainApplication::fileDrop(FileDropEvent event) {

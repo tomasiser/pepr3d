@@ -1,5 +1,6 @@
 #include "Toolbar.h"
 #include "MainApplication.h"
+#include "geometry/Geometry.h"
 #include "imgui_internal.h"
 
 namespace pepr3d {
@@ -110,12 +111,12 @@ void Toolbar::drawFileDropDown() {
 void Toolbar::drawUndoRedo() {
     ButtonProperties props;
     props.label = ICON_MD_UNDO;
-    props.isEnabled = false;
-    drawButton(props, []() {});
+    props.isEnabled = mCommandManager && mCommandManager->canUndo();
+    drawButton(props, [&]() { mCommandManager->undo(); });
     ImGui::SameLine(0.f, 0.f);
     props.label = ICON_MD_REDO;
-    props.isEnabled = false;
-    drawButton(props, []() {});
+    props.isEnabled = mCommandManager && mCommandManager->canRedo();
+    drawButton(props, [&]() { mCommandManager->redo(); });
 }
 
 void Toolbar::drawDemoWindowToggle() {
