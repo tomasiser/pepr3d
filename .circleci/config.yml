@@ -8,15 +8,20 @@ jobs:
       - run:
           name: Verify that source files conform to clang-format
           command: |
+            echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" >> /etc/apt/sources.list.d/unstable.list
             apt-get update -y
-            apt-get install -y clang-format
+            apt-get install -y clang-format-7
+            clang-format-7 --version
             CLANG_FORMAT_FILES_LIST=`find ./src/ -name \*.c -type f -or -name \*.cpp -type f -or -name \*.h -type f -or -name \*.hpp -type f`
             CLANG_FORMAT_FAILED=false
             for FILE_TO_VERIFY in $CLANG_FORMAT_FILES_LIST
             do
-              export FORMATTING_ISSUE_COUNT=`clang-format -output-replacements-xml -style=file $FILE_TO_VERIFY | grep offset | wc -l`
+              export FORMATTING_OUTPUT=`clang-format-7 -output-replacements-xml -style=file $FILE_TO_VERIFY`
+              export FORMATTING_ISSUE_COUNT=`echo $FORMATTING_OUTPUT | grep offset | wc -l`
               if [ "$FORMATTING_ISSUE_COUNT" -gt "0" ]; then
                 echo "File $FILE_TO_VERIFY does not conform to clang-format."
+                echo "Output from clang-format for $FILE_TO_VERIFY:"
+                echo "$FORMATTING_OUTPUT"
                 CLANG_FORMAT_FAILED=true
               fi
             done
