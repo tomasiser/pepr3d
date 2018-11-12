@@ -15,4 +15,4 @@ class PaintBucket : public ITool {
         return ICON_MD_FORMAT_COLOR_FILL;
     }
 };
-}
+}  // namespace pepr3d

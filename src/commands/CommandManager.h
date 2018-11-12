@@ -66,7 +66,7 @@ class CommandManager {
     void clearFutureState();
 
     /// Get snapshot before current state
-    auto getPrevSnapshotIterator() const;
+    auto getPrevSnapshotIterator() const -> decltype(std::declval<const std::vector<SnapshotPair>>().begin());
 
     /// Should we save state before next command
     bool shouldSaveState() const;
@@ -84,7 +84,8 @@ class CommandManager {
 };
 
 template <typename Target>
-auto CommandManager<Target>::getPrevSnapshotIterator() const {
+auto CommandManager<Target>::getPrevSnapshotIterator() const
+    -> decltype(std::declval<const std::vector<SnapshotPair>>().begin()) {
     assert(mPosFromEnd <= mCommandHistory.size());
 
     const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
@@ -174,11 +175,12 @@ const typename CommandManager<Target>::CommandBaseType& CommandManager<Target>::
 template <typename Target>
 void CommandManager<Target>::clearFutureState() {
     if(mPosFromEnd > 0) {
+        // Clear all future snapshots
+        mTargetSnapshots.erase(std::next(getPrevSnapshotIterator()), mTargetSnapshots.end());
+
         // Clear all future commands
         mCommandHistory.erase(std::prev(mCommandHistory.end(), mPosFromEnd), mCommandHistory.end());
 
-        // Clear all future snapshots
-        mTargetSnapshots.erase(std::next(getPrevSnapshotIterator()), mTargetSnapshots.end());
         mPosFromEnd = 0;
     }
 }
@@ -197,7 +199,7 @@ bool CommandManager<Target>::shouldSaveState() const {
 
 template <typename Target>
 bool CommandManager<Target>::joinWithLastCommand(CommandBaseType& command) {
-    if(!canUndo() || getLastCommand().getCommandType() != command.getCommandType() || command.getCommandType() == 0)
+    if(!canUndo() || !getLastCommand().canBeJoined())
         return false;
 
     if(getLastCommand().joinCommand(command)) {

@@ -10,6 +10,7 @@
 #include "ModelView.h"
 #include "SidePane.h"
 #include "Toolbar.h"
+#include "commands/CommandManager.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -100,6 +101,8 @@ class MainApplication : public App {
     ToolsVector::iterator mCurrentToolIterator;
 
     std::unique_ptr<Geometry> mGeometry;
+    std::unique_ptr<CommandManager<Geometry>> mCommandManager;
+
     std::string mGeometryFileName;
 };
 

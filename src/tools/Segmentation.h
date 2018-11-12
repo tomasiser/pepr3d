@@ -15,4 +15,4 @@ class Segmentation : public ITool {
         return ICON_MD_DASHBOARD;
     }
 };
-}
+}  // namespace pepr3d

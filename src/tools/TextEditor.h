@@ -15,4 +15,4 @@ class TextEditor : public ITool {
         return ICON_MD_TEXT_FIELDS;
     }
 };
-}
+}  // namespace pepr3d

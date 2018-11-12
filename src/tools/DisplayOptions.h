@@ -24,4 +24,4 @@ class DisplayOptions : public ITool {
    private:
     MainApplication& mApplication;
 };
-}
+}  // namespace pepr3d

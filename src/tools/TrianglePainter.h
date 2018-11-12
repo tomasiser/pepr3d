@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include "commands/CommandManager.h"
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
 #include "ui/ModelView.h"
@@ -11,7 +12,8 @@ class MainApplication;
 
 class TrianglePainter : public ITool {
    public:
-    TrianglePainter(MainApplication& app) : mApplication(app) {}
+    TrianglePainter(MainApplication& app, CommandManager<class Geometry>& commandManager)
+        : mApplication(app), mCommandManager(commandManager) {}
 
     virtual std::string getName() const override {
         return "Triangle Painter";
@@ -24,13 +26,17 @@ class TrianglePainter : public ITool {
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
 
    private:
     MainApplication& mApplication;
+    CommandManager<class Geometry>& mCommandManager;
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
+
+    bool mGroupCommands = false;
     std::optional<std::size_t> mHoveredTriangleId = {};
 };
 }  // namespace pepr3d

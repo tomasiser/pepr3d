@@ -15,4 +15,4 @@ class Information : public ITool {
         return ICON_MD_INFO_OUTLINE;
     }
 };
-}
+}  // namespace pepr3d

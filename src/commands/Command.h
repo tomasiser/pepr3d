@@ -15,10 +15,10 @@ class CommandBase {
    public:
     /**
      * @param isSlow Mark command as slow. CommandManager will create a snapshot after a slow command.
-     * @param commandType Command type is used to determine if two commands can be joined. If commandType is zero no
      * attempt will be made.
+     * @param canBeJoined can this command be joined together with the command of the same type
      */
-    CommandBase(bool isSlow = false, uint64_t commandType = 0) : mIsSlow(isSlow), mCommandType(commandType) {}
+    CommandBase(bool isSlow = false, bool canBeJoined = false) : mIsSlow(isSlow), mCanBeJoined(canBeJoined) {}
     virtual ~CommandBase() = default;
 
     /// Get description of the command
@@ -29,9 +29,9 @@ class CommandBase {
         return mIsSlow;
     }
 
-    /// Get value representing the command's type. Commands of the same type other than zero are assumed to be joinable
-    uint64_t getCommandType() const {
-        return mCommandType;
+    /// Can this command be joined with other commands of the same type
+    bool canBeJoined() const {
+        return mCanBeJoined;
     }
 
    protected:
@@ -47,8 +47,8 @@ class CommandBase {
     }
 
    private:
-    const bool mIsSlow = false;
-    const uint64_t mCommandType;
+    const bool mIsSlow;
+    const bool mCanBeJoined;
 };
 
 }  // namespace pepr3d
