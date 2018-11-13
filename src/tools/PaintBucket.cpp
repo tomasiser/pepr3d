@@ -4,6 +4,20 @@
 namespace pepr3d {
 
 void PaintBucket::drawToSidePane(SidePane &sidePane) {
+    sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
+    sidePane.drawSeparator();
+
+    sidePane.drawCheckbox("Paint while dragging", mShouldPaintWhileDrag);
+    sidePane.drawCheckbox("Color whole model", mDoNotStop);
+    if(!mDoNotStop) {
+        sidePane.drawCheckbox("Stop on different color", mStopOnColor);
+        sidePane.drawCheckbox("Stop on sharp edges", mStopOnNormal);
+        if(mStopOnNormal) {
+            sidePane.drawIntDragger("Maximum absolute angle", mStopOnNormalDegrees, 0.25f, 0, 180, "%.0f°", 40.0f);
+        }
+    }
+    sidePane.drawSeparator();
+
     const size_t triSize = mApplication.getCurrentGeometry()->getTriangleCount();
     sidePane.drawText("Number of triangles: " + std::to_string(triSize) + "\n");
     sidePane.drawText("Polyhedron closed 0/1: " + std::to_string(mApplication.getCurrentGeometry()->polyClosedCheck()) +
@@ -11,52 +25,62 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
     sidePane.drawText("Vertex count: " + std::to_string(mApplication.getCurrentGeometry()->polyVertCount()) + "\n");
 }
 
+void PaintBucket::drawToModelView(ModelView &modelView) {
+    if(mHoveredTriangleId) {
+        modelView.drawTriangleHighlight(*mHoveredTriangleId);
+    }
+}
+
 void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent event) {
     if(!event.isLeftDown()) {
         return;
     }
-
-    glm::vec2 lastClick = event.getPos();
-    const ci::Ray lastRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    const auto geometry = mApplication.getCurrentGeometry();
+    if(!mHoveredTriangleId) {
+        return;
+    }
+    auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         return;
     }
-    std::optional<std::size_t> selectedTriangleId = geometry->intersectMesh(lastRay);
 
-    const int angleDegrees = 30;
-    const double angleRads = angleDegrees * glm::pi<double>() / 180.0;
-    if(selectedTriangleId) {
-        const NormalStopping normalFtor(geometry, glm::cos(angleRads),
-                                        geometry->getTriangle(*selectedTriangleId).getNormal());
+    const double angleRads = mStopOnNormalDegrees * glm::pi<double>() / 180.0;
+    const NormalStopping normalFtor(geometry, glm::cos(angleRads),
+                                    geometry->getTriangle(*mHoveredTriangleId).getNormal());
 
-        const ColorStopping colorFtor(geometry);
+    const ColorStopping colorFtor(geometry);
 
-        bool normalStopOn = true;
-        bool colorStopOn = true;
-        bool noStopOn = false;
+    auto combinedCriterion = [&normalFtor, &colorFtor, this](const size_t a, const size_t b) -> bool {
+        if(mDoNotStop) {
+            return true;
+        }
+        bool result = true;
+        if(mStopOnNormal) {
+            result &= normalFtor(a, b);
+        }
+        if(mStopOnColor) {
+            result &= colorFtor(a, b);
+        }
+        return result;
+    };
 
-        auto combinedCriterion = [&normalFtor, &colorFtor, normalStopOn, colorStopOn, noStopOn](
-                                     const size_t a, const size_t b) -> bool {
-            bool result = true;
-            if(noStopOn) {
-                return true;
-            }
-            if(normalStopOn) {
-                result &= normalFtor(a, b);
-            }
-            if(colorStopOn) {
-                result &= colorFtor(a, b);
-            }
-            return result;
-        };
-
-        geometry->bucket(*selectedTriangleId, combinedCriterion);
-    }
+    geometry->bucket(*mHoveredTriangleId, combinedCriterion);
 }
 
 void PaintBucket::onModelViewMouseDrag(class ModelView &modelView, ci::app::MouseEvent event) {
-    onModelViewMouseDown(modelView, event);
+    if(mShouldPaintWhileDrag) {
+        onModelViewMouseMove(modelView, event);
+        onModelViewMouseDown(modelView, event);
+    }
+}
+
+void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent event) {
+    const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    auto geometry = mApplication.getCurrentGeometry();
+    if(geometry == nullptr) {
+        mHoveredTriangleId = {};
+        return;
+    }
+    mHoveredTriangleId = geometry->intersectMesh(cameraRay);
 }
 
 }  // namespace pepr3d

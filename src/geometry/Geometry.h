@@ -262,7 +262,7 @@ class Geometry {
             addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit, stopFunctor);
 
             // Set the color
-            setTriangleColor(currentVertex, mColorManager.size() - 2);
+            setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
         }
     }
 
