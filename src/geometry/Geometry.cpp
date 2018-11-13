@@ -1,5 +1,7 @@
 #include "geometry/Geometry.h"
+
 namespace pepr3d {
+
 Geometry::GeometryState Geometry::saveState() const {
     // Save only necessary data to keep snapshot size low
     return GeometryState{mTriangles, ColorManager::ColorMap(mColorManager.getColorMap())};

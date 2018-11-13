@@ -14,20 +14,25 @@
 
 #include <cinder/Log.h>
 #include <boost/functional/hash.hpp>
+#include <glm/gtc/epsilon.hpp>
 
 namespace pepr3d {
 
 class ModelImporter {
     std::string mPath;
-    std::vector<aiMesh *> mMeshes;
     std::vector<DataTriangle> mTriangles;
+
     ColorManager mPalette;
     bool mModelLoaded = false;
 
+    std::vector<glm::vec3> mVertexBuffer;
+    std::vector<std::array<size_t, 3>> mIndexBuffer;
+
    public:
-    ModelImporter(std::string path) {
-        this->mPath = path;
-        this->mModelLoaded = loadModel(path);
+    ModelImporter(const std::string p) : mPath(p) {
+        this->mModelLoaded = loadModel(this->mPath);
+        this->mModelLoaded &= loadModelWithJoinedVertices(this->mPath);
+        assert(mTriangles.size() == mIndexBuffer.size());
     }
 
     std::vector<DataTriangle> getTriangles() const {
@@ -43,9 +48,77 @@ class ModelImporter {
         return mModelLoaded;
     }
 
+    std::vector<glm::vec3> getVertexBuffer() const {
+        assert(!mVertexBuffer.empty());
+        return mVertexBuffer;
+    }
+
+    std::vector<std::array<size_t, 3>> getIndexBuffer() const {
+        assert(!mIndexBuffer.empty());
+        return mIndexBuffer;
+    }
+
    private:
+    /// Pull the correct Vertex buffer (correct as in vertices are re-used for multiple triangles) from the mesh
+    static std::vector<glm::vec3> calculateVertexBuffer(aiMesh *mesh) {
+        std::vector<glm::vec3> vertices;
+        vertices.reserve(mesh->mNumVertices);
+        for(size_t i = 0; i < mesh->mNumVertices; i++) {
+            vertices.emplace_back(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+        }
+        assert(vertices.size() == mesh->mNumVertices);
+        return vertices;
+    }
+
+    /// Pull the correct index buffer (correct as in different than 0-N) from the mesh
+    static std::vector<std::array<size_t, 3>> calculateIndexBuffer(aiMesh *mesh) {
+        std::vector<std::array<size_t, 3>> indices;
+        indices.reserve(mesh->mNumFaces);
+
+        for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
+            // We should only have triangles
+            assert(mesh->mFaces[i].mNumIndices == 3);
+            indices.push_back({mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
+        }
+        assert(indices.size() == mesh->mNumFaces);
+        return indices;
+    }
+
+    /// A method which loads the model with ALL vertex information apart from position removed. This is done to
+    /// correctly merge all vertices and receive a closed mesh, which can't be done if more than one vertex per position
+    /// exists.
+    bool loadModelWithJoinedVertices(const std::string &path) {
+        std::vector<aiMesh *> meshes;
+
+        /// Creates an instance of the Importer class
+        Assimp::Importer importer;
+        importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS | aiComponent_TANGENTS_AND_BITANGENTS |
+                                                                aiComponent_COLORS | aiComponent_TEXCOORDS |
+                                                                aiComponent_BONEWEIGHTS);
+
+        /// Scene with some postprocessing
+        const aiScene *scene = importer.ReadFile(path, aiProcess_RemoveComponent | aiProcess_JoinIdenticalVertices);
+
+        // If the import failed, report it
+        if(!scene) {
+            CI_LOG_E(importer.GetErrorString());
+            return false;
+        }
+
+        /// Access the file's contents
+        processNode(scene->mRootNode, scene, meshes);
+
+        mVertexBuffer = calculateVertexBuffer(meshes[0]);
+        mIndexBuffer = calculateIndexBuffer(meshes[0]);
+
+        meshes.clear();
+        return true;
+    }
+
+    /// A method which loads the model we will use for rendering - with duplicated vertices for normals, colors, etc.
     bool loadModel(const std::string &path) {
         mPalette.clear();
+        std::vector<aiMesh *> meshes;
 
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
@@ -60,34 +133,36 @@ class ModelImporter {
 
         // If the import failed, report it
         if(!scene) {
-            CI_LOG_E(importer.GetErrorString());  // TODO: write out error message somewhere
+            CI_LOG_E(importer.GetErrorString());
             return false;
         }
 
         /// Access the file's contents
-        processNode(scene->mRootNode, scene);
+        processNode(scene->mRootNode, scene, meshes);
 
-        mTriangles = processFirstMesh(mMeshes[0]);
+        mTriangles = processFirstMesh(meshes[0]);
 
         if(mPalette.empty()) {
             mPalette = ColorManager();  // create new palette with default colors
         }
 
-        // Everything will be cleaned up by the importer destructor
+        // Everything will be cleaned up by the importer destructor.
+        // WARNING: Every ASSIMP POINTER will be DELETED beyond this point.
+        meshes.clear();
         return true;
     }
 
     /// Processes scene tree recursively. Retrieving meshes from file.
-    void processNode(aiNode *node, const aiScene *scene) {
+    static void processNode(aiNode *node, const aiScene *scene, std::vector<aiMesh *> &meshes) {
         /// Process all the node's meshes (if any).
         for(unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-            mMeshes.push_back(mesh);
+            meshes.push_back(mesh);
         }
 
         /// Recursively do the same for each of its children.
         for(unsigned int i = 0; i < node->mNumChildren; i++) {
-            processNode(node->mChildren[i], scene);
+            processNode(node->mChildren[i], scene, meshes);
         }
     }
 
@@ -149,6 +224,12 @@ class ModelImporter {
             const bool zeroAreaCheck =
                 vertices[0] != vertices[1] && vertices[0] != vertices[2] && vertices[1] != vertices[2];
             if(zeroAreaCheck) {
+                /// Do last minute quality checks on the triangle
+                // Normal should be normalized
+                assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, 0.000001));
+                // ColorPalette should either be empty and return color 0, or returnColor should be within the palette
+                assert((mPalette.size() == 0 && returnColor == 0) ||
+                       (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor >= 0));
                 /// Place the constructed triangle
                 triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
             } else {
@@ -162,11 +243,12 @@ class ModelImporter {
     static glm::vec3 calculateNormal(const glm::vec3 vertices[3], const glm::vec3 normals[3]) {
         const glm::vec3 p0 = vertices[1] - vertices[0];
         const glm::vec3 p1 = vertices[2] - vertices[0];
-        const glm::vec3 faceNormal = glm::cross(p0, p1);
+        const glm::vec3 faceNormal = glm::normalize(glm::cross(p0, p1));
 
         const glm::vec3 vertexNormal = glm::normalize(normals[0] + normals[1] + normals[2]);
         const float dot = glm::dot(faceNormal, vertexNormal);
 
+        // return vertexNormal;
         return (dot < 0.0f) ? -faceNormal : faceNormal;
     }
 
