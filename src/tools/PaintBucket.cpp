@@ -24,9 +24,34 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     }
     std::optional<std::size_t> selectedTriangleId = geometry->intersectMesh(lastRay);
 
+    const int angleDegrees = 30;
+    const double angleRads = angleDegrees * glm::pi<double>() / 180.0;
     if(selectedTriangleId) {
-        const NormalStopping ftor(geometry, 0.866);
-        geometry->bucket(*selectedTriangleId, ftor);
+        const NormalStopping normalFtor(geometry, glm::cos(angleRads),
+                                        geometry->getTriangle(*selectedTriangleId).getNormal());
+
+        const ColorStopping colorFtor(geometry);
+
+        bool normalStopOn = true;
+        bool colorStopOn = true;
+        bool noStopOn = false;
+
+        auto combinedCriterion = [&normalFtor, &colorFtor, normalStopOn, colorStopOn, noStopOn](
+                                     const size_t a, const size_t b) -> bool {
+            bool result = true;
+            if(noStopOn) {
+                return true;
+            }
+            if(normalStopOn) {
+                result &= normalFtor(a, b);
+            }
+            if(colorStopOn) {
+                result &= colorFtor(a, b);
+            }
+            return result;
+        };
+
+        geometry->bucket(*selectedTriangleId, combinedCriterion);
     }
 }
 
