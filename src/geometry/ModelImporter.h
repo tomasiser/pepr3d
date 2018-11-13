@@ -31,7 +31,7 @@ class ModelImporter {
    public:
     ModelImporter(const std::string p) : mPath(p) {
         this->mModelLoaded = loadModel(this->mPath);
-        loadModelWithJoinedVertices(this->mPath);
+        this->mModelLoaded &= loadModelWithJoinedVertices(this->mPath);
         assert(mTriangles.size() == mIndexBuffer.size());
     }
 
@@ -101,7 +101,7 @@ class ModelImporter {
 
         // If the import failed, report it
         if(!scene) {
-            std::cout << "fail: " << importer.GetErrorString() << std::endl;  // TODO: write out error somewhere
+            CI_LOG_E(importer.GetErrorString());
             return false;
         }
 
@@ -112,7 +112,6 @@ class ModelImporter {
         mIndexBuffer = calculateIndexBuffer(meshes[0]);
 
         meshes.clear();
-
         return true;
     }
 
@@ -134,7 +133,7 @@ class ModelImporter {
 
         // If the import failed, report it
         if(!scene) {
-            CI_LOG_E(importer.GetErrorString());  // TODO: write out error message somewhere
+            CI_LOG_E(importer.GetErrorString());
             return false;
         }
 
