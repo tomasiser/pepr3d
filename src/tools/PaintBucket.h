@@ -52,14 +52,15 @@ class PaintBucket : public ITool {
     struct NormalStopping {
         const Geometry* geo;
         const double threshold;
+        const glm::vec3 startNormal;
 
-        NormalStopping(const Geometry* g, const double thresh) : geo(g), threshold(thresh) {}
+        NormalStopping(const Geometry* g, const double thresh, const glm::vec3 normal)
+            : geo(g), threshold(thresh), startNormal(normal) {}
 
         bool operator()(const size_t a, const size_t b) const {
-            const auto& normal1 = geo->getTriangle(a).getNormal();
-            const auto& normal2 = geo->getTriangle(b).getNormal();
+            const auto& newNormal = geo->getTriangle(a).getNormal();
 
-            const double cosAngle = glm::dot(glm::normalize(normal1), glm::normalize(normal2));
+            const double cosAngle = glm::dot(glm::normalize(newNormal), glm::normalize(startNormal));
             if(cosAngle < threshold) {
                 return false;
             } else {
