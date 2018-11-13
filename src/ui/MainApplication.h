@@ -36,6 +36,13 @@ class MainApplication : public App {
 
     MainApplication();
 
+    static void prepareSettings(Settings* settings) {
+        assert(settings != nullptr);
+#if defined(CINDER_MSW_DESKTOP)
+        settings->setConsoleWindowEnabled(true);
+#endif
+    }
+
     Toolbar& getToolbar() {
         return mToolbar;
     }
