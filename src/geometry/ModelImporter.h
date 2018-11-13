@@ -14,6 +14,7 @@
 
 #include <cinder/Log.h>
 #include <boost/functional/hash.hpp>
+#include <glm/gtc/epsilon.hpp>
 
 namespace pepr3d {
 
@@ -31,6 +32,7 @@ class ModelImporter {
     ModelImporter(const std::string p) : mPath(p) {
         this->mModelLoaded = loadModel(this->mPath);
         loadModelWithJoinedVertices(this->mPath);
+        assert(mTriangles.size() == mIndexBuffer.size());
     }
 
     std::vector<DataTriangle> getTriangles() const {
@@ -223,6 +225,12 @@ class ModelImporter {
             const bool zeroAreaCheck =
                 vertices[0] != vertices[1] && vertices[0] != vertices[2] && vertices[1] != vertices[2];
             if(zeroAreaCheck) {
+                /// Do last minute quality checks on the triangle
+                // Normal should be normalized
+                assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, 0.000001));
+                // ColorPalette should either be empty and return color 0, or returnColor should be within the palette
+                assert((mPalette.size() == 0 && returnColor == 0) ||
+                       (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor >= 0));
                 /// Place the constructed triangle
                 triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
             } else {
@@ -236,11 +244,12 @@ class ModelImporter {
     static glm::vec3 calculateNormal(const glm::vec3 vertices[3], const glm::vec3 normals[3]) {
         const glm::vec3 p0 = vertices[1] - vertices[0];
         const glm::vec3 p1 = vertices[2] - vertices[0];
-        const glm::vec3 faceNormal = glm::cross(p0, p1);
+        const glm::vec3 faceNormal = glm::normalize(glm::cross(p0, p1));
 
         const glm::vec3 vertexNormal = glm::normalize(normals[0] + normals[1] + normals[2]);
         const float dot = glm::dot(faceNormal, vertexNormal);
 
+        // return vertexNormal;
         return (dot < 0.0f) ? -faceNormal : faceNormal;
     }
 
