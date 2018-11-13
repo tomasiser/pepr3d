@@ -2,6 +2,7 @@
 
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/exceptions.h>
 
 #include <cassert>
 #include <optional>
@@ -320,8 +321,14 @@ class Geometry {
     void buildPolyhedron() {
         PolyhedronBuilder<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
         mPolyhedronData.P.clear();
-        mPolyhedronData.P.delegate(triangle);
-        mPolyhedronData.faceHandles = triangle.getFacetArray();
+        try {
+            mPolyhedronData.P.delegate(triangle);
+            mPolyhedronData.faceHandles = triangle.getFacetArray();
+        } catch(CGAL::Assertion_exception assertExcept) {
+            mPolyhedronData.P.clear();
+            CI_LOG_E("Polyhedron not loaded. " + assertExcept.message());
+            return;
+        }
 
         assert(mPolyhedronData.P.size_of_facets() == mPolyhedronData.indices.size());
         assert(mPolyhedronData.P.size_of_vertices() == mPolyhedronData.vertices.size());

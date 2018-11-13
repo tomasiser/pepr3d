@@ -92,12 +92,15 @@ class ModelImporter {
 
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
+        importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS | aiComponent_TANGENTS_AND_BITANGENTS |
                                                                 aiComponent_COLORS | aiComponent_TEXCOORDS |
                                                                 aiComponent_BONEWEIGHTS);
 
         /// Scene with some postprocessing
-        const aiScene *scene = importer.ReadFile(path, aiProcess_RemoveComponent | aiProcess_JoinIdenticalVertices);
+        const aiScene *scene =
+            importer.ReadFile(path, aiProcess_Triangulate | aiProcess_SortByPType | aiProcess_RemoveComponent |
+                                        aiProcess_JoinIdenticalVertices | aiProcess_FindDegenerates);
 
         // If the import failed, report it
         if(!scene) {
