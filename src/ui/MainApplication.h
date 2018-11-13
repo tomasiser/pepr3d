@@ -36,7 +36,7 @@ class MainApplication : public App {
 
     MainApplication();
 
-    static void MainApplication::prepareSettings(Settings* settings) {
+    static void prepareSettings(Settings* settings) {
         assert(settings != nullptr);
 #if defined(CINDER_MSW_DESKTOP)
         settings->setConsoleWindowEnabled(true);
