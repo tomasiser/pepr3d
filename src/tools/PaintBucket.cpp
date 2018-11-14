@@ -1,4 +1,5 @@
 #include "tools/PaintBucket.h"
+#include "commands/CmdPaintSingleColor.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
@@ -63,13 +64,28 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
         return result;
     };
 
-    geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+    std::vector<size_t> trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+
+    if(trianglesToPaint.empty()) {
+        return;
+    }
+
+    const size_t currentColorIndex = geometry->getColorManager().getActiveColorIndex();
+    const bool hoverOverSameTriangle = geometry->getTriangleColor(*mHoveredTriangleId) == currentColorIndex;
+
+    // We only want to re-draw if we are not dragging, or if you are dragging and reached a new region
+    if(!mDragging || (mDragging && !hoverOverSameTriangle)) {
+        mCommandManager.execute(std::make_unique<CmdPaintSingleColor>(std::move(trianglesToPaint), currentColorIndex),
+                                mDragging);
+    }
 }
 
 void PaintBucket::onModelViewMouseDrag(class ModelView &modelView, ci::app::MouseEvent event) {
     if(mShouldPaintWhileDrag) {
+        mDragging = true;
         onModelViewMouseMove(modelView, event);
         onModelViewMouseDown(modelView, event);
+        mDragging = false;
     }
 }
 

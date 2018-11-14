@@ -236,10 +236,12 @@ class Geometry {
 
     /// Spreads color starting from startTriangle to wherever it can reach.
     template <typename StoppingCondition>
-    void bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
+    std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
         if(mPolyhedronData.P.is_empty()) {
-            return;
+            return {};
         }
+
+        std::vector<size_t> trianglesToColor;
 
         std::deque<size_t> toVisit;
         const size_t startingFace = startTriangle;
@@ -262,8 +264,10 @@ class Geometry {
             addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit, stopFunctor);
 
             // Set the color
-            setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
+            // setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
+            trianglesToColor.push_back(currentVertex);
         }
+        return trianglesToColor;
     }
 
    private:

@@ -1,40 +1,11 @@
 #include "tools/TrianglePainter.h"
 #include <random>
 #include <vector>
+#include "commands/CmdPaintSingleColor.h"
 #include "geometry/Geometry.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
-
-class CmdPaintSingleTriangle : public CommandBase<Geometry> {
-   public:
-    std::string_view getDescription() const override {
-        return "Set color of a triangle";
-    }
-
-    CmdPaintSingleTriangle(size_t triangleId, size_t colorId)
-        : CommandBase(false, true), mTriangleIds{triangleId}, mColorId(colorId) {}
-
-   protected:
-    void run(Geometry& target) const override {
-        for(size_t triangleId : mTriangleIds) {
-            target.setTriangleColor(triangleId, mColorId);
-        }
-    }
-
-    bool joinCommand(const CommandBase& otherBase) override {
-        const auto* other = dynamic_cast<const CmdPaintSingleTriangle*>(&otherBase);
-        if(other) {
-            mTriangleIds.insert(mTriangleIds.end(), other->mTriangleIds.begin(), other->mTriangleIds.end());
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    std::vector<size_t> mTriangleIds;
-    size_t mColorId;
-};
 
 void TrianglePainter::drawToSidePane(SidePane& sidePane) {
     sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
@@ -70,7 +41,7 @@ void TrianglePainter::onModelViewMouseDown(ModelView& modelView, ci::app::MouseE
     // Avoid painting if the triangle is the same color
     const auto activeColor = geometry->getColorManager().getActiveColorIndex();
     if(geometry->getTriangleColor(*mHoveredTriangleId) != activeColor) {
-        mCommandManager.execute(std::make_unique<CmdPaintSingleTriangle>(*mHoveredTriangleId, activeColor),
+        mCommandManager.execute(std::make_unique<CmdPaintSingleColor>(*mHoveredTriangleId, activeColor),
                                 mGroupCommands);
         mGroupCommands = true;
     }
