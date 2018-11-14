@@ -67,16 +67,20 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     std::vector<size_t> trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
     const size_t currentColorIndex = geometry->getColorManager().getActiveColorIndex();
 
-    if(geometry->getTriangleColor(*mHoveredTriangleId) != currentColorIndex) {
+    const bool hoverOverSameTriangle = geometry->getTriangleColor(*mHoveredTriangleId) == currentColorIndex;
+    // We only want to re-draw if we are not dragging, or if you are dragging and reached a new region
+    if(!mDragging || (mDragging && !hoverOverSameTriangle)) {
         mCommandManager.execute(std::make_unique<CmdPaintSingleColor>(std::move(trianglesToPaint), currentColorIndex),
-                                false);
+                                mDragging);
     }
 }
 
 void PaintBucket::onModelViewMouseDrag(class ModelView &modelView, ci::app::MouseEvent event) {
     if(mShouldPaintWhileDrag) {
+        mDragging = true;
         onModelViewMouseMove(modelView, event);
         onModelViewMouseDown(modelView, event);
+        mDragging = false;
     }
 }
 

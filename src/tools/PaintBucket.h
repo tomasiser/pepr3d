@@ -36,6 +36,7 @@ class PaintBucket : public ITool {
     bool mStopOnColor = true;
     bool mDoNotStop = false;
     bool mShouldPaintWhileDrag = true;
+    bool mDragging = false;
 
     struct DoNotStop {
         const Geometry* geo;
