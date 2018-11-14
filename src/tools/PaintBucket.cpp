@@ -1,4 +1,5 @@
 #include "tools/PaintBucket.h"
+#include "commands/CmdPaintSingleColor.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
@@ -63,7 +64,13 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
         return result;
     };
 
-    geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+    std::vector<size_t> trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+    const size_t currentColorIndex = geometry->getColorManager().getActiveColorIndex();
+
+    if(geometry->getTriangleColor(*mHoveredTriangleId) != currentColorIndex) {
+        mCommandManager.execute(std::make_unique<CmdPaintSingleColor>(std::move(trianglesToPaint), currentColorIndex),
+                                false);
+    }
 }
 
 void PaintBucket::onModelViewMouseDrag(class ModelView &modelView, ci::app::MouseEvent event) {
