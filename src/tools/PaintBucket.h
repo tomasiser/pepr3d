@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include "geometry/Geometry.h"
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
@@ -19,11 +20,19 @@ class PaintBucket : public ITool {
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
+    virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
 
    private:
     MainApplication& mApplication;
+    std::optional<std::size_t> mHoveredTriangleId = {};
+    bool mStopOnNormal = false;
+    int mStopOnNormalDegrees = 30;
+    bool mStopOnColor = true;
+    bool mDoNotStop = false;
+    bool mShouldPaintWhileDrag = true;
 
     struct DoNotStop {
         const Geometry* geo;
