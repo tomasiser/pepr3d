@@ -46,6 +46,7 @@ void MainApplication::setup() {
 
     mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
     mToolbar.setCommandManager(mCommandManager.get());
+    mSidePane.setCommandManager(mCommandManager.get());
 
     mTools.emplace_back(make_unique<TrianglePainter>(*this, *mCommandManager));
     mTools.emplace_back(make_unique<PaintBucket>(*this, *mCommandManager));

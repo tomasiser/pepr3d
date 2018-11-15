@@ -1,5 +1,7 @@
 #include "SidePane.h"
 #include "MainApplication.h"
+#include "commands/CmdChangeColorManagerColor.h"
+#include "commands/CmdReplaceColorManagerColors.h"
 #include "geometry/Geometry.h"
 #include "tools/Tool.h"
 
@@ -151,7 +153,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         if(ImGui::BeginPopup(colorEditPopupId.c_str())) {
             ImGui::PushItemWidth(-0.001f);  // force full width
             if(ImGui::ColorPicker3(colorPickerId.c_str(), &color[0], ImGuiColorEditFlags_NoSidePreview)) {
-                colorManager.setColor(i, color);
+                assert(mCommandManager);
+                mCommandManager->execute(std::make_unique<CmdChangeColorManagerColor>(i, color), true);
             }
             ImGui::PopItemWidth();
             ImGui::EndPopup();
@@ -171,7 +174,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         for(int i = 0; i < colorManager.size(); ++i) {
             newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
         }
-        colorManager.replaceColors(std::move(newColors));
+        assert(mCommandManager);
+        mCommandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
     }
 }
 

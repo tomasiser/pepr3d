@@ -33,7 +33,7 @@ class ColorManager {
         replaceColors(start, end);
     }
 
-    ColorManager(const size_t number) {
+    explicit ColorManager(const size_t number) {
         std::random_device rd;   // Will be used to obtain a seed for the random number engine
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
         std::uniform_real_distribution<> randomGen(0.0, 1.0);
@@ -93,8 +93,8 @@ class ColorManager {
     }
 
     /// Replace the current colors with this new vector of colors, trims if above limit
-    void replaceColors(ColorMap&& newColors) {
-        mColorMap = std::move(newColors);
+    void replaceColors(const ColorMap& newColors) {
+        mColorMap = newColors;
         if(mColorMap.size() > PEPR3D_MAX_PALETTE_COLORS) {
             mColorMap.resize(PEPR3D_MAX_PALETTE_COLORS);
         }
