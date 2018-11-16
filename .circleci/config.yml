@@ -76,7 +76,7 @@ workflows:
           type: approval
       - build:
           requires:
-            - request-build
+            - start
       - test:
           requires:
             - build
