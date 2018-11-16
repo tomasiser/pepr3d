@@ -124,7 +124,7 @@ TEST(ColorManager, replaceColors_iterators_above_limit) {
     EXPECT_EQ(newColors.size(), PEPR3D_MAX_PALETTE_COLORS + 3);
 }
 
-TEST(ColorManager, replaceColors_move_semantics) {
+TEST(ColorManager, replaceColors_copy) {
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
@@ -134,17 +134,15 @@ TEST(ColorManager, replaceColors_move_semantics) {
     pepr3d::ColorManager cm;
     EXPECT_EQ(cm.size(), 4);
 
-    cm.replaceColors(std::move(newColors));
+    cm.replaceColors(newColors);
 
     EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
         EXPECT_EQ(cm.getColor(i), glm::vec4(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS), 0, 0, 1));
     }
-
-    EXPECT_EQ(newColors.size(), 0);
 }
 
-TEST(ColorManager, replaceColors_move_semantics_above_limit) {
+TEST(ColorManager, replaceColors_copy_above_limit) {
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 1);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 1; ++i) {
@@ -154,14 +152,12 @@ TEST(ColorManager, replaceColors_move_semantics_above_limit) {
     pepr3d::ColorManager cm;
     EXPECT_EQ(cm.size(), 4);
 
-    cm.replaceColors(std::move(newColors));
+    cm.replaceColors(newColors);
 
     EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
         EXPECT_EQ(cm.getColor(i), glm::vec4(i / static_cast<float>(PEPR3D_MAX_PALETTE_COLORS + 1), 0, 0, 1));
     }
-
-    EXPECT_EQ(newColors.size(), 0);
 }
 
 TEST(ColorManager, constructor_color_generation) {
