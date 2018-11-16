@@ -1,5 +1,6 @@
 #pragma once
 
+#include "commands/CommandManager.h"
 #include "geometry/ColorManager.h"
 #include "peprimgui.h"
 
@@ -40,8 +41,13 @@ class SidePane {
         ImGui::PopItemWidth();
     }
 
+    void setCommandManager(CommandManager<class Geometry>* commandManager) {
+        mCommandManager = commandManager;
+    }
+
    private:
     MainApplication& mApplication;
+    CommandManager<class Geometry>* mCommandManager = nullptr;
     float mWidth = 235.0f;
 };
 
