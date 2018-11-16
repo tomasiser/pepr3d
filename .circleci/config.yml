@@ -67,10 +67,12 @@ jobs:
             ./pepr3dtests
 workflows:
   version: 2
-  verify-and-build:
+  clang-format:
     jobs:
       - clang-format-diff
-      - request-build:
+  build-and-test:
+    jobs:
+      - start:
           type: approval
       - build:
           requires:
