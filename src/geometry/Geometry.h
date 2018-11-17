@@ -12,6 +12,7 @@
 #include "cinder/Ray.h"
 #include "cinder/gl/gl.h"
 #include "geometry/ColorManager.h"
+#include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
 #include "geometry/Triangle.h"
@@ -152,6 +153,10 @@ class Geometry {
         } else {
             CI_LOG_E("Model not loaded --> write out message for user");
         }
+    }
+
+    void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType) {
+        ModelExporter modelExporter(mTriangles, filePath, fileName, fileType);
     }
 
     /// Set new triangle color. Fast, as it directly modifies the color buffer, without requiring a reload.

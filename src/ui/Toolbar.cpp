@@ -98,7 +98,30 @@ void Toolbar::drawFileDropDown() {
             ImGui::Button("Open", glm::ivec2(175, 50));
             ImGui::Button("Save", glm::ivec2(175, 50));
             ImGui::Button("Save as", glm::ivec2(175, 50));
-            ImGui::Button("Export", glm::ivec2(175, 50));
+            if(ImGui::Button("Export", glm::ivec2(175, 50))) {
+                mApplication.dispatchAsync([&]() {
+                    std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
+
+                    auto path = mApplication.getSaveFilePath(getDocumentsDirectory().append("untitled"), extensions);
+
+                    if(!path.empty() && !path.extension().empty()) {
+                        std::string fileName =
+                            path.filename().string().substr(0, path.filename().string().find_last_of("."));
+                        std::string filePath = path.parent_path().string() + std::string("/") + ::string(fileName);
+
+                        if(!fs::is_directory(filePath) || !fs::exists(filePath)) {  // Check if folder exists
+                            fs::create_directory(filePath);                         // create folder
+                            
+                            std::string fileType = path.extension().string().substr(1);
+
+                            mApplication.getCurrentGeometry()->exportGeometry(filePath, fileName, fileType);
+
+                        } else {
+                            // folder error
+                        }
+                    }
+                });
+            }
             if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
                 mApplication.quit();
             }
