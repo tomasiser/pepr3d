@@ -4,6 +4,8 @@
 #include <sstream>
 #include <vector>
 
+#include <cassert>
+
 #include <assimp/scene.h>       // Output data structure
 #include <assimp/Exporter.hpp>  // C++ exporter interface
 
@@ -32,7 +34,6 @@ class ModelExporter {
             std::stringstream ss;
             ss << filePath << "/" << fileName << "_" << i << "." << fileType;
             exporter.Export(scenes[i], std::string(fileType) + std::string("b"), ss.str());
-
         }
 
         return true;
@@ -93,29 +94,17 @@ class ModelExporter {
             face.mIndices = new unsigned int[3];
             face.mNumIndices = 3;
 
-            pMesh->mVertices[3 * i + 0] =
-                aiVector3D(mTriangles[indices[i]].getVertex(0).x, mTriangles[indices[i]].getVertex(0).y,
-                           mTriangles[indices[i]].getVertex(0).z);
-            pMesh->mVertices[3 * i + 1] =
-                aiVector3D(mTriangles[indices[i]].getVertex(1).x, mTriangles[indices[i]].getVertex(1).y,
-                           mTriangles[indices[i]].getVertex(1).z);
-            pMesh->mVertices[3 * i + 2] =
-                aiVector3D(mTriangles[indices[i]].getVertex(2).x, mTriangles[indices[i]].getVertex(2).y,
-                           mTriangles[indices[i]].getVertex(2).z);
+            for(unsigned int j = 0; j < face.mNumIndices; j++) {
+                pMesh->mVertices[3 * i + j] =
+                    aiVector3D(mTriangles[indices[i]].getVertex(j).x, mTriangles[indices[i]].getVertex(j).y,
+                               mTriangles[indices[i]].getVertex(j).z);
 
-            pMesh->mNormals[3 * i + 0] =
-                aiVector3D(mTriangles[indices[i]].getNormal().x, mTriangles[indices[i]].getNormal().y,
-                           mTriangles[indices[i]].getNormal().z);
-            pMesh->mNormals[3 * i + 1] =
-                aiVector3D(mTriangles[indices[i]].getNormal().x, mTriangles[indices[i]].getNormal().y,
-                           mTriangles[indices[i]].getNormal().z);
-            pMesh->mNormals[3 * i + 2] =
-                aiVector3D(mTriangles[indices[i]].getNormal().x, mTriangles[indices[i]].getNormal().y,
-                           mTriangles[indices[i]].getNormal().z);
+                pMesh->mNormals[3 * i + j] =
+                    aiVector3D(mTriangles[indices[i]].getNormal().x, mTriangles[indices[i]].getNormal().y,
+                               mTriangles[indices[i]].getNormal().z);
 
-            face.mIndices[0] = 3 * i + 0;
-            face.mIndices[1] = 3 * i + 1;
-            face.mIndices[2] = 3 * i + 2;
+                face.mIndices[j] = 3 * i + j;
+            }
         }
         return scene;
     }
