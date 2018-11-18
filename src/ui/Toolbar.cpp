@@ -109,16 +109,12 @@ void Toolbar::drawFileDropDown() {
                             path.filename().string().substr(0, path.filename().string().find_last_of("."));
                         std::string filePath = path.parent_path().string() + std::string("/") + ::string(fileName);
 
-                        if(!fs::is_directory(filePath) || !fs::exists(filePath)) {  // Check if folder exists
-                            fs::create_directory(filePath);                         // create folder
-                            
-                            std::string fileType = path.extension().string().substr(1);
-
-                            mApplication.getCurrentGeometry()->exportGeometry(filePath, fileName, fileType);
-
-                        } else {
-                            // folder error
+                        if(!fs::is_directory(filePath) || !fs::exists(filePath)) {  // check if folder exists
+                            fs::create_directory(filePath);
                         }
+                        std::string fileType = path.extension().string().substr(1);
+
+                        mApplication.getCurrentGeometry()->exportGeometry(filePath, fileName, fileType);
                     }
                 });
             }
