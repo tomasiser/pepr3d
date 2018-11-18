@@ -76,11 +76,32 @@ class ModelImporter {
         indices.reserve(mesh->mNumFaces);
 
         for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
-            // We should only have triangles
             assert(mesh->mFaces[i].mNumIndices == 3);
-            indices.push_back({mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
+
+            glm::vec3 triangle[3];
+
+            for(unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++) {
+
+                for(unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++) {
+                    triangle[j].x = mesh->mVertices[mesh->mFaces[i].mIndices[j]].x;
+                    triangle[j].y = mesh->mVertices[mesh->mFaces[i].mIndices[j]].y;
+                    triangle[j].z = mesh->mVertices[mesh->mFaces[i].mIndices[j]].z;
+                }
+            }
+            /// Check for degenerate triangles which we do not want in the representation
+            const double Eps = 0.000001;
+            const double len = glm::length(glm::cross(triangle[1] - triangle[0], triangle[2] - triangle[0]));
+            const bool zeroAreaCrossCheck = glm::epsilonEqual<double>(len, 0, Eps);
+            const bool zeroAreaCheck =
+                triangle[0] != triangle[1] && triangle[0] != triangle[2] && triangle[1] != triangle[2];
+            if(zeroAreaCheck && !zeroAreaCrossCheck) {
+                indices.push_back(
+                    {mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
+            } else {
+                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from index buffer.");
+            }
         }
-        assert(indices.size() == mesh->mNumFaces);
+
         return indices;
     }
 
@@ -93,6 +114,8 @@ class ModelImporter {
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
         importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, 1);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_CHECKAREA, 1);
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS | aiComponent_TANGENTS_AND_BITANGENTS |
                                                                 aiComponent_COLORS | aiComponent_TEXCOORDS |
                                                                 aiComponent_BONEWEIGHTS);
@@ -125,8 +148,9 @@ class ModelImporter {
 
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
-
         importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, 1);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_CHECKAREA, 1);
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
 
         /// Scene with some postprocessing
@@ -224,12 +248,15 @@ class ModelImporter {
             }
 
             /// Check for degenerate triangles which we do not want in the representation
+            const double Eps = 0.000001;
+            const double len = glm::length(glm::cross(vertices[1] - vertices[0], vertices[2] - vertices[0]));
+            const bool zeroAreaCrossCheck = glm::epsilonEqual<double>(len, 0, Eps);
             const bool zeroAreaCheck =
                 vertices[0] != vertices[1] && vertices[0] != vertices[2] && vertices[1] != vertices[2];
-            if(zeroAreaCheck) {
+            if(zeroAreaCheck && !zeroAreaCrossCheck) {
                 /// Do last minute quality checks on the triangle
                 // Normal should be normalized
-                assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, 0.000001));
+                assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, Eps));
                 // ColorPalette should either be empty and return color 0, or returnColor should be within the palette
                 assert((mPalette.size() == 0 && returnColor == 0) ||
                        (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor >= 0));
@@ -247,6 +274,11 @@ class ModelImporter {
         const glm::vec3 p0 = vertices[1] - vertices[0];
         const glm::vec3 p1 = vertices[2] - vertices[0];
         const glm::vec3 faceNormal = glm::normalize(glm::cross(p0, p1));
+
+        auto areNormalsNan = glm::isnan(normals[0]);
+        if(glm::any(areNormalsNan)) {
+            return faceNormal;
+        }
 
         const glm::vec3 vertexNormal = glm::normalize(normals[0] + normals[1] + normals[2]);
         const float dot = glm::dot(faceNormal, vertexNormal);
