@@ -172,9 +172,9 @@ void Geometry::buildPolyhedron() {
     try {
         mPolyhedronData.P.delegate(triangle);
         mPolyhedronData.faceHandles = triangle.getFacetArray();
-    } catch(CGAL::Assertion_exception assertExcept) {
+    } catch(CGAL::Assertion_exception* assertExcept) {
         mPolyhedronData.P.clear();
-        CI_LOG_E("Polyhedron not loaded. " + assertExcept.message());
+        CI_LOG_E("Polyhedron not loaded. " + assertExcept->message());
         return;
     }
 
@@ -189,7 +189,7 @@ void Geometry::buildPolyhedron() {
     assert(mPolyhedronData.P.size_of_vertices() == mPolyhedronData.vertices.size());
 
     // Use the facetsCreated from the incremental builder, set the ids linearly
-    for(int facetId = 0; facetId < mPolyhedronData.faceHandles.size(); ++facetId) {
+    for(size_t facetId = 0; facetId < mPolyhedronData.faceHandles.size(); ++facetId) {
         mPolyhedronData.faceHandles[facetId]->id() = facetId;
     }
 
@@ -211,7 +211,8 @@ std::array<int, 3> Geometry::gatherNeighbours(
         const auto eFace = edgeIter->facet();
         if(edgeIter->opposite()->facet() != nullptr) {
             const size_t triId = edgeIter->opposite()->facet()->id();
-            assert(static_cast<int>(triId) < mTriangles.size());
+            // Asserting in int, because int is the return value
+            assert(static_cast<int>(triId) < static_cast<int>(mTriangles.size()));
             returnValue[i] = static_cast<int>(triId);
         }
         ++edgeIter;

@@ -256,14 +256,16 @@ class ModelImporter {
             }
 
             /// Check for degenerate triangles which we do not want in the representation
-            const bool isZeroArea = zeroAreaCheck(vertices);
+            const double Eps = 0.000001;
+            const bool isZeroArea = zeroAreaCheck(vertices, Eps);
             if(!isZeroArea) {
                 /// Do last minute quality checks on the triangle
                 // Normal should be normalized
                 assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, Eps));
                 // ColorPalette should either be empty and return color 0, or returnColor should be within the palette
-                assert((mPalette.size() == 0 && returnColor == 0) ||
-                       (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor >= 0));
+                assert(
+                    (mPalette.size() == 0 && returnColor == 0) ||
+                    (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor < PEPR3D_MAX_PALETTE_COLORS));
                 /// Place the constructed triangle
                 triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
             } else {
@@ -290,8 +292,6 @@ class ModelImporter {
         // return vertexNormal;
         return (dot < 0.0f) ? -faceNormal : faceNormal;
     }
-
-    bool sameColor() {}
 };
 
 }  // namespace pepr3d

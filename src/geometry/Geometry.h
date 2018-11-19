@@ -119,7 +119,6 @@ class Geometry {
     }
 
     const DataTriangle& getTriangle(const size_t triangleIndex) const {
-        assert(triangleIndex >= 0);
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex];
     }

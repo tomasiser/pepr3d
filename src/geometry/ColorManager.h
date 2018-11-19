@@ -39,7 +39,7 @@ class ColorManager {
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
         std::uniform_real_distribution<> randomGen(0.0, 1.0);
 
-        for(int i = 0; i < number; ++i) {
+        for(size_t i = 0; i < number; ++i) {
             mColorMap.emplace_back(randomGen(gen), randomGen(gen), randomGen(gen), 1);
         }
     }
