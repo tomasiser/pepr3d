@@ -1,20 +1,20 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>  // Post processing flags
 #include <assimp/scene.h>        // Output data structure
 #include <assimp/Importer.hpp>   // C++ importer interface
 
-#include <unordered_set>
-#include "geometry/ColorManager.h"
-#include "geometry/Triangle.h"
-
 #include <cinder/Log.h>
 #include <boost/functional/hash.hpp>
 #include <glm/gtc/epsilon.hpp>
+
+#include <iostream>
+#include <unordered_set>
+#include <vector>
+
+#include "geometry/ColorManager.h"
+#include "geometry/Triangle.h"
 
 namespace pepr3d {
 

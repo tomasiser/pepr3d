@@ -3,14 +3,14 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/exceptions.h>
+#include <cinder/Log.h>
+#include <cinder/Ray.h>
+#include <cinder/gl/gl.h>
 
 #include <cassert>
 #include <optional>
 #include <vector>
 
-#include "cinder/Log.h"
-#include "cinder/Ray.h"
-#include "cinder/gl/gl.h"
 #include "geometry/ColorManager.h"
 #include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <random>
-#include <vector>
 #include "cinder/Color.h"
 #include "glm/glm.hpp"
+
+#include <random>
+#include <vector>
 
 #define PEPR3D_MAX_PALETTE_COLORS 8
 

@@ -1,13 +1,12 @@
 #pragma once
 
-#include <array>
-#include <sstream>
-#include <vector>
-
-#include <cassert>
-
 #include <assimp/scene.h>       // Output data structure
 #include <assimp/Exporter.hpp>  // C++ exporter interface
+
+#include <array>
+#include <cassert>
+#include <sstream>
+#include <vector>
 
 #include "geometry/Triangle.h"
 
