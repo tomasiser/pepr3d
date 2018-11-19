@@ -81,13 +81,11 @@ class ModelImporter {
             glm::vec3 triangle[3];
 
             for(unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++) {
-
-                for(unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++) {
-                    triangle[j].x = mesh->mVertices[mesh->mFaces[i].mIndices[j]].x;
-                    triangle[j].y = mesh->mVertices[mesh->mFaces[i].mIndices[j]].y;
-                    triangle[j].z = mesh->mVertices[mesh->mFaces[i].mIndices[j]].z;
-                }
+                triangle[j].x = mesh->mVertices[mesh->mFaces[i].mIndices[j]].x;
+                triangle[j].y = mesh->mVertices[mesh->mFaces[i].mIndices[j]].y;
+                triangle[j].z = mesh->mVertices[mesh->mFaces[i].mIndices[j]].z;
             }
+
             /// Check for degenerate triangles which we do not want in the representation
             const double Eps = 0.000001;
             const double len = glm::length(glm::cross(triangle[1] - triangle[0], triangle[2] - triangle[0]));
