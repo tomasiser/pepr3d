@@ -7,12 +7,14 @@
 
 namespace pepr3d {
 
-using K = CGAL::Simple_cartesian<double>;
-using Point = K::Point_3;
-using Triangle = K::Triangle_3;
-
 /// Custom Triangle type holding the CGAL::Triangle_3 and additional data
 class DataTriangle {
+   public:
+    using K = CGAL::Simple_cartesian<double>;
+    using Point = K::Point_3;
+    using Triangle = K::Triangle_3;
+
+   private:
     /// Geometry data in CGAL format to allow for usage in AABB tree
     Triangle mTriangleCgal;
 
@@ -64,9 +66,9 @@ struct DataTriangleAABBPrimitive {
     using Id = std::vector<DataTriangle>::const_iterator;
 
     // CGAL types returned
-    using Point = K::Point_3;     // CGAL 3D point type
-    using Datum = K::Triangle_3;  // CGAL 3D triangle type
-    using Datum_reference = const K::Triangle_3 &;
+    using Point = pepr3d::DataTriangle::K::Point_3;     // CGAL 3D point type
+    using Datum = pepr3d::DataTriangle::K::Triangle_3;  // CGAL 3D triangle type
+    using Datum_reference = const pepr3d::DataTriangle::K::Triangle_3 &;
 
    private:
     Id tri;  // this is what the AABB tree stores internally

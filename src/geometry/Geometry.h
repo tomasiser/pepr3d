@@ -19,15 +19,14 @@
 
 namespace pepr3d {
 
-using Direction = K::Direction_3;
-using Ft = K::FT;
-using Ray = K::Ray_3;
-using My_AABB_traits = CGAL::AABB_traits<K, DataTriangleAABBPrimitive>;
-using Tree = CGAL::AABB_tree<My_AABB_traits>;
-using Ray_intersection = boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>;
-
 class Geometry {
    public:
+    using Direction = pepr3d::DataTriangle::K::Direction_3;
+    using Ft = pepr3d::DataTriangle::K::FT;
+    using Ray = pepr3d::DataTriangle::K::Ray_3;
+    using My_AABB_traits = CGAL::AABB_traits<pepr3d::DataTriangle::K, DataTriangleAABBPrimitive>;
+    using Tree = CGAL::AABB_tree<My_AABB_traits>;
+    using Ray_intersection = boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>;
     using ColorIndex = GLuint;
 
    private:
@@ -61,14 +60,21 @@ class Geometry {
     };
 
     struct PolyhedronData {
+        /// Vertex positions after joining all identical vertices.
+        /// This is after removing all other componens and as such based only on the position property.
         std::vector<glm::vec3> vertices;
 
+        /// Indices to triangles of the polyhedron. Indices are stored in a CCW order, as imported from Assimp.
         std::vector<std::array<size_t, 3>> indices;
 
+        /// CGAL Polyhedral surface class
         Polyhedron P;
 
+        /// A vector with pointers to the polyhedron faces.
+        /// The i-th pointer points to the face of the i-th triangle from the indices vector<>.
         std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle> faceHandles;
 
+        /// Simple property to check if the Polyhedron is closed or not.
         bool closeCheck = false;
     } mPolyhedronData;
 
@@ -88,7 +94,6 @@ class Geometry {
         assert(mTree->size() == mTriangles.size());
     }
 
-    /// Returns a constant iterator to the vertex buffer
     std::vector<glm::vec3>& getVertexBuffer() {
         return mVertexBuffer;
     }
@@ -101,7 +106,6 @@ class Geometry {
         return mPolyhedronData.vertices.size();
     }
 
-    /// Returns a constant iterator to the index buffer
     std::vector<uint32_t>& getIndexBuffer() {
         return mIndexBuffer;
     }
@@ -114,107 +118,17 @@ class Geometry {
         return mNormalBuffer;
     }
 
-    /// Loads new geometry into the private data, rebuilds the vertex and index buffers
-    /// automatically.
-    void loadNewGeometry(const std::string& fileName) {
-        /// Load into mTriangles
-        ModelImporter modelImporter(fileName);  // only first mesh [0]
-
-        if(modelImporter.isModelLoaded()) {
-            mTriangles = modelImporter.getTriangles();
-
-            mPolyhedronData.vertices.clear();
-            mPolyhedronData.indices.clear();
-            mPolyhedronData.vertices = modelImporter.getVertexBuffer();
-            mPolyhedronData.indices = modelImporter.getIndexBuffer();
-
-            /// Generate new vertex buffer
-            generateVertexBuffer();
-
-            /// Generate new index buffer
-            generateIndexBuffer();
-
-            /// Generate new color buffer from triangle color data
-            generateColorBuffer();
-
-            /// Generate new normal buffer, copying the triangle normal to each vertex
-            generateNormalBuffer();
-
-            /// Rebuild the AABB tree
-            mTree->rebuild(mTriangles.begin(), mTriangles.end());
-            assert(mTree->size() == mTriangles.size());
-
-            /// Build the polyhedron data structure
-            buildPolyhedron();
-
-            /// Get the generated color palette of the model, replace the current one
-            mColorManager = modelImporter.getColorManager();
-            assert(!mColorManager.empty());
-        } else {
-            CI_LOG_E("Model not loaded --> write out message for user");
-        }
-    }
-
-    void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType) {
-        ModelExporter modelExporter(mTriangles, filePath, fileName, fileType);
-    }
-
-    /// Set new triangle color. Fast, as it directly modifies the color buffer, without requiring a reload.
-    void setTriangleColor(const size_t triangleIndex, const size_t newColor) {
-        /// Change it in the buffer
-        // Color buffer has 1 ColorA for each vertex, each triangle has 3 vertices
-        const size_t vertexPosition = triangleIndex * 3;
-
-        // Change all vertices of the triangle to the same new color
-        assert(vertexPosition + 2 < mColorBuffer.size());
-
-        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
-        mColorBuffer[vertexPosition] = newColorIndex;
-        mColorBuffer[vertexPosition + 1] = newColorIndex;
-        mColorBuffer[vertexPosition + 2] = newColorIndex;
-
-        /// Change it in the triangle soup
+    const DataTriangle& getTriangle(const size_t triangleIndex) const {
+        assert(triangleIndex >= 0);
         assert(triangleIndex < mTriangles.size());
-        mTriangles[triangleIndex].setColor(newColor);
+        return mTriangles[triangleIndex];
     }
 
-    /// Get the color of the indexed triangle
     size_t getTriangleColor(const size_t triangleIndex) const {
-        assert(triangleIndex < mTriangles.size());
-        return mTriangles[triangleIndex].getColor();
+        return getTriangle(triangleIndex).getColor();
     }
 
-    /// Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists.
-    /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
-    std::optional<size_t> intersectMesh(const ci::Ray& ray) const {
-        if(mTree->empty()) {
-            return {};
-        }
-
-        const glm::vec3 source = ray.getOrigin();
-        const glm::vec3 direction = ray.getDirection();
-
-        const Ray rayQuery(Point(source.x, source.y, source.z), Direction(direction.x, direction.y, direction.z));
-
-        // Find the two intersection parameters - place and triangle
-        Ray_intersection intersection = mTree->first_intersection(rayQuery);
-        if(intersection) {
-            // The intersected triangle
-            if(boost::get<DataTriangleAABBPrimitive::Id>(intersection->second) != mTriangles.end()) {
-                const DataTriangleAABBPrimitive::Id intersectedTriIter =
-                    boost::get<DataTriangleAABBPrimitive::Id>(intersection->second);
-                assert(intersectedTriIter != mTriangles.end());
-                const size_t retValue = intersectedTriIter - mTriangles.begin();
-                assert(retValue < mTriangles.size());
-                return retValue;  // convert the iterator into an index
-            }
-        }
-
-        /// No intersection detected.
-        return {};
-    }
-
-    /// Return the number of triangles in the model
+    /// Return the number of triangles in the whole mesh
     size_t getTriangleCount() const {
         return mTriangles.size();
     }
@@ -227,11 +141,18 @@ class Geometry {
         return mColorManager;
     }
 
-    const DataTriangle& getTriangle(const size_t triangleIndex) const {
-        assert(triangleIndex >= 0);
-        assert(triangleIndex < mTriangles.size());
-        return mTriangles[triangleIndex];
-    }
+    /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.
+    void loadNewGeometry(const std::string& fileName);
+
+    /// Exports the modified geometry to the file specified by a path, file name and file type.
+    void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType);
+
+    /// Set new triangle color. Fast, as it directly modifies the color buffer, without requiring a reload.
+    void setTriangleColor(const size_t triangleIndex, const size_t newColor);
+
+    /// Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists.
+    /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
+    std::optional<size_t> intersectMesh(const ci::Ray& ray) const;
 
     /// Save current state into a struct so that it can be restored later (CommandManager target requirement)
     GeometryState saveState() const;
@@ -239,150 +160,35 @@ class Geometry {
     /// Load previous state from a struct (CommandManager target requirement)
     void loadState(const GeometryState&);
 
-    /// Spreads color starting from startTriangle to wherever it can reach.
+    /// Spreads as BFS, starting from startTriangle to wherever it can reach.
+    /// Stopping is handled by the StoppingCondition functor/lambda.
+    /// A vector of reached triangle indices is returned;
     template <typename StoppingCondition>
-    std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
-        if(mPolyhedronData.P.is_empty()) {
-            return {};
-        }
-
-        std::vector<size_t> trianglesToColor;
-
-        std::deque<size_t> toVisit;
-        const size_t startingFace = startTriangle;
-        toVisit.push_back(startingFace);
-
-        std::unordered_set<size_t> alreadyVisited;
-        alreadyVisited.insert(startingFace);
-
-        assert(mPolyhedronData.indices.size() == mTriangles.size());
-
-        while(!toVisit.empty()) {
-            // Remove yourself from queue and mark visited
-            const size_t currentVertex = toVisit.front();
-            toVisit.pop_front();
-            assert(alreadyVisited.find(currentVertex) != alreadyVisited.end());
-            assert(currentVertex < mTriangles.size());
-            assert(toVisit.size() < mTriangles.size());
-
-            // Manage neighbours and grow the queue
-            addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit, stopFunctor);
-
-            // Set the color
-            // setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
-            trianglesToColor.push_back(currentVertex);
-        }
-        return trianglesToColor;
-    }
+    std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor);
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
     /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing
     /// is possible.
-    void generateVertexBuffer() {
-        mVertexBuffer.clear();
-        mVertexBuffer.reserve(3 * mTriangles.size());
-
-        for(const auto& mTriangle : mTriangles) {
-            mVertexBuffer.push_back(mTriangle.getVertex(0));
-            mVertexBuffer.push_back(mTriangle.getVertex(1));
-            mVertexBuffer.push_back(mTriangle.getVertex(2));
-        }
-    }
+    void generateVertexBuffer();
 
     /// Generating a linear index buffer, since we do not reuse any vertices.
-    void generateIndexBuffer() {
-        mIndexBuffer.clear();
-        mIndexBuffer.reserve(mVertexBuffer.size());
-
-        for(uint32_t i = 0; i < mVertexBuffer.size(); ++i) {
-            mIndexBuffer.push_back(i);
-        }
-    }
+    void generateIndexBuffer();
 
     /// Generating triplets of colors, since we only allow a single-colored triangle.
-    void generateColorBuffer() {
-        mColorBuffer.clear();
-        mColorBuffer.reserve(mVertexBuffer.size());
-
-        for(const auto& mTriangle : mTriangles) {
-            const ColorIndex triColorIndex = static_cast<ColorIndex>(mTriangle.getColor());
-            mColorBuffer.push_back(triColorIndex);
-            mColorBuffer.push_back(triColorIndex);
-            mColorBuffer.push_back(triColorIndex);
-        }
-        assert(mColorBuffer.size() == mVertexBuffer.size());
-    }
+    void generateColorBuffer();
 
     /// Generate a buffer of normals. Generates only "triangle normals" - all three vertices have the same normal.
-    void generateNormalBuffer() {
-        mNormalBuffer.clear();
-        mNormalBuffer.reserve(mVertexBuffer.size());
-        for(const auto& mTriangle : mTriangles) {
-            mNormalBuffer.push_back(mTriangle.getNormal());
-            mNormalBuffer.push_back(mTriangle.getNormal());
-            mNormalBuffer.push_back(mTriangle.getNormal());
-        }
-        assert(mNormalBuffer.size() == mVertexBuffer.size());
-    }
+    void generateNormalBuffer();
 
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
-    void buildPolyhedron() {
-        PolyhedronBuilder<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
-        mPolyhedronData.P.clear();
-        try {
-            mPolyhedronData.P.delegate(triangle);
-            mPolyhedronData.faceHandles = triangle.getFacetArray();
-        } catch(CGAL::Assertion_exception assertExcept) {
-            mPolyhedronData.P.clear();
-            CI_LOG_E("Polyhedron not loaded. " + assertExcept.message());
-            return;
-        }
-
-        // The exception does not get thrown in Release
-        if(!mPolyhedronData.P.is_valid() || mPolyhedronData.P.is_empty()) {
-            mPolyhedronData.P.clear();
-            CI_LOG_E("Polyhedron loaded empty or invalid.");
-            return;
-        }
-
-        assert(mPolyhedronData.P.size_of_facets() == mPolyhedronData.indices.size());
-        assert(mPolyhedronData.P.size_of_vertices() == mPolyhedronData.vertices.size());
-
-        // Use the facetsCreated from the incremental builder, set the ids linearly
-        for(int facetId = 0; facetId < mPolyhedronData.faceHandles.size(); ++facetId) {
-            mPolyhedronData.faceHandles[facetId]->id() = facetId;
-        }
-
-        mPolyhedronData.closeCheck = mPolyhedronData.P.is_closed();
-    }
+    void buildPolyhedron();
 
     /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL
     /// Polyhedron construct.
     std::array<int, 3> gatherNeighbours(
         const size_t triIndex,
-        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const {
-        assert(triIndex < faceHandles.size());
-        const Polyhedron::Facet_iterator& facet = faceHandles[triIndex];
-        std::array<int, 3> returnValue = {-1, -1, -1};
-        assert(facet->is_triangle());
-
-        const auto edgeIteratorStart = facet->facet_begin();
-        auto edgeIter = edgeIteratorStart;
-
-        for(int i = 0; i < 3; ++i) {
-            const auto eFace = edgeIter->facet();
-            if(edgeIter->opposite()->facet() != nullptr) {
-                const size_t triId = edgeIter->opposite()->facet()->id();
-                assert(static_cast<int>(triId) < mTriangles.size());
-                returnValue[i] = static_cast<int>(triId);
-            }
-            ++edgeIter;
-        }
-        assert(edgeIter == edgeIteratorStart);
-
-        return returnValue;
-    }
+        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const;
 
     /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
     template <typename StoppingCondition>
@@ -390,22 +196,64 @@ class Geometry {
         const size_t currentVertex,
         const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
         std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
-        const StoppingCondition& stopFunctor) const {
-        const std::array<int, 3> neighbours = gatherNeighbours(currentVertex, faceHandles);
-        for(int i = 0; i < 3; ++i) {
-            if(neighbours[i] == -1) {
-                continue;
-            } else {
-                if(alreadyVisited.find(neighbours[i]) == alreadyVisited.end()) {
-                    // New vertex -> visit it.
-                    if(stopFunctor(neighbours[i], currentVertex)) {
-                        toVisit.push_back(neighbours[i]);
-                        alreadyVisited.insert(neighbours[i]);
-                    }
+        const StoppingCondition& stopFunctor) const;
+};
+
+template <typename StoppingCondition>
+std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
+    if(mPolyhedronData.P.is_empty()) {
+        return {};
+    }
+
+    std::vector<size_t> trianglesToColor;
+
+    std::deque<size_t> toVisit;
+    const size_t startingFace = startTriangle;
+    toVisit.push_back(startingFace);
+
+    std::unordered_set<size_t> alreadyVisited;
+    alreadyVisited.insert(startingFace);
+
+    assert(mPolyhedronData.indices.size() == mTriangles.size());
+
+    while(!toVisit.empty()) {
+        // Remove yourself from queue and mark visited
+        const size_t currentVertex = toVisit.front();
+        toVisit.pop_front();
+        assert(alreadyVisited.find(currentVertex) != alreadyVisited.end());
+        assert(currentVertex < mTriangles.size());
+        assert(toVisit.size() < mTriangles.size());
+
+        // Manage neighbours and grow the queue
+        addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit, stopFunctor);
+
+        // Set the color
+        // setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
+        trianglesToColor.push_back(currentVertex);
+    }
+    return trianglesToColor;
+}
+
+template <typename StoppingCondition>
+void Geometry::addNeighboursToQueue(
+    const size_t currentVertex,
+    const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
+    std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
+    const StoppingCondition& stopFunctor) const {
+    const std::array<int, 3> neighbours = gatherNeighbours(currentVertex, faceHandles);
+    for(int i = 0; i < 3; ++i) {
+        if(neighbours[i] == -1) {
+            continue;
+        } else {
+            if(alreadyVisited.find(neighbours[i]) == alreadyVisited.end()) {
+                // New vertex -> visit it.
+                if(stopFunctor(neighbours[i], currentVertex)) {
+                    toVisit.push_back(neighbours[i]);
+                    alreadyVisited.insert(neighbours[i]);
                 }
             }
         }
     }
-};
+}
 
 }  // namespace pepr3d

@@ -4,7 +4,7 @@
 
 namespace pepr3d {
 
-typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3> Polyhedron;
+typedef CGAL::Polyhedron_3<pepr3d::DataTriangle::K, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 typedef Polyhedron::HalfedgeDS HalfedgeDS;
 
 template <class HDS>

@@ -46,7 +46,7 @@ class ModelExporter {
         for(size_t i = 0; i < mTriangles.size(); i++) {
             mTriangles[0].getColor();
             size_t color = mTriangles[i].getColor();
-            colorsWithIndices[color].emplace_back(i);
+            colorsWithIndices[color].emplace_back(static_cast<unsigned int>(i));
         }
         for(auto &elem : colorsWithIndices) {
             scenes.emplace_back(newScene(elem.second));
