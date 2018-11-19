@@ -178,6 +178,13 @@ void Geometry::buildPolyhedron() {
         return;
     }
 
+    // The exception does not get thrown in Release
+    if(!mPolyhedronData.P.is_valid() || mPolyhedronData.P.is_empty()) {
+        mPolyhedronData.P.clear();
+        CI_LOG_E("Polyhedron loaded empty or invalid.");
+        return;
+    }
+
     assert(mPolyhedronData.P.size_of_facets() == mPolyhedronData.indices.size());
     assert(mPolyhedronData.P.size_of_vertices() == mPolyhedronData.vertices.size());
 
