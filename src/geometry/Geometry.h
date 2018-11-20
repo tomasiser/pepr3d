@@ -3,15 +3,16 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/exceptions.h>
+#include <cinder/Log.h>
+#include <cinder/Ray.h>
+#include <cinder/gl/gl.h>
 
 #include <cassert>
 #include <optional>
 #include <vector>
 
-#include "cinder/Log.h"
-#include "cinder/Ray.h"
-#include "cinder/gl/gl.h"
 #include "geometry/ColorManager.h"
+#include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
 #include "geometry/Triangle.h"
@@ -118,7 +119,6 @@ class Geometry {
     }
 
     const DataTriangle& getTriangle(const size_t triangleIndex) const {
-        assert(triangleIndex >= 0);
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex];
     }
@@ -142,6 +142,9 @@ class Geometry {
 
     /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.
     void loadNewGeometry(const std::string& fileName);
+
+    /// Exports the modified geometry to the file specified by a path, file name and file type.
+    void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType);
 
     /// Set new triangle color. Fast, as it directly modifies the color buffer, without requiring a reload.
     void setTriangleColor(const size_t triangleIndex, const size_t newColor);

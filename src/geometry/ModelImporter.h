@@ -1,20 +1,20 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>  // Post processing flags
 #include <assimp/scene.h>        // Output data structure
 #include <assimp/Importer.hpp>   // C++ importer interface
 
-#include <unordered_set>
-#include "geometry/ColorManager.h"
-#include "geometry/Triangle.h"
-
 #include <cinder/Log.h>
 #include <boost/functional/hash.hpp>
 #include <glm/gtc/epsilon.hpp>
+
+#include <iostream>
+#include <unordered_set>
+#include <vector>
+
+#include "geometry/ColorManager.h"
+#include "geometry/Triangle.h"
 
 namespace pepr3d {
 
@@ -59,6 +59,20 @@ class ModelImporter {
     }
 
    private:
+    /// Returns true if the given triangle has a zero area either due to rounding or vertices
+    static bool zeroAreaCheck(const std::array<glm::vec3, 3> &triangle, const double Eps = 0.000001) {
+        /// Check for degenerate triangles which we do not want in the representation
+        const double len = glm::length(glm::cross(triangle[1] - triangle[0], triangle[2] - triangle[0]));
+        const bool hasZeroAreaByCross = glm::epsilonEqual<double>(len, 0, Eps);
+        const bool verticesAreDifferent =
+            triangle[0] != triangle[1] && triangle[0] != triangle[2] && triangle[1] != triangle[2];
+        if(verticesAreDifferent && !hasZeroAreaByCross) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /// Pull the correct Vertex buffer (correct as in vertices are re-used for multiple triangles) from the mesh
     static std::vector<glm::vec3> calculateVertexBuffer(aiMesh *mesh) {
         std::vector<glm::vec3> vertices;
@@ -76,11 +90,26 @@ class ModelImporter {
         indices.reserve(mesh->mNumFaces);
 
         for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
-            // We should only have triangles
             assert(mesh->mFaces[i].mNumIndices == 3);
-            indices.push_back({mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
+
+            std::array<glm::vec3, 3> triangle;
+
+            for(unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++) {
+                triangle[j].x = mesh->mVertices[mesh->mFaces[i].mIndices[j]].x;
+                triangle[j].y = mesh->mVertices[mesh->mFaces[i].mIndices[j]].y;
+                triangle[j].z = mesh->mVertices[mesh->mFaces[i].mIndices[j]].z;
+            }
+
+            /// Check for degenerate triangles which we do not want in the representation
+            const bool isZeroArea = zeroAreaCheck(triangle);
+            if(!isZeroArea) {
+                indices.push_back(
+                    {mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
+            } else {
+                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from index buffer.");
+            }
         }
-        assert(indices.size() == mesh->mNumFaces);
+
         return indices;
     }
 
@@ -93,6 +122,8 @@ class ModelImporter {
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
         importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, 1);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_CHECKAREA, 1);
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS | aiComponent_TANGENTS_AND_BITANGENTS |
                                                                 aiComponent_COLORS | aiComponent_TEXCOORDS |
                                                                 aiComponent_BONEWEIGHTS);
@@ -125,8 +156,9 @@ class ModelImporter {
 
         /// Creates an instance of the Importer class
         Assimp::Importer importer;
-
         importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, 1);
+        importer.SetPropertyInteger(AI_CONFIG_PP_FD_CHECKAREA, 1);
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
 
         /// Scene with some postprocessing
@@ -178,7 +210,7 @@ class ModelImporter {
 
             assert(face.mNumIndices == 3);
 
-            glm::vec3 vertices[3];
+            std::array<glm::vec3, 3> vertices;
             glm::vec3 normals[3];
             glm::vec3 normal;
 
@@ -224,15 +256,16 @@ class ModelImporter {
             }
 
             /// Check for degenerate triangles which we do not want in the representation
-            const bool zeroAreaCheck =
-                vertices[0] != vertices[1] && vertices[0] != vertices[2] && vertices[1] != vertices[2];
-            if(zeroAreaCheck) {
+            const double Eps = 0.000001;
+            const bool isZeroArea = zeroAreaCheck(vertices, Eps);
+            if(!isZeroArea) {
                 /// Do last minute quality checks on the triangle
                 // Normal should be normalized
-                assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, 0.000001));
+                assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, Eps));
                 // ColorPalette should either be empty and return color 0, or returnColor should be within the palette
-                assert((mPalette.size() == 0 && returnColor == 0) ||
-                       (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor >= 0));
+                assert(
+                    (mPalette.size() == 0 && returnColor == 0) ||
+                    (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor < PEPR3D_MAX_PALETTE_COLORS));
                 /// Place the constructed triangle
                 triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
             } else {
@@ -243,10 +276,15 @@ class ModelImporter {
     }
 
     /// Calculates triangle normal from its vertices with orientation of original vertex normals.
-    static glm::vec3 calculateNormal(const glm::vec3 vertices[3], const glm::vec3 normals[3]) {
+    static glm::vec3 calculateNormal(const std::array<glm::vec3, 3> vertices, const glm::vec3 normals[3]) {
         const glm::vec3 p0 = vertices[1] - vertices[0];
         const glm::vec3 p1 = vertices[2] - vertices[0];
         const glm::vec3 faceNormal = glm::normalize(glm::cross(p0, p1));
+
+        auto areNormalsNan = glm::isnan(normals[0]);
+        if(glm::any(areNormalsNan)) {
+            return faceNormal;
+        }
 
         const glm::vec3 vertexNormal = glm::normalize(normals[0] + normals[1] + normals[2]);
         const float dot = glm::dot(faceNormal, vertexNormal);
@@ -254,8 +292,6 @@ class ModelImporter {
         // return vertexNormal;
         return (dot < 0.0f) ? -faceNormal : faceNormal;
     }
-
-    bool sameColor() {}
 };
 
 }  // namespace pepr3d

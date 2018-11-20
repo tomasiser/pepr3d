@@ -2,6 +2,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <cinder/Color.h>
+
 #include <vector>
 
 namespace pepr3d {
