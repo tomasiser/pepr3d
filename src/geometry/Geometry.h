@@ -2,13 +2,16 @@
 
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/exceptions.h>
-#include <cinder/Log.h>
+#include <CGAL/mesh_segmentation.h>
+#include "cinder/Log.h"
 #include <cinder/Ray.h>
 #include <cinder/gl/gl.h>
 
 #include <cassert>
 #include <optional>
+#include <unordered_map>
 #include <vector>
 
 #include "geometry/ColorManager.h"
@@ -80,6 +83,16 @@ class Geometry {
 
         /// Simple property to check if the Polyhedron is closed or not.
         bool closeCheck = false;
+
+        typedef CGAL::Surface_mesh<DataTriangle::K::Point_3> Mesh;
+        typedef Mesh::Vertex_index vertex_descriptor;
+        typedef Mesh::Face_index face_descriptor;
+
+        bool sdfComputed = false;
+        PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, size_t> mIdMap;
+        PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, double> sdf_property_map;
+        std::vector<PolyhedronData::face_descriptor> mFaceDescs;
+        Mesh mMesh;
     } mPolyhedronData;
 
    public:
@@ -186,6 +199,15 @@ class Geometry {
     template <typename StoppingCondition>
     std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor);
 
+    void preSegmentation() {
+        computeSdf();
+    }
+
+    size_t segmentation(const int numberOfClusters, const float smoothingLambda,
+                        std::unordered_map<size_t, std::vector<size_t>>& segmentToTriangleIds) {
+        return segment(numberOfClusters, smoothingLambda, segmentToTriangleIds);
+    }
+
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
     /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing
@@ -204,6 +226,8 @@ class Geometry {
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
     void buildPolyhedron();
 
+    std::array<int, 3> Geometry::gatherNeighboursSurface(const size_t triIndex) const;
+
     /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL
     /// Polyhedron construct.
     std::array<int, 3> gatherNeighbours(
@@ -217,6 +241,11 @@ class Geometry {
         const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
         std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
         const StoppingCondition& stopFunctor) const;
+
+    void computeSdf();
+
+    size_t segment(const int numberOfClusters, const float smoothingLambda,
+                   std::unordered_map<size_t, std::vector<size_t>>& segmentToTriangleIds);
 };
 
 template <typename StoppingCondition>

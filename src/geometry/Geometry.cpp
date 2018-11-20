@@ -172,6 +172,54 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
 }
 
 void Geometry::buildPolyhedron() {
+    mPolyhedronData.mMesh.clear();
+    mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.mIdMap);
+    mPolyhedronData.mFaceDescs.clear();
+
+    std::cout << "\nSTART BUILD \n mPoly vertices, indices:" << mPolyhedronData.vertices.size() << " , "
+              << mPolyhedronData.indices.size() << "\n";
+    std::cout << "Mesh building: \n";
+
+    std::vector<PolyhedronData::vertex_descriptor> vertDescs;
+    vertDescs.reserve(mPolyhedronData.vertices.size());
+    mPolyhedronData.mMesh.reserve(mPolyhedronData.vertices.size(), mPolyhedronData.indices.size() * 3 / 2,
+                                  mPolyhedronData.indices.size());
+
+    for(const auto& vertex : mPolyhedronData.vertices) {
+        PolyhedronData::vertex_descriptor v =
+            mPolyhedronData.mMesh.add_vertex(DataTriangle::Point(vertex.x, vertex.y, vertex.z));
+        vertDescs.push_back(v);
+    }
+
+    mPolyhedronData.mFaceDescs.reserve(mPolyhedronData.indices.size());
+    for(const auto& tri : mPolyhedronData.indices) {
+        auto f = mPolyhedronData.mMesh.add_face(vertDescs[tri[0]], vertDescs[tri[1]], vertDescs[tri[2]]);
+        assert(f != PolyhedronData::Mesh::null_face());
+        mPolyhedronData.mFaceDescs.push_back(f);
+    }
+
+    bool created;
+    boost::tie(mPolyhedronData.mIdMap, created) =
+        mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, size_t>(
+            "f:idOfEachTriangle", std::numeric_limits<size_t>::max() - 1);
+    assert(created);
+
+    // Add the IDs
+    size_t i = 0;
+    for(const PolyhedronData::face_descriptor& face : mPolyhedronData.mFaceDescs) {
+        /*std::cout << i << " ";
+        if (i == 49) {
+            std::cout << "danger\n";
+        }*/
+        mPolyhedronData.mIdMap[face] = i;
+        ++i;
+    }
+
+    std::cout << "Mesh is valid : " << mPolyhedronData.mMesh.is_valid()
+              << ", vertices: " << mPolyhedronData.mMesh.number_of_vertices()
+              << ", faces: " << mPolyhedronData.mMesh.number_of_faces() << "\n";
+
+    std::cout << "\nPolyhedron building: \n";
     PolyhedronBuilder<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
     mPolyhedronData.P.clear();
     try {
@@ -199,6 +247,35 @@ void Geometry::buildPolyhedron() {
     }
 
     mPolyhedronData.closeCheck = mPolyhedronData.P.is_closed();
+    std::cout << "Polyhedron built OK. " << mPolyhedronData.P.size_of_vertices() << " vertices, "
+              << mPolyhedronData.P.size_of_facets() << " facets."
+              << "\n";
+}
+
+std::array<int, 3> Geometry::gatherNeighboursSurface(const size_t triIndex) const {
+    const auto& faceDescriptors = mPolyhedronData.mFaceDescs;
+    const auto& mesh = mPolyhedronData.mMesh;
+    assert(triIndex < faceDescriptors.size());
+    std::array<int, 3> returnValue = {-1, -1, -1};
+
+    const PolyhedronData::face_descriptor face = faceDescriptors[triIndex];
+    const auto edge = mesh.halfedge(face);
+    auto itEdge = edge;
+
+    for(int i = 0; i < 3; ++i) {
+        auto oppositeEdge = mesh.opposite(itEdge);
+        if(oppositeEdge.is_valid()) {
+            const PolyhedronData::Mesh::Face_index neighbourFace = mesh.face(oppositeEdge);
+            const size_t neighbourFaceId = mPolyhedronData.mIdMap[neighbourFace];
+            assert(neighbourFaceId < mTriangles.size());
+            returnValue[i] = neighbourFaceId;
+        }
+
+        itEdge = mesh.next(itEdge);
+    }
+    assert(edge == itEdge);
+
+    return returnValue;
 }
 
 std::array<int, 3> Geometry::gatherNeighbours(
@@ -224,7 +301,79 @@ std::array<int, 3> Geometry::gatherNeighbours(
     }
     assert(edgeIter == edgeIteratorStart);
 
+    auto meshRet = gatherNeighboursSurface(triIndex);
+
+    for(int i = 0; i < 3; ++i) {
+        // std::cout << " poly> " << returnValue[i] << " - " << meshRet[i] << " <mesh\n";
+        assert(returnValue[i] == meshRet[i]);
+    }
+
     return returnValue;
+}
+
+void Geometry::computeSdf() {
+    mPolyhedronData.sdfComputed = false;
+    mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
+    bool created;
+    boost::tie(mPolyhedronData.sdf_property_map, created) =
+        mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, double>("f:sdf");
+    assert(created);
+
+    CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true);
+    mPolyhedronData.sdfComputed = true;
+    CI_LOG_I("SDF values computed.");
+}
+
+size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda,
+                         std::unordered_map<size_t, std::vector<size_t>>& segmentToTriangleIds) {
+    if(!mPolyhedronData.sdfComputed) {
+        return 0;
+    }
+    bool created;
+    PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, std::size_t> segment_property_map;
+    boost::tie(segment_property_map, created) =
+        mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, std::size_t>("f:sid");
+    assert(created);
+
+    std::size_t number_of_segments =
+        CGAL::segmentation_from_sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map,
+                                           segment_property_map, numberOfClusters, smoothingLambda);
+
+    // Fill up the palette to the new number of colors
+    if(number_of_segments > PEPR3D_MAX_PALETTE_COLORS) {
+        mPolyhedronData.mMesh.remove_property_map(segment_property_map);
+        return 0;
+    }
+    glm::vec4 segmentColors[4] = {glm::vec4(0.1, 1, 0.1, 1), glm::vec4(1, 0, 1, 1), glm::vec4(0.4, 0.4, 0.4, 1),
+                                  glm::vec4(0, 1, 1, 1)};
+    const int colorsToAdd = static_cast<int>(number_of_segments) - static_cast<int>(mColorManager.size());
+    for(int i = 0; i < colorsToAdd; ++i) {
+        mColorManager.addColor(segmentColors[i]);
+        CI_LOG_I("Added a color");
+    }
+    assert(mColorManager.size() >= number_of_segments);
+
+    for(size_t seg = 0; seg < number_of_segments; ++seg) {
+        segmentToTriangleIds.insert({seg, {}});
+    }
+
+    // Assign the colors to the triangles
+    for(const auto& face : mPolyhedronData.mFaceDescs) {
+        const size_t id = mPolyhedronData.mIdMap[face];
+        const size_t color = segment_property_map[face];
+        assert(id < mTriangles.size());
+        assert(color < mColorManager.size());
+
+        segmentToTriangleIds[color].push_back(id);
+        // setTriangleColor(id, color);
+    }
+
+    CI_LOG_I("Segmentation finished. Number of segments: " + std::to_string(number_of_segments));
+
+    // End, clean up
+    mPolyhedronData.mMesh.remove_property_map(segment_property_map);
+
+    return number_of_segments;
 }
 
 }  // namespace pepr3d

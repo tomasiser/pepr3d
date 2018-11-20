@@ -1,12 +1,11 @@
 #pragma once
 
+#include <random>
+#include <vector>
 #include "cinder/Color.h"
 #include "glm/glm.hpp"
 
-#include <random>
-#include <vector>
-
-#define PEPR3D_MAX_PALETTE_COLORS 8
+#define PEPR3D_MAX_PALETTE_COLORS 12
 
 namespace pepr3d {
 
@@ -39,8 +38,13 @@ class ColorManager {
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
         std::uniform_real_distribution<> randomGen(0.0, 1.0);
 
-        for(size_t i = 0; i < number; ++i) {
-            mColorMap.emplace_back(randomGen(gen), randomGen(gen), randomGen(gen), 1);
+        const auto start = randomGen(gen);
+        for(int i = 0; i < number; ++i) {
+            double added = start + static_cast<double>(i) / static_cast<double>(number) * 0.7;
+            float whole, fractional;
+            fractional = std::modf(added, &whole);
+            ci::ColorA r = cinder::hsvToRgb(glm::vec4(fractional, 1, 1, 1));
+            mColorMap.emplace_back(r.r, r.g, r.b, 1);
         }
     }
 
