@@ -1,4 +1,5 @@
 #include "tools/LiveDebug.h"
+#include "geometry/Geometry.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
@@ -15,6 +16,13 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     sidePane.drawSeparator();
     sidePane.drawText("Model view mouse pos:\nX: " + std::to_string(mMousePos.x) +
                       "\nY: " + std::to_string(mMousePos.y));
+
+    const size_t triSize = mApplication.getCurrentGeometry()->getTriangleCount();
+    sidePane.drawText("Vertex count: " + std::to_string(mApplication.getCurrentGeometry()->polyVertCount()) + "\n");
+    sidePane.drawText("Triangle count: " + std::to_string(triSize) + "\n");
+    sidePane.drawText("Polyhedron closed 0/1: " + std::to_string(mApplication.getCurrentGeometry()->polyClosedCheck()) +
+                      "\n");
+
     sidePane.drawSeparator();
 
     static int addedValue = 1;

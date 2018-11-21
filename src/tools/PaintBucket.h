@@ -27,6 +27,8 @@ class PaintBucket : public ITool {
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
 
+    enum NormalAngleCompare { NEIGHBOURS = 1, ABSOLUTE = 2 };
+
    private:
     MainApplication& mApplication;
     CommandManager<class Geometry>& mCommandManager;
@@ -37,6 +39,7 @@ class PaintBucket : public ITool {
     bool mDoNotStop = false;
     bool mShouldPaintWhileDrag = true;
     bool mDragging = false;
+    NormalAngleCompare mNormalCompare = NormalAngleCompare::NEIGHBOURS;
 
     struct DoNotStop {
         const Geometry* geo;
@@ -66,14 +69,25 @@ class PaintBucket : public ITool {
         const Geometry* geo;
         const double threshold;
         const glm::vec3 startNormal;
+        NormalAngleCompare angleCompare;
 
-        NormalStopping(const Geometry* g, const double thresh, const glm::vec3 normal)
-            : geo(g), threshold(thresh), startNormal(normal) {}
+        NormalStopping(const Geometry* g, const double thresh, const glm::vec3 normal,
+                       const NormalAngleCompare angleCmp)
+            : geo(g), threshold(thresh), startNormal(normal), angleCompare(angleCmp) {}
 
         bool operator()(const size_t a, const size_t b) const {
-            const auto& newNormal = geo->getTriangle(a).getNormal();
+            double cosAngle = 0.0;
+            if(angleCompare == NormalAngleCompare::ABSOLUTE) {
+                const auto& newNormal = geo->getTriangle(a).getNormal();
+                cosAngle = glm::dot(glm::normalize(newNormal), glm::normalize(startNormal));
+            } else if(angleCompare == NormalAngleCompare::NEIGHBOURS) {
+                const auto& newNormal1 = geo->getTriangle(a).getNormal();
+                const auto& newNormal2 = geo->getTriangle(b).getNormal();
+                cosAngle = glm::dot(glm::normalize(newNormal1), glm::normalize(newNormal2));
+            } else {
+                assert(false);
+            }
 
-            const double cosAngle = glm::dot(glm::normalize(newNormal), glm::normalize(startNormal));
             if(cosAngle < threshold) {
                 return false;
             } else {
