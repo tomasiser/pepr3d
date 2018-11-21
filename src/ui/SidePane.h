@@ -41,6 +41,13 @@ class SidePane {
         ImGui::PopItemWidth();
     }
 
+    void drawVec3Dragger(std::string label, glm::vec3& value, float dragSpeed, float minValue, float maxValue,
+                         std::string displayFormat, float width) {
+        ImGui::PushItemWidth(width);
+        ImGui::DragFloat3(label.c_str(), &value[0], dragSpeed, minValue, maxValue, displayFormat.c_str());
+        ImGui::PopItemWidth();
+    }
+
     void setCommandManager(CommandManager<class Geometry>* commandManager) {
         mCommandManager = commandManager;
     }

@@ -58,6 +58,11 @@ void Geometry::loadNewGeometry(const std::string& fileName) {
         mTree->rebuild(mTriangles.begin(), mTriangles.end());
         assert(mTree->size() == mTriangles.size());
 
+        /// Get the new bounding box
+        if(!mTree->empty()) {
+            mBoundingBox = std::make_unique<BoundingBox>(mTree->bbox());
+        }
+
         /// Build the polyhedron data structure
         buildPolyhedron();
 
