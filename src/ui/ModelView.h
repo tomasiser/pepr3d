@@ -36,6 +36,32 @@ class ModelView {
         mIsWireframeEnabled = enable;
     }
 
+    bool isGridEnabled() const {
+        return mIsGridEnabled;
+    }
+
+    void enableGrid(bool enable = true) {
+        mIsGridEnabled = enable;
+    }
+
+    float getModelRoll() const {
+        return mModelRoll;
+    }
+
+    void setModelRoll(float roll) {
+        mModelRoll = roll;
+    }
+
+    glm::vec3 getModelTranslate() const {
+        return mModelTranslate;
+    }
+
+    void setModelTranslate(glm::vec3 translate) {
+        mModelTranslate = translate;
+    }
+
+    void resetCamera();
+
    private:
     MainApplication& mApplication;
     std::pair<glm::ivec2, glm::ivec2> mViewport;
@@ -43,6 +69,11 @@ class ModelView {
     ci::CameraUi mCameraUi;
     ci::gl::GlslProgRef mModelShader;
     bool mIsWireframeEnabled = false;
+    bool mIsGridEnabled = true;
+    glm::mat4 mModelMatrix;
+    float mModelRoll = 0.0f;
+    glm::vec3 mModelTranslate = glm::vec3(0);
+    void updateModelMatrix();
 };
 
 }  // namespace pepr3d

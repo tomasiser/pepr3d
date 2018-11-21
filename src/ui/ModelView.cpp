@@ -6,7 +6,7 @@
 namespace pepr3d {
 
 void ModelView::setup() {
-    mCamera.lookAt(glm::vec3(3, 2, 2), glm::vec3(0, 0, 0));
+    resetCamera();
     mCameraUi = ci::CameraUi(&mCamera);
     resize();
 
@@ -32,14 +32,16 @@ void ModelView::draw() {
     ci::gl::setMatrices(mCamera);
     gl::ScopedDepth depth(true);
 
+    updateModelMatrix();
+
     drawGeometry();
 
-    {
+    if(mIsGridEnabled) {
         ci::gl::ScopedModelMatrix modelScope;
-        ci::gl::multModelMatrix(glm::translate(glm::vec3(0, -0.5f, 0)));
+        ci::gl::multModelMatrix(glm::scale(glm::vec3(0.9f)));  // i.e., new size is 2.0f * 0.9f = 1.8f
         ci::gl::ScopedColor colorScope(ci::ColorA::black());
         ci::gl::ScopedLineWidth widthScope(1.0f);
-        auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(16)),
+        auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(18)),  // i.e., 1 cell = 0.1f
                                            ci::gl::getStockShader(ci::gl::ShaderDef().color()));
         plane->draw();
     }
@@ -64,9 +66,8 @@ void ModelView::onMouseDrag(MouseEvent event) {
     if(tool) {
         tool->onModelViewMouseDrag(*this, event);
     }
-    bool isMouseDown = event.isMiddleDown() || event.isRightDown();
-    bool shouldPan = event.isControlDown() && isMouseDown;
-    bool shouldTumble = !shouldPan && isMouseDown;
+    bool shouldPan = event.isMiddleDown() || (event.isControlDown() && event.isRightDown());
+    bool shouldTumble = !shouldPan && event.isRightDown();
     mCameraUi.mouseDrag(event.getPos(), shouldTumble, shouldPan, false /* should zoom */);
 }
 
@@ -93,11 +94,51 @@ void ModelView::onMouseMove(MouseEvent event) {
     }
 }
 
+void ModelView::resetCamera() {
+    mCamera.lookAt(glm::vec3(3.0f, 2.5f, 2.0f), glm::vec3(0.0f, 0.25f, 0.0f));
+}
+
+void ModelView::updateModelMatrix() {
+    const Geometry* const geometry = mApplication.getCurrentGeometry();
+    if(!geometry) {
+        return;
+    }
+    const glm::vec3 aabbMin = geometry->getBoundingBoxMin();
+    const glm::vec3 aabbMax = geometry->getBoundingBoxMax();
+    const glm::vec3 aabbSize = aabbMax - aabbMin;
+    const float maxSize = glm::max(glm::max(aabbSize.x, aabbSize.y), aabbSize.z);
+    float inverseMaxSize = 1.0f / maxSize;
+
+    if(std::isnan(inverseMaxSize)) {
+        inverseMaxSize = 1.0f;  // fallback
+    }
+
+    // attention: in OpenGL, matrices are applied in reverse order (from the latest to the first)
+    mModelMatrix = glm::scale(glm::vec3(inverseMaxSize, inverseMaxSize, -inverseMaxSize));
+    mModelMatrix *= glm::translate(aabbSize / 2.0f);
+    mModelMatrix *= glm::rotate(glm::radians(-90.0f), glm::vec3(1, 0, 0));
+    mModelMatrix *= glm::translate(-aabbSize / 2.0f);
+    mModelMatrix *= glm::translate(-aabbMin);
+
+    const glm::vec4 aabbMinFit = mModelMatrix * glm::vec4(aabbMin, 1.0f);
+    const glm::vec4 aabbMaxFit = mModelMatrix * glm::vec4(aabbMax, 1.0f);
+    const glm::vec4 aabbSizeFit = aabbMaxFit - aabbMinFit;
+
+    mModelMatrix =
+        glm::translate(glm::vec3(-aabbSizeFit.x / 2.0f, -aabbSizeFit.z / 2.0f, aabbSizeFit.y / 2.0f)) * mModelMatrix;
+    mModelMatrix = glm::rotate(glm::radians(mModelRoll), glm::vec3(1, 0, 0)) * mModelMatrix;
+    mModelMatrix = glm::translate(glm::vec3(0.0f, aabbSizeFit.z / 2.0f - aabbMaxFit.z, 0.0f)) * mModelMatrix;
+    mModelMatrix = glm::translate(mModelTranslate) * mModelMatrix;
+}
+
 ci::Ray ModelView::getRayFromWindowCoordinates(glm::ivec2 windowCoords) const {
     glm::vec2 viewportRelativeCoords(
         windowCoords.x / static_cast<float>(mViewport.second.x),
         1.0f - (windowCoords.y - mApplication.getToolbar().getHeight()) / static_cast<float>(mViewport.second.y));
     ci::Ray ray = mCamera.generateRay(viewportRelativeCoords.x, viewportRelativeCoords.y, mCamera.getAspectRatio());
+    glm::mat4 inverseModelMatrix = glm::inverse(mModelMatrix);
+    ray.setOrigin(inverseModelMatrix * glm::vec4(ray.getOrigin(), 1));                        // point, w=1
+    ray.setDirection(glm::normalize(inverseModelMatrix * glm::vec4(ray.getDirection(), 0)));  // vector, w=0
     return ray;
 }
 
@@ -142,6 +183,9 @@ void ModelView::drawGeometry() {
     mModelShader->uniform("uColorPalette", &colorMap[0], static_cast<int>(colorMap.size()));
     mModelShader->uniform("uShowWireframe", mIsWireframeEnabled);
 
+    const ci::gl::ScopedModelMatrix scopedModelMatrix;
+    ci::gl::multModelMatrix(mModelMatrix);
+
     // Create batch and draw
     auto myBatch = ci::gl::Batch::create(myVboMesh, mModelShader);
     myBatch->draw();
@@ -152,6 +196,9 @@ void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
     if(geometry == nullptr) {
         return;
     }
+
+    const ci::gl::ScopedModelMatrix scopedModelMatrix;
+    ci::gl::multModelMatrix(mModelMatrix);
 
     const DataTriangle& triangle = geometry->getTriangle(triangleIndex);
     const glm::vec4 color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleIndex));
