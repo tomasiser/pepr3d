@@ -14,16 +14,17 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
         sidePane.drawCheckbox("Stop on different color", mStopOnColor);
         sidePane.drawCheckbox("Stop on sharp edges", mStopOnNormal);
         if(mStopOnNormal) {
-            sidePane.drawIntDragger("Maximum absolute angle", mStopOnNormalDegrees, 0.25f, 0, 180, "%.0f°", 40.0f);
+            sidePane.drawIntDragger("Maximum angle", mStopOnNormalDegrees, 0.25f, 0, 180, "%.0f°", 40.0f);
+            sidePane.drawText("Angles to compare:");
+            if(ImGui::RadioButton("With starting triangle", mNormalCompare == NormalAngleCompare::ABSOLUTE)) {
+                mNormalCompare = NormalAngleCompare::ABSOLUTE;
+            }
+            if(ImGui::RadioButton("Neighbouring triangles", mNormalCompare == NormalAngleCompare::NEIGHBOURS)) {
+                mNormalCompare = NormalAngleCompare::NEIGHBOURS;
+            }
         }
     }
     sidePane.drawSeparator();
-
-    const size_t triSize = mApplication.getCurrentGeometry()->getTriangleCount();
-    sidePane.drawText("Number of triangles: " + std::to_string(triSize) + "\n");
-    sidePane.drawText("Polyhedron closed 0/1: " + std::to_string(mApplication.getCurrentGeometry()->polyClosedCheck()) +
-                      "\n");
-    sidePane.drawText("Vertex count: " + std::to_string(mApplication.getCurrentGeometry()->polyVertCount()) + "\n");
 }
 
 void PaintBucket::drawToModelView(ModelView &modelView) {
@@ -46,7 +47,7 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
 
     const double angleRads = mStopOnNormalDegrees * glm::pi<double>() / 180.0;
     const NormalStopping normalFtor(geometry, glm::cos(angleRads),
-                                    geometry->getTriangle(*mHoveredTriangleId).getNormal());
+                                    geometry->getTriangle(*mHoveredTriangleId).getNormal(), mNormalCompare);
 
     const ColorStopping colorFtor(geometry);
 

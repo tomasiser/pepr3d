@@ -10,13 +10,6 @@ namespace pepr3d {
 void TrianglePainter::drawToSidePane(SidePane& sidePane) {
     sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
     sidePane.drawSeparator();
-
-    sidePane.drawText("Last click:\nX: " + std::to_string(mLastClick.x) + "\nY: " + std::to_string(mLastClick.y));
-    const size_t triSize = mApplication.getCurrentGeometry()->getTriangleCount();
-    sidePane.drawText("Number of triangles: " + std::to_string(triSize) + "\n");
-    if(mHoveredTriangleId) {
-        sidePane.drawText("Hovered triangle ID: " + std::to_string(*mHoveredTriangleId) + "\n");
-    }
 }
 
 void TrianglePainter::drawToModelView(ModelView& modelView) {
