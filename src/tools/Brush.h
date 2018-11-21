@@ -14,5 +14,9 @@ class Brush : public ITool {
     virtual std::string getIcon() const override {
         return ICON_MD_BRUSH;
     }
+    
+    virtual bool isEnabled() const override {
+        return false;
+    }
 };
 }  // namespace pepr3d

@@ -56,7 +56,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>());
     mTools.emplace_back(make_unique<Information>());
-    mTools.emplace_back(make_unique<LiveDebug>(*this));
+    // mTools.emplace_back(make_unique<LiveDebug>(*this));
     mCurrentToolIterator = mTools.begin();
 
     mModelView.setup();

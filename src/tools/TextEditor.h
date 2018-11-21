@@ -14,5 +14,9 @@ class TextEditor : public ITool {
     virtual std::string getIcon() const override {
         return ICON_MD_TEXT_FIELDS;
     }
+    
+    virtual bool isEnabled() const override {
+        return false;
+    }
 };
 }  // namespace pepr3d

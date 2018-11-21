@@ -39,7 +39,7 @@ class MainApplication : public App {
     static void prepareSettings(Settings* settings) {
         assert(settings != nullptr);
 #if defined(CINDER_MSW_DESKTOP)
-        settings->setConsoleWindowEnabled(true);
+        // settings->setConsoleWindowEnabled(true);
 #endif
     }
 

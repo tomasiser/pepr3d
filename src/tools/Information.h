@@ -14,5 +14,10 @@ class Information : public ITool {
     virtual std::string getIcon() const override {
         return ICON_MD_INFO_OUTLINE;
     }
+
+    virtual void drawToSidePane(SidePane& sidePane) override {
+        sidePane.drawText("Pepr3D 0.1 (early preview)");
+        sidePane.drawText("github.com/tomasiser/pepr3d");
+    }
 };
 }  // namespace pepr3d
