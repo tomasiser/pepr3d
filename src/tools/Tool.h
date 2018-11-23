@@ -21,6 +21,8 @@ class ITool {
     virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event){};
     virtual void onModelViewMouseWheel(ModelView& modelView, ci::app::MouseEvent event){};
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event){};
+    virtual void onToolSelect(ModelView& modelView){};
+    virtual void onToolDeselect(ModelView& modelView){};
 };
 
 }  // namespace pepr3d

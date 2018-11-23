@@ -69,6 +69,17 @@ bool SidePane::drawButton(std::string label) {
     return ret;
 }
 
+bool SidePane::drawColoredButton(std::string label, const ci::ColorA color) {
+    ImGui::PushStyleColor(ImGuiCol_Border, color);
+    // ImGui::PushStyleColor(ImGuiCol_Text, color);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 3.0f);
+    bool ret = ImGui::Button(label.c_str(), glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
+    ImGui::PopStyleVar();
+    // ImGui::PopStyleColor(2);
+    ImGui::PopStyleColor();
+    return ret;
+}
+
 void SidePane::drawSeparator() {
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     auto* drawList = ImGui::GetWindowDrawList();

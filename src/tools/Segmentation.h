@@ -2,6 +2,7 @@
 #include <optional>
 #include <unordered_map>
 #include "commands/CommandManager.h"
+#include "geometry/Geometry.h"
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
 #include "ui/ModelView.h"
@@ -28,6 +29,7 @@ class Segmentation : public ITool {
     // virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
     // virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     // virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onToolDeselect(ModelView& modelView) override;
 
    private:
     MainApplication& mApplication;
@@ -36,6 +38,12 @@ class Segmentation : public ITool {
     int mNumberOfClusters = 5;
     float mSmoothingLambda = 0.3f;
     size_t mNumberOfSegments = 0;
+    bool mPickState = false;
+    ColorManager::ColorMap mOldColorManagerMap;
+    size_t mOldColorManagerSize = 0;
+    std::vector<Geometry::ColorIndex> mOldColorBuffer;
+    ColorManager mOldColorManager;
+    std::vector<size_t> mNewColors;
 
     std::unordered_map<size_t, std::vector<size_t>> mSegmentToTriangleIds;
 };

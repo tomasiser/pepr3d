@@ -89,6 +89,8 @@ class MainApplication : public App {
     void setCurrentToolIterator(ToolsVector::iterator tool) {
         assert(mTools.size() > 0);
         assert(tool != mTools.end());
+        (*mCurrentToolIterator)->onToolDeselect(mModelView);
+        std::cout << "Had " << mCurrentToolIterator - mTools.begin() << ", switch to " << tool - mTools.begin() << "\n";
         mCurrentToolIterator = tool;
     }
 
