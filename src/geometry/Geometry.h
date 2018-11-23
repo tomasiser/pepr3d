@@ -11,7 +11,10 @@
 #include <optional>
 #include <vector>
 
+#include "ThreadPool.h"
+
 #include "geometry/ColorManager.h"
+#include "geometry/GeometryProgress.h"
 #include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
@@ -57,6 +60,9 @@ class Geometry {
 
     /// A vector based map mapping size_t into ci::ColorA
     ColorManager mColorManager;
+
+    /// Current progress of import, tree, polyhedron building, export, etc.
+    GeometryProgress mProgress;
 
     struct GeometryState {
         std::vector<DataTriangle> triangles;
@@ -161,8 +167,12 @@ class Geometry {
         return mColorManager;
     }
 
+    const GeometryProgress& getProgress() const {
+        return mProgress;
+    }
+
     /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.
-    void loadNewGeometry(const std::string& fileName);
+    void loadNewGeometry(const std::string& fileName, ::ThreadPool& threadPool);
 
     /// Exports the modified geometry to the file specified by a path, file name and file type.
     void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType);

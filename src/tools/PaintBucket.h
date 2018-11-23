@@ -10,8 +10,7 @@ namespace pepr3d {
 
 class PaintBucket : public ITool {
    public:
-    PaintBucket(MainApplication& app, CommandManager<class Geometry>& commandManager)
-        : mApplication(app), mCommandManager(commandManager) {}
+    PaintBucket(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Paint Bucket";
@@ -31,7 +30,6 @@ class PaintBucket : public ITool {
 
    private:
     MainApplication& mApplication;
-    CommandManager<class Geometry>& mCommandManager;
     std::optional<std::size_t> mHoveredTriangleId = {};
     bool mStopOnNormal = false;
     int mStopOnNormalDegrees = 30;

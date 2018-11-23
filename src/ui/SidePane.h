@@ -48,13 +48,8 @@ class SidePane {
         ImGui::PopItemWidth();
     }
 
-    void setCommandManager(CommandManager<class Geometry>* commandManager) {
-        mCommandManager = commandManager;
-    }
-
    private:
     MainApplication& mApplication;
-    CommandManager<class Geometry>* mCommandManager = nullptr;
     float mWidth = 235.0f;
 };
 

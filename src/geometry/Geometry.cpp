@@ -30,41 +30,61 @@ void Geometry::loadState(const GeometryState& state) {
 
 /* -------------------- Mesh loading -------------------- */
 
-void Geometry::loadNewGeometry(const std::string& fileName) {
+void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& threadPool) {
+    // Reset progress
+    mProgress.resetLoad();
+
     /// Load into mTriangles
-    ModelImporter modelImporter(fileName);  // only first mesh [0]
+    ModelImporter modelImporter(fileName, &mProgress, threadPool);  // only first mesh [0]
 
     if(modelImporter.isModelLoaded()) {
         mTriangles = modelImporter.getTriangles();
 
-        mPolyhedronData.vertices.clear();
-        mPolyhedronData.indices.clear();
-        mPolyhedronData.vertices = modelImporter.getVertexBuffer();
-        mPolyhedronData.indices = modelImporter.getIndexBuffer();
+        /// Async build the polyhedron data structure
+        auto buildPolyhedronFuture = threadPool.enqueue([&modelImporter, this]() {
+            mPolyhedronData.vertices.clear();
+            mPolyhedronData.indices.clear();
+            mPolyhedronData.vertices = modelImporter.getVertexBuffer();
+            mPolyhedronData.indices = modelImporter.getIndexBuffer();
+            buildPolyhedron();
+        });
+
+        /// Async build the AABB tree
+        auto buildTreeFuture = threadPool.enqueue([this]() {
+            mProgress.aabbTreePercentage = 0.0f;
+
+            mTree->rebuild(mTriangles.cbegin(), mTriangles.cend());
+            assert(mTree->size() == mTriangles.size());
+
+            /// Get the new bounding box
+            if(!mTree->empty()) {
+                mBoundingBox = std::make_unique<BoundingBox>(mTree->bbox());
+            }
+
+            mProgress.aabbTreePercentage = 1.0f;
+        });
+
+        mProgress.buffersPercentage = 0.0f;
 
         /// Generate new vertex buffer
         generateVertexBuffer();
+        mProgress.buffersPercentage = 0.25f;
 
         /// Generate new index buffer
         generateIndexBuffer();
+        mProgress.buffersPercentage = 0.50f;
 
         /// Generate new color buffer from triangle color data
         generateColorBuffer();
+        mProgress.buffersPercentage = 0.75f;
 
         /// Generate new normal buffer, copying the triangle normal to each vertex
         generateNormalBuffer();
+        mProgress.buffersPercentage = 1.0f;
 
-        /// Rebuild the AABB tree
-        mTree->rebuild(mTriangles.begin(), mTriangles.end());
-        assert(mTree->size() == mTriangles.size());
-
-        /// Get the new bounding box
-        if(!mTree->empty()) {
-            mBoundingBox = std::make_unique<BoundingBox>(mTree->bbox());
-        }
-
-        /// Build the polyhedron data structure
-        buildPolyhedron();
+        /// Wait for building the polyhedron and tree
+        buildTreeFuture.get();
+        buildPolyhedronFuture.get();
 
         /// Get the generated color palette of the model, replace the current one
         mColorManager = modelImporter.getColorManager();
@@ -172,6 +192,7 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
 }
 
 void Geometry::buildPolyhedron() {
+    mProgress.polyhedronPercentage = 0.0f;
     PolyhedronBuilder<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
     mPolyhedronData.P.clear();
     try {
@@ -199,6 +220,7 @@ void Geometry::buildPolyhedron() {
     }
 
     mPolyhedronData.closeCheck = mPolyhedronData.P.is_closed();
+    mProgress.polyhedronPercentage = 1.0f;
 }
 
 std::array<int, 3> Geometry::gatherNeighbours(
