@@ -5,7 +5,7 @@
 #include "cinder/Color.h"
 #include "glm/glm.hpp"
 
-#define PEPR3D_MAX_PALETTE_COLORS 12
+#define PEPR3D_MAX_PALETTE_COLORS 16
 
 namespace pepr3d {
 
@@ -36,14 +36,15 @@ class ColorManager {
     explicit ColorManager(const size_t number) {
         std::random_device rd;   // Will be used to obtain a seed for the random number engine
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-        std::uniform_real_distribution<> randomGen(0.0, 1.0);
+        std::uniform_real_distribution<> randomGenHue(0.0, 1.0);
+        std::uniform_real_distribution<> randomGenValue(0.6, 1.0);
 
-        const auto start = randomGen(gen);
+        const float start = static_cast<float>(randomGenHue(gen));
         for(int i = 0; i < number; ++i) {
-            double added = start + static_cast<double>(i) / static_cast<double>(number) * 0.7;
+            float added = start + static_cast<float>(i) / static_cast<float>(number) * 0.7f;
             float whole, fractional;
             fractional = std::modf(added, &whole);
-            ci::ColorA r = cinder::hsvToRgb(glm::vec4(fractional, 1, 1, 1));
+            ci::ColorA r = cinder::hsvToRgb(glm::vec4(fractional, 1, randomGenValue(gen), 1));
             mColorMap.emplace_back(r.r, r.g, r.b, 1);
         }
     }

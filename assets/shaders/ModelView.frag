@@ -1,6 +1,6 @@
 #version 150
 
-#define PEPR3D_MAX_PALETTE_COLORS 8
+#define PEPR3D_MAX_PALETTE_COLORS 16
 
 in vec3 Normal;
 in vec3 BarycentricCoordinates;

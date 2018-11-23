@@ -182,8 +182,9 @@ void Geometry::buildPolyhedron() {
 
     std::vector<PolyhedronData::vertex_descriptor> vertDescs;
     vertDescs.reserve(mPolyhedronData.vertices.size());
-    mPolyhedronData.mMesh.reserve(mPolyhedronData.vertices.size(), mPolyhedronData.indices.size() * 3 / 2,
-                                  mPolyhedronData.indices.size());
+    mPolyhedronData.mMesh.reserve(static_cast<PolyhedronData::Mesh::size_type>(mPolyhedronData.vertices.size()),
+                                  static_cast<PolyhedronData::Mesh::size_type>(mPolyhedronData.indices.size() * 3 / 2),
+                                  static_cast<PolyhedronData::Mesh::size_type>(mPolyhedronData.indices.size()));
 
     for(const auto& vertex : mPolyhedronData.vertices) {
         PolyhedronData::vertex_descriptor v =
@@ -268,7 +269,7 @@ std::array<int, 3> Geometry::gatherNeighboursSurface(const size_t triIndex) cons
             const PolyhedronData::Mesh::Face_index neighbourFace = mesh.face(oppositeEdge);
             const size_t neighbourFaceId = mPolyhedronData.mIdMap[neighbourFace];
             assert(neighbourFaceId < mTriangles.size());
-            returnValue[i] = neighbourFaceId;
+            returnValue[i] = static_cast<int>(neighbourFaceId);
         }
 
         itEdge = mesh.next(itEdge);
@@ -344,14 +345,6 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
         mPolyhedronData.mMesh.remove_property_map(segment_property_map);
         return 0;
     }
-    glm::vec4 segmentColors[4] = {glm::vec4(0.1, 1, 0.1, 1), glm::vec4(1, 0, 1, 1), glm::vec4(0.4, 0.4, 0.4, 1),
-                                  glm::vec4(0, 1, 1, 1)};
-    const int colorsToAdd = static_cast<int>(number_of_segments) - static_cast<int>(mColorManager.size());
-    for(int i = 0; i < colorsToAdd; ++i) {
-        mColorManager.addColor(segmentColors[i]);
-        CI_LOG_I("Added a color");
-    }
-    assert(mColorManager.size() >= number_of_segments);
 
     for(size_t seg = 0; seg < number_of_segments; ++seg) {
         segmentToTriangleIds.insert({seg, {}});
@@ -362,10 +355,9 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
         const size_t id = mPolyhedronData.mIdMap[face];
         const size_t color = segment_property_map[face];
         assert(id < mTriangles.size());
-        assert(color < mColorManager.size());
+        assert(color < number_of_segments);
 
         segmentToTriangleIds[color].push_back(id);
-        // setTriangleColor(id, color);
     }
 
     CI_LOG_I("Segmentation finished. Number of segments: " + std::to_string(number_of_segments));
