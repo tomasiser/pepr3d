@@ -125,9 +125,7 @@ void MainApplication::saveFile(const std::string& filePath, const std::string& f
     mProgressIndicator.setGeometryInProgress(mGeometry);
     mThreadPool.enqueue([filePath, fileName, fileType, this]() {
         mGeometry->exportGeometry(filePath, fileName, fileType);
-        dispatchAsync([this]() {
-            mProgressIndicator.setGeometryInProgress(nullptr);
-        });
+        dispatchAsync([this]() { mProgressIndicator.setGeometryInProgress(nullptr); });
     });
 }
 

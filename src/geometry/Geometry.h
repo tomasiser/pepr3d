@@ -62,7 +62,7 @@ class Geometry {
     ColorManager mColorManager;
 
     /// Current progress of import, tree, polyhedron building, export, etc.
-    GeometryProgress mProgress;
+    std::unique_ptr<GeometryProgress> mProgress;
 
     struct GeometryState {
         std::vector<DataTriangle> triangles;
@@ -90,11 +90,10 @@ class Geometry {
 
    public:
     /// Empty constructor
-    Geometry() {
-        mTree = std::make_unique<Tree>();
-    }
+    Geometry() : mTree(std::make_unique<Tree>()), mProgress(std::make_unique<GeometryProgress>()) {}
 
-    Geometry(std::vector<DataTriangle>&& triangles) : mTriangles(std::move(triangles)) {
+    Geometry(std::vector<DataTriangle>&& triangles)
+        : mTriangles(std::move(triangles)), mProgress(std::make_unique<GeometryProgress>()) {
         generateVertexBuffer();
         generateIndexBuffer();
         generateColorBuffer();
@@ -168,7 +167,8 @@ class Geometry {
     }
 
     const GeometryProgress& getProgress() const {
-        return mProgress;
+        assert(mProgress != nullptr);
+        return *mProgress;
     }
 
     /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.

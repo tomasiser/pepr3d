@@ -32,10 +32,10 @@ void Geometry::loadState(const GeometryState& state) {
 
 void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& threadPool) {
     // Reset progress
-    mProgress.resetLoad();
+    mProgress->resetLoad();
 
     /// Load into mTriangles
-    ModelImporter modelImporter(fileName, &mProgress, threadPool);  // only first mesh [0]
+    ModelImporter modelImporter(fileName, mProgress.get(), threadPool);  // only first mesh [0]
 
     if(modelImporter.isModelLoaded()) {
         mTriangles = modelImporter.getTriangles();
@@ -51,7 +51,7 @@ void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& thread
 
         /// Async build the AABB tree
         auto buildTreeFuture = threadPool.enqueue([this]() {
-            mProgress.aabbTreePercentage = 0.0f;
+            mProgress->aabbTreePercentage = 0.0f;
 
             mTree->rebuild(mTriangles.cbegin(), mTriangles.cend());
             assert(mTree->size() == mTriangles.size());
@@ -61,26 +61,26 @@ void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& thread
                 mBoundingBox = std::make_unique<BoundingBox>(mTree->bbox());
             }
 
-            mProgress.aabbTreePercentage = 1.0f;
+            mProgress->aabbTreePercentage = 1.0f;
         });
 
-        mProgress.buffersPercentage = 0.0f;
+        mProgress->buffersPercentage = 0.0f;
 
         /// Generate new vertex buffer
         generateVertexBuffer();
-        mProgress.buffersPercentage = 0.25f;
+        mProgress->buffersPercentage = 0.25f;
 
         /// Generate new index buffer
         generateIndexBuffer();
-        mProgress.buffersPercentage = 0.50f;
+        mProgress->buffersPercentage = 0.50f;
 
         /// Generate new color buffer from triangle color data
         generateColorBuffer();
-        mProgress.buffersPercentage = 0.75f;
+        mProgress->buffersPercentage = 0.75f;
 
         /// Generate new normal buffer, copying the triangle normal to each vertex
         generateNormalBuffer();
-        mProgress.buffersPercentage = 1.0f;
+        mProgress->buffersPercentage = 1.0f;
 
         /// Wait for building the polyhedron and tree
         buildTreeFuture.get();
@@ -96,9 +96,9 @@ void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& thread
 
 void Geometry::exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType) {
     // Reset progress
-    mProgress.resetSave();
+    mProgress->resetSave();
 
-    ModelExporter modelExporter(mTriangles, filePath, fileName, fileType, &mProgress);
+    ModelExporter modelExporter(mTriangles, filePath, fileName, fileType, mProgress.get());
 }
 
 void Geometry::generateVertexBuffer() {
@@ -195,7 +195,7 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
 }
 
 void Geometry::buildPolyhedron() {
-    mProgress.polyhedronPercentage = 0.0f;
+    mProgress->polyhedronPercentage = 0.0f;
     PolyhedronBuilder<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
     mPolyhedronData.P.clear();
     try {
@@ -223,7 +223,7 @@ void Geometry::buildPolyhedron() {
     }
 
     mPolyhedronData.closeCheck = mPolyhedronData.P.is_closed();
-    mProgress.polyhedronPercentage = 1.0f;
+    mProgress->polyhedronPercentage = 1.0f;
 }
 
 std::array<int, 3> Geometry::gatherNeighbours(
