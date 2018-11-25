@@ -2,19 +2,27 @@
 
 uniform mat4 ciModelViewProjection;
 uniform mat3 ciNormalMatrix;
+uniform mat4 ciModelMatrix;
+uniform float uAreaHighlightSize;
+uniform bool uAreaHighlightEnabled;
 
 in vec4 ciPosition;
 in vec3 ciNormal;
 in uint aColorIndex;
+in int aAreaHighlightMask; 
 
 out highp vec3 Normal;
 out highp vec3 BarycentricCoordinates;
+out highp vec3 ModelCoordinates;
 flat out uint ColorIndex;
+flat out int AreaHighlightMask;
 
 void main() {
     Normal = ciNormalMatrix * ciNormal;
     ColorIndex = aColorIndex;
+	ModelCoordinates = ciPosition.xyz;
     gl_Position = ciModelViewProjection * ciPosition;
+	AreaHighlightMask = aAreaHighlightMask;
 
     int vertexMod3 = gl_VertexID % 3;
     BarycentricCoordinates = vec3(float(vertexMod3 == 0), float(vertexMod3 == 1), float(vertexMod3 == 2));

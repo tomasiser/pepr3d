@@ -1,4 +1,6 @@
 #include "geometry/Geometry.h"
+#include <set>
+#include "GeometryUtils.h"
 
 namespace pepr3d {
 
@@ -151,6 +153,92 @@ std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray) const {
 
     /// No intersection detected.
     return {};
+}
+
+std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray, glm::vec3& outPos) const {
+    auto intersection = intersectMesh(ray);
+
+    if(intersection) {
+        // Calculate intersection point of the ray with the triangle
+        const DataTriangle& tri = getTriangle(*intersection);
+
+        auto intersectionPoint = GeometryUtils::triangleRayIntersection(tri, ray);
+
+        if(intersectionPoint)
+            outPos = *intersectionPoint;
+    }
+
+    return intersection;
+}
+
+void Geometry::highlightArea(const ci::Ray& ray, float size) {
+    const glm::vec3 source = ray.getOrigin();
+    const glm::vec3 rayDirection = ray.getDirection();
+
+    glm::vec3 intersectionPoint{};
+    auto intersectedTri = intersectMesh(ray, intersectionPoint);
+    const float sizeSquared = size * size;
+
+    /// Stop when the trinagle has no intersection with the area highlight
+    auto stoppingCriterionSingleTri = [this, intersectionPoint, sizeSquared, rayDirection, intersectedTri](const size_t triId) -> bool {
+        // Always accept the first triangle
+        if(triId == *intersectedTri)
+            return true;
+
+        const auto& tri = getTriangle(triId);
+        const auto a = tri.getVertex(0);
+        const auto b = tri.getVertex(1);
+        const auto c = tri.getVertex(2);
+
+        if(glm::dot(tri.getNormal(), rayDirection) > 0.f)
+            return false;  // stop on triangles facing away from the ray
+
+        // If any side has intersection with the brush keep the triangle
+        if(GeometryUtils::segmentPointDistanceSquared(a, b, intersectionPoint) < sizeSquared)
+            return true;
+        if(GeometryUtils::segmentPointDistanceSquared(b, c, intersectionPoint) < sizeSquared)
+            return true;
+        if(GeometryUtils::segmentPointDistanceSquared(c, a, intersectionPoint) < sizeSquared)
+            return true;
+
+        return false;
+    };
+
+    const auto stoppingCriterion = [&stoppingCriterionSingleTri, this](const size_t a, const size_t b) -> bool {
+        return stoppingCriterionSingleTri(a) && stoppingCriterionSingleTri(b);
+    };
+
+    if(intersectedTri) {
+        std::vector<size_t> trianglesToPaint = bucket(*intersectedTri, stoppingCriterion);
+
+        std::set<size_t> paintSet(trianglesToPaint.begin(), trianglesToPaint.end());
+        trianglesToPaint.clear();
+
+        mAreaHighlight.vertexMask.clear();
+        mAreaHighlight.size = size;
+        mAreaHighlight.origin = intersectionPoint;
+        mAreaHighlight.direction = ray.getDirection();
+        mAreaHighlight.enabled = true;
+        mAreaHighlight.dirty = true;
+
+        // Mark all triangles with attribute assigned to vertex
+        mAreaHighlight.vertexMask.reserve(mTriangles.size() * 3);
+        for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
+            // Fill 3 vertices of a triangle
+            if(paintSet.find(triangleIdx) == paintSet.end()) {
+                mAreaHighlight.vertexMask.emplace_back(0);
+                mAreaHighlight.vertexMask.emplace_back(0);
+                mAreaHighlight.vertexMask.emplace_back(0);
+            } else {
+                mAreaHighlight.vertexMask.emplace_back(1);
+                mAreaHighlight.vertexMask.emplace_back(1);
+                mAreaHighlight.vertexMask.emplace_back(1);
+            }
+        }
+        // TODO: Improvement: Try to avoid doing all this if we are highlighting the same triangle with the same size
+    } else {
+        mAreaHighlight.enabled = false;
+    }
 }
 
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {

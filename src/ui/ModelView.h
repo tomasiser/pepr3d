@@ -74,8 +74,9 @@ class ModelView {
     float mModelRoll = 0.0f;
     glm::vec3 mModelTranslate = glm::vec3(0);
     void updateModelMatrix();
-     struct Attributes {
+    struct Attributes {
         static const cinder::geom::Attrib COLOR_IDX = cinder::geom::Attrib::CUSTOM_0;
+        static const cinder::geom::Attrib HIGHLIGHT_MASK = cinder::geom::Attrib::CUSTOM_1;
     };
 };
 

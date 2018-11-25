@@ -30,6 +30,18 @@ class Geometry {
     using BoundingBox = My_AABB_traits::Bounding_box;
     using ColorIndex = GLuint;
 
+    struct AreaHighlight {
+        /// boolen for each triangle that indicates if the triangle should display cursor highlight
+        /// Used to limit the highlight to continuous surface
+        std::vector<GLint> vertexMask;  // Possibly needs to be GLint, had problems getting GLbyte through cinder
+        glm::vec3 origin{};
+        glm::vec3 direction{};
+        float size{};
+        bool enabled{};
+        /// Do we need to upload new data to the gpu
+        bool dirty{true};
+    };
+
    private:
     /// Triangle soup of the model mesh, containing CGAL::Triangle_3 data for AABB tree.
     std::vector<DataTriangle> mTriangles;
@@ -57,6 +69,9 @@ class Geometry {
 
     /// A vector based map mapping size_t into ci::ColorA
     ColorManager mColorManager;
+
+    /// Struct representing a highlight around user's cursor
+    AreaHighlight mAreaHighlight;
 
     struct GeometryState {
         std::vector<DataTriangle> triangles;
@@ -139,6 +154,10 @@ class Geometry {
         return glm::vec3(mBoundingBox->xmax(), mBoundingBox->ymax(), mBoundingBox->zmax());
     }
 
+    const Geometry::AreaHighlight& getAreaHighlight() const {
+        return mAreaHighlight;
+    }
+
     const DataTriangle& getTriangle(const size_t triangleIndex) const {
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex];
@@ -174,6 +193,15 @@ class Geometry {
     /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
     std::optional<size_t> intersectMesh(const ci::Ray& ray) const;
 
+    /// Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists.
+    /// Additionally outputs intersection point to the outPos param
+    /// Example use: generate ray based on a mouse click, call this method, then call setTriangleColor.
+    std::optional<size_t> intersectMesh(const ci::Ray& ray, glm::vec3& outPos) const;
+
+    /// Highlight an area around the intersection point. All points on a continuous surface closer than the size are
+    /// highlighted.
+    void highlightArea(const ci::Ray& ray, float size);
+
     /// Save current state into a struct so that it can be restored later (CommandManager target requirement)
     GeometryState saveState() const;
 
@@ -188,8 +216,8 @@ class Geometry {
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
-    /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing
-    /// is possible.
+    /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex
+    /// sharing is possible.
     void generateVertexBuffer();
 
     /// Generating a linear index buffer, since we do not reuse any vertices.
@@ -204,8 +232,8 @@ class Geometry {
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
     void buildPolyhedron();
 
-    /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL
-    /// Polyhedron construct.
+    /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the
+    /// CGAL Polyhedron construct.
     std::array<int, 3> gatherNeighbours(
         const size_t triIndex,
         const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const;

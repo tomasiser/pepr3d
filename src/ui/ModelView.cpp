@@ -14,7 +14,8 @@ void ModelView::setup() {
         ci::gl::GlslProg::create(ci::gl::GlslProg::Format()
                                      .vertex(ci::loadString(mApplication.loadAsset("shaders/ModelView.vert")))
                                      .fragment(ci::loadString(mApplication.loadAsset("shaders/ModelView.frag")))
-                                     .attrib(ci::geom::Attrib::CUSTOM_0, "aColorIndex"));
+                                     .attrib(Attributes::COLOR_IDX, "aColorIndex")
+                                     .attrib(Attributes::HIGHLIGHT_MASK, "aAreaHighlightMask"));
 }
 
 void ModelView::resize() {
@@ -161,11 +162,15 @@ void ModelView::drawGeometry() {
 
     const std::vector<glm::vec3>& normals = mApplication.getCurrentGeometry()->getNormalBuffer();
 
+    const auto& areaHighlight =
+        mApplication.getCurrentGeometry()->getAreaHighlight();
+
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::POSITION, 3),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::NORMAL, 3),
-        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::CUSTOM_0, 1)};  // color index
+        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(Attributes::COLOR_IDX, 1),
+        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(Attributes::HIGHLIGHT_MASK, 1)};
 
     // Create elementary buffer of indices
     const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
@@ -177,7 +182,8 @@ void ModelView::drawGeometry() {
     // Assign the buffers to the attributes
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, normals);
-    myVboMesh->bufferAttrib<Geometry::ColorIndex>(ci::geom::Attrib::CUSTOM_0, colors);
+    myVboMesh->bufferAttrib<Geometry::ColorIndex>(Attributes::COLOR_IDX, colors);
+    myVboMesh->bufferAttrib<GLint>(Attributes::HIGHLIGHT_MASK, areaHighlight.vertexMask);
 
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
@@ -186,6 +192,12 @@ void ModelView::drawGeometry() {
 
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
+
+    // Assign highlight uniforms
+    mModelShader->uniform("uAreaHighlightEnabled", areaHighlight.enabled);
+    mModelShader->uniform("uAreaHighlightOrigin", areaHighlight.origin);
+    mModelShader->uniform("uAreaHighlightSize", areaHighlight.size);
+    mModelShader->uniform("uAreaHighlightColor", vec3(0.f, 1.f, 0.f));
 
     // Create batch and draw
     auto myBatch = ci::gl::Batch::create(myVboMesh, mModelShader);
