@@ -148,6 +148,7 @@ void ModelView::drawGeometry() {
     }
 
     // \todo Getting const references to the buffers, might want to use pointers, iterators, whatever.
+    // TODO: \todo : Do we need to recreate all the buffers every draw call?
     // Get vertex buffer
     const std::vector<glm::vec3>& positions = mApplication.getCurrentGeometry()->getVertexBuffer();
     // Get index buffer
