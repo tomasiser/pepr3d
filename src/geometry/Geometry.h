@@ -200,7 +200,11 @@ class Geometry {
 
     /// Highlight an area around the intersection point. All points on a continuous surface closer than the size are
     /// highlighted.
-    void highlightArea(const ci::Ray& ray, float size);
+    void highlightArea(const ci::Ray& ray, const struct BrushSettings& settings);
+
+
+    /// Paint continuous area with a brush of specified size
+    void paintArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
     /// Save current state into a struct so that it can be restored later (CommandManager target requirement)
     GeometryState saveState() const;

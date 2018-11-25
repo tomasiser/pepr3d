@@ -5,17 +5,22 @@
 #include "ui/SidePane.h"
 
 namespace pepr3d {
+    struct BrushSettings
+    {
+        /// Size of a brush in model space units
+        float size = 0.1f;
+
+        /// Paint only to triangles connected to the origin
+        bool continuous = true;
+
+        /// Paint onto backward facing triangles
+        bool paintBackfaces = false;
+    };
 
 class Brush : public ITool {
    public:
     Brush(MainApplication& app, CommandManager<class Geometry>& commandManager)
         : mApplication(app), mCommandManager(commandManager) {}
-
-    void setBrushSize(float brushSize) {
-        mBrushSize = brushSize;
-    }
-
-    float getBrushSize() const {return mBrushSize;}
 
     virtual std::string getName() const override {
         return "Brush";
@@ -43,6 +48,6 @@ class Brush : public ITool {
     MainApplication& mApplication;
     CommandManager<class Geometry>& mCommandManager;
 
-    float mBrushSize = 0.1f;
+    BrushSettings mBrushSettings;
 };
 }  // namespace pepr3d

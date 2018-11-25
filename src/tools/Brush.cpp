@@ -29,5 +29,5 @@ void pepr3d::Brush::stopPaint() {
 }
 
 void pepr3d::Brush::updateHighlight() const {
-    mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSize);
+    mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSettings);
 }

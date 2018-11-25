@@ -1,6 +1,7 @@
 #include "geometry/Geometry.h"
 #include <set>
 #include "GeometryUtils.h"
+#include "tools/Brush.h"
 
 namespace pepr3d {
 
@@ -171,16 +172,17 @@ std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray, glm::vec3& out
     return intersection;
 }
 
-void Geometry::highlightArea(const ci::Ray& ray, float size) {
+void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) {
     const glm::vec3 source = ray.getOrigin();
     const glm::vec3 rayDirection = ray.getDirection();
 
     glm::vec3 intersectionPoint{};
     auto intersectedTri = intersectMesh(ray, intersectionPoint);
-    const float sizeSquared = size * size;
+    const float sizeSquared = settings.size * settings.size;
 
     /// Stop when the trinagle has no intersection with the area highlight
-    auto stoppingCriterionSingleTri = [this, intersectionPoint, sizeSquared, rayDirection, intersectedTri](const size_t triId) -> bool {
+    auto stoppingCriterionSingleTri = [this, intersectionPoint, sizeSquared, rayDirection,
+                                       intersectedTri,settings](const size_t triId) -> bool {
         // Always accept the first triangle
         if(triId == *intersectedTri)
             return true;
@@ -190,7 +192,7 @@ void Geometry::highlightArea(const ci::Ray& ray, float size) {
         const auto b = tri.getVertex(1);
         const auto c = tri.getVertex(2);
 
-        if(glm::dot(tri.getNormal(), rayDirection) > 0.f)
+        if(!settings.paintBackfaces && glm::dot(tri.getNormal(), rayDirection) > 0.f)
             return false;  // stop on triangles facing away from the ray
 
         // If any side has intersection with the brush keep the triangle
@@ -209,13 +211,18 @@ void Geometry::highlightArea(const ci::Ray& ray, float size) {
     };
 
     if(intersectedTri) {
-        std::vector<size_t> trianglesToPaint = bucket(*intersectedTri, stoppingCriterion);
+        std::vector<size_t> trianglesToPaint;
 
+        if(settings.continuous)
+        {
+            trianglesToPaint = bucket(*intersectedTri, stoppingCriterion);
+        }
+        
         std::set<size_t> paintSet(trianglesToPaint.begin(), trianglesToPaint.end());
         trianglesToPaint.clear();
 
         mAreaHighlight.vertexMask.clear();
-        mAreaHighlight.size = size;
+        mAreaHighlight.size = settings.size;
         mAreaHighlight.origin = intersectionPoint;
         mAreaHighlight.direction = ray.getDirection();
         mAreaHighlight.enabled = true;
@@ -225,7 +232,7 @@ void Geometry::highlightArea(const ci::Ray& ray, float size) {
         mAreaHighlight.vertexMask.reserve(mTriangles.size() * 3);
         for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
             // Fill 3 vertices of a triangle
-            if(paintSet.find(triangleIdx) == paintSet.end()) {
+            if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
                 mAreaHighlight.vertexMask.emplace_back(0);
                 mAreaHighlight.vertexMask.emplace_back(0);
                 mAreaHighlight.vertexMask.emplace_back(0);
