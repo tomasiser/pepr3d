@@ -91,13 +91,13 @@ void Toolbar::drawFileDropDown() {
 
     if(props.isToggled) {
         ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
-        ImGui::SetNextWindowSize(glm::ivec2(175, 300));
+        ImGui::SetNextWindowSize(glm::ivec2(175, 150));
         if(ImGui::BeginPopup(filePopupId)) {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
-            ImGui::Button("Open", glm::ivec2(175, 50));
-            ImGui::Button("Save", glm::ivec2(175, 50));
-            ImGui::Button("Save as", glm::ivec2(175, 50));
+            // ImGui::Button("Open", glm::ivec2(175, 50));
+            // ImGui::Button("Save", glm::ivec2(175, 50));
+            // ImGui::Button("Save as", glm::ivec2(175, 50));
             if(ImGui::Button("Import", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
                 mApplication.dispatchAsync([&]() {
@@ -127,7 +127,7 @@ void Toolbar::drawFileDropDown() {
                         }
                         std::string fileType = path.extension().string().substr(1);
 
-                        mApplication.getCurrentGeometry()->exportGeometry(filePath, fileName, fileType);
+                        mApplication.saveFile(filePath, fileName, fileType);
                     }
                 });
             }

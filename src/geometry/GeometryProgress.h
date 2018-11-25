@@ -18,6 +18,14 @@ struct GeometryProgress {
         aabbTreePercentage = -1.0f;
         polyhedronPercentage = -1.0f;
     }
+
+    std::atomic<float> createScenePercentage{-1.0f};
+    std::atomic<float> exportFilePercentage{-1.0f};
+
+    void resetSave() {
+        createScenePercentage = -1.0f;
+        exportFilePercentage = -1.0f;
+    }
 };
 
 }  // namespace pepr3d

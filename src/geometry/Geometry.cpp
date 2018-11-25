@@ -95,7 +95,10 @@ void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& thread
 }
 
 void Geometry::exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType) {
-    ModelExporter modelExporter(mTriangles, filePath, fileName, fileType);
+    // Reset progress
+    mProgress.resetSave();
+
+    ModelExporter modelExporter(mTriangles, filePath, fileName, fileType, &mProgress);
 }
 
 void Geometry::generateVertexBuffer() {

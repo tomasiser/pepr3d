@@ -114,6 +114,23 @@ void MainApplication::openFile(const std::string& path) {
     });
 }
 
+void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {
+    if(mGeometry == nullptr) {
+        return;
+    }
+
+    mProgressIndicator.setGeometryInProgress(mGeometry);
+    mThreadPool.enqueue([filePath, fileName, fileType, this]() {
+        std::cout << "saving file from thread pool" << std::endl;
+        mGeometry->exportGeometry(filePath, fileName, fileType);
+        std::cout << "finished from thread pool" << std::endl;
+        dispatchAsync([this]() {
+            std::cout << "dispatch" << std::endl;
+            mProgressIndicator.setGeometryInProgress(nullptr);
+        });
+    });
+}
+
 void MainApplication::update() {}
 
 void MainApplication::draw() {

@@ -34,11 +34,15 @@ void ProgressIndicator::draw() {
         ImGui::Separator();
 
         const auto& progress = mGeometry->getProgress();
+
         drawStatus("Importing render geometry...", progress.importRenderPercentage, false);
         drawStatus("Importing compute geometry...", progress.importComputePercentage, false);
         drawStatus("Generating buffers...", progress.buffersPercentage, false);
         drawStatus("Building AABB tree...", progress.aabbTreePercentage, true);
         drawStatus("Building polyhedron...", progress.polyhedronPercentage, true);
+
+        drawStatus("Creating scene...", progress.createScenePercentage, true);
+        drawStatus("Exporting geometry...", progress.exportFilePercentage, false);
 
         ImGui::EndPopup();
     }
