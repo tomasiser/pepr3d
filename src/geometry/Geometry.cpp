@@ -203,6 +203,7 @@ void Geometry::buildPolyhedron() {
         mPolyhedronData.faceHandles = triangle.getFacetArray();
     } catch(CGAL::Assertion_exception* assertExcept) {
         mPolyhedronData.P.clear();
+        mProgress->polyhedronPercentage = -1.0f;
         CI_LOG_E("Polyhedron not loaded. " + assertExcept->message());
         return;
     }
@@ -210,6 +211,7 @@ void Geometry::buildPolyhedron() {
     // The exception does not get thrown in Release
     if(!mPolyhedronData.P.is_valid() || mPolyhedronData.P.is_empty()) {
         mPolyhedronData.P.clear();
+        mProgress->polyhedronPercentage = -1.0f;
         CI_LOG_E("Polyhedron loaded empty or invalid.");
         return;
     }
