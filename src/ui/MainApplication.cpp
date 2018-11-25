@@ -23,7 +23,13 @@
 
 namespace pepr3d {
 
-MainApplication::MainApplication() : mToolbar(*this), mSidePane(*this), mModelView(*this), mThreadPool(4) {}
+// At least 2 threads in thread pool must be created, or importing will never finish!
+// std::thread::hardware_concurrency() may return 0
+MainApplication::MainApplication()
+    : mToolbar(*this),
+      mSidePane(*this),
+      mModelView(*this),
+      mThreadPool(max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
@@ -99,11 +105,8 @@ void MainApplication::openFile(const std::string& path) {
     std::shared_ptr<Geometry> geometry = mGeometryInProgress = std::make_shared<Geometry>();
     mProgressIndicator.setGeometryInProgress(geometry);
     mThreadPool.enqueue([geometry, path, this]() {
-        std::cout << "opening file from thread pool" << std::endl;
         geometry->loadNewGeometry(path, mThreadPool);
-        std::cout << "finished from thread pool" << std::endl;
         dispatchAsync([path, this]() {
-            std::cout << "dispatch" << std::endl;
             mGeometry = mGeometryInProgress;
             mGeometryInProgress = nullptr;
             mGeometryFileName = path;
@@ -121,11 +124,8 @@ void MainApplication::saveFile(const std::string& filePath, const std::string& f
 
     mProgressIndicator.setGeometryInProgress(mGeometry);
     mThreadPool.enqueue([filePath, fileName, fileType, this]() {
-        std::cout << "saving file from thread pool" << std::endl;
         mGeometry->exportGeometry(filePath, fileName, fileType);
-        std::cout << "finished from thread pool" << std::endl;
         dispatchAsync([this]() {
-            std::cout << "dispatch" << std::endl;
             mProgressIndicator.setGeometryInProgress(nullptr);
         });
     });
