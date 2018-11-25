@@ -1,3 +1,7 @@
+/**
+ * Modified for Pepr3D to prevent flipping of camera
+ */
+
 /*
  Copyright (c) 2010, The Cinder Project, All rights reserved.
  This code is intended for use with the Cinder C++ library: http://libcinder.org
@@ -27,15 +31,15 @@
 #include "cinder/app/MouseEvent.h"
 #include "cinder/app/Window.h"
 
-namespace cinder {
+namespace pepr3d {
 
 //! Enables user interaction with a CameraPersp via the mouse
-class CI_API CameraUi {
+class CameraUi {
    public:
     CameraUi();
     //! Constructs a CameraUi which manipulates \a camera directly (and consequently expects its pointer to remain
     //! valid). Optionally attaches to mouse/window signals of \a window, with priority \a signalPriority.
-    CameraUi(CameraPersp *camera, const app::WindowRef &window = nullptr, int signalPriority = 0);
+    CameraUi(ci::CameraPersp *camera, const ci::app::WindowRef &window = nullptr, int signalPriority = 0);
     CameraUi(const CameraUi &rhs);
     ~CameraUi();
 
@@ -43,7 +47,7 @@ class CI_API CameraUi {
 
     //! Connects to mouseDown, mouseDrag, mouseWheel and resize signals of \a window, with optional priority \a
     //! signalPriority
-    void connect(const app::WindowRef &window, int signalPriority = 0);
+    void connect(const ci::app::WindowRef &window, int signalPriority = 0);
     //! Disconnects all signal handlers
     void disconnect();
     //! Returns whether the CameraUi is connected to mouse and window signal handlers
@@ -65,29 +69,29 @@ class CI_API CameraUi {
     }
 
     //! Signal emitted whenever the user modifies the camera
-    signals::Signal<void()> &getSignalCameraChange();
+    ci::signals::Signal<void()> &getSignalCameraChange();
 
-    void mouseDown(app::MouseEvent &event);
-    void mouseUp(app::MouseEvent &event);
-    void mouseWheel(app::MouseEvent &event);
-    void mouseDrag(app::MouseEvent &event);
+    void mouseDown(ci::app::MouseEvent &event);
+    void mouseUp(ci::app::MouseEvent &event);
+    void mouseWheel(ci::app::MouseEvent &event);
+    void mouseDrag(ci::app::MouseEvent &event);
 
-    void mouseDown(const vec2 &mousePos);
-    void mouseUp(const vec2 &mousePos);
+    void mouseDown(const glm::vec2 &mousePos);
+    void mouseUp(const glm::vec2 &mousePos);
     void mouseWheel(float increment);
-    void mouseDrag(const vec2 &mousePos, bool leftDown, bool middleDown, bool rightDown);
+    void mouseDrag(const glm::vec2 &mousePos, bool leftDown, bool middleDown, bool rightDown);
 
     //! Returns a reference to the currently controlled CameraPersp
-    const CameraPersp &getCamera() const {
+    const ci::CameraPersp &getCamera() const {
         return *mCamera;
     }
     //! Specifices which CameraPersp should be modified
-    void setCamera(CameraPersp *camera) {
+    void setCamera(ci::CameraPersp *camera) {
         mCamera = camera;
     }
 
     //! Sets the size of the window in pixels when no WindowRef is supplied with connect()
-    void setWindowSize(const ivec2 &windowSizePixels) {
+    void setWindowSize(const glm::ivec2 &windowSizePixels) {
         mWindowSize = windowSizePixels;
     }
 
@@ -114,21 +118,22 @@ class CI_API CameraUi {
    private:
     enum { ACTION_NONE, ACTION_ZOOM, ACTION_PAN, ACTION_TUMBLE };
 
-    ivec2 getWindowSize() const;
+    glm::ivec2 getWindowSize() const;
 
-    vec2 mInitialMousePos;
-    CameraPersp mInitialCam;
-    CameraPersp *mCamera;
+    glm::vec2 mInitialMousePos;
+    float mDeltaYBeforeFlip;
+    ci::CameraPersp mInitialCam;
+    ci::CameraPersp *mCamera;
     float mInitialPivotDistance;
     float mMouseWheelMultiplier, mMinimumPivotDistance;
     int mLastAction;
 
-    ivec2 mWindowSize;  // used when mWindow is null
-    app::WindowRef mWindow;
+    glm::ivec2 mWindowSize;  // used when mWindow is null
+    ci::app::WindowRef mWindow;
     bool mEnabled;
     int mSignalPriority;
     std::vector<ci::signals::Connection> mConnections;
-    signals::Signal<void()> mSignalCameraChange;
+    ci::signals::Signal<void()> mSignalCameraChange;
 };
 
-};  // namespace cinder
+};  // namespace pepr3d

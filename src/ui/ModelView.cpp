@@ -7,7 +7,7 @@ namespace pepr3d {
 
 void ModelView::setup() {
     resetCamera();
-    mCameraUi = ci::CameraUi(&mCamera);
+    mCameraUi = pepr3d::CameraUi(&mCamera);
     resize();
 
     mModelShader =

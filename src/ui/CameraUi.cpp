@@ -1,3 +1,7 @@
+/**
+ * Modified for Pepr3D to prevent flipping of camera
+ */
+
 /*
  Copyright (c) 2015, The Cinder Project: http://libcinder.org All rights reserved.
  This code is intended for use with the Cinder C++ library: http://libcinder.org
@@ -23,9 +27,9 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "cinder/CameraUi.h"
+#include "ui/CameraUi.h"
 
-namespace cinder {
+namespace pepr3d {
 
 CameraUi::CameraUi()
     : mCamera(nullptr),
@@ -35,7 +39,7 @@ CameraUi::CameraUi()
       mEnabled(true),
       mLastAction(ACTION_NONE) {}
 
-CameraUi::CameraUi(CameraPersp *camera, const app::WindowRef &window, int signalPriority)
+CameraUi::CameraUi(ci::CameraPersp *camera, const ci::app::WindowRef &window, int signalPriority)
     : mCamera(camera), mWindowSize(640, 480), mMouseWheelMultiplier(1.2f), mMinimumPivotDistance(1.0f), mEnabled(true) {
     connect(window, signalPriority);
 }
@@ -69,7 +73,7 @@ CameraUi &CameraUi::operator=(const CameraUi &rhs) {
 
 //! Connects to mouseDown, mouseDrag, mouseWheel and resize signals of \a window, with optional priority \a
 //! signalPriority
-void CameraUi::connect(const app::WindowRef &window, int signalPriority) {
+void CameraUi::connect(const ci::app::WindowRef &window, int signalPriority) {
     if(!mConnections.empty()) {
         disconnect();
     }
@@ -77,14 +81,14 @@ void CameraUi::connect(const app::WindowRef &window, int signalPriority) {
     mWindow = window;
     mSignalPriority = signalPriority;
     if(window) {
+        mConnections.push_back(window->getSignalMouseDown().connect(
+            signalPriority, [this](ci::app::MouseEvent &event) { mouseDown(event); }));
         mConnections.push_back(
-            window->getSignalMouseDown().connect(signalPriority, [this](app::MouseEvent &event) { mouseDown(event); }));
-        mConnections.push_back(
-            window->getSignalMouseUp().connect(signalPriority, [this](app::MouseEvent &event) { mouseUp(event); }));
-        mConnections.push_back(
-            window->getSignalMouseDrag().connect(signalPriority, [this](app::MouseEvent &event) { mouseDrag(event); }));
+            window->getSignalMouseUp().connect(signalPriority, [this](ci::app::MouseEvent &event) { mouseUp(event); }));
+        mConnections.push_back(window->getSignalMouseDrag().connect(
+            signalPriority, [this](ci::app::MouseEvent &event) { mouseDrag(event); }));
         mConnections.push_back(window->getSignalMouseWheel().connect(
-            signalPriority, [this](app::MouseEvent &event) { mouseWheel(event); }));
+            signalPriority, [this](ci::app::MouseEvent &event) { mouseWheel(event); }));
         mConnections.push_back(window->getSignalResize().connect(signalPriority, [this]() {
             setWindowSize(mWindow->getSize());
             if(mCamera)
@@ -108,11 +112,11 @@ bool CameraUi::isConnected() const {
     return mWindow != nullptr;
 }
 
-signals::Signal<void()> &CameraUi::getSignalCameraChange() {
+ci::signals::Signal<void()> &CameraUi::getSignalCameraChange() {
     return mSignalCameraChange;
 }
 
-void CameraUi::mouseDown(app::MouseEvent &event) {
+void CameraUi::mouseDown(ci::app::MouseEvent &event) {
     if(!mEnabled)
         return;
 
@@ -120,7 +124,7 @@ void CameraUi::mouseDown(app::MouseEvent &event) {
     event.setHandled();
 }
 
-void CameraUi::mouseUp(app::MouseEvent &event) {
+void CameraUi::mouseUp(ci::app::MouseEvent &event) {
     if(!mEnabled)
         return;
 
@@ -128,7 +132,7 @@ void CameraUi::mouseUp(app::MouseEvent &event) {
     event.setHandled();
 }
 
-void CameraUi::mouseWheel(app::MouseEvent &event) {
+void CameraUi::mouseWheel(ci::app::MouseEvent &event) {
     if(!mEnabled)
         return;
 
@@ -136,11 +140,11 @@ void CameraUi::mouseWheel(app::MouseEvent &event) {
     event.setHandled();
 }
 
-void CameraUi::mouseUp(const vec2 & /*mousePos*/) {
+void CameraUi::mouseUp(const glm::vec2 & /*mousePos*/) {
     mLastAction = ACTION_NONE;
 }
 
-void CameraUi::mouseDown(const vec2 &mousePos) {
+void CameraUi::mouseDown(const glm::vec2 &mousePos) {
     if(!mCamera || !mEnabled)
         return;
 
@@ -150,7 +154,7 @@ void CameraUi::mouseDown(const vec2 &mousePos) {
     mLastAction = ACTION_NONE;
 }
 
-void CameraUi::mouseDrag(app::MouseEvent &event) {
+void CameraUi::mouseDrag(ci::app::MouseEvent &event) {
     if(!mEnabled)
         return;
 
@@ -165,7 +169,7 @@ void CameraUi::mouseDrag(app::MouseEvent &event) {
     event.setHandled();
 }
 
-void CameraUi::mouseDrag(const vec2 &mousePos, bool leftDown, bool middleDown, bool rightDown) {
+void CameraUi::mouseDrag(const glm::vec2 &mousePos, bool leftDown, bool middleDown, bool rightDown) {
     if(!mCamera || !mEnabled)
         return;
 
@@ -183,6 +187,7 @@ void CameraUi::mouseDrag(const vec2 &mousePos, bool leftDown, bool middleDown, b
         mInitialCam = *mCamera;
         mInitialPivotDistance = mCamera->getPivotDistance();
         mInitialMousePos = mousePos;
+        mDeltaYBeforeFlip = 0.0f;
     }
 
     mLastAction = action;
@@ -191,37 +196,48 @@ void CameraUi::mouseDrag(const vec2 &mousePos, bool leftDown, bool middleDown, b
         auto mouseDelta = (mousePos.x - mInitialMousePos.x) + (mousePos.y - mInitialMousePos.y);
 
         float newPivotDistance =
-            powf(2.71828183f, 2 * -mouseDelta / length(vec2(getWindowSize()))) * mInitialPivotDistance;
-        vec3 oldTarget = mInitialCam.getEyePoint() + mInitialCam.getViewDirection() * mInitialPivotDistance;
-        vec3 newEye = oldTarget - mInitialCam.getViewDirection() * newPivotDistance;
+            std::powf(2.71828183f, 2 * -mouseDelta / glm::length(glm::vec2(getWindowSize()))) * mInitialPivotDistance;
+        glm::vec3 oldTarget = mInitialCam.getEyePoint() + mInitialCam.getViewDirection() * mInitialPivotDistance;
+        glm::vec3 newEye = oldTarget - mInitialCam.getViewDirection() * newPivotDistance;
         mCamera->setEyePoint(newEye);
         mCamera->setPivotDistance(std::max<float>(newPivotDistance, mMinimumPivotDistance));
     } else if(action == ACTION_PAN) {  // panning
         float deltaX = (mousePos.x - mInitialMousePos.x) / (float)getWindowSize().x * mInitialPivotDistance;
         float deltaY = (mousePos.y - mInitialMousePos.y) / (float)getWindowSize().y * mInitialPivotDistance;
-        vec3 right, up;
+        glm::vec3 right, up;
         mInitialCam.getBillboardVectors(&right, &up);
         mCamera->setEyePoint(mInitialCam.getEyePoint() - right * deltaX + up * deltaY);
     } else {  // tumbling
         float deltaX = (mousePos.x - mInitialMousePos.x) / -100.0f;
         float deltaY = (mousePos.y - mInitialMousePos.y) / 100.0f;
-        vec3 mW = normalize(mInitialCam.getViewDirection());
+        glm::vec3 mW = normalize(mInitialCam.getViewDirection());
         bool invertMotion = (mInitialCam.getOrientation() * mInitialCam.getWorldUp()).y < 0.0f;
 
-        vec3 mU = normalize(cross(mInitialCam.getWorldUp(), mW));
+        glm::vec3 mU = normalize(cross(mInitialCam.getWorldUp(), mW));
 
         if(invertMotion) {
             deltaX = -deltaX;
             deltaY = -deltaY;
         }
 
+        glm::quat newOrientation = glm::angleAxis(deltaX, mInitialCam.getWorldUp()) * glm::angleAxis(deltaY, mU) *
+                                   mInitialCam.getOrientation();
+        if((newOrientation * mInitialCam.getWorldUp()).y < 0.0f) {  // prevent camera flip
+            mInitialMousePos.y += 100.0f * (deltaY - mDeltaYBeforeFlip);
+            deltaY = mDeltaYBeforeFlip;
+            newOrientation = glm::angleAxis(deltaX, mInitialCam.getWorldUp()) * glm::angleAxis(deltaY, mU) *
+                             mInitialCam.getOrientation();
+        }
+        mDeltaYBeforeFlip = deltaY;
+
         glm::vec3 rotatedVec = glm::angleAxis(deltaY, mU) * (-mInitialCam.getViewDirection() * mInitialPivotDistance);
         rotatedVec = glm::angleAxis(deltaX, mInitialCam.getWorldUp()) * rotatedVec;
 
-        mCamera->setEyePoint(mInitialCam.getEyePoint() + mInitialCam.getViewDirection() * mInitialPivotDistance +
-                             rotatedVec);
-        mCamera->setOrientation(glm::angleAxis(deltaX, mInitialCam.getWorldUp()) * glm::angleAxis(deltaY, mU) *
-                                mInitialCam.getOrientation());
+        glm::vec3 newEyePoint =
+            mInitialCam.getEyePoint() + mInitialCam.getViewDirection() * mInitialPivotDistance + rotatedVec;
+
+        mCamera->setEyePoint(newEyePoint);
+        mCamera->setOrientation(newOrientation);
     }
 
     mSignalCameraChange.emit();
@@ -240,7 +256,7 @@ void CameraUi::mouseWheel(float increment) {
         multiplier = powf(mMouseWheelMultiplier, increment);
     else
         multiplier = powf(-mMouseWheelMultiplier, -increment);
-    vec3 newEye =
+    glm::vec3 newEye =
         mCamera->getEyePoint() + mCamera->getViewDirection() * (mCamera->getPivotDistance() * (1 - multiplier));
     mCamera->setEyePoint(newEye);
     mCamera->setPivotDistance(std::max<float>(mCamera->getPivotDistance() * multiplier, mMinimumPivotDistance));
@@ -248,11 +264,11 @@ void CameraUi::mouseWheel(float increment) {
     mSignalCameraChange.emit();
 }
 
-ivec2 CameraUi::getWindowSize() const {
+glm::ivec2 CameraUi::getWindowSize() const {
     if(mWindow)
         return mWindow->getSize();
     else
         return mWindowSize;
 }
 
-};  // namespace cinder
+};  // namespace pepr3d
