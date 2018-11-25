@@ -136,4 +136,4 @@ class CameraUi {
     ci::signals::Signal<void()> mSignalCameraChange;
 };
 
-};  // namespace pepr3d
+}  // namespace pepr3d

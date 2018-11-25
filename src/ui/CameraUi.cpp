@@ -196,7 +196,7 @@ void CameraUi::mouseDrag(const glm::vec2 &mousePos, bool leftDown, bool middleDo
         auto mouseDelta = (mousePos.x - mInitialMousePos.x) + (mousePos.y - mInitialMousePos.y);
 
         float newPivotDistance =
-            std::powf(2.71828183f, 2 * -mouseDelta / glm::length(glm::vec2(getWindowSize()))) * mInitialPivotDistance;
+            std::pow(2.71828183f, 2.0f * -mouseDelta / glm::length(glm::vec2(getWindowSize()))) * mInitialPivotDistance;
         glm::vec3 oldTarget = mInitialCam.getEyePoint() + mInitialCam.getViewDirection() * mInitialPivotDistance;
         glm::vec3 newEye = oldTarget - mInitialCam.getViewDirection() * newPivotDistance;
         mCamera->setEyePoint(newEye);
@@ -271,4 +271,4 @@ glm::ivec2 CameraUi::getWindowSize() const {
         return mWindowSize;
 }
 
-};  // namespace pepr3d
+}  // namespace pepr3d
