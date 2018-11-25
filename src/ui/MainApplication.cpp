@@ -29,7 +29,7 @@ MainApplication::MainApplication()
     : mToolbar(*this),
       mSidePane(*this),
       mModelView(*this),
-      mThreadPool(max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
+      mThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
 
 void MainApplication::setup() {
     setWindowSize(950, 570);

@@ -51,7 +51,7 @@ void ProgressIndicator::draw() {
 }
 
 void ProgressIndicator::drawSpinner(const char* label) {
-    // https://github.com/ocornut/imgui/issues/1901
+    // https://github.com/ocornut/imgui/issues/1901 (modified)
 
     const ImU32 color = ImGui::ColorConvertFloat4ToU32(ci::ColorA::hex(0x017BDA));
     float radius = 10.0f;
@@ -79,7 +79,7 @@ void ProgressIndicator::drawSpinner(const char* label) {
     window->DrawList->PathClear();
 
     int num_segments = 30;
-    int start = 0;  // abs(static_cast<int>(sin(g.Time * 1.8f) * (num_segments - 5)));
+    int start = 0;
 
     const float a_min = IM_PI * 2.0f * ((float)start) / (float)num_segments;
     const float a_max = IM_PI * 2.0f * ((float)num_segments - 3) / (float)num_segments;
@@ -89,7 +89,7 @@ void ProgressIndicator::drawSpinner(const char* label) {
     for(int i = 0; i < num_segments; i++) {
         const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
         window->DrawList->PathLineTo(
-            ImVec2(centre.x + cos(a + g.Time * 8) * radius, centre.y + sin(a + g.Time * 8) * radius));
+            ImVec2(centre.x + std::cos(a + g.Time * 8) * radius, centre.y + std::sin(a + g.Time * 8) * radius));
     }
 
     window->DrawList->PathStroke(color, false, thickness);
@@ -129,7 +129,7 @@ void ProgressIndicator::drawStatus(const std::string& label, float progress, boo
     float progressStart, progressEnd;
 
     if(isIndeterminate) {
-        progressStart = fmod(g.Time * 500.0f, size.x + 50.0f) - 50.0f;
+        progressStart = std::fmod(g.Time * 500.0f, size.x + 50.0f) - 50.0f;
         progressEnd = progressStart + 50.0f;
     } else {
         progressStart = 0.0f;
@@ -137,8 +137,8 @@ void ProgressIndicator::drawStatus(const std::string& label, float progress, boo
     }
 
     window->DrawList->AddRectFilled(bb.Min, ImVec2(pos.x + size.x, bb.Max.y), bg_col);
-    window->DrawList->AddRectFilled(ImVec2(bb.Min.x + max(0.0f, progressStart), bb.Min.y),
-                                    ImVec2(pos.x + min(size.x, progressEnd), bb.Max.y), fg_col);
+    window->DrawList->AddRectFilled(ImVec2(bb.Min.x + std::max(0.0f, progressStart), bb.Min.y),
+                                    ImVec2(pos.x + std::min(size.x, progressEnd), bb.Max.y), fg_col);
 }
 
 }  // namespace pepr3d
