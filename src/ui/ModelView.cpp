@@ -193,7 +193,7 @@ void ModelView::drawGeometry() {
 
 void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
     const Geometry* const geometry = mApplication.getCurrentGeometry();
-    if(geometry == nullptr) {
+    if(geometry == nullptr || triangleIndex >= geometry->getTriangleCount()) {
         return;
     }
 
