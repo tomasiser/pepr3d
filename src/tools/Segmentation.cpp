@@ -161,8 +161,6 @@ void Segmentation::computeSegmentaton() {
     mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(mNumberOfClusters, mSmoothingLambda,
                                                                         mSegmentToTriangleIds, mTriangleToSegmentMap);
 
-    CI_LOG_I("Segmentation " + std::to_string(mNumberOfSegments) + " segments.");
-
     if(mNumberOfSegments > 0) {
         // We only want to save the state if we segmented for the first time
         if(mPickState == false) {

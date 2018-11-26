@@ -74,16 +74,6 @@ class Geometry {
         /// Indices to triangles of the polyhedron. Indices are stored in a CCW order, as imported from Assimp.
         std::vector<std::array<size_t, 3>> indices;
 
-        /// CGAL Polyhedral surface class
-        Polyhedron P;
-
-        /// A vector with pointers to the polyhedron faces.
-        /// The i-th pointer points to the face of the i-th triangle from the indices vector<>.
-        std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle> faceHandles;
-
-        /// Simple property to check if the Polyhedron is closed or not.
-        bool closeCheck = false;
-
         typedef CGAL::Surface_mesh<DataTriangle::K::Point_3> Mesh;
         typedef Mesh::Vertex_index vertex_descriptor;
         typedef Mesh::Face_index face_descriptor;
@@ -118,8 +108,8 @@ class Geometry {
         return mVertexBuffer;
     }
 
-    bool polyClosedCheck() const {
-        return mPolyhedronData.closeCheck;
+    bool polyhedronValid() const {
+        return mPolyhedronData.mMesh.is_valid();
     }
 
     size_t polyVertCount() const {
@@ -231,21 +221,14 @@ class Geometry {
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
     void buildPolyhedron();
 
-    std::array<int, 3> Geometry::gatherNeighboursSurface(const size_t triIndex) const;
-
     /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL
     /// Polyhedron construct.
-    std::array<int, 3> gatherNeighbours(
-        const size_t triIndex,
-        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const;
+    std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const;
 
     /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
     template <typename StoppingCondition>
-    void addNeighboursToQueue(
-        const size_t currentVertex,
-        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
-        std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
-        const StoppingCondition& stopFunctor) const;
+    void addNeighboursToQueue(const size_t currentVertex, std::unordered_set<size_t>& alreadyVisited,
+                              std::deque<size_t>& toVisit, const StoppingCondition& stopFunctor) const;
 
     void computeSdf();
 
@@ -256,7 +239,7 @@ class Geometry {
 
 template <typename StoppingCondition>
 std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
-    if(mPolyhedronData.P.is_empty()) {
+    if(mPolyhedronData.mMesh.is_empty()) {
         return {};
     }
 
@@ -280,7 +263,7 @@ std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const Stop
         assert(toVisit.size() < mTriangles.size());
 
         // Manage neighbours and grow the queue
-        addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit, stopFunctor);
+        addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
 
         // Set the color
         // setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
@@ -290,12 +273,9 @@ std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const Stop
 }
 
 template <typename StoppingCondition>
-void Geometry::addNeighboursToQueue(
-    const size_t currentVertex,
-    const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
-    std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
-    const StoppingCondition& stopFunctor) const {
-    const std::array<int, 3> neighbours = gatherNeighbours(currentVertex, faceHandles);
+void Geometry::addNeighboursToQueue(const size_t currentVertex, std::unordered_set<size_t>& alreadyVisited,
+                                    std::deque<size_t>& toVisit, const StoppingCondition& stopFunctor) const {
+    const std::array<int, 3> neighbours = gatherNeighbours(currentVertex);
     for(int i = 0; i < 3; ++i) {
         if(neighbours[i] == -1) {
             continue;

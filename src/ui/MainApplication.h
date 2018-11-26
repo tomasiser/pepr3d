@@ -90,7 +90,6 @@ class MainApplication : public App {
         assert(mTools.size() > 0);
         assert(tool != mTools.end());
         (*mCurrentToolIterator)->onToolDeselect(mModelView);
-        std::cout << "Had " << mCurrentToolIterator - mTools.begin() << ", switch to " << tool - mTools.begin() << "\n";
         mCurrentToolIterator = tool;
     }
 

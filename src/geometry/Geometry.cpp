@@ -178,10 +178,6 @@ void Geometry::buildPolyhedron() {
     mPolyhedronData.sdfComputed = false;
     mPolyhedronData.mFaceDescs.clear();
 
-    std::cout << "\nSTART BUILD \n mPoly vertices, indices:" << mPolyhedronData.vertices.size() << " , "
-              << mPolyhedronData.indices.size() << "\n";
-    std::cout << "Mesh building: \n";
-
     std::vector<PolyhedronData::vertex_descriptor> vertDescs;
     vertDescs.reserve(mPolyhedronData.vertices.size());
     mPolyhedronData.mMesh.reserve(static_cast<PolyhedronData::Mesh::size_type>(mPolyhedronData.vertices.size()),
@@ -210,52 +206,14 @@ void Geometry::buildPolyhedron() {
     // Add the IDs
     size_t i = 0;
     for(const PolyhedronData::face_descriptor& face : mPolyhedronData.mFaceDescs) {
-        /*std::cout << i << " ";
-        if (i == 49) {
-            std::cout << "danger\n";
-        }*/
         mPolyhedronData.mIdMap[face] = i;
         ++i;
     }
-
-    std::cout << "Mesh is valid : " << mPolyhedronData.mMesh.is_valid()
-              << ", vertices: " << mPolyhedronData.mMesh.number_of_vertices()
-              << ", faces: " << mPolyhedronData.mMesh.number_of_faces() << "\n";
-
-    std::cout << "\nPolyhedron building: \n";
-    PolyhedronBuilder<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
-    mPolyhedronData.P.clear();
-    try {
-        mPolyhedronData.P.delegate(triangle);
-        mPolyhedronData.faceHandles = triangle.getFacetArray();
-    } catch(CGAL::Assertion_exception* assertExcept) {
-        mPolyhedronData.P.clear();
-        CI_LOG_E("Polyhedron not loaded. " + assertExcept->message());
-        return;
-    }
-
-    // The exception does not get thrown in Release
-    if(!mPolyhedronData.P.is_valid() || mPolyhedronData.P.is_empty()) {
-        mPolyhedronData.P.clear();
-        CI_LOG_E("Polyhedron loaded empty or invalid.");
-        return;
-    }
-
-    assert(mPolyhedronData.P.size_of_facets() == mPolyhedronData.indices.size());
-    assert(mPolyhedronData.P.size_of_vertices() == mPolyhedronData.vertices.size());
-
-    // Use the facetsCreated from the incremental builder, set the ids linearly
-    for(size_t facetId = 0; facetId < mPolyhedronData.faceHandles.size(); ++facetId) {
-        mPolyhedronData.faceHandles[facetId]->id() = facetId;
-    }
-
-    mPolyhedronData.closeCheck = mPolyhedronData.P.is_closed();
-    std::cout << "Polyhedron built OK. " << mPolyhedronData.P.size_of_vertices() << " vertices, "
-              << mPolyhedronData.P.size_of_facets() << " facets."
-              << "\n";
+    CI_LOG_I("Polyhedral mesh built, vertices: " + std::to_string(mPolyhedronData.vertices.size()) +
+             ", faces: " + std::to_string(mPolyhedronData.indices.size()));
 }
 
-std::array<int, 3> Geometry::gatherNeighboursSurface(const size_t triIndex) const {
+std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
     const auto& faceDescriptors = mPolyhedronData.mFaceDescs;
     const auto& mesh = mPolyhedronData.mMesh;
     assert(triIndex < faceDescriptors.size());
@@ -277,39 +235,6 @@ std::array<int, 3> Geometry::gatherNeighboursSurface(const size_t triIndex) cons
         itEdge = mesh.next(itEdge);
     }
     assert(edge == itEdge);
-
-    return returnValue;
-}
-
-std::array<int, 3> Geometry::gatherNeighbours(
-    const size_t triIndex,
-    const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const {
-    assert(triIndex < faceHandles.size());
-    const Polyhedron::Facet_iterator& facet = faceHandles[triIndex];
-    std::array<int, 3> returnValue = {-1, -1, -1};
-    assert(facet->is_triangle());
-
-    const auto edgeIteratorStart = facet->facet_begin();
-    auto edgeIter = edgeIteratorStart;
-
-    for(int i = 0; i < 3; ++i) {
-        const auto eFace = edgeIter->facet();
-        if(edgeIter->opposite()->facet() != nullptr) {
-            const size_t triId = edgeIter->opposite()->facet()->id();
-            // Asserting in int, because int is the return value
-            assert(static_cast<int>(triId) < static_cast<int>(mTriangles.size()));
-            returnValue[i] = static_cast<int>(triId);
-        }
-        ++edgeIter;
-    }
-    assert(edgeIter == edgeIteratorStart);
-
-    auto meshRet = gatherNeighboursSurface(triIndex);
-
-    for(int i = 0; i < 3; ++i) {
-        // std::cout << " poly> " << returnValue[i] << " - " << meshRet[i] << " <mesh\n";
-        assert(returnValue[i] == meshRet[i]);
-    }
 
     return returnValue;
 }
