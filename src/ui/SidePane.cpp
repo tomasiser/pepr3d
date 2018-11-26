@@ -69,10 +69,10 @@ bool SidePane::drawButton(std::string label) {
     return ret;
 }
 
-bool SidePane::drawColoredButton(std::string label, const ci::ColorA color) {
+bool SidePane::drawColoredButton(std::string label, const ci::ColorA color, const float borderThickness) {
     ImGui::PushStyleColor(ImGuiCol_Border, color);
     // ImGui::PushStyleColor(ImGuiCol_Text, color);
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 3.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, borderThickness);
     bool ret = ImGui::Button(label.c_str(), glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
     ImGui::PopStyleVar();
     // ImGui::PopStyleColor(2);

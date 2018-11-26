@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <optional>
 #include <unordered_map>
 #include "commands/CommandManager.h"
@@ -24,12 +25,13 @@ class Segmentation : public ITool {
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
-    // virtual void drawToModelView(ModelView& modelView) override;
-    // virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void drawToModelView(ModelView& modelView) override;
+    virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     // virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
     // virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
-    // virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onToolDeselect(ModelView& modelView) override;
+    virtual void onNewGeometryLoaded(ModelView& modelView) override;
 
    private:
     MainApplication& mApplication;
@@ -39,12 +41,18 @@ class Segmentation : public ITool {
     float mSmoothingLambda = 0.3f;
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
-    ColorManager::ColorMap mOldColorManagerMap;
-    size_t mOldColorManagerSize = 0;
+
     std::vector<Geometry::ColorIndex> mOldColorBuffer;
     ColorManager mOldColorManager;
     std::vector<size_t> mNewColors;
+    std::optional<std::size_t> mHoveredTriangleId = {};
 
-    std::unordered_map<size_t, std::vector<size_t>> mSegmentToTriangleIds;
+    std::map<size_t, std::vector<size_t>> mSegmentToTriangleIds;
+    std::unordered_map<size_t, size_t> mTriangleToSegmentMap;
+
+    void reset();
+    void revertColorPalette();
+    void computeSegmentaton();
+    void cancel();
 };
 }  // namespace pepr3d

@@ -203,9 +203,14 @@ class Geometry {
         computeSdf();
     }
 
+    bool sdfComputed() const {
+        return mPolyhedronData.sdfComputed;
+    }
+
     size_t segmentation(const int numberOfClusters, const float smoothingLambda,
-                        std::unordered_map<size_t, std::vector<size_t>>& segmentToTriangleIds) {
-        return segment(numberOfClusters, smoothingLambda, segmentToTriangleIds);
+                        std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
+                        std::unordered_map<size_t, size_t>& triangleToSegmentMap) {
+        return segment(numberOfClusters, smoothingLambda, segmentToTriangleIds, triangleToSegmentMap);
     }
 
    private:
@@ -245,7 +250,8 @@ class Geometry {
     void computeSdf();
 
     size_t segment(const int numberOfClusters, const float smoothingLambda,
-                   std::unordered_map<size_t, std::vector<size_t>>& segmentToTriangleIds);
+                   std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
+                   std::unordered_map<size_t, size_t>& triangleToSegmentMap);
 };
 
 template <typename StoppingCondition>

@@ -174,6 +174,8 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
 void Geometry::buildPolyhedron() {
     mPolyhedronData.mMesh.clear();
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.mIdMap);
+    mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
+    mPolyhedronData.sdfComputed = false;
     mPolyhedronData.mFaceDescs.clear();
 
     std::cout << "\nSTART BUILD \n mPoly vertices, indices:" << mPolyhedronData.vertices.size() << " , "
@@ -326,7 +328,8 @@ void Geometry::computeSdf() {
 }
 
 size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda,
-                         std::unordered_map<size_t, std::vector<size_t>>& segmentToTriangleIds) {
+                         std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
+                         std::unordered_map<size_t, size_t>& triangleToSegmentMap) {
     if(!mPolyhedronData.sdfComputed) {
         return 0;
     }
@@ -356,7 +359,7 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
         const size_t color = segment_property_map[face];
         assert(id < mTriangles.size());
         assert(color < number_of_segments);
-
+        triangleToSegmentMap.insert({id, color});
         segmentToTriangleIds[color].push_back(id);
     }
 

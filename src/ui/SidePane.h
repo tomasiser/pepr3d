@@ -20,7 +20,7 @@ class SidePane {
 
     void drawText(std::string text);
     bool drawButton(std::string label);
-    bool drawColoredButton(std::string label, const ci::ColorA color);
+    bool drawColoredButton(std::string label, const ci::ColorA color, const float borderThickness = 3.0f);
     void drawSeparator();
     void drawColorPalette(ColorManager& colorManager);
 

@@ -92,6 +92,9 @@ void MainApplication::fileDrop(FileDropEvent event) {
     }
     mGeometryFileName = event.getFile(0).string();
     mGeometry->loadNewGeometry(mGeometryFileName);
+    for(auto& tool : mTools) {
+        tool->onNewGeometryLoaded(mModelView);
+    }
     getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
 }
 
