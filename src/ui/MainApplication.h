@@ -115,6 +115,12 @@ class MainApplication : public App {
    private:
     void setupIcon();
     void drawExportDialog();
+    void willResignActive();
+    void didBecomeActive();
+    bool isWindowObscured();
+
+    bool mShouldSkipDraw = false;
+    bool mIsFocused = true;
 
     Toolbar mToolbar;
     SidePane mSidePane;
