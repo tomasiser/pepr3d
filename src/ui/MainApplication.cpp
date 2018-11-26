@@ -29,6 +29,11 @@ void MainApplication::setup() {
     setWindowSize(950, 570);
     getWindow()->setTitle("Pepr3D - Unsaved project");
     setupIcon();
+    gl::enableVerticalSync(true);
+    disableFrameRate();
+
+    getSignalWillResignActive().connect(bind(&MainApplication::willResignActive, this));
+    getSignalDidBecomeActive().connect(bind(&MainApplication::didBecomeActive, this));
 
     auto uiOptions = ImGui::Options();
     std::vector<ImWchar> textRange = {0x0001, 0x00BF, 0};
@@ -95,9 +100,26 @@ void MainApplication::fileDrop(FileDropEvent event) {
     getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
 }
 
-void MainApplication::update() {}
+void MainApplication::update() {
+#if defined(CINDER_MSW_DESKTOP)
+    // on Microsoft Windows, when window is not focused, periodically check
+    // if it is obscured (not visible) every 2 seconds
+    if(!mIsFocused) {
+        if((mShouldSkipDraw && (getElapsedFrames() % 4) == 0) || (!mShouldSkipDraw && (getElapsedFrames() % 48) == 0)) {
+            if(isWindowObscured()) {
+                mShouldSkipDraw = true;
+                setFrameRate(2.0f);  // cannot set to 0.0f because then the window would never wake up again
+            }
+        }
+    }
+#endif
+}
 
 void MainApplication::draw() {
+    if(mShouldSkipDraw) {
+        return;
+    }
+
     gl::clear(ColorA::hex(0xFCFCFC));
 
     if(mShowDemoWindow) {
@@ -117,6 +139,54 @@ void MainApplication::setupIcon() {
     SendMessage(wnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
     SendMessage(wnd, WM_SETICON, ICON_BIG, (LPARAM)icon);
 #endif
+}
+
+void MainApplication::willResignActive() {
+    setFrameRate(24.0f);
+    mIsFocused = false;
+}
+
+void MainApplication::didBecomeActive() {
+    disableFrameRate();
+    mIsFocused = true;
+    mShouldSkipDraw = false;
+}
+
+bool MainApplication::isWindowObscured() {
+#if defined(CINDER_MSW_DESKTOP)
+    auto dc = getWindow()->getDc();
+    auto wnd = WindowFromDC(dc);
+
+    if(IsIconic(wnd)) {
+        return true;  // window is minimized (iconic)
+    }
+
+    RECT windowRect;
+    if(GetWindowRect(wnd, &windowRect)) {
+        // check if window is obscured by another window at 3 diagonal points (top left, center, bottom right):
+        bool isObscuredAtDiagonal = true;
+        POINT checkpoint;
+        // check window top left:
+        checkpoint.x = windowRect.left;
+        checkpoint.y = windowRect.top;
+        auto wndAtCheckpoint = WindowFromPoint(checkpoint);
+        isObscuredAtDiagonal &= (wndAtCheckpoint != wnd);
+        // check window center:
+        checkpoint.x = windowRect.left + (windowRect.right - windowRect.left) / 2;
+        checkpoint.y = windowRect.top + (windowRect.bottom - windowRect.top) / 2;
+        wndAtCheckpoint = WindowFromPoint(checkpoint);
+        isObscuredAtDiagonal &= (wndAtCheckpoint != wnd);
+        // check window bottom right:
+        checkpoint.x = windowRect.right - 1;
+        checkpoint.y = windowRect.bottom - 1;
+        wndAtCheckpoint = WindowFromPoint(checkpoint);
+        isObscuredAtDiagonal &= (wndAtCheckpoint != wnd);
+        if(isObscuredAtDiagonal) {
+            return true;
+        }
+    }
+#endif
+    return false;
 }
 
 }  // namespace pepr3d
