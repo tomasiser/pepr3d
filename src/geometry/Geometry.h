@@ -11,7 +11,10 @@
 #include <optional>
 #include <vector>
 
+#include "ThreadPool.h"
+
 #include "geometry/ColorManager.h"
+#include "geometry/GeometryProgress.h"
 #include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
@@ -58,6 +61,9 @@ class Geometry {
     /// A vector based map mapping size_t into ci::ColorA
     ColorManager mColorManager;
 
+    /// Current progress of import, tree, polyhedron building, export, etc.
+    std::unique_ptr<GeometryProgress> mProgress;
+
     struct GeometryState {
         std::vector<DataTriangle> triangles;
         ColorManager::ColorMap colorMap;
@@ -84,11 +90,10 @@ class Geometry {
 
    public:
     /// Empty constructor
-    Geometry() {
-        mTree = std::make_unique<Tree>();
-    }
+    Geometry() : mTree(std::make_unique<Tree>()), mProgress(std::make_unique<GeometryProgress>()) {}
 
-    Geometry(std::vector<DataTriangle>&& triangles) : mTriangles(std::move(triangles)) {
+    Geometry(std::vector<DataTriangle>&& triangles)
+        : mTriangles(std::move(triangles)), mProgress(std::make_unique<GeometryProgress>()) {
         generateVertexBuffer();
         generateIndexBuffer();
         generateColorBuffer();
@@ -161,8 +166,13 @@ class Geometry {
         return mColorManager;
     }
 
+    const GeometryProgress& getProgress() const {
+        assert(mProgress != nullptr);
+        return *mProgress;
+    }
+
     /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.
-    void loadNewGeometry(const std::string& fileName);
+    void loadNewGeometry(const std::string& fileName, ::ThreadPool& threadPool);
 
     /// Exports the modified geometry to the file specified by a path, file name and file type.
     void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType);

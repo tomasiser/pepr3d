@@ -91,14 +91,27 @@ void Toolbar::drawFileDropDown() {
 
     if(props.isToggled) {
         ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
-        ImGui::SetNextWindowSize(glm::ivec2(175, 250));
+        ImGui::SetNextWindowSize(glm::ivec2(175, 150));
         if(ImGui::BeginPopup(filePopupId)) {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
-            ImGui::Button("Open", glm::ivec2(175, 50));
-            ImGui::Button("Save", glm::ivec2(175, 50));
-            ImGui::Button("Save as", glm::ivec2(175, 50));
+            // ImGui::Button("Open", glm::ivec2(175, 50));
+            // ImGui::Button("Save", glm::ivec2(175, 50));
+            // ImGui::Button("Save as", glm::ivec2(175, 50));
+            if(ImGui::Button("Import", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
+                mApplication.dispatchAsync([&]() {
+                    std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
+
+                    auto path = mApplication.getOpenFilePath(getDocumentsDirectory(), extensions);
+
+                    if(!path.empty()) {
+                        mApplication.openFile(path.string());
+                    }
+                });
+            }
             if(ImGui::Button("Export", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
                 mApplication.dispatchAsync([&]() {
                     std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
 
@@ -107,14 +120,14 @@ void Toolbar::drawFileDropDown() {
                     if(!path.empty() && !path.extension().empty()) {
                         std::string fileName =
                             path.filename().string().substr(0, path.filename().string().find_last_of("."));
-                        std::string filePath = path.parent_path().string() + std::string("/") + ::string(fileName);
+                        std::string filePath = path.parent_path().string() + std::string("/") + std::string(fileName);
 
                         if(!fs::is_directory(filePath) || !fs::exists(filePath)) {  // check if folder exists
                             fs::create_directory(filePath);
                         }
                         std::string fileType = path.extension().string().substr(1);
 
-                        mApplication.getCurrentGeometry()->exportGeometry(filePath, fileName, fileType);
+                        mApplication.saveFile(filePath, fileName, fileType);
                     }
                 });
             }
@@ -128,14 +141,15 @@ void Toolbar::drawFileDropDown() {
 }
 
 void Toolbar::drawUndoRedo() {
+    CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
     ButtonProperties props;
     props.label = ICON_MD_UNDO;
-    props.isEnabled = mCommandManager && mCommandManager->canUndo();
-    drawButton(props, [&]() { mCommandManager->undo(); });
+    props.isEnabled = commandManager && commandManager->canUndo();
+    drawButton(props, [&]() { commandManager->undo(); });
     ImGui::SameLine(0.f, 0.f);
     props.label = ICON_MD_REDO;
-    props.isEnabled = mCommandManager && mCommandManager->canRedo();
-    drawButton(props, [&]() { mCommandManager->redo(); });
+    props.isEnabled = commandManager && commandManager->canRedo();
+    drawButton(props, [&]() { commandManager->redo(); });
 }
 
 void Toolbar::drawDemoWindowToggle() {

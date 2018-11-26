@@ -98,6 +98,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
     //     }
     // }
 
+    CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
+
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     glm::ivec2 initialCursorPos = ImGui::GetCursorScreenPos();
     ImDrawList* const drawList = ImGui::GetWindowDrawList();
@@ -153,8 +155,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         if(ImGui::BeginPopup(colorEditPopupId.c_str())) {
             ImGui::PushItemWidth(-0.001f);  // force full width
             if(ImGui::ColorPicker3(colorPickerId.c_str(), &color[0], ImGuiColorEditFlags_NoSidePreview)) {
-                assert(mCommandManager);
-                mCommandManager->execute(std::make_unique<CmdChangeColorManagerColor>(i, color), true);
+                assert(commandManager);
+                commandManager->execute(std::make_unique<CmdChangeColorManagerColor>(i, color), true);
             }
             ImGui::PopItemWidth();
             ImGui::EndPopup();
@@ -174,8 +176,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         for(int i = 0; i < colorManager.size(); ++i) {
             newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
         }
-        assert(mCommandManager);
-        mCommandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
+        assert(commandManager);
+        commandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
     }
 }
 

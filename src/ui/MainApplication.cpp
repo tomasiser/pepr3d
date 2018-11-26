@@ -23,7 +23,13 @@
 
 namespace pepr3d {
 
-MainApplication::MainApplication() : mToolbar(*this), mSidePane(*this), mModelView(*this) {}
+// At least 2 threads in thread pool must be created, or importing will never finish!
+// std::thread::hardware_concurrency() may return 0
+MainApplication::MainApplication()
+    : mToolbar(*this),
+      mSidePane(*this),
+      mModelView(*this),
+      mThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
@@ -46,15 +52,13 @@ void MainApplication::setup() {
     ImGui::initialize(uiOptions);
     applyLightTheme(ImGui::GetStyle());
 
-    mGeometry = std::make_unique<Geometry>();
-    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string());
+    mGeometry = std::make_shared<Geometry>();
+    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), mThreadPool);
 
     mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
-    mToolbar.setCommandManager(mCommandManager.get());
-    mSidePane.setCommandManager(mCommandManager.get());
 
-    mTools.emplace_back(make_unique<TrianglePainter>(*this, *mCommandManager));
-    mTools.emplace_back(make_unique<PaintBucket>(*this, *mCommandManager));
+    mTools.emplace_back(make_unique<TrianglePainter>(*this));
+    mTools.emplace_back(make_unique<PaintBucket>(*this));
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
     mTools.emplace_back(make_unique<Segmentation>());
@@ -95,9 +99,39 @@ void MainApplication::fileDrop(FileDropEvent event) {
     if(mGeometry == nullptr || event.getFiles().size() < 1) {
         return;
     }
-    mGeometryFileName = event.getFile(0).string();
-    mGeometry->loadNewGeometry(mGeometryFileName);
-    getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
+    openFile(event.getFile(0).string());
+}
+
+void MainApplication::openFile(const std::string& path) {
+    if(mGeometryInProgress != nullptr) {
+        return;  // disallow loading new geometry while another is already being loaded
+    }
+
+    std::shared_ptr<Geometry> geometry = mGeometryInProgress = std::make_shared<Geometry>();
+    mProgressIndicator.setGeometryInProgress(geometry);
+    mThreadPool.enqueue([geometry, path, this]() {
+        geometry->loadNewGeometry(path, mThreadPool);
+        dispatchAsync([path, this]() {
+            mGeometry = mGeometryInProgress;
+            mGeometryInProgress = nullptr;
+            mGeometryFileName = path;
+            mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
+            getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
+            mProgressIndicator.setGeometryInProgress(nullptr);
+        });
+    });
+}
+
+void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {
+    if(mGeometry == nullptr) {
+        return;
+    }
+
+    mProgressIndicator.setGeometryInProgress(mGeometry);
+    mThreadPool.enqueue([filePath, fileName, fileType, this]() {
+        mGeometry->exportGeometry(filePath, fileName, fileType);
+        dispatchAsync([this]() { mProgressIndicator.setGeometryInProgress(nullptr); });
+    });
 }
 
 void MainApplication::update() {
@@ -129,6 +163,21 @@ void MainApplication::draw() {
     mToolbar.draw();
     mSidePane.draw();
     mModelView.draw();
+    mProgressIndicator.draw();
+
+    // if(mGeometryInProgress != nullptr) {
+    //     std::string progressStatus =
+    //         "%% render: " + std::to_string(mGeometryInProgress->getProgress().importRenderPercentage);
+    //     ImGui::Text(progressStatus.c_str());
+    //     progressStatus = "%% compute: " + std::to_string(mGeometryInProgress->getProgress().importComputePercentage);
+    //     ImGui::Text(progressStatus.c_str());
+    //     progressStatus = "%% buffers: " + std::to_string(mGeometryInProgress->getProgress().buffersPercentage);
+    //     ImGui::Text(progressStatus.c_str());
+    //     progressStatus = "%% aabb: " + std::to_string(mGeometryInProgress->getProgress().aabbTreePercentage);
+    //     ImGui::Text(progressStatus.c_str());
+    //     progressStatus = "%% polyhedron: " + std::to_string(mGeometryInProgress->getProgress().polyhedronPercentage);
+    //     ImGui::Text(progressStatus.c_str());
+    // }
 }
 
 void MainApplication::setupIcon() {

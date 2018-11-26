@@ -7,7 +7,10 @@
 
 #include "peprimgui.h"
 
+#include "ThreadPool.h"
+
 #include "ModelView.h"
+#include "ProgressIndicator.h"
 #include "SidePane.h"
 #include "Toolbar.h"
 #include "commands/CommandManager.h"
@@ -63,6 +66,9 @@ class MainApplication : public App {
         mShowDemoWindow = show;
     }
 
+    void openFile(const std::string& path);
+    void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType);
+
     using ToolsVector = std::vector<std::unique_ptr<ITool>>;
 
     ToolsVector::iterator getToolsBegin() {
@@ -96,6 +102,10 @@ class MainApplication : public App {
         return mGeometry.get();
     }
 
+    CommandManager<Geometry>* getCommandManager() {
+        return mCommandManager.get();
+    }
+
    private:
     void setupIcon();
     void willResignActive();
@@ -108,15 +118,20 @@ class MainApplication : public App {
     Toolbar mToolbar;
     SidePane mSidePane;
     ModelView mModelView;
+    ProgressIndicator mProgressIndicator;
     bool mShowDemoWindow = false;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
 
-    std::unique_ptr<Geometry> mGeometry;
+    std::shared_ptr<Geometry> mGeometry;
+    std::shared_ptr<Geometry>
+        mGeometryInProgress;  // used for async loading of Geometry, is nullptr if nothing is being loaded
     std::unique_ptr<CommandManager<Geometry>> mCommandManager;
 
     std::string mGeometryFileName;
+
+    ::ThreadPool mThreadPool;
 };
 
 }  // namespace pepr3d
