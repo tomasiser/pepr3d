@@ -1,5 +1,6 @@
 #include "geometry/Geometry.h"
 #include <set>
+#include "CGAL/Sphere_3.h"
 #include "GeometryUtils.h"
 #include "tools/Brush.h"
 
@@ -172,19 +173,15 @@ std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray, glm::vec3& out
     return intersection;
 }
 
-void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) {
-    const glm::vec3 source = ray.getOrigin();
-    const glm::vec3 rayDirection = ray.getDirection();
-
-    glm::vec3 intersectionPoint{};
-    auto intersectedTri = intersectMesh(ray, intersectionPoint);
-    const float sizeSquared = settings.size * settings.size;
+std::vector<size_t> Geometry::getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection,
+                                                     size_t startTriangle, const struct BrushSettings& settings) {
+    const double sizeSquared = settings.size * settings.size;
 
     /// Stop when the trinagle has no intersection with the area highlight
-    auto stoppingCriterionSingleTri = [this, intersectionPoint, sizeSquared, rayDirection,
-                                       intersectedTri,settings](const size_t triId) -> bool {
+    auto stoppingCriterionSingleTri = [this, originPoint, sizeSquared, insideDirection, startTriangle,
+                                       settings](const size_t triId) -> bool {
         // Always accept the first triangle
-        if(triId == *intersectedTri)
+        if(triId == startTriangle)
             return true;
 
         const auto& tri = getTriangle(triId);
@@ -192,15 +189,15 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
         const auto b = tri.getVertex(1);
         const auto c = tri.getVertex(2);
 
-        if(!settings.paintBackfaces && glm::dot(tri.getNormal(), rayDirection) > 0.f)
+        if(!settings.paintBackfaces && glm::dot(tri.getNormal(), insideDirection) > 0.f)
             return false;  // stop on triangles facing away from the ray
 
         // If any side has intersection with the brush keep the triangle
-        if(GeometryUtils::segmentPointDistanceSquared(a, b, intersectionPoint) < sizeSquared)
+        if(GeometryUtils::segmentPointDistanceSquared(a, b, originPoint) < sizeSquared)
             return true;
-        if(GeometryUtils::segmentPointDistanceSquared(b, c, intersectionPoint) < sizeSquared)
+        if(GeometryUtils::segmentPointDistanceSquared(b, c, originPoint) < sizeSquared)
             return true;
-        if(GeometryUtils::segmentPointDistanceSquared(c, a, intersectionPoint) < sizeSquared)
+        if(GeometryUtils::segmentPointDistanceSquared(c, a, originPoint) < sizeSquared)
             return true;
 
         return false;
@@ -210,14 +207,22 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
         return stoppingCriterionSingleTri(a) && stoppingCriterionSingleTri(b);
     };
 
+    return bucket(startTriangle, stoppingCriterion);
+}
+
+void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) {
+    const glm::vec3 source = ray.getOrigin();
+    const glm::vec3 rayDirection = ray.getDirection();
+
+    glm::vec3 intersectionPoint{};
+    auto intersectedTri = intersectMesh(ray, intersectionPoint);
     if(intersectedTri) {
         std::vector<size_t> trianglesToPaint;
 
-        if(settings.continuous)
-        {
-            trianglesToPaint = bucket(*intersectedTri, stoppingCriterion);
+        if(settings.continuous) {
+            trianglesToPaint = getTrianglesUnderBrush(intersectionPoint, rayDirection, *intersectedTri, settings);
         }
-        
+
         std::set<size_t> paintSet(trianglesToPaint.begin(), trianglesToPaint.end());
         trianglesToPaint.clear();
 
@@ -248,8 +253,34 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
     }
 }
 
+void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
+    using Point = DataTriangle::K::Point_3;
+    using Sphere = DataTriangle::K::Sphere_3;
+
+    const glm::vec3 source = ray.getOrigin();
+    const glm::vec3 rayDirection = ray.getDirection();
+
+    glm::vec3 intersectionPoint{};
+    auto intersectedTri = intersectMesh(ray, intersectionPoint);
+
+    if(!intersectedTri) {
+        return;
+    }
+
+    const auto trisInBrush = getTrianglesUnderBrush(intersectionPoint, rayDirection, *intersectedTri, settings);
+
+    Sphere brushShape(Point(intersectionPoint.x, intersectionPoint.y, intersectionPoint.z),
+                      settings.size * settings.size);
+
+    for(const size_t triangleIdx : trisInBrush) {
+        const auto& cgalTri = getTriangle(triangleIdx).getTri();
+
+        // CGAL::intersection(brushShape, cgalTri);
+    }
+}
+
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {
-    /// Change it in the buffer
+    // Change it in the buffer
     // Color buffer has 1 ColorA for each vertex, each triangle has 3 vertices
     const size_t vertexPosition = triangleIndex * 3;
 

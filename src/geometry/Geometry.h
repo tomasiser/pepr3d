@@ -36,7 +36,7 @@ class Geometry {
         std::vector<GLint> vertexMask;  // Possibly needs to be GLint, had problems getting GLbyte through cinder
         glm::vec3 origin{};
         glm::vec3 direction{};
-        float size{};
+        double size{};
         bool enabled{};
         /// Do we need to upload new data to the gpu
         bool dirty{true};
@@ -202,7 +202,6 @@ class Geometry {
     /// highlighted.
     void highlightArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
-
     /// Paint continuous area with a brush of specified size
     void paintArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
@@ -217,6 +216,9 @@ class Geometry {
     /// A vector of reached triangle indices is returned;
     template <typename StoppingCondition>
     std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor);
+
+    /// Spread as BFS from starting triangle, until the limits of brush settings are reached
+    std::vector<size_t> getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection, size_t startTriangle, const struct BrushSettings& settings);
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.

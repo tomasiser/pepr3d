@@ -196,7 +196,7 @@ void ModelView::drawGeometry() {
     // Assign highlight uniforms
     mModelShader->uniform("uAreaHighlightEnabled", areaHighlight.enabled);
     mModelShader->uniform("uAreaHighlightOrigin", areaHighlight.origin);
-    mModelShader->uniform("uAreaHighlightSize", areaHighlight.size);
+    mModelShader->uniform("uAreaHighlightSize", static_cast<float>(areaHighlight.size));
     mModelShader->uniform("uAreaHighlightColor", vec3(0.f, 1.f, 0.f));
 
     // Create batch and draw
