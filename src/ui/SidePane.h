@@ -48,14 +48,14 @@ class SidePane {
         ImGui::DragFloat3(label.c_str(), &value[0], dragSpeed, minValue, maxValue, displayFormat.c_str());
         ImGui::PopItemWidth();
     }
-    
-        void drawFloatDragger(std::string label, float& value, float dragSpeed, float minValue, float maxValue,
-                              std::string displayFormat, float width) {
+
+    void drawFloatDragger(std::string label, float& value, float dragSpeed, float minValue, float maxValue,
+                          std::string displayFormat, float width) {
         ImGui::PushItemWidth(width);
         ImGui::DragFloat(label.c_str(), &value, dragSpeed, minValue, maxValue, displayFormat.c_str());
         ImGui::PopItemWidth();
     }
-    
+
     void setCommandManager(CommandManager<class Geometry>* commandManager) {
         mCommandManager = commandManager;
     }

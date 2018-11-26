@@ -40,7 +40,7 @@ class ColorManager {
         std::uniform_real_distribution<> randomGenValue(0.6, 1.0);
 
         const float start = static_cast<float>(randomGenHue(gen));
-        for(int i = 0; i < number; ++i) {
+        for(size_t i = 0; i < number; ++i) {
             float added = start + static_cast<float>(i) / static_cast<float>(number) * 0.7f;
             float whole, fractional;
             fractional = std::modf(added, &whole);

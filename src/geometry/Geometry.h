@@ -5,9 +5,9 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/exceptions.h>
 #include <CGAL/mesh_segmentation.h>
-#include "cinder/Log.h"
 #include <cinder/Ray.h>
 #include <cinder/gl/gl.h>
+#include "cinder/Log.h"
 
 #include <cassert>
 #include <optional>
@@ -223,7 +223,7 @@ class Geometry {
 
     /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL
     /// Polyhedron construct.
-    std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const;
+    std::array<int, 3> gatherNeighbours(const size_t triIndex) const;
 
     /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
     template <typename StoppingCondition>
