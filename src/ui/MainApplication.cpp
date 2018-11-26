@@ -143,6 +143,10 @@ void MainApplication::draw() {
     mModelView.draw();
     mProgressIndicator.draw();
 
+    if(mShowExportDialog) {
+        drawExportDialog();
+    }
+
     // if(mGeometryInProgress != nullptr) {
     //     std::string progressStatus =
     //         "%% render: " + std::to_string(mGeometryInProgress->getProgress().importRenderPercentage);
@@ -166,6 +170,163 @@ void MainApplication::setupIcon() {
     SendMessage(wnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
     SendMessage(wnd, WM_SETICON, ICON_BIG, (LPARAM)icon);
 #endif
+}
+
+void MainApplication::showImportDialog() {
+    dispatchAsync([this]() {
+        fs::path initialPath(mGeometryFileName);
+        initialPath.remove_filename();
+        if(initialPath.empty()) {
+            initialPath = getDocumentsDirectory();
+        }
+
+        std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
+        auto path = getOpenFilePath(initialPath, extensions);
+
+        if(!path.empty()) {
+            openFile(path.string());
+        }
+    });
+}
+
+void MainApplication::drawExportDialog() {
+    if(mGeometry == nullptr) {
+        return;
+    }
+
+    bool exportStl = false;
+    bool exportPly = false;
+    bool createStlFolder = false;
+    bool createPlyFolder = false;
+
+    if(!ImGui::IsPopupOpen("##exportdialog")) {
+        ImGui::OpenPopup("##exportdialog");
+    }
+    ImGuiWindowFlags window_flags = 0;
+    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    window_flags |= ImGuiWindowFlags_NoScrollbar;
+    window_flags |= ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoResize;
+    window_flags |= ImGuiWindowFlags_NoCollapse;
+    window_flags |= ImGuiWindowFlags_NoNav;
+    const ImGuiIO& io = ImGui::GetIO();
+    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x / 2.0f, io.DisplaySize.y / 2.0f), ImGuiCond_Always,
+                            ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowSize(ImVec2(400.0f, -1.0f));
+    ImGui::SetNextWindowBgAlpha(1.0f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
+    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
+    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+    if(ImGui::BeginPopupModal("##exportdialog", nullptr, window_flags)) {
+        ImGui::Text("Exporting geometry");
+        ImGui::Spacing();
+        ImGui::Checkbox("Create a new folder for exported files", &mShouldExportInNewFolder);
+        ImGui::Spacing();
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        ImGui::Text(".stl (stereolithography)");
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x017BDA));
+        ImGui::Text("(recommended for Prusa printers)");
+        ImGui::PopStyleColor();
+        ImGui::Spacing();
+        ImGui::TextWrapped(
+            "Exports multiple different .stl files, each with a separate color of the model. "
+            "This is suitable for 3D printing with Prusa printers and Slic3r Prusa Edition.");
+
+        ImGui::Spacing();
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::hex(0x017BDA));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0x0165B2));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0x015699));
+        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
+        exportStl = ImGui::Button("Export as multiple .stl files", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
+        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+                                            (ImColor)ci::ColorA::hex(0xEDEDED));
+        ImGui::PopStyleColor(4);
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        ImGui::Text(".ply (Polygon File Format)");
+        ImGui::Spacing();
+        ImGui::TextWrapped("Exports multiple different .ply files, each with a separate color of the model.");
+        ImGui::Spacing();
+
+        exportPly = ImGui::Button("Export as multiple .ply files", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
+        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+                                            (ImColor)ci::ColorA::hex(0xEDEDED));
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        bool shouldClose = ImGui::Button("Cancel", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
+        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+                                            (ImColor)ci::ColorA::hex(0xEDEDED));
+
+        if(shouldClose) {
+            mShowExportDialog = false;
+            ImGui::CloseCurrentPopup();
+        } else if(exportStl || exportPly) {
+            mShowExportDialog = false;
+            ImGui::CloseCurrentPopup();
+            dispatchAsync([exportStl, exportPly, this]() {
+                fs::path initialPath(mGeometryFileName);
+                std::string name = initialPath.filename().replace_extension().string();
+                initialPath.remove_filename();
+                if(initialPath.empty()) {
+                    initialPath = getDocumentsDirectory();
+                    name = "untitled";
+                } else {
+                    name += "_exported";
+                }
+
+                std::string fileType;
+                std::vector<std::string> extensions;
+                if(exportStl) {
+                    extensions.emplace_back("stl");
+                    name += ".stl";
+                    fileType = "stl";
+                } else if(exportPly) {
+                    extensions.emplace_back("ply");
+                    name += ".ply";
+                    fileType = "ply";
+                }
+
+                auto path = getSaveFilePath(initialPath.append(name), extensions);
+
+                if(!path.empty()) {
+                    std::string fileName =
+                        path.filename().string().substr(0, path.filename().string().find_last_of("."));
+                    std::string filePath = path.parent_path().string();
+                    if(mShouldExportInNewFolder) {
+                        filePath += std::string("/") + std::string(fileName);
+                    }
+
+                    if(!fs::is_directory(filePath) || !fs::exists(filePath)) {  // check if folder exists
+                        fs::create_directory(filePath);
+                    }
+
+                    saveFile(filePath, fileName, fileType);
+                }
+            });
+        }
+
+        ImGui::EndPopup();
+    }
+    ImGui::PopStyleVar(2);
+    ImGui::PopStyleColor(7);
 }
 
 }  // namespace pepr3d

@@ -106,14 +106,23 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
+    void showImportDialog();
+
+    void showExportDialog() {
+        mShowExportDialog = true;
+    }
+
    private:
     void setupIcon();
+    void drawExportDialog();
 
     Toolbar mToolbar;
     SidePane mSidePane;
     ModelView mModelView;
     ProgressIndicator mProgressIndicator;
     bool mShowDemoWindow = false;
+    bool mShowExportDialog = false;
+    bool mShouldExportInNewFolder = false;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
