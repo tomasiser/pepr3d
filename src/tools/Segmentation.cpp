@@ -87,7 +87,7 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 CI_LOG_I("Segmentation applied.");
             } else {  // Else report the error to the user and continue.
                 /// \todo Popup for the user
-                CI_LOG_E("Please assign all segments to a color from the palette first.");
+                CI_LOG_W("Please assign all segments to a color from the palette first.");
             }
         }
         if(sidePane.drawButton("Cancel")) {
@@ -182,7 +182,7 @@ void Segmentation::computeSegmentaton() {
 
     assert(0.0f < mSmoothingLambda && mSmoothingLambda <= 1.0f);
     assert(2 < mNumberOfClusters && mNumberOfClusters <= mApplication.getCurrentGeometry()->getTriangleCount() &&
-           mNumberOfClusters < 15);
+           mNumberOfClusters <= 15);
 
     mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(mNumberOfClusters, mSmoothingLambda,
                                                                         mSegmentToTriangleIds, mTriangleToSegmentMap);
