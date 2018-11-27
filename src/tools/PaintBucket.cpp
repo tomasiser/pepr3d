@@ -5,7 +5,7 @@
 namespace pepr3d {
 
 void PaintBucket::drawToSidePane(SidePane &sidePane) {
-    if(mGeometryCorrect == false) {
+    if(!mGeometryCorrect) {
         sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
         return;
     }
@@ -45,11 +45,11 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     if(!mHoveredTriangleId) {
         return;
     }
-    auto geometry = mApplication.getCurrentGeometry();
+    const auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         return;
     }
-    if(mGeometryCorrect == false) {
+    if(!mGeometryCorrect) {
         return;
     }
 
@@ -104,7 +104,7 @@ void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent
         return;
     }
     const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    auto geometry = mApplication.getCurrentGeometry();
+    const auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         mHoveredTriangleId = {};
         return;

@@ -195,11 +195,11 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
 }
 
 void Geometry::buildPolyhedron() {
-    mPolyhedronData.mMesh.clear();
     mProgress->polyhedronPercentage = 0.0f;
+    mPolyhedronData.mMesh.clear();
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.mIdMap);
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
-    mPolyhedronData.sdfComputed = false;
+    mPolyhedronData.isSdfComputed = false;
     mPolyhedronData.valid = false;
     mPolyhedronData.mFaceDescs.clear();
 
@@ -264,7 +264,7 @@ std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
     auto itEdge = edge;
 
     for(int i = 0; i < 3; ++i) {
-        auto oppositeEdge = mesh.opposite(itEdge);
+        const auto oppositeEdge = mesh.opposite(itEdge);
         if(oppositeEdge.is_valid() && !mesh.is_border(oppositeEdge)) {
             const PolyhedronData::Mesh::Face_index neighbourFace = mesh.face(oppositeEdge);
             const size_t neighbourFaceId = mPolyhedronData.mIdMap[neighbourFace];
@@ -280,7 +280,7 @@ std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
 }
 
 void Geometry::computeSdf() {
-    mPolyhedronData.sdfComputed = false;
+    mPolyhedronData.isSdfComputed = false;
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
     bool created;
     boost::tie(mPolyhedronData.sdf_property_map, created) =
@@ -288,14 +288,14 @@ void Geometry::computeSdf() {
     assert(created);
 
     CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true);
-    mPolyhedronData.sdfComputed = true;
+    mPolyhedronData.isSdfComputed = true;
     CI_LOG_I("SDF values computed.");
 }
 
 size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda,
                          std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
                          std::unordered_map<size_t, size_t>& triangleToSegmentMap) {
-    if(!mPolyhedronData.sdfComputed) {
+    if(!mPolyhedronData.isSdfComputed) {
         return 0;
     }
     bool created;
@@ -304,17 +304,16 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
         mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, std::size_t>("f:sid");
     assert(created);
 
-    std::size_t number_of_segments =
+    const std::size_t numberOfSegments =
         CGAL::segmentation_from_sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map,
                                            segment_property_map, numberOfClusters, smoothingLambda);
 
-    // Fill up the palette to the new number of colors
-    if(number_of_segments > PEPR3D_MAX_PALETTE_COLORS) {
+    if(numberOfSegments > PEPR3D_MAX_PALETTE_COLORS) {
         mPolyhedronData.mMesh.remove_property_map(segment_property_map);
         return 0;
     }
 
-    for(size_t seg = 0; seg < number_of_segments; ++seg) {
+    for(size_t seg = 0; seg < numberOfSegments; ++seg) {
         segmentToTriangleIds.insert({seg, {}});
     }
 
@@ -323,17 +322,17 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
         const size_t id = mPolyhedronData.mIdMap[face];
         const size_t color = segment_property_map[face];
         assert(id < mTriangles.size());
-        assert(color < number_of_segments);
+        assert(color < numberOfSegments);
         triangleToSegmentMap.insert({id, color});
         segmentToTriangleIds[color].push_back(id);
     }
 
-    CI_LOG_I("Segmentation finished. Number of segments: " + std::to_string(number_of_segments));
+    CI_LOG_I("Segmentation finished. Number of segments: " + std::to_string(numberOfSegments));
 
     // End, clean up
     mPolyhedronData.mMesh.remove_property_map(segment_property_map);
 
-    return number_of_segments;
+    return numberOfSegments;
 }
 
 }  // namespace pepr3d

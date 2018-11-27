@@ -72,7 +72,7 @@ class ModelView {
     }
 
     std::vector<glm::vec4>& getOverrideColorBuffer() {
-        return mColorOverride.overrideColors;
+        return mColorOverride.overrideColorBuffer;
     }
 
    private:
@@ -89,7 +89,7 @@ class ModelView {
 
     struct ColorOverrideData {
         bool isOverriden = false;
-        std::vector<glm::vec4> overrideColors;
+        std::vector<glm::vec4> overrideColorBuffer;
     } mColorOverride;
 
     void updateModelMatrix();

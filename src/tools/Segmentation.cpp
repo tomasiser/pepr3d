@@ -7,19 +7,19 @@
 namespace pepr3d {
 
 void Segmentation::drawToSidePane(SidePane& sidePane) {
-    if(mGeometryCorrect == false) {
+    if(!mGeometryCorrect) {
         sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
         return;
     }
-    bool sdfComputed = mApplication.getCurrentGeometry()->sdfComputed();
-    if(!sdfComputed) {
+    const bool isSdfComputed = mApplication.getCurrentGeometry()->isSdfComputed();
+    if(!isSdfComputed) {
         sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
             mApplication.getCurrentGeometry()->preSegmentation();
         }
     } else {
         if(sidePane.drawButton("Segment!")) {
-            computeSegmentaton();
+            computeSegmentation();
         }
         sidePane.drawIntDragger("Robustness [2,15]", mNumberOfClusters, 0.25f, 2, 15, "%.0f", 40.0f);
         sidePane.drawFloatDragger("Edge tolerance [0,1]", mSmoothingLambda, .01f, 0.01f, 1.f, "%.02f", 70.f);
@@ -50,8 +50,8 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
             if(mHoveredTriangleId) {
                 auto find = mTriangleToSegmentMap.find(*mHoveredTriangleId);
                 assert(find != mTriangleToSegmentMap.end());
-                assert((*find).first == *mHoveredTriangleId);
-                if((*find).second == toPaint.first) {
+                assert(find->first == *mHoveredTriangleId);
+                if(find->second == toPaint.first) {
                     borderColor = ci::ColorA(1, 0, 0, 1);
                     displayText = "Currently hovered";
                     thickness = 5.0f;
@@ -59,7 +59,7 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
             }
             if(sidePane.drawColoredButton(displayText.c_str(), borderColor, thickness)) {
                 mNewColors[toPaint.first] = colorManager.getActiveColorIndex();
-                glm::vec4 newColor = colorManager.getColor(colorManager.getActiveColorIndex());
+                const glm::vec4 newColor = colorManager.getColor(colorManager.getActiveColorIndex());
                 setSegmentColor(toPaint.first, newColor);
             }
         }
@@ -104,7 +104,7 @@ void Segmentation::cancel() {
 }
 
 void Segmentation::onToolDeselect(ModelView& modelView) {
-    if(mGeometryCorrect == false) {
+    if(!mGeometryCorrect) {
         return;
     }
     cancel();
@@ -112,7 +112,7 @@ void Segmentation::onToolDeselect(ModelView& modelView) {
 
 void Segmentation::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     ci::Ray mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    auto geometry = mApplication.getCurrentGeometry();
+    const auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         mHoveredTriangleId = {};
         return;
@@ -136,22 +136,22 @@ void Segmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEven
     if(!mPickState) {
         return;
     }
-    if(mGeometryCorrect == false) {
+    if(!mGeometryCorrect) {
         return;
     }
 
     auto find = mTriangleToSegmentMap.find(*mHoveredTriangleId);
     assert(find != mTriangleToSegmentMap.end());
-    assert((*find).first == *mHoveredTriangleId);
+    assert(find->first == *mHoveredTriangleId);
 
-    const size_t segId = (*find).second;
+    const size_t segId = find->second;
     assert(segId < mNumberOfSegments);
     assert(segId < mNewColors.size());
 
     ColorManager& colorManager = mApplication.getCurrentGeometry()->getColorManager();
 
     mNewColors[segId] = colorManager.getActiveColorIndex();
-    glm::vec4 newColor = colorManager.getColor(colorManager.getActiveColorIndex());
+    const glm::vec4 newColor = colorManager.getColor(colorManager.getActiveColorIndex());
     setSegmentColor(segId, newColor);
 }
 
@@ -170,7 +170,7 @@ void Segmentation::reset() {
     mTriangleToSegmentMap.clear();
 }
 
-void Segmentation::computeSegmentaton() {
+void Segmentation::computeSegmentation() {
     cancel();
 
     mSmoothingLambda = std::min<float>(mSmoothingLambda, 1.0f);
@@ -181,7 +181,7 @@ void Segmentation::computeSegmentaton() {
     mNumberOfClusters = std::max<int>(2, mNumberOfClusters);
 
     assert(0.0f < mSmoothingLambda && mSmoothingLambda <= 1.0f);
-    assert(2 < mNumberOfClusters && mNumberOfClusters <= mApplication.getCurrentGeometry()->getTriangleCount() &&
+    assert(2 <= mNumberOfClusters && mNumberOfClusters <= mApplication.getCurrentGeometry()->getTriangleCount() &&
            mNumberOfClusters <= 15);
 
     mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(mNumberOfClusters, mSmoothingLambda,
@@ -241,7 +241,7 @@ void Segmentation::setSegmentColor(const size_t segmentId, const glm::vec4 newCo
 void Segmentation::onNewGeometryLoaded(ModelView& modelView) {
     mHoveredTriangleId = {};
     mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
-    if(mGeometryCorrect == false) {
+    if(!mGeometryCorrect) {
         return;
     }
     CI_LOG_I("Model changed, segmentation reset");

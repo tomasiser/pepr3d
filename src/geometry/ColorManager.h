@@ -126,7 +126,7 @@ class ColorManager {
 
         const float start = static_cast<float>(randomGenHue(gen));
         for(size_t i = 0; i < colorCount; ++i) {
-            float added = start + static_cast<float>(i) / static_cast<float>(colorCount) * 0.7f;
+            const float added = start + static_cast<float>(i) / static_cast<float>(colorCount) * 0.7f;
             float whole, fractional;
             fractional = std::modf(added, &whole);
             ci::ColorA r = cinder::hsvToRgb(glm::vec4(fractional, 1, randomGenValue(gen), 1));

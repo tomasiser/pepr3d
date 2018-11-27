@@ -49,7 +49,7 @@ class Segmentation : public ITool {
     std::unordered_map<size_t, size_t> mTriangleToSegmentMap;
 
     void reset();
-    void computeSegmentaton();
+    void computeSegmentation();
     void cancel();
     void setSegmentColor(const size_t segmentId, const glm::vec4 newColor);
 };

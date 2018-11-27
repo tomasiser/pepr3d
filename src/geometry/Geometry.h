@@ -84,7 +84,7 @@ class Geometry {
         typedef Mesh::Vertex_index vertex_descriptor;
         typedef Mesh::Face_index face_descriptor;
 
-        bool sdfComputed = false;
+        bool isSdfComputed = false;
         bool valid = false;
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, size_t> mIdMap;
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, double> sdf_property_map;
@@ -204,8 +204,8 @@ class Geometry {
         computeSdf();
     }
 
-    bool sdfComputed() const {
-        return mPolyhedronData.sdfComputed;
+    bool isSdfComputed() const {
+        return mPolyhedronData.isSdfComputed;
     }
 
     size_t segmentation(const int numberOfClusters, const float smoothingLambda,
