@@ -273,11 +273,16 @@ std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const Stop
         assert(currentVertex < mTriangles.size());
         assert(toVisit.size() < mTriangles.size());
 
-        // Manage neighbours and grow the queue
-        addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
+        // Catching because of unpredictable CGAL errors
+        try {
+            // Manage neighbours and grow the queue
+            addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
+        } catch(CGAL::Assertion_exception* excp) {
+            CI_LOG_E("Exception caught. Returning immediately. " + excp->expression() + " " + excp->message());
+            return {};
+        }
 
-        // Set the color
-        // setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
+        // Add the triangle to the list
         trianglesToColor.push_back(currentVertex);
     }
     return trianglesToColor;

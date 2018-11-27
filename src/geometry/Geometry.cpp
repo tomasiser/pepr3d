@@ -259,14 +259,13 @@ std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
     const auto& mesh = mPolyhedronData.mMesh;
     assert(triIndex < faceDescriptors.size());
     std::array<int, 3> returnValue = {-1, -1, -1};
-
     const PolyhedronData::face_descriptor face = faceDescriptors[triIndex];
     const auto edge = mesh.halfedge(face);
     auto itEdge = edge;
 
     for(int i = 0; i < 3; ++i) {
         auto oppositeEdge = mesh.opposite(itEdge);
-        if(oppositeEdge.is_valid()) {
+        if(oppositeEdge.is_valid() && !mesh.is_border(oppositeEdge)) {
             const PolyhedronData::Mesh::Face_index neighbourFace = mesh.face(oppositeEdge);
             const size_t neighbourFaceId = mPolyhedronData.mIdMap[neighbourFace];
             assert(neighbourFaceId < mTriangles.size());
