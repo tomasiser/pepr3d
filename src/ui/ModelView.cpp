@@ -162,8 +162,7 @@ void ModelView::drawGeometry() {
 
     const std::vector<glm::vec3>& normals = mApplication.getCurrentGeometry()->getNormalBuffer();
 
-    const auto& areaHighlight =
-        mApplication.getCurrentGeometry()->getAreaHighlight();
+    const auto& areaHighlight = mApplication.getCurrentGeometry()->getAreaHighlight();
 
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {

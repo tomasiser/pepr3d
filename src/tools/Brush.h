@@ -7,16 +7,22 @@
 namespace pepr3d {
 struct BrushSettings {
     /// Index of the selected color
-    size_t color=0;
+    size_t color = 0;
 
     /// Size of a brush in model space units
-    double size = 0.1f;
+    double size = 0.2;
 
     /// Paint only to triangles connected to the origin
     bool continuous = true;
 
     /// Paint onto backward facing triangles
     bool paintBackfaces = false;
+
+    /// Will not create new triangles to match brush shape
+    bool respectOriginalTriangles = true;
+
+    /// When respecting original triangles should we paint triangles that are not fully inside the brush?
+    bool paintOuterRing = false;
 };
 
 class Brush : public ITool {

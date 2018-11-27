@@ -8,6 +8,7 @@
 #include <cinder/gl/gl.h>
 
 #include <cassert>
+#include <map>
 #include <optional>
 #include <vector>
 
@@ -16,6 +17,7 @@
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
 #include "geometry/Triangle.h"
+#include "geometry/TriangleDetail.h"
 
 namespace pepr3d {
 
@@ -45,6 +47,9 @@ class Geometry {
    private:
     /// Triangle soup of the model mesh, containing CGAL::Triangle_3 data for AABB tree.
     std::vector<DataTriangle> mTriangles;
+
+    /// Map of triangle details. (Detailed triangles that replace the original)
+    std::map<size_t, TriangleDetail> mTriangleDetails;
 
     /// Vertex buffer with the same data as mTriangles for OpenGL to render the mesh.
     /// Contains position and color data for each vertex.
@@ -180,6 +185,12 @@ class Geometry {
         return mColorManager;
     }
 
+    bool isTriangleSingleColor(size_t triangleIdx) const {
+        // Triangle is single color when it has no detail triangles
+        auto it = mTriangleDetails.find(triangleIdx);
+        return it == mTriangleDetails.end() || it->second.isSingleColor();
+    }
+
     /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.
     void loadNewGeometry(const std::string& fileName);
 
@@ -218,7 +229,8 @@ class Geometry {
     std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor);
 
     /// Spread as BFS from starting triangle, until the limits of brush settings are reached
-    std::vector<size_t> getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection, size_t startTriangle, const struct BrushSettings& settings);
+    std::vector<size_t> getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection,
+                                               size_t startTriangle, const struct BrushSettings& settings);
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
@@ -251,6 +263,19 @@ class Geometry {
         const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
         std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
         const StoppingCondition& stopFunctor) const;
+
+    void updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOrigin, const struct BrushSettings& settings);
+
+    TriangleDetail* createTriangleDetail(size_t triangleIdx);
+
+    TriangleDetail* getTriangleDetail(const size_t triangleIndex) {
+        auto& it = mTriangleDetails.find(triangleIndex);
+        if(it == mTriangleDetails.end()) {
+            return createTriangleDetail(triangleIndex);
+        } else {
+            return &(it->second);
+        }
+    }
 };
 
 template <typename StoppingCondition>

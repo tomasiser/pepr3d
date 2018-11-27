@@ -1,8 +1,12 @@
 #include "geometry/Geometry.h"
-#include <set>
-#include "CGAL/Sphere_3.h"
 #include "GeometryUtils.h"
 #include "tools/Brush.h"
+
+#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
+#include <CGAL/Sphere_3.h>
+#include <CGAL/Spherical_kernel_3.h>
+#include <CGAL/Spherical_kernel_intersections.h>
+#include <set>
 
 namespace pepr3d {
 
@@ -86,10 +90,24 @@ void Geometry::generateVertexBuffer() {
     mVertexBuffer.clear();
     mVertexBuffer.reserve(3 * mTriangles.size());
 
-    for(const auto& mTriangle : mTriangles) {
-        mVertexBuffer.push_back(mTriangle.getVertex(0));
-        mVertexBuffer.push_back(mTriangle.getVertex(1));
-        mVertexBuffer.push_back(mTriangle.getVertex(2));
+    for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
+        const auto& triangle = mTriangles[idx];
+
+        if(isTriangleSingleColor(idx)) {
+            mVertexBuffer.push_back(triangle.getVertex(0));
+            mVertexBuffer.push_back(triangle.getVertex(1));
+            mVertexBuffer.push_back(triangle.getVertex(2));
+        }
+    }
+
+    for(auto& it : mTriangleDetails) {
+        const auto& detailTriangles = it.second.getTriangles();
+
+        for(const auto& triangle : detailTriangles) {
+            mVertexBuffer.push_back(triangle.getVertex(0));
+            mVertexBuffer.push_back(triangle.getVertex(1));
+            mVertexBuffer.push_back(triangle.getVertex(2));
+        }
     }
 }
 
@@ -106,12 +124,26 @@ void Geometry::generateColorBuffer() {
     mColorBuffer.clear();
     mColorBuffer.reserve(mVertexBuffer.size());
 
-    for(const auto& mTriangle : mTriangles) {
-        const ColorIndex triColorIndex = static_cast<ColorIndex>(mTriangle.getColor());
-        mColorBuffer.push_back(triColorIndex);
-        mColorBuffer.push_back(triColorIndex);
-        mColorBuffer.push_back(triColorIndex);
+    for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
+        if(isTriangleSingleColor(idx)) {
+            const auto& triangle = mTriangles[idx];
+            const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
+        }
     }
+
+    for(auto& it : mTriangleDetails) {
+        const auto& detailTriangles = it.second.getTriangles();
+
+        for(const auto& triangle : detailTriangles) {
+            mColorBuffer.push_back(triangle.getColor());
+            mColorBuffer.push_back(triangle.getColor());
+            mColorBuffer.push_back(triangle.getColor());
+        }
+    }
+
     assert(mColorBuffer.size() == mVertexBuffer.size());
 }
 
@@ -122,6 +154,17 @@ void Geometry::generateNormalBuffer() {
         mNormalBuffer.push_back(mTriangle.getNormal());
         mNormalBuffer.push_back(mTriangle.getNormal());
         mNormalBuffer.push_back(mTriangle.getNormal());
+    }
+
+    for(auto& it : mTriangleDetails) {
+        const auto& detailTriangles = it.second.getTriangles();
+        glm::vec3 normal = it.second.getOriginal().getNormal();
+
+        for(const auto& triangle : detailTriangles) {
+            mNormalBuffer.push_back(normal);
+            mNormalBuffer.push_back(normal);
+            mNormalBuffer.push_back(normal);
+        }
     }
     assert(mNormalBuffer.size() == mVertexBuffer.size());
 }
@@ -254,12 +297,6 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
 }
 
 void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
-    using Point = DataTriangle::K::Point_3;
-    using Sphere = DataTriangle::K::Sphere_3;
-
-    const glm::vec3 source = ray.getOrigin();
-    const glm::vec3 rayDirection = ray.getDirection();
-
     glm::vec3 intersectionPoint{};
     auto intersectedTri = intersectMesh(ray, intersectionPoint);
 
@@ -267,16 +304,76 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
         return;
     }
 
-    const auto trisInBrush = getTrianglesUnderBrush(intersectionPoint, rayDirection, *intersectedTri, settings);
-
-    Sphere brushShape(Point(intersectionPoint.x, intersectionPoint.y, intersectionPoint.z),
-                      settings.size * settings.size);
+    const auto trisInBrush = getTrianglesUnderBrush(intersectionPoint, ray.getDirection(), *intersectedTri, settings);
 
     for(const size_t triangleIdx : trisInBrush) {
         const auto& cgalTri = getTriangle(triangleIdx).getTri();
 
-        // CGAL::intersection(brushShape, cgalTri);
+        if(GeometryUtils::isFullyInsideASphere(cgalTri, intersectionPoint, settings.size)) {
+            // Triangles fully inside are colored whole
+            setTriangleColor(triangleIdx, settings.color);
+        } else {
+            if(settings.respectOriginalTriangles && settings.paintOuterRing) {
+                setTriangleColor(triangleIdx, settings.color);
+            } else {
+                updateTriangleDetail(triangleIdx, intersectionPoint, settings);
+            }
+        }
     }
+
+    // Generate new buffers for OpenGL to see the new data
+    generateVertexBuffer();
+    generateIndexBuffer();
+    generateColorBuffer();
+    generateNormalBuffer();
+}
+
+namespace geometry_internal {
+/// Helps get intersection data without potentionally generating exception code
+struct TriangleDetailVisitor : public boost::static_visitor<std::optional<DataTriangle::K::Circle_3>> {
+    std::optional<DataTriangle::K::Circle_3> operator()(const DataTriangle::K::Circle_3& circle) const {
+        return circle;
+    }
+
+    std::optional<DataTriangle::K::Circle_3> operator()(const DataTriangle::K::Point_3) const {
+        return {};
+    }
+};
+}  // namespace geometry_internal
+
+TriangleDetail* Geometry::createTriangleDetail(size_t triangleIdx) {
+    auto result =
+        mTriangleDetails.emplace(triangleIdx, TriangleDetail(getTriangle(triangleIdx), getTriangleColor(triangleIdx)));
+
+    return &(result.first->second);
+}
+
+void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOrigin,
+                                    const struct BrushSettings& settings) {
+    using Point = DataTriangle::K::Point_3;
+    using Point2D = DataTriangle::K::Point_2;
+    using Sphere = DataTriangle::K::Sphere_3;
+    using Plane = DataTriangle::K::Plane_3;
+    using Triangle = DataTriangle::Triangle;
+
+    const Triangle& tri = getTriangle(triangleIdx).getTri();
+    const Plane triPlane = tri.supporting_plane();
+
+    const Sphere brushShape(Point(brushOrigin.x, brushOrigin.y, brushOrigin.z), settings.size * settings.size);
+
+    auto intersection = CGAL::intersection(brushShape, triPlane);
+    assert(intersection);
+
+    auto circleIntersection = boost::apply_visitor(geometry_internal::TriangleDetailVisitor{}, *intersection);
+    if(!circleIntersection)
+        return;  // Intersection is a point, consider this triangle not hit
+
+    const Point2D circleOrigin = triPlane.to_2d(circleIntersection->center());
+    // Transform the edge as a point, because this transformation does not preserve distances
+    const Point2D circleEdge = triPlane.to_2d(circleIntersection->center() +
+                                              triPlane.base1() * CGAL::sqrt(circleIntersection->squared_radius()));
+
+    getTriangleDetail(triangleIdx)->addCircle(circleOrigin, circleEdge, settings.color);
 }
 
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {
@@ -295,6 +392,11 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
     /// Change it in the triangle soup
     assert(triangleIndex < mTriangles.size());
     mTriangles[triangleIndex].setColor(newColor);
+
+    // If the triangle had a detail remove it
+    if(!isTriangleSingleColor(triangleIndex)) {
+        mTriangleDetails.erase(triangleIndex);
+    }
 }
 
 void Geometry::buildPolyhedron() {

@@ -21,5 +21,4 @@ TEST(GeometryUtils, segmentPointDistanceSquared) {
 }
 
 
-
 #endif

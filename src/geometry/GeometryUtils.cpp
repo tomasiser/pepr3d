@@ -1,4 +1,5 @@
 #include "geometry/GeometryUtils.h"
+#include <CGAL/Aff_transformation_3.h>
 #include "geometry/Geometry.h"
 
 namespace pepr3d {
@@ -27,4 +28,17 @@ std::optional<glm::vec3> GeometryUtils::triangleRayIntersection(const DataTriang
         return {};
     }
 }
+
+bool GeometryUtils::isFullyInsideASphere(const DataTriangle::K::Triangle_3 &tri, const DataTriangle::K::Point_3 &origin,
+                                         double radius) {
+    // All three points must be inside the sphere (closer than the radius)
+    using Vector = DataTriangle::K::Vector_3;
+    const double radiusSquared = radius * radius;
+    const double dist0 = Vector(tri.vertex(0), origin).squared_length();
+    const double dist1 = Vector(tri.vertex(1), origin).squared_length();
+    const double dist2 = Vector(tri.vertex(2), origin).squared_length();
+
+    return dist0 <= radiusSquared && dist1 <= radiusSquared && dist2 <= radiusSquared;
+}
+
 }  // namespace pepr3d
