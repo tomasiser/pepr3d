@@ -7,7 +7,7 @@ namespace pepr3d {
 
 void ModelView::setup() {
     resetCamera();
-    mCameraUi = ci::CameraUi(&mCamera);
+    mCameraUi = pepr3d::CameraUi(&mCamera);
     resize();
 
     mModelShader =
@@ -200,7 +200,7 @@ void ModelView::drawGeometry() {
 
 void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
     const Geometry* const geometry = mApplication.getCurrentGeometry();
-    if(geometry == nullptr) {
+    if(geometry == nullptr || triangleIndex >= geometry->getTriangleCount()) {
         return;
     }
 

@@ -84,7 +84,8 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
 
     // We only want to re-draw if we are not dragging, or if you are dragging and reached a new region
     if(!mDragging || (mDragging && !hoverOverSameTriangle)) {
-        mCommandManager.execute(std::make_unique<CmdPaintSingleColor>(std::move(trianglesToPaint), currentColorIndex),
+        CommandManager<Geometry> *const commandManager = mApplication.getCommandManager();
+        commandManager->execute(std::make_unique<CmdPaintSingleColor>(std::move(trianglesToPaint), currentColorIndex),
                                 mDragging);
     }
 }

@@ -8,18 +8,21 @@
 #include <sstream>
 #include <vector>
 
+#include "geometry/AssimpProgress.h"
+#include "geometry/GeometryProgress.h"
 #include "geometry/Triangle.h"
 
 namespace pepr3d {
 
 class ModelExporter {
-    std::vector<DataTriangle> mTriangles;
+    const std::vector<DataTriangle> &mTriangles;
     bool mModelSaved = false;
+    GeometryProgress *mProgress;
 
    public:
     ModelExporter(const std::vector<DataTriangle> &triangles, const std::string filePath, const std::string fileName,
-                  const std::string fileType) {
-        this->mTriangles = triangles;
+                  const std::string fileType, GeometryProgress *progress)
+        : mTriangles(triangles), mProgress(progress) {
         this->mModelSaved = saveModel(filePath, fileName, fileType);
     }
 
@@ -27,12 +30,25 @@ class ModelExporter {
     bool saveModel(const std::string filePath, const std::string fileName, const std::string fileType) {
         Assimp::Exporter exporter;
 
+        if(mProgress != nullptr) {
+            mProgress->createScenePercentage = 0.0f;
+        }
+
         std::vector<aiScene *> scenes = createScenes();
+
+        if(mProgress != nullptr) {
+            mProgress->createScenePercentage = 1.0f;
+            mProgress->exportFilePercentage = 0.0f;
+        }
 
         for(size_t i = 0; i < scenes.size(); i++) {
             std::stringstream ss;
             ss << filePath << "/" << fileName << "_" << i << "." << fileType;
             exporter.Export(scenes[i], std::string(fileType) + std::string("b"), ss.str());
+        }
+
+        if(mProgress != nullptr) {
+            mProgress->exportFilePercentage = 1.0f;
         }
 
         return true;
@@ -44,7 +60,6 @@ class ModelExporter {
         std::map<size_t, std::vector<unsigned int>> colorsWithIndices;
 
         for(size_t i = 0; i < mTriangles.size(); i++) {
-            mTriangles[0].getColor();
             size_t color = mTriangles[i].getColor();
             colorsWithIndices[color].emplace_back(static_cast<unsigned int>(i));
         }

@@ -1,11 +1,12 @@
 #pragma once
 
-#include "cinder/CameraUi.h"
 #include "cinder/Utilities.h"
 #include "cinder/gl/gl.h"
 #include "glm/glm.hpp"
 
 #include "peprimgui.h"
+
+#include "ui/CameraUi.h"
 
 namespace pepr3d {
 
@@ -78,7 +79,7 @@ class ModelView {
     MainApplication& mApplication;
     std::pair<glm::ivec2, glm::ivec2> mViewport;
     ci::CameraPersp mCamera;
-    ci::CameraUi mCameraUi;
+    pepr3d::CameraUi mCameraUi;
     ci::gl::GlslProgRef mModelShader;
     bool mIsWireframeEnabled = false;
     bool mIsGridEnabled = true;

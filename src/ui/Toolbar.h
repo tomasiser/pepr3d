@@ -19,15 +19,10 @@ class Toolbar {
         return mHeight;
     }
 
-    void setCommandManager(CommandManager<class Geometry>* commandManager) {
-        mCommandManager = commandManager;
-    }
-
     void draw();
 
    private:
     MainApplication& mApplication;
-    CommandManager<class Geometry>* mCommandManager = nullptr;
 
     std::size_t mSelectedButtonIndex = 3;
     float mHeight = 50.0f;

@@ -12,8 +12,7 @@ class MainApplication;
 
 class TrianglePainter : public ITool {
    public:
-    TrianglePainter(MainApplication& app, CommandManager<class Geometry>& commandManager)
-        : mApplication(app), mCommandManager(commandManager) {}
+    TrianglePainter(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Triangle Painter";
@@ -33,7 +32,6 @@ class TrianglePainter : public ITool {
 
    private:
     MainApplication& mApplication;
-    CommandManager<class Geometry>& mCommandManager;
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
 
