@@ -7,8 +7,8 @@
 namespace pepr3d {
 
 void Segmentation::drawToSidePane(SidePane& sidePane) {
-    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
-        sidePane.drawText("Polyhedron not built,\nsince the geometry was damaged.\nTool disabled.");
+    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
         return;
     }
     bool sdfComputed = mApplication.getCurrentGeometry()->sdfComputed();
@@ -79,7 +79,8 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 for(const auto& segment : mSegmentToTriangleIds) {
                     const size_t activeColorAssigned = mNewColors[segment.first];
                     auto proxy = segment.second;
-                    mCommandManager.execute(
+                    CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
+                    commandManager->execute(
                         std::make_unique<CmdPaintSingleColor>(std::move(proxy), activeColorAssigned), false);
                 }
                 reset();
@@ -103,7 +104,7 @@ void Segmentation::cancel() {
 }
 
 void Segmentation::onToolDeselect(ModelView& modelView) {
-    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
         return;
     }
     cancel();
@@ -135,7 +136,7 @@ void Segmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEven
     if(!mPickState) {
         return;
     }
-    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
         return;
     }
 
@@ -239,7 +240,7 @@ void Segmentation::setSegmentColor(const size_t segmentId, const glm::vec4 newCo
 
 void Segmentation::onNewGeometryLoaded(ModelView& modelView) {
     mHoveredTriangleId = {};
-    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
         return;
     }
     CI_LOG_I("Model changed, segmentation reset");

@@ -5,8 +5,8 @@
 namespace pepr3d {
 
 void PaintBucket::drawToSidePane(SidePane &sidePane) {
-    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
-        sidePane.drawText("Polyhedron not built,\nsince the geometry was damaged.\nTool disabled.");
+    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
         return;
     }
 
@@ -49,7 +49,7 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     if(geometry == nullptr) {
         return;
     }
-    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
         return;
     }
 
@@ -109,7 +109,7 @@ void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent
     mHoveredTriangleId = geometry->intersectMesh(cameraRay);
 }
 
-void PaintBucket::onNewGeometryLoaded(ModelView& modelView) {
+void PaintBucket::onNewGeometryLoaded(ModelView &modelView) {
     mHoveredTriangleId = {};
 }
 

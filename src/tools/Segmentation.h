@@ -13,8 +13,7 @@ namespace pepr3d {
 
 class Segmentation : public ITool {
    public:
-    Segmentation(MainApplication& app, CommandManager<class Geometry>& commandManager)
-        : mApplication(app), mCommandManager(commandManager) {}
+    Segmentation(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Segmentation";
@@ -35,7 +34,6 @@ class Segmentation : public ITool {
 
    private:
     MainApplication& mApplication;
-    CommandManager<class Geometry>& mCommandManager;
 
     int mNumberOfClusters = 5;
     float mSmoothingLambda = 0.3f;

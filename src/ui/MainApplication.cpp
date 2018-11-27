@@ -61,7 +61,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<PaintBucket>(*this));
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
-    mTools.emplace_back(make_unique<Segmentation>(*this, *mCommandManager));
+    mTools.emplace_back(make_unique<Segmentation>(*this));
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>());
     mTools.emplace_back(make_unique<Information>());

@@ -219,18 +219,17 @@ void Geometry::buildPolyhedron() {
     bool meshHasNull = false;
     for(const auto& tri : mPolyhedronData.indices) {
         auto f = mPolyhedronData.mMesh.add_face(vertDescs[tri[0]], vertDescs[tri[1]], vertDescs[tri[2]]);
-        if (f == PolyhedronData::Mesh::null_face()) {
+        if(f == PolyhedronData::Mesh::null_face()) {
             // Adding a non-valid face, the model is wrong and we stop.
             meshHasNull = true;
             break;
-        }
-        else {
+        } else {
             assert(f != PolyhedronData::Mesh::null_face());
             mPolyhedronData.mFaceDescs.push_back(f);
         }
     }
     // If the build failed, clear, set invalid and exit;
-    if (meshHasNull) {
+    if(meshHasNull) {
         mPolyhedronData.mMesh.clear();
         mPolyhedronData.valid = false;
         mProgress->polyhedronPercentage = -1.0f;
