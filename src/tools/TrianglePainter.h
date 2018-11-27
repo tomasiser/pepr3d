@@ -29,6 +29,7 @@ class TrianglePainter : public ITool {
     virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onNewGeometryLoaded(ModelView& modelView) override;
 
    private:
     MainApplication& mApplication;

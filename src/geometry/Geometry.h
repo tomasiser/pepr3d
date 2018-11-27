@@ -79,6 +79,7 @@ class Geometry {
         typedef Mesh::Face_index face_descriptor;
 
         bool sdfComputed = false;
+        bool valid = false;
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, size_t> mIdMap;
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, double> sdf_property_map;
         std::vector<PolyhedronData::face_descriptor> mFaceDescs;
@@ -109,7 +110,7 @@ class Geometry {
     }
 
     bool polyhedronValid() const {
-        return mPolyhedronData.mMesh.is_valid();
+        return mPolyhedronData.mMesh.is_valid() && mPolyhedronData.valid && !mPolyhedronData.mMesh.is_empty();
     }
 
     size_t polyVertCount() const {

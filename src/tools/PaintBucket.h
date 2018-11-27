@@ -26,6 +26,7 @@ class PaintBucket : public ITool {
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onNewGeometryLoaded(ModelView& modelView) override;
 
     enum NormalAngleCompare { NEIGHBOURS = 1, ABSOLUTE = 2 };
 

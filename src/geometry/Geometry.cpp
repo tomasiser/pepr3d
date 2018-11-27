@@ -176,6 +176,7 @@ void Geometry::buildPolyhedron() {
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.mIdMap);
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
     mPolyhedronData.sdfComputed = false;
+    mPolyhedronData.valid = false;
     mPolyhedronData.mFaceDescs.clear();
 
     std::vector<PolyhedronData::vertex_descriptor> vertDescs;
@@ -191,10 +192,24 @@ void Geometry::buildPolyhedron() {
     }
 
     mPolyhedronData.mFaceDescs.reserve(mPolyhedronData.indices.size());
+    bool meshHasNull = false;
     for(const auto& tri : mPolyhedronData.indices) {
         auto f = mPolyhedronData.mMesh.add_face(vertDescs[tri[0]], vertDescs[tri[1]], vertDescs[tri[2]]);
-        assert(f != PolyhedronData::Mesh::null_face());
-        mPolyhedronData.mFaceDescs.push_back(f);
+        if (f == PolyhedronData::Mesh::null_face()) {
+            // Adding a non-valid face, the model is wrong and we stop.
+            meshHasNull = true;
+            break;
+        }
+        else {
+            assert(f != PolyhedronData::Mesh::null_face());
+            mPolyhedronData.mFaceDescs.push_back(f);
+        }
+    }
+    // If the build failed, clear, set invalid and exit;
+    if (meshHasNull) {
+        mPolyhedronData.mMesh.clear();
+        mPolyhedronData.valid = false;
+        return;
     }
 
     bool created;
@@ -211,6 +226,7 @@ void Geometry::buildPolyhedron() {
     }
     CI_LOG_I("Polyhedral mesh built, vertices: " + std::to_string(mPolyhedronData.vertices.size()) +
              ", faces: " + std::to_string(mPolyhedronData.indices.size()));
+    mPolyhedronData.valid = true;
 }
 
 std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {

@@ -7,6 +7,10 @@
 namespace pepr3d {
 
 void Segmentation::drawToSidePane(SidePane& sidePane) {
+    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+        sidePane.drawText("Polyhedron not built,\nsince the geometry was damaged.\nTool disabled.");
+        return;
+    }
     bool sdfComputed = mApplication.getCurrentGeometry()->sdfComputed();
     if(!sdfComputed) {
         sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
@@ -99,6 +103,9 @@ void Segmentation::cancel() {
 }
 
 void Segmentation::onToolDeselect(ModelView& modelView) {
+    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+        return;
+    }
     cancel();
 }
 
@@ -113,7 +120,7 @@ void Segmentation::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEven
 }
 
 void Segmentation::drawToModelView(ModelView& modelView) {
-    if(mHoveredTriangleId && mPickState) {
+    if(mHoveredTriangleId && mPickState && mApplication.getCurrentGeometry()->polyhedronValid()) {
         modelView.drawTriangleHighlight(*mHoveredTriangleId);
     }
 }
@@ -126,6 +133,9 @@ void Segmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEven
         return;
     }
     if(!mPickState) {
+        return;
+    }
+    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
         return;
     }
 
@@ -208,6 +218,7 @@ void Segmentation::computeSegmentaton() {
         mApplication.getModelView().setColorOverride(true);
     }
 }
+
 void Segmentation::setSegmentColor(const size_t segmentId, const glm::vec4 newColor) {
     std::vector<glm::vec4>& overrideBuffer = mApplication.getModelView().getOverrideColorBuffer();
     auto segmentTris = mSegmentToTriangleIds.find(segmentId);
@@ -227,6 +238,10 @@ void Segmentation::setSegmentColor(const size_t segmentId, const glm::vec4 newCo
 }
 
 void Segmentation::onNewGeometryLoaded(ModelView& modelView) {
+    mHoveredTriangleId = {};
+    if (mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+        return;
+    }
     CI_LOG_I("Model changed, segmentation reset");
     reset();
 }
