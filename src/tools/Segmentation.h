@@ -42,17 +42,16 @@ class Segmentation : public ITool {
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
 
-    std::vector<Geometry::ColorIndex> mOldColorBuffer;
-    ColorManager mOldColorManager;
     std::vector<size_t> mNewColors;
+    std::vector<glm::vec4> mSegmentationColors;
     std::optional<std::size_t> mHoveredTriangleId = {};
 
     std::map<size_t, std::vector<size_t>> mSegmentToTriangleIds;
     std::unordered_map<size_t, size_t> mTriangleToSegmentMap;
 
     void reset();
-    void revertColorPalette();
     void computeSegmentaton();
     void cancel();
+    void setSegmentColor(const size_t segmentId, const glm::vec4 newColor);
 };
 }  // namespace pepr3d

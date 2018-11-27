@@ -34,19 +34,7 @@ class ColorManager {
     }
 
     explicit ColorManager(const size_t number) {
-        std::random_device rd;   // Will be used to obtain a seed for the random number engine
-        std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-        std::uniform_real_distribution<> randomGenHue(0.0, 1.0);
-        std::uniform_real_distribution<> randomGenValue(0.6, 1.0);
-
-        const float start = static_cast<float>(randomGenHue(gen));
-        for(size_t i = 0; i < number; ++i) {
-            float added = start + static_cast<float>(i) / static_cast<float>(number) * 0.7f;
-            float whole, fractional;
-            fractional = std::modf(added, &whole);
-            ci::ColorA r = cinder::hsvToRgb(glm::vec4(fractional, 1, randomGenValue(gen), 1));
-            mColorMap.emplace_back(r.r, r.g, r.b, 1);
-        }
+        generateColors(number, mColorMap);
     }
 
     /// Return the i-th color
@@ -125,6 +113,25 @@ class ColorManager {
 
     const ColorMap& getColorMap() const {
         return mColorMap;
+    }
+
+    static void generateColors(const size_t colorCount, std::vector<glm::vec4>& outNewColors) {
+        outNewColors.clear();
+        outNewColors.reserve(colorCount);
+
+        std::random_device rd;   // Will be used to obtain a seed for the random number engine
+        std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
+        std::uniform_real_distribution<> randomGenHue(0.0, 1.0);
+        std::uniform_real_distribution<> randomGenValue(0.6, 1.0);
+
+        const float start = static_cast<float>(randomGenHue(gen));
+        for(size_t i = 0; i < colorCount; ++i) {
+            float added = start + static_cast<float>(i) / static_cast<float>(colorCount) * 0.7f;
+            float whole, fractional;
+            fractional = std::modf(added, &whole);
+            ci::ColorA r = cinder::hsvToRgb(glm::vec4(fractional, 1, randomGenValue(gen), 1));
+            outNewColors.emplace_back(r.r, r.g, r.b, 1);
+        }
     }
 };
 

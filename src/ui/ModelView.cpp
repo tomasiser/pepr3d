@@ -158,12 +158,17 @@ void ModelView::drawGeometry() {
     const std::vector<Geometry::ColorIndex>& colors = mApplication.getCurrentGeometry()->getColorBuffer();
     assert(colors.size() == positions.size());
 
+    std::vector<glm::vec4>& overrideColorBuffer = mApplication.getModelView().getOverrideColorBuffer();
+    bool isColorOverride = mApplication.getModelView().isColorOverride();
+    assert(!isColorOverride || overrideColorBuffer.size() == positions.size());
+
     const std::vector<glm::vec3>& normals = mApplication.getCurrentGeometry()->getNormalBuffer();
 
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::POSITION, 3),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::NORMAL, 3),
+        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::COLOR, 4),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::CUSTOM_0, 1)};  // color index
 
     // Create elementary buffer of indices
@@ -176,12 +181,14 @@ void ModelView::drawGeometry() {
     // Assign the buffers to the attributes
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, normals);
+    myVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, overrideColorBuffer);
     myVboMesh->bufferAttrib<Geometry::ColorIndex>(ci::geom::Attrib::CUSTOM_0, colors);
 
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
     mModelShader->uniform("uColorPalette", &colorMap[0], static_cast<int>(colorMap.size()));
     mModelShader->uniform("uShowWireframe", mIsWireframeEnabled);
+    mModelShader->uniform("uOverridePalette", isColorOverride);
 
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
