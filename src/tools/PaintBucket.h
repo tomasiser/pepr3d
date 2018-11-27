@@ -38,6 +38,7 @@ class PaintBucket : public ITool {
     bool mDoNotStop = false;
     bool mShouldPaintWhileDrag = true;
     bool mDragging = false;
+    bool mGeometryCorrect = true;
     NormalAngleCompare mNormalCompare = NormalAngleCompare::NEIGHBOURS;
 
     struct DoNotStop {

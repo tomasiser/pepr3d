@@ -5,7 +5,7 @@
 namespace pepr3d {
 
 void PaintBucket::drawToSidePane(SidePane &sidePane) {
-    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mGeometryCorrect == false) {
         sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
         return;
     }
@@ -33,7 +33,7 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
 }
 
 void PaintBucket::drawToModelView(ModelView &modelView) {
-    if(mHoveredTriangleId && mApplication.getCurrentGeometry()->polyhedronValid()) {
+    if(mHoveredTriangleId && mGeometryCorrect) {
         modelView.drawTriangleHighlight(*mHoveredTriangleId);
     }
 }
@@ -49,7 +49,7 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     if(geometry == nullptr) {
         return;
     }
-    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mGeometryCorrect == false) {
         return;
     }
 
@@ -100,6 +100,9 @@ void PaintBucket::onModelViewMouseDrag(class ModelView &modelView, ci::app::Mous
 }
 
 void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent event) {
+    if(!mGeometryCorrect) {
+        return;
+    }
     const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(event.getPos());
     auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
@@ -110,6 +113,7 @@ void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent
 }
 
 void PaintBucket::onNewGeometryLoaded(ModelView &modelView) {
+    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
     mHoveredTriangleId = {};
 }
 

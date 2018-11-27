@@ -7,7 +7,7 @@
 namespace pepr3d {
 
 void Segmentation::drawToSidePane(SidePane& sidePane) {
-    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mGeometryCorrect == false) {
         sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
         return;
     }
@@ -104,7 +104,7 @@ void Segmentation::cancel() {
 }
 
 void Segmentation::onToolDeselect(ModelView& modelView) {
-    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mGeometryCorrect == false) {
         return;
     }
     cancel();
@@ -121,7 +121,7 @@ void Segmentation::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEven
 }
 
 void Segmentation::drawToModelView(ModelView& modelView) {
-    if(mHoveredTriangleId && mPickState && mApplication.getCurrentGeometry()->polyhedronValid()) {
+    if(mHoveredTriangleId && mPickState && mGeometryCorrect) {
         modelView.drawTriangleHighlight(*mHoveredTriangleId);
     }
 }
@@ -136,7 +136,7 @@ void Segmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEven
     if(!mPickState) {
         return;
     }
-    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    if(mGeometryCorrect == false) {
         return;
     }
 
@@ -240,7 +240,8 @@ void Segmentation::setSegmentColor(const size_t segmentId, const glm::vec4 newCo
 
 void Segmentation::onNewGeometryLoaded(ModelView& modelView) {
     mHoveredTriangleId = {};
-    if(mApplication.getCurrentGeometry()->polyhedronValid() == false) {
+    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
+    if(mGeometryCorrect == false) {
         return;
     }
     CI_LOG_I("Model changed, segmentation reset");

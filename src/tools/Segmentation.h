@@ -39,6 +39,7 @@ class Segmentation : public ITool {
     float mSmoothingLambda = 0.3f;
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
+    bool mGeometryCorrect = true;
 
     std::vector<size_t> mNewColors;
     std::vector<glm::vec4> mSegmentationColors;
