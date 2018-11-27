@@ -60,4 +60,8 @@ void TrianglePainter::onModelViewMouseMove(ModelView& modelView, ci::app::MouseE
     mHoveredTriangleId = geometry->intersectMesh(mLastRay);
 }
 
+void TrianglePainter::onNewGeometryLoaded(ModelView& modelView) {
+    mHoveredTriangleId = {};
+}
+
 }  // namespace pepr3d

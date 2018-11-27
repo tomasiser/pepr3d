@@ -114,7 +114,7 @@ class ModelImporter {
                 indices.push_back(
                     {mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
             } else {
-                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from index buffer.");
+                CI_LOG_W("Imported a triangle with zero surface area. Ommiting it from index buffer.");
             }
         }
 
@@ -291,7 +291,7 @@ class ModelImporter {
                 /// Place the constructed triangle
                 triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
             } else {
-                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from geometry data.");
+                CI_LOG_W("Imported a triangle with zero surface area. Ommiting it from geometry data.");
             }
         }
         return triangles;
