@@ -202,7 +202,7 @@ void MainApplication::showImportDialog() {
             initialPath = getDocumentsDirectory();
         }
 
-        std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
+        const std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
         auto path = getOpenFilePath(initialPath, extensions);
 
         if(!path.empty()) {
@@ -293,7 +293,7 @@ void MainApplication::drawExportDialog() {
         ImGui::Separator();
         ImGui::Spacing();
 
-        bool shouldClose = ImGui::Button("Cancel", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
+        const bool shouldClose = ImGui::Button("Cancel", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
         ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
                                             (ImColor)ci::ColorA::hex(0xEDEDED));
 
