@@ -95,6 +95,7 @@ class MainApplication : public App {
     void setCurrentToolIterator(ToolsVector::iterator tool) {
         assert(mTools.size() > 0);
         assert(tool != mTools.end());
+        (*mCurrentToolIterator)->onToolDeselect(mModelView);
         mCurrentToolIterator = tool;
     }
 

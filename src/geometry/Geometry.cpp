@@ -196,62 +196,143 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
 
 void Geometry::buildPolyhedron() {
     mProgress->polyhedronPercentage = 0.0f;
-    PolyhedronBuilder<HalfedgeDS> triangle(mPolyhedronData.indices, mPolyhedronData.vertices);
-    mPolyhedronData.P.clear();
-    try {
-        mPolyhedronData.P.delegate(triangle);
-        mPolyhedronData.faceHandles = triangle.getFacetArray();
-    } catch(CGAL::Assertion_exception* assertExcept) {
-        mPolyhedronData.P.clear();
+    mPolyhedronData.mMesh.clear();
+    mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.mIdMap);
+    mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
+    mPolyhedronData.isSdfComputed = false;
+    mPolyhedronData.valid = false;
+    mPolyhedronData.mFaceDescs.clear();
+
+    std::vector<PolyhedronData::vertex_descriptor> vertDescs;
+    vertDescs.reserve(mPolyhedronData.vertices.size());
+    mPolyhedronData.mMesh.reserve(static_cast<PolyhedronData::Mesh::size_type>(mPolyhedronData.vertices.size()),
+                                  static_cast<PolyhedronData::Mesh::size_type>(mPolyhedronData.indices.size() * 3 / 2),
+                                  static_cast<PolyhedronData::Mesh::size_type>(mPolyhedronData.indices.size()));
+
+    for(const auto& vertex : mPolyhedronData.vertices) {
+        PolyhedronData::vertex_descriptor v =
+            mPolyhedronData.mMesh.add_vertex(DataTriangle::Point(vertex.x, vertex.y, vertex.z));
+        vertDescs.push_back(v);
+    }
+
+    mPolyhedronData.mFaceDescs.reserve(mPolyhedronData.indices.size());
+    bool meshHasNull = false;
+    for(const auto& tri : mPolyhedronData.indices) {
+        auto f = mPolyhedronData.mMesh.add_face(vertDescs[tri[0]], vertDescs[tri[1]], vertDescs[tri[2]]);
+        if(f == PolyhedronData::Mesh::null_face()) {
+            // Adding a non-valid face, the model is wrong and we stop.
+            meshHasNull = true;
+            break;
+        } else {
+            assert(f != PolyhedronData::Mesh::null_face());
+            mPolyhedronData.mFaceDescs.push_back(f);
+        }
+    }
+    // If the build failed, clear, set invalid and exit;
+    if(meshHasNull) {
+        mPolyhedronData.mMesh.clear();
+        mPolyhedronData.valid = false;
         mProgress->polyhedronPercentage = -1.0f;
-        CI_LOG_E("Polyhedron not loaded. " + assertExcept->message());
         return;
     }
 
-    // The exception does not get thrown in Release
-    if(!mPolyhedronData.P.is_valid() || mPolyhedronData.P.is_empty()) {
-        mPolyhedronData.P.clear();
-        mProgress->polyhedronPercentage = -1.0f;
-        CI_LOG_E("Polyhedron loaded empty or invalid.");
-        return;
+    bool created;
+    boost::tie(mPolyhedronData.mIdMap, created) =
+        mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, size_t>(
+            "f:idOfEachTriangle", std::numeric_limits<size_t>::max() - 1);
+    assert(created);
+
+    // Add the IDs
+    size_t i = 0;
+    for(const PolyhedronData::face_descriptor& face : mPolyhedronData.mFaceDescs) {
+        mPolyhedronData.mIdMap[face] = i;
+        ++i;
     }
-
-    assert(mPolyhedronData.P.size_of_facets() == mPolyhedronData.indices.size());
-    assert(mPolyhedronData.P.size_of_vertices() == mPolyhedronData.vertices.size());
-
-    // Use the facetsCreated from the incremental builder, set the ids linearly
-    for(size_t facetId = 0; facetId < mPolyhedronData.faceHandles.size(); ++facetId) {
-        mPolyhedronData.faceHandles[facetId]->id() = facetId;
-    }
-
-    mPolyhedronData.closeCheck = mPolyhedronData.P.is_closed();
+    CI_LOG_I("Polyhedral mesh built, vertices: " + std::to_string(mPolyhedronData.vertices.size()) +
+             ", faces: " + std::to_string(mPolyhedronData.indices.size()));
+    mPolyhedronData.valid = true;
     mProgress->polyhedronPercentage = 1.0f;
 }
 
-std::array<int, 3> Geometry::gatherNeighbours(
-    const size_t triIndex,
-    const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const {
-    assert(triIndex < faceHandles.size());
-    const Polyhedron::Facet_iterator& facet = faceHandles[triIndex];
+std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
+    const auto& faceDescriptors = mPolyhedronData.mFaceDescs;
+    const auto& mesh = mPolyhedronData.mMesh;
+    assert(triIndex < faceDescriptors.size());
     std::array<int, 3> returnValue = {-1, -1, -1};
-    assert(facet->is_triangle());
-
-    const auto edgeIteratorStart = facet->facet_begin();
-    auto edgeIter = edgeIteratorStart;
+    const PolyhedronData::face_descriptor face = faceDescriptors[triIndex];
+    const auto edge = mesh.halfedge(face);
+    auto itEdge = edge;
 
     for(int i = 0; i < 3; ++i) {
-        const auto eFace = edgeIter->facet();
-        if(edgeIter->opposite()->facet() != nullptr) {
-            const size_t triId = edgeIter->opposite()->facet()->id();
-            // Asserting in int, because int is the return value
-            assert(static_cast<int>(triId) < static_cast<int>(mTriangles.size()));
-            returnValue[i] = static_cast<int>(triId);
+        const auto oppositeEdge = mesh.opposite(itEdge);
+        if(oppositeEdge.is_valid() && !mesh.is_border(oppositeEdge)) {
+            const PolyhedronData::Mesh::Face_index neighbourFace = mesh.face(oppositeEdge);
+            const size_t neighbourFaceId = mPolyhedronData.mIdMap[neighbourFace];
+            assert(neighbourFaceId < mTriangles.size());
+            returnValue[i] = static_cast<int>(neighbourFaceId);
         }
-        ++edgeIter;
+
+        itEdge = mesh.next(itEdge);
     }
-    assert(edgeIter == edgeIteratorStart);
+    assert(edge == itEdge);
 
     return returnValue;
+}
+
+void Geometry::computeSdf() {
+    mPolyhedronData.isSdfComputed = false;
+    mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
+    bool created;
+    boost::tie(mPolyhedronData.sdf_property_map, created) =
+        mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, double>("f:sdf");
+    assert(created);
+
+    CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true);
+    mPolyhedronData.isSdfComputed = true;
+    CI_LOG_I("SDF values computed.");
+}
+
+size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda,
+                         std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
+                         std::unordered_map<size_t, size_t>& triangleToSegmentMap) {
+    if(!mPolyhedronData.isSdfComputed) {
+        return 0;
+    }
+    bool created;
+    PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, std::size_t> segment_property_map;
+    boost::tie(segment_property_map, created) =
+        mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, std::size_t>("f:sid");
+    assert(created);
+
+    const std::size_t numberOfSegments =
+        CGAL::segmentation_from_sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map,
+                                           segment_property_map, numberOfClusters, smoothingLambda);
+
+    if(numberOfSegments > PEPR3D_MAX_PALETTE_COLORS) {
+        mPolyhedronData.mMesh.remove_property_map(segment_property_map);
+        return 0;
+    }
+
+    for(size_t seg = 0; seg < numberOfSegments; ++seg) {
+        segmentToTriangleIds.insert({seg, {}});
+    }
+
+    // Assign the colors to the triangles
+    for(const auto& face : mPolyhedronData.mFaceDescs) {
+        const size_t id = mPolyhedronData.mIdMap[face];
+        const size_t color = segment_property_map[face];
+        assert(id < mTriangles.size());
+        assert(color < numberOfSegments);
+        triangleToSegmentMap.insert({id, color});
+        segmentToTriangleIds[color].push_back(id);
+    }
+
+    CI_LOG_I("Segmentation finished. Number of segments: " + std::to_string(numberOfSegments));
+
+    // End, clean up
+    mPolyhedronData.mMesh.remove_property_map(segment_property_map);
+
+    return numberOfSegments;
 }
 
 }  // namespace pepr3d

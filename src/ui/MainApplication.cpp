@@ -61,7 +61,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<PaintBucket>(*this));
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
-    mTools.emplace_back(make_unique<Segmentation>());
+    mTools.emplace_back(make_unique<Segmentation>(*this));
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>());
     mTools.emplace_back(make_unique<Information>());
@@ -120,6 +120,10 @@ void MainApplication::openFile(const std::string& path) {
             mProgressIndicator.setGeometryInProgress(nullptr);
         });
     });
+
+    for(auto& tool : mTools) {
+        tool->onNewGeometryLoaded(mModelView);
+    }
 }
 
 void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {

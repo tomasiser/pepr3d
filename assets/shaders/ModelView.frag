@@ -1,15 +1,17 @@
 #version 150
 
-#define PEPR3D_MAX_PALETTE_COLORS 8
+#define PEPR3D_MAX_PALETTE_COLORS 16
 
 in vec3 Normal;
 in vec3 BarycentricCoordinates;
+in vec4 Color;
 flat in uint ColorIndex;
 
 out vec4 oColor;
 
 uniform vec4 uColorPalette[PEPR3D_MAX_PALETTE_COLORS];
 uniform bool uShowWireframe;
+uniform bool uOverridePalette;
 
 // From Florian Boesch post on barycentric coordinates
 // http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
@@ -35,9 +37,9 @@ void main() {
     float ambient = 0.2;
     float lightIntensity = lambert + ambient;
 
-    vec3 materialColor = uColorPalette[ColorIndex].rgb;
+    vec3 materialColor = uOverridePalette ? Color.rgb : uColorPalette[ColorIndex].rgb;
     vec3 wireframeColor = uShowWireframe ? getWireframeColor(materialColor) : materialColor;
     vec3 triangleColor = wireframe(materialColor, wireframeColor, 1.0);
 
-    oColor = vec4(vec3(lightIntensity * triangleColor), 1.0);
+    oColor = vec4(vec3(lightIntensity * triangleColor), uOverridePalette ? Color.a : 1.0);
 }

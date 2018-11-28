@@ -63,6 +63,18 @@ class ModelView {
 
     void resetCamera();
 
+    void setColorOverride(bool val) {
+        mColorOverride.isOverriden = val;
+    }
+
+    bool isColorOverride() const {
+        return mColorOverride.isOverriden;
+    }
+
+    std::vector<glm::vec4>& getOverrideColorBuffer() {
+        return mColorOverride.overrideColorBuffer;
+    }
+
    private:
     MainApplication& mApplication;
     std::pair<glm::ivec2, glm::ivec2> mViewport;
@@ -74,6 +86,12 @@ class ModelView {
     glm::mat4 mModelMatrix;
     float mModelRoll = 0.0f;
     glm::vec3 mModelTranslate = glm::vec3(0);
+
+    struct ColorOverrideData {
+        bool isOverriden = false;
+        std::vector<glm::vec4> overrideColorBuffer;
+    } mColorOverride;
+
     void updateModelMatrix();
 };
 
