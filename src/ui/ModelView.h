@@ -83,6 +83,7 @@ class ModelView {
     ci::gl::GlslProgRef mModelShader;
     bool mIsWireframeEnabled = false;
     bool mIsGridEnabled = true;
+    float mGridOffset = 0.0f;
     glm::mat4 mModelMatrix;
     float mModelRoll = 0.0f;
     glm::vec3 mModelTranslate = glm::vec3(0);
