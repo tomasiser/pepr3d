@@ -100,36 +100,11 @@ void Toolbar::drawFileDropDown() {
             // ImGui::Button("Save as", glm::ivec2(175, 50));
             if(ImGui::Button("Import", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.dispatchAsync([&]() {
-                    std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
-
-                    auto path = mApplication.getOpenFilePath(getDocumentsDirectory(), extensions);
-
-                    if(!path.empty()) {
-                        mApplication.openFile(path.string());
-                    }
-                });
+                mApplication.showImportDialog();
             }
             if(ImGui::Button("Export", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.dispatchAsync([&]() {
-                    std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
-
-                    auto path = mApplication.getSaveFilePath(getDocumentsDirectory().append("untitled"), extensions);
-
-                    if(!path.empty() && !path.extension().empty()) {
-                        std::string fileName =
-                            path.filename().string().substr(0, path.filename().string().find_last_of("."));
-                        std::string filePath = path.parent_path().string() + std::string("/") + std::string(fileName);
-
-                        if(!fs::is_directory(filePath) || !fs::exists(filePath)) {  // check if folder exists
-                            fs::create_directory(filePath);
-                        }
-                        std::string fileType = path.extension().string().substr(1);
-
-                        mApplication.saveFile(filePath, fileName, fileType);
-                    }
-                });
+                mApplication.showExportDialog();
             }
             if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
                 mApplication.quit();

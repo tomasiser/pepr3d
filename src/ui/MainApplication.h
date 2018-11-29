@@ -107,8 +107,15 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
+    void showImportDialog();
+
+    void showExportDialog() {
+        mShowExportDialog = true;
+    }
+
    private:
     void setupIcon();
+    void drawExportDialog();
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
@@ -121,6 +128,8 @@ class MainApplication : public App {
     ModelView mModelView;
     ProgressIndicator mProgressIndicator;
     bool mShowDemoWindow = false;
+    bool mShowExportDialog = false;
+    bool mShouldExportInNewFolder = false;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
