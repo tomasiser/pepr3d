@@ -109,21 +109,30 @@ void MainApplication::openFile(const std::string& path) {
 
     std::shared_ptr<Geometry> geometry = mGeometryInProgress = std::make_shared<Geometry>();
     mProgressIndicator.setGeometryInProgress(geometry);
+
+    // Queue the loading of the new geometry
     mThreadPool.enqueue([geometry, path, this]() {
+        // Load the geometry
         geometry->loadNewGeometry(path, mThreadPool);
-        dispatchAsync([path, this]() {
+
+        // Lambda that will be called once the loading finishes.
+        // Put all updates to saved states here.
+        auto onLoadingComplete = [path, this]() {
             mGeometry = mGeometryInProgress;
             mGeometryInProgress = nullptr;
             mGeometryFileName = path;
             mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
             getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
             mProgressIndicator.setGeometryInProgress(nullptr);
-        });
-    });
+            for(auto& tool : mTools) {
+                tool->onNewGeometryLoaded(mModelView);
+            }
+        };
 
-    for(auto& tool : mTools) {
-        tool->onNewGeometryLoaded(mModelView);
-    }
+        // Call the lambda to swap the geometry and command manager pointers, etc.
+        // onLoadingComplete Gets called at the beginning of the next draw() cycle.
+        dispatchAsync(onLoadingComplete);
+    });
 }
 
 void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {
