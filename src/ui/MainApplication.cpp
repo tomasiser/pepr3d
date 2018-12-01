@@ -107,6 +107,8 @@ void MainApplication::openFile(const std::string& path) {
         return;  // disallow loading new geometry while another is already being loaded
     }
 
+    resetError();
+
     std::shared_ptr<Geometry> geometry = mGeometryInProgress = std::make_shared<Geometry>();
     mProgressIndicator.setGeometryInProgress(geometry);
 
@@ -118,6 +120,50 @@ void MainApplication::openFile(const std::string& path) {
         // Lambda that will be called once the loading finishes.
         // Put all updates to saved states here.
         auto onLoadingComplete = [path, this]() {
+            const GeometryProgress& progress = mGeometryInProgress->getProgress();
+
+            if(progress.importRenderPercentage < 1.0f || progress.importComputePercentage < 1.0f) {
+                const std::string errorCaption = "Failed to import geometry data";
+                const std::string errorDescription =
+                    "You tried to import a file which did not contain correct geometry data that could be loaded in "
+                    "Pepr3D via the Assimp library. The supported files are valid .obj, .stl, and .ply.\n\nThe "
+                    "provided file could not be imported.";
+                setError(errorCaption, errorDescription);
+                mGeometryInProgress = nullptr;
+                mProgressIndicator.setGeometryInProgress(nullptr);
+                return;
+            }
+
+            if(progress.buffersPercentage < 1.0f) {
+                const std::string errorCaption = "Failed to generate buffers";
+                const std::string errorDescription =
+                    "The imported geometry contains problems. An error has occured while generating vertex, index, "
+                    "color, and normal buffers for rendering the geometry.\n\nThe provided file could not be imported.";
+                setError(errorCaption, errorDescription);
+                mGeometryInProgress = nullptr;
+                mProgressIndicator.setGeometryInProgress(nullptr);
+                return;
+            }
+
+            if(progress.aabbTreePercentage < 1.0f) {
+                const std::string errorCaption = "Failed to build an AABB tree";
+                const std::string errorDescription =
+                    "The imported geometry contains problems. An AABB tree could not be built using the data via the "
+                    "CGAL library.\n\nThe provided file could not be imported.";
+                setError(errorCaption, errorDescription);
+                mGeometryInProgress = nullptr;
+                mProgressIndicator.setGeometryInProgress(nullptr);
+                return;
+            }
+
+            if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
+                const std::string errorCaption = "Failed to build a polyhedron";
+                const std::string errorDescription =
+                    "The imported geometry contains problems. We could not build a valid polyhedron data structure via "
+                    "the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled.";
+                setError(errorCaption, errorDescription);
+            }
+
             mGeometry = mGeometryInProgress;
             mGeometryInProgress = nullptr;
             mGeometryFileName = path;
@@ -148,6 +194,11 @@ void MainApplication::saveFile(const std::string& filePath, const std::string& f
 }
 
 void MainApplication::update() {
+    // verify that a selected tool is enabled, otherwise select Triangle Painter, which is always enabled:
+    if(!(*mCurrentToolIterator)->isEnabled()) {
+        mCurrentToolIterator = mTools.begin();
+    }
+
 #if defined(CINDER_MSW_DESKTOP)
     // on Microsoft Windows, when window is not focused, periodically check
     // if it is obscured (not visible) every 2 seconds
@@ -180,6 +231,10 @@ void MainApplication::draw() {
 
     if(mShowExportDialog) {
         drawExportDialog();
+    }
+
+    if(!mErrorCaption.empty()) {
+        drawErrorDialog();
     }
 
     // if(mGeometryInProgress != nullptr) {
@@ -356,6 +411,68 @@ void MainApplication::drawExportDialog() {
                     saveFile(filePath, fileName, fileType);
                 }
             });
+        }
+
+        ImGui::EndPopup();
+    }
+    ImGui::PopStyleVar(2);
+    ImGui::PopStyleColor(7);
+}
+
+void MainApplication::drawErrorDialog() {
+    if(!ImGui::IsPopupOpen("##errordialog")) {
+        ImGui::OpenPopup("##errordialog");
+    }
+    ImGuiWindowFlags window_flags = 0;
+    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    window_flags |= ImGuiWindowFlags_NoScrollbar;
+    window_flags |= ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoResize;
+    window_flags |= ImGuiWindowFlags_NoCollapse;
+    window_flags |= ImGuiWindowFlags_NoNav;
+    const ImGuiIO& io = ImGui::GetIO();
+    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x / 2.0f, io.DisplaySize.y / 2.0f), ImGuiCond_Always,
+                            ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowSize(ImVec2(400.0f, -1.0f));
+    ImGui::SetNextWindowBgAlpha(1.0f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
+    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
+    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+    if(ImGui::BeginPopupModal("##errordialog", nullptr, window_flags)) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xEB5757));
+        ImGui::TextWrapped(mErrorCaption.c_str());
+        ImGui::PopStyleColor();
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        ImGui::TextWrapped(mErrorDescription.c_str());
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        // ImGui::TextWrapped(
+        //     "https://github.com/tomasiser/pepr3d/wiki/Error-messages");
+
+        // ImGui::Spacing();
+        // ImGui::Separator();
+        // ImGui::Spacing();
+
+        const bool shouldClose = ImGui::Button("Continue", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
+        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+                                            (ImColor)ci::ColorA::hex(0xEDEDED));
+
+        if(shouldClose) {
+            resetError();
+            ImGui::CloseCurrentPopup();
         }
 
         ImGui::EndPopup();

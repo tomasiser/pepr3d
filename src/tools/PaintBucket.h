@@ -20,6 +20,10 @@ class PaintBucket : public ITool {
         return ICON_MD_FORMAT_COLOR_FILL;
     }
 
+    virtual bool isEnabled() const override {
+        return mGeometryCorrect;
+    }
+
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;

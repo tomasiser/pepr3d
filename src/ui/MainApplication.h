@@ -113,9 +113,15 @@ class MainApplication : public App {
         mShowExportDialog = true;
     }
 
+    void setError(const std::string& caption, const std::string& description = "") {
+        mErrorCaption = caption;
+        mErrorDescription = description;
+    }
+
    private:
     void setupIcon();
     void drawExportDialog();
+    void drawErrorDialog();
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
@@ -130,6 +136,13 @@ class MainApplication : public App {
     bool mShowDemoWindow = false;
     bool mShowExportDialog = false;
     bool mShouldExportInNewFolder = false;
+
+    std::string mErrorCaption;
+    std::string mErrorDescription;
+    void resetError() {
+        mErrorCaption = "";
+        mErrorDescription = "";
+    }
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;

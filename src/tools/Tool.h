@@ -14,6 +14,10 @@ class ITool {
 
     virtual std::string getName() const = 0;
     virtual std::string getIcon() const = 0;
+    virtual bool isEnabled() const {
+        return true;
+    };
+
     virtual void drawToSidePane(SidePane& sidePane){};
     virtual void drawToModelView(ModelView& modelView){};
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event){};
