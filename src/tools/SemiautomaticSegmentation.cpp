@@ -1,21 +1,114 @@
 #include "tools/SemiautomaticSegmentation.h"
+#include "commands/CmdPaintSingleColor.h"
 
 namespace pepr3d {
 
 void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
-    sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
-    sidePane.drawSeparator();
+    Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
 
-    if(!mStartingTriangles.empty()) {
-        for(const auto& colorTris : mStartingTriangles) {
-            sidePane.drawText("Tri: " + std::to_string(colorTris.first) +
-                              " color: " + std::to_string(colorTris.second));
+    const bool isSdfComputed = currentGeometry->isSdfComputed();
+    if(!isSdfComputed) {
+        sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
+        if(sidePane.drawButton("Compute SDF")) {
+            currentGeometry->preSegmentation();
         }
+    } else {
+        sidePane.drawColorPalette(currentGeometry->getColorManager());
+        sidePane.drawSeparator();
 
-        if(sidePane.drawButton("Cancel")) {
-            reset();
+        if(mStartingTriangles.empty()) {
+            sidePane.drawText("Draw with several colors to\nenable segmentation.");
+        } else {
+            sidePane.drawFloatDragger("Spread", mBucketSpread, .01f, 0.0f, 1.f, "%.02f", 70.f);
+
+            // Update only if the bucket setting changed and we should re-fill
+            if(mBucketSpread != mBucketSpreadLatest) {
+                spreadColors();
+            }
+
+            if(sidePane.drawButton("Apply")) {
+                CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
+
+                for(auto& toPaint : mCurrentColoring) {
+                    commandManager->execute(
+                        std::make_unique<CmdPaintSingleColor>(std::move(toPaint.second), toPaint.first), false);
+                }
+                reset();
+            }
+
+            if(sidePane.drawButton("Cancel")) {
+                reset();
+            }
         }
     }
+}
+
+void SemiautomaticSegmentation::spreadColors() {
+    Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    mCurrentColoring.clear();
+    mBucketSpreadLatest = mBucketSpread;
+    auto& overrideBuffer = mApplication.getModelView().getOverrideColorBuffer();
+    overrideBuffer = mBackupColorBuffer;
+
+    // Collect all triangles of each color
+    const std::unordered_map<std::size_t, std::vector<std::size_t>> trianglesByColor = collectTrianglesByColor();
+
+    ///// Normal stopping init, uncomment in case we want to include it as a feature
+    // const Geometry* const p = const_cast<const Geometry*>(currentGeometry);
+    // const double angleRads = (1 - mBucketSpread) * 180.f * glm::pi<double>() / 180.0;
+    // NormalStopping stoppingFtor(p, angleRads);
+
+    // Bucket spread all the colors
+    for(const auto& colorTriangles : trianglesByColor) {
+        const size_t currentColor = colorTriangles.first;
+        const std::vector<size_t>& startingTriangles = colorTriangles.second;
+        if(startingTriangles.empty()) {
+            continue;
+        }
+
+        std::vector<double> initialValues;
+        initialValues.reserve(startingTriangles.size());
+        for(size_t startI : startingTriangles) {
+            initialValues.push_back(currentGeometry->getSdfValue(startI));
+        }
+
+        SDFStopping SDFStopping(currentGeometry, initialValues, mBucketSpread);
+        const std::vector<size_t> ret = currentGeometry->bucket(startingTriangles, SDFStopping);
+
+        // Remember the coloring
+        mCurrentColoring.insert({currentColor, ret});
+
+        // Render it
+        if(mApplication.getModelView().isColorOverride()) {
+            for(const size_t tri : ret) {
+                const auto rgbTriangleColor = currentGeometry->getColorManager().getColor(currentColor);
+                overrideBuffer[3 * tri] = rgbTriangleColor;
+                overrideBuffer[3 * tri + 1] = rgbTriangleColor;
+                overrideBuffer[3 * tri + 2] = rgbTriangleColor;
+            }
+        }
+    }
+}
+
+std::unordered_map<std::size_t, std::vector<std::size_t>> SemiautomaticSegmentation::collectTrianglesByColor() {
+    std::unordered_map<std::size_t, std::vector<std::size_t>> result;
+    const Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+
+    for(size_t i = 0; i < currentGeometry->getColorManager().size(); ++i) {
+        result.insert({i, {}});
+    }
+
+    for(const auto& colorTris : mStartingTriangles) {
+        const size_t triangleIndex = colorTris.first;
+        const size_t triangleColor = colorTris.second;
+
+        auto sameColorTriangles = result.find(triangleColor);
+        assert(sameColorTriangles != result.end());
+        sameColorTriangles->second.push_back(triangleIndex);
+    }
+
+    return result;
 }
 
 void SemiautomaticSegmentation::drawToModelView(ModelView& modelView) {
@@ -45,6 +138,7 @@ void SemiautomaticSegmentation::setupOverride() {
         newOverrideBuffer[3 * triIndex + 2] = rgbTriangleColor;
     }
 
+    mBackupColorBuffer = newOverrideBuffer;
     mApplication.getModelView().getOverrideColorBuffer() = newOverrideBuffer;
     mApplication.getModelView().setColorOverride(true);
 }
@@ -70,8 +164,19 @@ void SemiautomaticSegmentation::setTriangleColor() {
             overrideBuffer[3 * triIndex] = rgbTriangleColor;
             overrideBuffer[3 * triIndex + 1] = rgbTriangleColor;
             overrideBuffer[3 * triIndex + 2] = rgbTriangleColor;
+            mBackupColorBuffer[3 * triIndex] = rgbTriangleColor;
+            mBackupColorBuffer[3 * triIndex + 1] = rgbTriangleColor;
+            mBackupColorBuffer[3 * triIndex + 2] = rgbTriangleColor;
         }
     }
+}
+
+void SemiautomaticSegmentation::onToolDeselect(ModelView& modelView) {
+    reset();
+}
+
+void SemiautomaticSegmentation::onNewGeometryLoaded(ModelView& modelView) {
+    reset();
 }
 
 void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
@@ -112,8 +217,16 @@ void SemiautomaticSegmentation::onModelViewMouseMove(ModelView& modelView, ci::a
 }
 
 void SemiautomaticSegmentation::reset() {
+    mBucketSpread = 0.0f;
+    mBucketSpreadLatest = 0.0f;
+    mNormalStop = false;
+
     mHoveredTriangleId = {};
     mStartingTriangles.clear();
+    mBackupColorBuffer.clear();
+
+    mApplication.getModelView().getOverrideColorBuffer().clear();
+    mApplication.getModelView().setColorOverride(false);
 }
 
 }  // namespace pepr3d
