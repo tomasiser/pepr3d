@@ -137,8 +137,9 @@ void MainApplication::openFile(const std::string& path) {
             if(progress.buffersPercentage < 1.0f) {
                 const std::string errorCaption = "Failed to generate buffers";
                 const std::string errorDescription =
-                    "The imported geometry contains problems. An error has occured while generating vertex, index, "
-                    "color, and normal buffers for rendering the geometry.\n\nThe provided file could not be imported.";
+                    "Problems were found in the imported geometry. An error has occured while generating vertex, "
+                    "index, color, and normal buffers for rendering the geometry.\n\nThe provided file could not be "
+                    "imported.";
                 setError(errorCaption, errorDescription);
                 mGeometryInProgress = nullptr;
                 mProgressIndicator.setGeometryInProgress(nullptr);
@@ -148,8 +149,8 @@ void MainApplication::openFile(const std::string& path) {
             if(progress.aabbTreePercentage < 1.0f) {
                 const std::string errorCaption = "Failed to build an AABB tree";
                 const std::string errorDescription =
-                    "The imported geometry contains problems. An AABB tree could not be built using the data via the "
-                    "CGAL library.\n\nThe provided file could not be imported.";
+                    "Problems were found in the imported geometry. An AABB tree could not be built using the data "
+                    "using the CGAL library.\n\nThe provided file could not be imported.";
                 setError(errorCaption, errorDescription);
                 mGeometryInProgress = nullptr;
                 mProgressIndicator.setGeometryInProgress(nullptr);
@@ -159,8 +160,9 @@ void MainApplication::openFile(const std::string& path) {
             if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
                 const std::string errorCaption = "Failed to build a polyhedron";
                 const std::string errorDescription =
-                    "The imported geometry contains problems. We could not build a valid polyhedron data structure via "
-                    "the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled.";
+                    "Problems were found in the imported geometry. We could not build a valid polyhedron data "
+                    "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
+                    "You can still edit the imported model with the remaining tools.";
                 setError(errorCaption, errorDescription);
             }
 
@@ -313,6 +315,7 @@ void MainApplication::drawExportDialog() {
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
     if(ImGui::BeginPopupModal("##exportdialog", nullptr, window_flags)) {
         ImGui::Text("Exporting geometry");
         ImGui::Spacing();
@@ -415,7 +418,7 @@ void MainApplication::drawExportDialog() {
 
         ImGui::EndPopup();
     }
-    ImGui::PopStyleVar(2);
+    ImGui::PopStyleVar(3);
     ImGui::PopStyleColor(7);
 }
 
@@ -444,6 +447,7 @@ void MainApplication::drawErrorDialog() {
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
     if(ImGui::BeginPopupModal("##errordialog", nullptr, window_flags)) {
         ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xEB5757));
         ImGui::TextWrapped(mErrorCaption.c_str());
@@ -477,7 +481,7 @@ void MainApplication::drawErrorDialog() {
 
         ImGui::EndPopup();
     }
-    ImGui::PopStyleVar(2);
+    ImGui::PopStyleVar(3);
     ImGui::PopStyleColor(7);
 }
 
