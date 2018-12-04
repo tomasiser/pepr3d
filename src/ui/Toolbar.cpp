@@ -141,7 +141,9 @@ void Toolbar::drawToolButtons() {
     std::size_t index = 0;
     for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit, ++index) {
         ImGui::SameLine(0.0f, 0.0f);
+        glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
         drawToolButton(toolit);
+        mApplication.drawTooltipOnHover((*toolit)->getName(), "", (*toolit)->getDescription(), "", buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
         if(index == 4 || index == 7) {
             ImGui::SameLine(0.0f, 0.0f);
             drawSeparator();

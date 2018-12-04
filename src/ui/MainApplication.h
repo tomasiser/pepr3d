@@ -119,6 +119,10 @@ class MainApplication : public App {
         mErrorDescription = description;
     }
 
+    void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
+                            const std::string& description = "", const std::string& disabled = "",
+                            glm::vec2 position = glm::vec2(-1.0f), glm::vec2 pivot = glm::vec2(0.0f));
+
    private:
     void setupIcon();
     void drawExportDialog();

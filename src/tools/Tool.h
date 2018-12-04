@@ -13,6 +13,9 @@ class ITool {
     virtual ~ITool() = default;
 
     virtual std::string getName() const = 0;
+    virtual std::string getDescription() const {
+        return "";
+    }
     virtual std::string getIcon() const = 0;
     virtual bool isEnabled() const {
         return true;

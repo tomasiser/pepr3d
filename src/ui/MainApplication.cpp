@@ -485,6 +485,44 @@ void MainApplication::drawErrorDialog() {
     ImGui::PopStyleColor(7);
 }
 
+void MainApplication::drawTooltipOnHover(const std::string& label, const std::string& shortcut,
+                                         const std::string& description, const std::string& disabled,
+                                         glm::vec2 position, glm::vec2 pivot) {
+    if(ImGui::IsItemHovered()) {
+        ImGui::PushStyleColor(ImGuiCol_PopupBg, ci::ColorA::hex(0x1C2A35));
+        // ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
+        // ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
+        // ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
+        // ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
+        // ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
+
+        if(position.x > -1.0f && position.y > -1.0f) {
+            ImGui::SetNextWindowPos(position, ImGuiCond_Always, pivot);
+        }
+
+        ImGui::BeginTooltip();
+
+        ImGui::PushTextWrapPos(200.0f);
+        ImGui::TextUnformatted(label.c_str());
+        ImGui::PopTextWrapPos();
+
+        if (!description.empty()) {
+            ImGui::PushTextWrapPos(250.0f);
+            ImGui::TextUnformatted(description.c_str());
+            ImGui::PopTextWrapPos();
+        }
+
+        ImGui::EndTooltip();
+
+        ImGui::PopStyleVar(3);
+        ImGui::PopStyleColor(2);
+    }
+}
+
 void MainApplication::willResignActive() {
     setFrameRate(24.0f);
     mIsFocused = false;
