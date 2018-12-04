@@ -43,8 +43,12 @@ class SemiautomaticSegmentation : public ITool {
     void reset();
     void setupOverride();
     void setTriangleColor();
-    std::unordered_map<std::size_t, std::vector<std::size_t>> collectTrianglesByColor();
+    std::unordered_map<std::size_t, std::vector<std::size_t>> collectTrianglesByColor(
+        const std::unordered_map<std::size_t, std::size_t>& sourceTriangles);
     void spreadColors();
+    void postprocess(const std::unordered_map<std::size_t, std::vector<double>>& sdfValuesPerColor);
+    size_t findClosestColorFromSDF(const size_t triangle, const size_t color1, const size_t color2,
+                                   const std::unordered_map<std::size_t, std::vector<double>>& sdfValuesPerColor);
 
     struct NormalStopping {
         const Geometry* geo;

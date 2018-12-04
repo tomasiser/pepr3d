@@ -11,7 +11,7 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!isSdfComputed) {
         sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            currentGeometry->preSegmentation();
+            currentGeometry->computeSdfValues();
         }
     } else {
         sidePane.drawColorPalette(currentGeometry->getColorManager());
@@ -44,6 +44,82 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     }
 }
 
+size_t SemiautomaticSegmentation::findClosestColorFromSDF(
+    const size_t triangle, const size_t color1, const size_t color2,
+    const std::unordered_map<std::size_t, std::vector<double>>& sdfValuesPerColor) {
+    const Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    double triangleSdfValue = currentGeometry->getSdfValue(triangle);
+
+    auto findClosestSDFValue = [](double target, const std::vector<double>& values) -> double {
+        const auto initialSdfValue = std::lower_bound(values.begin(), values.end(), target);
+        double closest1 = -1;
+        double closest2 = -1;
+        if(initialSdfValue == values.end()) {
+            closest1 = closest2 = values.back();
+        } else {
+            closest1 = *initialSdfValue;
+            if(*initialSdfValue == values.front()) {
+                closest2 = *initialSdfValue;
+            } else {
+                closest2 = *(initialSdfValue - 1);
+            }
+        }
+        const double delta1 = abs(target - closest1);
+        const double delta2 = abs(target - closest2);
+        if(delta1 < delta2) {
+            return closest1;
+        } else {
+            return closest2;
+        }
+    };
+
+    const auto find1 = sdfValuesPerColor.find(color1);
+    const auto find2 = sdfValuesPerColor.find(color2);
+
+    if(find1 == sdfValuesPerColor.end() && find2 == sdfValuesPerColor.end()) {
+        assert(false);
+        /// \todo Throw and display error
+        return std::numeric_limits<size_t>::max();
+    } else if(find1 == sdfValuesPerColor.end()) {
+        return color2;
+    } else if(find2 == sdfValuesPerColor.end()) {
+        return color1;
+    } else {
+        const double closeToColor1 = findClosestSDFValue(triangleSdfValue, find1->second);
+        const double closeToColor2 = findClosestSDFValue(triangleSdfValue, find2->second);
+        const double delta1 = abs(triangleSdfValue - closeToColor1);
+        const double delta2 = abs(triangleSdfValue - closeToColor2);
+        if(delta1 < delta2) {
+            return color1;
+        } else {
+            return color2;
+        }
+    }
+}
+
+void SemiautomaticSegmentation::postprocess(
+    const std::unordered_map<std::size_t, std::vector<double>>& sdfValuesPerColor) {
+    std::unordered_map<std::size_t, std::size_t> triangleToColor;
+    // Go through each color, create an assignment triangle->color
+    for(const auto& oneColor : mCurrentColoring) {
+        // Go through each triangle assigned to a single color
+        for(const auto& tri : oneColor.second) {
+            auto findTri = triangleToColor.find(tri);
+            // If we did not assign this triangle before, assign it to currentColor
+            if(findTri == triangleToColor.end()) {
+                triangleToColor.insert({tri, oneColor.first});
+            } else {  // If we did assign, check the SDF values and assign it to the closest color
+                const size_t oldColor = findTri->second;
+                const size_t currentColor = oneColor.first;
+                findTri->second = findClosestColorFromSDF(tri, oldColor, currentColor, sdfValuesPerColor);
+            }
+        }
+    }
+
+    // Re-collect the triangles by colors to get the resulting
+    mCurrentColoring = collectTrianglesByColor(triangleToColor);
+}
+
 void SemiautomaticSegmentation::spreadColors() {
     Geometry* const currentGeometry = mApplication.getCurrentGeometry();
     mCurrentColoring.clear();
@@ -52,12 +128,15 @@ void SemiautomaticSegmentation::spreadColors() {
     overrideBuffer = mBackupColorBuffer;
 
     // Collect all triangles of each color
-    const std::unordered_map<std::size_t, std::vector<std::size_t>> trianglesByColor = collectTrianglesByColor();
+    const std::unordered_map<std::size_t, std::vector<std::size_t>> trianglesByColor =
+        collectTrianglesByColor(mStartingTriangles);
 
     ///// Normal stopping init, uncomment in case we want to include it as a feature
     // const Geometry* const p = const_cast<const Geometry*>(currentGeometry);
     // const double angleRads = (1 - mBucketSpread) * 180.f * glm::pi<double>() / 180.0;
     // NormalStopping stoppingFtor(p, angleRads);
+
+    std::unordered_map<std::size_t, std::vector<double>> sdfValuesPerColor;
 
     // Bucket spread all the colors
     for(const auto& colorTriangles : trianglesByColor) {
@@ -67,7 +146,10 @@ void SemiautomaticSegmentation::spreadColors() {
             continue;
         }
 
-        std::vector<double> initialValues;
+        sdfValuesPerColor.insert({currentColor, {}});
+        assert(sdfValuesPerColor.find(currentColor) != sdfValuesPerColor.end());
+        vector<double>& initialValues = sdfValuesPerColor.find(currentColor)->second;
+
         initialValues.reserve(startingTriangles.size());
         for(size_t startI : startingTriangles) {
             initialValues.push_back(currentGeometry->getSdfValue(startI));
@@ -78,11 +160,16 @@ void SemiautomaticSegmentation::spreadColors() {
 
         // Remember the coloring
         mCurrentColoring.insert({currentColor, ret});
+    }
 
-        // Render it
+    // Postprocess the newly calculated colorings
+    postprocess(sdfValuesPerColor);
+
+    // Render all new colorings
+    for(const auto& coloring : mCurrentColoring) {
         if(mApplication.getModelView().isColorOverride()) {
-            for(const size_t tri : ret) {
-                const auto rgbTriangleColor = currentGeometry->getColorManager().getColor(currentColor);
+            for(const size_t tri : coloring.second) {
+                const auto rgbTriangleColor = currentGeometry->getColorManager().getColor(coloring.first);
                 overrideBuffer[3 * tri] = rgbTriangleColor;
                 overrideBuffer[3 * tri + 1] = rgbTriangleColor;
                 overrideBuffer[3 * tri + 2] = rgbTriangleColor;
@@ -91,7 +178,8 @@ void SemiautomaticSegmentation::spreadColors() {
     }
 }
 
-std::unordered_map<std::size_t, std::vector<std::size_t>> SemiautomaticSegmentation::collectTrianglesByColor() {
+std::unordered_map<std::size_t, std::vector<std::size_t>> SemiautomaticSegmentation::collectTrianglesByColor(
+    const std::unordered_map<std::size_t, std::size_t>& sourceTriangles) {
     std::unordered_map<std::size_t, std::vector<std::size_t>> result;
     const Geometry* const currentGeometry = mApplication.getCurrentGeometry();
 
@@ -99,7 +187,7 @@ std::unordered_map<std::size_t, std::vector<std::size_t>> SemiautomaticSegmentat
         result.insert({i, {}});
     }
 
-    for(const auto& colorTris : mStartingTriangles) {
+    for(const auto& colorTris : sourceTriangles) {
         const size_t triangleIndex = colorTris.first;
         const size_t triangleColor = colorTris.second;
 
