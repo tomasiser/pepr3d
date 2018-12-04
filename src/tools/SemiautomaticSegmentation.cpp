@@ -286,6 +286,10 @@ void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::a
     // Added the first triangle, override the buffer.
     if(emptyBefore && !mStartingTriangles.empty()) {
         setupOverride();
+    } else {  // Restore the pre-spread buffer
+        mApplication.getModelView().getOverrideColorBuffer() = mBackupColorBuffer;
+        mBucketSpread = 0.f;
+        mBucketSpreadLatest = 0.f;
     }
 }
 
