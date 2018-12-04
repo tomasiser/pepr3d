@@ -123,6 +123,8 @@ class MainApplication : public App {
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
 
+    peprimgui::PeprImGui mImGui;  // ImGui wrapper for Cinder/Pepr3D
+
     Toolbar mToolbar;
     SidePane mSidePane;
     ModelView mModelView;

@@ -106,7 +106,7 @@ list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_MAIN_FILE})
 ci_make_app(APP_NAME "pepr3d"
             CINDER_PATH ${CINDER_PATH}
             SOURCES     ${SRC_FILES_IMGUI} ${APP_PATH}/resources/Resources.rc ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE}
-            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/threadpool ${APP_PATH}/lib/peprimgui ${APP_PATH}/lib/cinder-imgui/include ${APP_PATH}/lib/cinder-imgui/lib/imgui
+            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/threadpool ${APP_PATH}/lib/peprimgui ${APP_PATH}/lib/cinder-imgui/lib/imgui
             RESOURCES   ${APP_PATH}/resources/icon.ico
             # ASSETS_PATH
             # BLOCKS
@@ -133,7 +133,7 @@ add_executable(pepr3dtests ${SRC_FILES_IMGUI} ${SRC_FILES_PEPR3D} ${SRC_FILES_PE
 #add_dependencies(pepr3dtests gtest CGAL::CGAL CGAL::CGAL_Core)
 
 target_include_directories(pepr3dtests
-                           PRIVATE ${APP_PATH}/src ${APP_PATH}/lib/cinder-imgui/include
+                           PRIVATE ${APP_PATH}/src
                                    ${APP_PATH}/lib/threadpool
                                    ${APP_PATH}/lib/peprimgui
                                    ${APP_PATH}/lib/cinder-imgui/lib/imgui
