@@ -9,6 +9,7 @@
 
 #include "ThreadPool.h"
 
+#include "FontStorage.h"
 #include "ModelView.h"
 #include "ProgressIndicator.h"
 #include "SidePane.h"
@@ -113,7 +114,12 @@ class MainApplication : public App {
         mShowExportDialog = true;
     }
 
+    FontStorage& getFontStorage() {
+        return mFontStorage;
+    }
+
    private:
+    void setupFonts();
     void setupIcon();
     void drawExportDialog();
     void willResignActive();
@@ -124,6 +130,7 @@ class MainApplication : public App {
     bool mIsFocused = true;
 
     peprimgui::PeprImGui mImGui;  // ImGui wrapper for Cinder/Pepr3D
+    FontStorage mFontStorage;
 
     Toolbar mToolbar;
     SidePane mSidePane;

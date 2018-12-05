@@ -236,76 +236,6 @@ void Renderer::initFontTexture() {
     ImGui::GetIO().Fonts->TexID = (void*)(intptr_t)mFontTexture->getId();
 }
 
-/*ImFont* addFont( ci::DataSourceRef font, float size, int fontId )
- {
- ImFont* newFont = getRenderer()->addFont( font, size, fontId );
- return newFont;
- }
- */
-
-ImFont* Renderer::addFont(const ci::fs::path& font, float size, const ImFontConfig& config,
-                          const ImWchar* glyph_ranges) {
-    ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
-
-    auto fontSource = loadFile(font);
-    Font ciFont(fontSource, size);
-
-    ImWchar* glyphRanges = nullptr;
-    // if we have glyph ranges copy them
-    if(glyph_ranges && glyph_ranges[0] && glyph_ranges[1]) {
-        mFontsGlyphRanges.push_back(vector<ImWchar>());
-        auto& ranges = mFontsGlyphRanges.back();
-        for(const ImWchar* range = glyph_ranges; range[0] && range[1]; range += 2) {
-            ranges.push_back(range[0]);
-            ranges.push_back(range[1]);
-            ranges.push_back(static_cast<ImWchar>(0));
-        }
-        glyphRanges = ranges.data();
-    }
-    // otherwise get them from the font
-    else if(ciFont.getNumGlyphs()) {
-        size_t numGlyphs = ciFont.getNumGlyphs();
-        // copy glyphs so we can sort them
-        vector<ImWchar> glyphs;
-        for(size_t i = 0; i < numGlyphs; ++i) {
-            glyphs.push_back(ciFont.getGlyphIndex(i));
-        }
-        sort(glyphs.begin(), glyphs.end());
-
-        // find glyph ranges
-        mFontsGlyphRanges.push_back(vector<ImWchar>());
-        auto& ranges = mFontsGlyphRanges.back();
-        Font::Glyph start = glyphs[0] == 0 ? '0' : glyphs[0];
-        for(size_t i = 1; i < numGlyphs; ++i) {
-            if(glyphs[i] != glyphs[i - 1] + 1) {
-                ranges.push_back(start);
-                ranges.push_back(glyphs[i - 1]);
-                start = glyphs[i];
-            }
-        }
-        if(ranges.empty() || ranges.back() != glyphs[numGlyphs - 1]) {
-            ranges.push_back(start);
-            ranges.push_back(glyphs[numGlyphs - 1]);
-        }
-        ranges.push_back('\0');
-        glyphRanges = ranges.data();
-    }
-
-    BufferRef buffer = fontSource->getBuffer();
-    void* bufferCopy = (void*)malloc(buffer->getSize());
-    memcpy(bufferCopy, buffer->getData(), buffer->getSize());
-
-    ImFont* newFont =
-        fontAtlas->AddFontFromMemoryTTF(bufferCopy, static_cast<int>(buffer->getSize()), size, &config, glyphRanges);
-    // ImFont* newFont = fontAtlas->AddFontFromFileTTF( font.string().c_str(),
-    // size, &config, glyphRanges );
-
-    return newFont;
-}
-void Renderer::clearFonts() {
-    mFontsGlyphRanges.clear();
-}
-
 //! initalizes and returns the shader
 gl::GlslProgRef Renderer::getGlslProg() {
     if(!mShader) {
@@ -604,7 +534,6 @@ void PeprImGui::setup(cinder::app::AppBase* application, WindowRef window) {
     // setup fonts
     ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
     fontAtlas->Clear();
-    mRenderer->clearFonts();
     mRenderer->initFontTexture();
 
 #ifndef CINDER_LINUX
@@ -659,17 +588,7 @@ void PeprImGui::disconnectWindow(WindowRef window) {
     mWindowConnections.clear();
 }
 
-void PeprImGui::clearFonts() {
-    ImGui::GetIO().Fonts->Clear();
-    mRenderer->clearFonts();
-}
-
-ImFont* PeprImGui::addFont(const ci::fs::path& path, float size, const ImFontConfig& config,
-                           const ImWchar* glyphRanges) {
-    return mRenderer->addFont(path, size, config, glyphRanges);
-}
-
-void PeprImGui::setupFonts() {
+void PeprImGui::refreshFontTexture() {
     mRenderer->initFontTexture();
 }
 

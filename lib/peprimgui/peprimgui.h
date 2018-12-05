@@ -116,9 +116,6 @@ class Renderer {
 
     //! renders imgui drawlist
     void render(ImDrawData* draw_data);
-    //! sets the font
-    ImFont* addFont(const ci::fs::path& path, float size, const ImFontConfig& config,
-                    const ImWchar* glyphRanges = NULL);
 
     //! initializes and returns the font texture
     Texture2dRef getFontTextureRef();
@@ -136,16 +133,12 @@ class Renderer {
     //! initializes the shader
     void initGlslProg();
 
-    void clearFonts();
-
    protected:
     Texture2dRef mFontTexture;
     ci::gl::VaoRef mVao;
     ci::gl::VboRef mVbo;
     ci::gl::VboRef mIbo;
     ci::gl::GlslProgRef mShader;
-
-    std::vector<std::vector<ImWchar>> mFontsGlyphRanges;
 };
 
 using RendererRef = std::shared_ptr<Renderer>;
@@ -165,10 +158,7 @@ class PeprImGui {
     void connectWindow(WindowRef window);
     void disconnectWindow(WindowRef window);
 
-    void clearFonts();
-    ImFont* addFont(const ci::fs::path& font, float size, const ImFontConfig& config,
-                    const ImWchar* glyphRanges = NULL);
-    void setupFonts();
+    void refreshFontTexture();
 
    private:
     void mouseDown(ci::app::MouseEvent& event);
