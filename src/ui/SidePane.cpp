@@ -40,8 +40,10 @@ void SidePane::draw() {
     drawList->AddLine(cursorPos + glm::ivec2(0, 49), cursorPos + glm::ivec2(size.x, 49),
                       ImColor(ci::ColorA::hex(0xEDEDED)));
 
-    ImGui::SetCursorPos(glm::ivec2(12, 22));
+    ImGui::SetCursorPos(glm::ivec2(12, 13));
+    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     ImGui::Text(currentTool.getIcon().c_str());
+    ImGui::PopFont();
     ImGui::SetCursorPos(glm::ivec2(50, 15));
     ImGui::Text(currentTool.getName().c_str());
 

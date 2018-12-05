@@ -9,6 +9,7 @@
 
 #include "ThreadPool.h"
 
+#include "FontStorage.h"
 #include "ModelView.h"
 #include "ProgressIndicator.h"
 #include "SidePane.h"
@@ -123,7 +124,12 @@ class MainApplication : public App {
                             const std::string& description = "", const std::string& disabled = "",
                             glm::vec2 position = glm::vec2(-1.0f), glm::vec2 pivot = glm::vec2(0.0f));
 
+    FontStorage& getFontStorage() {
+        return mFontStorage;
+    }
+
    private:
+    void setupFonts();
     void setupIcon();
     void drawExportDialog();
     void drawErrorDialog();
@@ -133,6 +139,9 @@ class MainApplication : public App {
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
+
+    peprimgui::PeprImGui mImGui;  // ImGui wrapper for Cinder/Pepr3D
+    FontStorage mFontStorage;
 
     Toolbar mToolbar;
     SidePane mSidePane;

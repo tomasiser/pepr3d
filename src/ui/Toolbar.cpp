@@ -27,7 +27,7 @@ void Toolbar::draw() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.76f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
 
     ImGui::Begin("##toolbar", nullptr, window_flags);
 
@@ -82,12 +82,14 @@ void Toolbar::drawFileDropDown() {
     props.label = ICON_MD_FOLDER_OPEN;
     props.isDropDown = true;
     props.isToggled = ImGui::IsPopupOpen(filePopupId);
+    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() {
         props.isToggled = !props.isToggled;
         if(props.isToggled) {
             ImGui::OpenPopup(filePopupId);
         }
     });
+    ImGui::PopFont();
 
     if(props.isToggled) {
         ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
@@ -95,6 +97,7 @@ void Toolbar::drawFileDropDown() {
         if(ImGui::BeginPopup(filePopupId)) {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
+            ImGui::PushFont(mApplication.getFontStorage().getSmallFont());
             // ImGui::Button("Open", glm::ivec2(175, 50));
             // ImGui::Button("Save", glm::ivec2(175, 50));
             // ImGui::Button("Save as", glm::ivec2(175, 50));
@@ -109,6 +112,7 @@ void Toolbar::drawFileDropDown() {
             if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
                 mApplication.quit();
             }
+            ImGui::PopFont();
             ImGui::PopStyleVar(2);
             ImGui::EndPopup();
         }
@@ -120,21 +124,25 @@ void Toolbar::drawUndoRedo() {
     ButtonProperties props;
     props.label = ICON_MD_UNDO;
     props.isEnabled = commandManager && commandManager->canUndo();
+    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() { commandManager->undo(); });
     ImGui::SameLine(0.f, 0.f);
     props.label = ICON_MD_REDO;
     props.isEnabled = commandManager && commandManager->canRedo();
     drawButton(props, [&]() { commandManager->redo(); });
+    ImGui::PopFont();
 }
 
 void Toolbar::drawDemoWindowToggle() {
     ButtonProperties props;
     props.label = ICON_MD_CHILD_FRIENDLY;
     props.isToggled = mApplication.isDemoWindowShown();
+    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() {
         props.isToggled = !props.isToggled;
         mApplication.showDemoWindow(props.isToggled);
     });
+    ImGui::PopFont();
 }
 
 void Toolbar::drawToolButtons() {
@@ -156,10 +164,12 @@ void Toolbar::drawToolButton(ToolsVector::iterator tool) {
     props.label = (*tool)->getIcon();
     props.isToggled = (tool == mApplication.getCurrentToolIterator());
     props.isEnabled = (*tool)->isEnabled();
+    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() {
         props.isToggled = true;
         mApplication.setCurrentToolIterator(tool);
     });
+    ImGui::PopFont();
 }
 
 }  // namespace pepr3d
