@@ -19,7 +19,7 @@ class TrianglePainter : public ITool {
     }
 
     virtual std::string getDescription() const override {
-        return "Color individual triangles by clicking on them.";
+        return "Color individual triangles by clicking or dragging the mouse.";
     }
 
     virtual std::string getIcon() const override {

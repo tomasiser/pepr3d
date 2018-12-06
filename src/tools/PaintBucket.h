@@ -16,6 +16,10 @@ class PaintBucket : public ITool {
         return "Paint Bucket";
     }
 
+    virtual std::string getDescription() const override {
+        return "Color whole regions with a single click.";
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_FORMAT_COLOR_FILL;
     }

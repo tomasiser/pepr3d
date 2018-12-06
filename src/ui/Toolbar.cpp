@@ -82,6 +82,7 @@ void Toolbar::drawFileDropDown() {
     props.label = ICON_MD_FOLDER_OPEN;
     props.isDropDown = true;
     props.isToggled = ImGui::IsPopupOpen(filePopupId);
+    glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() {
         props.isToggled = !props.isToggled;
@@ -90,6 +91,8 @@ void Toolbar::drawFileDropDown() {
         }
     });
     ImGui::PopFont();
+    mApplication.drawTooltipOnHover("File", "", "Open, save, import, and export a model.", "",
+                                    buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
 
     if(props.isToggled) {
         ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
@@ -124,13 +127,19 @@ void Toolbar::drawUndoRedo() {
     ButtonProperties props;
     props.label = ICON_MD_UNDO;
     props.isEnabled = commandManager && commandManager->canUndo();
+    glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() { commandManager->undo(); });
+    mApplication.drawTooltipOnHover("Undo", "Ctrl+Z", "Undo last action.", "",
+                                    buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
     ImGui::SameLine(0.f, 0.f);
     props.label = ICON_MD_REDO;
     props.isEnabled = commandManager && commandManager->canRedo();
+    buttonPos = ImGui::GetCursorScreenPos();
     drawButton(props, [&]() { commandManager->redo(); });
     ImGui::PopFont();
+    mApplication.drawTooltipOnHover("Redo", "Ctrl+Y", "Redo last action.", "",
+                                    buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
 }
 
 void Toolbar::drawDemoWindowToggle() {
@@ -151,7 +160,8 @@ void Toolbar::drawToolButtons() {
         ImGui::SameLine(0.0f, 0.0f);
         glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
         drawToolButton(toolit);
-        mApplication.drawTooltipOnHover((*toolit)->getName(), "", (*toolit)->getDescription(), "", buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
+        mApplication.drawTooltipOnHover((*toolit)->getName(), "", (*toolit)->getDescription(), "",
+                                        buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
         if(index == 4 || index == 7) {
             ImGui::SameLine(0.0f, 0.0f);
             drawSeparator();

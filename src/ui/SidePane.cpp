@@ -141,7 +141,9 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         if(ImGui::IsItemClicked(1)) {
             ImGui::OpenPopup(colorEditPopupId.c_str());
         }
-        mApplication.drawTooltipOnHover("Color #" + std::to_string(i), "", "Select: left click\nEdit: right click", "", glm::vec2(-18.0f + cursorPos.x, cursorPos.y), glm::vec2(1.0f, 0.0f));
+        mApplication.drawTooltipOnHover("Color " + std::to_string(i + 1), (i < 10) ? std::to_string(i + 1) : "",
+                                        "Select: left click\nEdit: right click", "",
+                                        glm::vec2(-18.0f + cursorPos.x, cursorPos.y), glm::vec2(1.0f, 0.0f));
 
         drawList->AddRect(
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX), 0),
@@ -191,6 +193,14 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         assert(commandManager);
         commandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
     }
+}
+
+void SidePane::drawTooltip(const std::string& label, const std::string& shortcut, const std::string& description,
+                           const std::string& disabled) {
+    glm::vec2 position = ImGui::GetItemRectMin();
+    position += glm::vec2(-18.0f, 0.0f);
+    const glm::vec2 pivot(1.0f, 0.0f);
+    mApplication.drawTooltipOnHover(label, shortcut, description, disabled, position, pivot);
 }
 
 }  // namespace pepr3d

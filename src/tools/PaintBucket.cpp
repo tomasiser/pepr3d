@@ -14,12 +14,17 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
     sidePane.drawSeparator();
 
     sidePane.drawCheckbox("Paint while dragging", mShouldPaintWhileDrag);
+    sidePane.drawTooltip("When enabled, you can drag your mouse over regions to continuously color them.");
     sidePane.drawCheckbox("Color whole model", mDoNotStop);
+    sidePane.drawTooltip("When enabled, the selected color will always be applied to the whole model.");
     if(!mDoNotStop) {
         sidePane.drawCheckbox("Stop on different color", mStopOnColor);
+        sidePane.drawTooltip("When enabled, coloring will stop on a boundary with a different color.");
         sidePane.drawCheckbox("Stop on sharp edges", mStopOnNormal);
+        sidePane.drawTooltip("When enabled, coloring will stop on a boundary with a sharp edge.");
         if(mStopOnNormal) {
             sidePane.drawIntDragger("Maximum angle", mStopOnNormalDegrees, 0.25f, 0, 180, "%.0f°", 40.0f);
+            sidePane.drawTooltip("The maximum angle (in degrees) that the coloring can pass through on a sharp edge.");
             sidePane.drawText("Angles to compare:");
             if(ImGui::RadioButton("With starting triangle", mNormalCompare == NormalAngleCompare::ABSOLUTE)) {
                 mNormalCompare = NormalAngleCompare::ABSOLUTE;

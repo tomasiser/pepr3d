@@ -140,6 +140,8 @@ class MainApplication : public App {
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
 
+    glm::vec2 mLastTooltipSize = glm::vec2(0.0f);
+
     peprimgui::PeprImGui mImGui;  // ImGui wrapper for Cinder/Pepr3D
     FontStorage mFontStorage;
 

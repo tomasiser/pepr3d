@@ -516,37 +516,55 @@ void MainApplication::drawTooltipOnHover(const std::string& label, const std::st
                                          const std::string& description, const std::string& disabled,
                                          glm::vec2 position, glm::vec2 pivot) {
     if(ImGui::IsItemHovered()) {
+        ImGui::PushFont(mFontStorage.getRegularFont());
         ImGui::PushStyleColor(ImGuiCol_PopupBg, ci::ColorA::hex(0x1C2A35));
-        // ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+        ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0x1C2A35));
         ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
-        // ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
-        // ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
-        // ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
-        // ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
 
-        if(position.x > -1.0f && position.y > -1.0f) {
+        const bool isStaticPosition = position.x > -1.0f || position.y > -1.0f;  // do not follow mouse
+        if(isStaticPosition) {
+            if(position.x < 6.0f) {
+                position.x = 6.0f;
+            }
+            const float bottomY = position.y + (1.0f - pivot.y) * mLastTooltipSize.y;
+            if(bottomY > ImGui::GetIO().DisplaySize.y - 6.0f) {
+                position.y = ImGui::GetIO().DisplaySize.y - 6.0f;
+                pivot.y = 1.0f;
+            }
             ImGui::SetNextWindowPos(position, ImGuiCond_Always, pivot);
         }
 
         ImGui::BeginTooltip();
 
+        mLastTooltipSize = ImGui::GetWindowSize();
+
         ImGui::PushTextWrapPos(200.0f);
         ImGui::TextUnformatted(label.c_str());
         ImGui::PopTextWrapPos();
 
-        if (!description.empty()) {
+        if(!shortcut.empty()) {
+            ImGui::SameLine(0.0f, 4.0f);
+            ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xAAAAAA));
+            ImGui::Text("(%s)", shortcut.c_str());
+            ImGui::PopStyleColor();
+        }
+
+        if(!description.empty()) {
+            ImGui::PushFont(mFontStorage.getSmallFont());
             ImGui::PushTextWrapPos(250.0f);
             ImGui::TextUnformatted(description.c_str());
             ImGui::PopTextWrapPos();
+            ImGui::PopFont();
         }
 
         ImGui::EndTooltip();
 
         ImGui::PopStyleVar(3);
-        ImGui::PopStyleColor(2);
+        ImGui::PopStyleColor(3);
+        ImGui::PopFont();
     }
 }
 
