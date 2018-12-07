@@ -41,15 +41,8 @@ void MainApplication::setup() {
     getSignalWillResignActive().connect(bind(&MainApplication::willResignActive, this));
     getSignalDidBecomeActive().connect(bind(&MainApplication::didBecomeActive, this));
 
-    auto uiOptions = ImGui::Options();
-    std::vector<ImWchar> textRange = {0x0001, 0x00BF, 0};
-    std::vector<ImWchar> iconsRange = {ICON_MIN_MD, ICON_MAX_MD, 0};
-    uiOptions.fonts({make_pair<fs::path, float>(getAssetPath("fonts/SourceSansPro-SemiBold.ttf"), 1.0f * 18.0f),
-                     make_pair<fs::path, float>(getAssetPath("fonts/MaterialIcons-Regular.ttf"), 1.0f * 24.0f)},
-                    true);
-    uiOptions.fontGlyphRanges("SourceSansPro-SemiBold", textRange);
-    uiOptions.fontGlyphRanges("MaterialIcons-Regular", iconsRange);
-    ImGui::initialize(uiOptions);
+    mImGui.setup(this, getWindow());
+
     applyLightTheme(ImGui::GetStyle());
 
     mGeometry = std::make_shared<Geometry>();
@@ -67,6 +60,8 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<Information>());
     mTools.emplace_back(make_unique<LiveDebug>(*this));
     mCurrentToolIterator = mTools.begin();
+
+    setupFonts();
 
     mModelView.setup();
 }
@@ -195,6 +190,38 @@ void MainApplication::draw() {
     //     progressStatus = "%% polyhedron: " + std::to_string(mGeometryInProgress->getProgress().polyhedronPercentage);
     //     ImGui::Text(progressStatus.c_str());
     // }
+}
+
+void MainApplication::setupFonts() {
+    ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
+
+    fontAtlas->Clear();
+
+    std::vector<ImWchar> textRange = {0x0001, 0x00FF, 0};
+    ImFontConfig fontConfig;
+    fontConfig.GlyphExtraSpacing.x = -0.2f;
+    mFontStorage.mRegularFont = fontAtlas->AddFontFromFileTTF(
+        getAssetPath("fonts/SourceSansPro-SemiBold.ttf").string().c_str(), 18.0f, &fontConfig, textRange.data());
+    mFontStorage.mSmallFont = fontAtlas->AddFontFromFileTTF(
+        getAssetPath("fonts/SourceSansPro-SemiBold.ttf").string().c_str(), 16.0f, &fontConfig, textRange.data());
+
+    ImVector<ImWchar> iconsRange;
+    ImFontAtlas::GlyphRangesBuilder iconsRangeBuilder;
+    for(auto& tool : mTools) {
+        iconsRangeBuilder.AddText(tool->getIcon().c_str());
+    }
+    iconsRangeBuilder.AddText(ICON_MD_ARROW_DROP_DOWN);
+    iconsRangeBuilder.AddText(ICON_MD_FOLDER_OPEN);
+    iconsRangeBuilder.AddText(ICON_MD_UNDO);
+    iconsRangeBuilder.AddText(ICON_MD_REDO);
+    iconsRangeBuilder.AddText(ICON_MD_CHILD_FRIENDLY);
+    iconsRangeBuilder.BuildRanges(&iconsRange);
+    fontConfig.GlyphExtraSpacing.x = 0.0f;
+    mFontStorage.mRegularIcons = fontAtlas->AddFontFromFileTTF(
+        getAssetPath("fonts/MaterialIcons-Regular.ttf").string().c_str(), 24.0f, &fontConfig, iconsRange.Data);
+    mFontStorage.mRegularIcons->DisplayOffset.y = -1.0f;
+
+    mImGui.refreshFontTexture();
 }
 
 void MainApplication::setupIcon() {

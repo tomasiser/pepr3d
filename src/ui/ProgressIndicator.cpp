@@ -89,8 +89,8 @@ void ProgressIndicator::drawSpinner(const char* label) {
 
     for(int i = 0; i < num_segments; i++) {
         const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-        window->DrawList->PathLineTo(
-            ImVec2(centre.x + std::cos(a + g.Time * 8) * radius, centre.y + std::sin(a + g.Time * 8) * radius));
+        window->DrawList->PathLineTo(ImVec2(centre.x + static_cast<float>(std::cos(a + g.Time * 8.0)) * radius,
+                                            centre.y + static_cast<float>(std::sin(a + g.Time * 8.0)) * radius));
     }
 
     window->DrawList->PathStroke(color, false, thickness);
@@ -130,7 +130,7 @@ void ProgressIndicator::drawStatus(const std::string& label, float progress, boo
     float progressStart, progressEnd;
 
     if(isIndeterminate) {
-        progressStart = std::fmod(g.Time * 500.0f, size.x + 50.0f) - 50.0f;
+        progressStart = static_cast<float>(std::fmod(g.Time * 500.0f, size.x + 50.0f)) - 50.0f;
         progressEnd = progressStart + 50.0f;
     } else {
         progressStart = 0.0f;
