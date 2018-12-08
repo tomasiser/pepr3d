@@ -105,6 +105,9 @@ void MainApplication::openFile(const std::string& path) {
         return;  // disallow loading new geometry while another is already being loaded
     }
 
+    mLastVersionSaved = 0;
+    mIsGeometryDirty = false;
+
     mGeometryInProgress = std::make_shared<Geometry>();
     mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
 
@@ -188,6 +191,14 @@ void MainApplication::update() {
         }
     }
 #endif
+    if(!mIsGeometryDirty && mLastVersionSaved != mCommandManager->getVersionNumber()) {
+        mIsGeometryDirty = true;
+        fs::path path(mGeometryFileName);
+
+        std::string title = path.has_stem() ? path.stem().string() : "Untitled";
+        title += std::string("* - Pepr3D");
+        getWindow()->setTitle(title);
+    }
 }
 
 void MainApplication::draw() {
@@ -503,6 +514,8 @@ void MainApplication::saveProjectAs() {
         }
 
         mGeometryFileName = finalPath;
+        mLastVersionSaved = mCommandManager->getVersionNumber();
+        mIsGeometryDirty = false;
         getWindow()->setTitle(path.stem().string() + std::string(" - Pepr3D"));
     });
 }
@@ -521,6 +534,9 @@ void MainApplication::saveProject() {
         cereal::BinaryOutputArchive saveArchive(os);
         saveArchive(mGeometry);
     }
+    mLastVersionSaved = mCommandManager->getVersionNumber();
+    mIsGeometryDirty = false;
+    getWindow()->setTitle(dirToSave.stem().string() + std::string(" - Pepr3D"));
 }
 
 }  // namespace pepr3d

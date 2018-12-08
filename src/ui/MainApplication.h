@@ -152,6 +152,8 @@ class MainApplication : public App {
     std::unique_ptr<CommandManager<Geometry>> mCommandManager;
 
     std::string mGeometryFileName;
+    std::size_t mLastVersionSaved = std::numeric_limits<std::size_t>::max();
+    bool mIsGeometryDirty = false;
 
     ::ThreadPool mThreadPool;
 };
