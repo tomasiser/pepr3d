@@ -108,7 +108,7 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
-    void showImportDialog();
+    void showImportDialog(const std::vector<std::string> extensions);
 
     void showExportDialog() {
         mShowExportDialog = true;
@@ -117,6 +117,9 @@ class MainApplication : public App {
     FontStorage& getFontStorage() {
         return mFontStorage;
     }
+
+    void saveProject() const;
+    void loadProject(const std::string fileName);
 
    private:
     void setupFonts();

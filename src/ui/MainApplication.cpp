@@ -1,3 +1,6 @@
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/memory.hpp>
+
 #include "ui/MainApplication.h"
 
 #include "IconsMaterialDesign.h"
@@ -102,32 +105,61 @@ void MainApplication::openFile(const std::string& path) {
         return;  // disallow loading new geometry while another is already being loaded
     }
 
-    std::shared_ptr<Geometry> geometry = mGeometryInProgress = std::make_shared<Geometry>();
-    mProgressIndicator.setGeometryInProgress(geometry);
+    mGeometryInProgress = std::make_shared<Geometry>();
+    mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
 
-    // Queue the loading of the new geometry
-    mThreadPool.enqueue([geometry, path, this]() {
-        // Load the geometry
-        geometry->loadNewGeometry(path, mThreadPool);
+    fs::path fsPath(path);
+    fs::path ext = fsPath.extension();
 
-        // Lambda that will be called once the loading finishes.
-        // Put all updates to saved states here.
-        auto onLoadingComplete = [path, this]() {
-            mGeometry = mGeometryInProgress;
-            mGeometryInProgress = nullptr;
-            mGeometryFileName = path;
-            mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
-            getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
-            mProgressIndicator.setGeometryInProgress(nullptr);
-            for(auto& tool : mTools) {
-                tool->onNewGeometryLoaded(mModelView);
-            }
+    // Lambda that will be called once the loading finishes.
+    // Put all updates to saved states here.
+    auto onLoadingComplete = [path, this]() {
+        mGeometry = mGeometryInProgress;
+        mGeometryInProgress = nullptr;
+        mGeometryFileName = path;
+        mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
+        getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        for(auto& tool : mTools) {
+            tool->onNewGeometryLoaded(mModelView);
+        }
+        CI_LOG_I("Loading complete.");
+    };
+
+    if(ext == ".p3d") {
+        CI_LOG_I("Loading project from " + path);
+        {
+            std::ifstream is(path, std::ios::binary);
+            cereal::BinaryInputArchive loadArchive(is);
+            // CAREFUL! Replaces the shared_ptr in mGeometryInProgress!
+            loadArchive(mGeometryInProgress);
+            // Pointer changed, replace it in progress indicator
+            mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
+        }
+        auto asyncCalculation = [onLoadingComplete, path, this]() {
+            mGeometryInProgress->recomputeFromData(mThreadPool);
+
+            // Call the lambda to swap the geometry and command manager pointers, etc.
+            // onLoadingComplete Gets called at the beginning of the next draw() cycle.
+            dispatchAsync(onLoadingComplete);
         };
+        mThreadPool.enqueue(asyncCalculation);
+    } else if(ext == ".stl" || ext == ".ply" || ext == ".obj") {
+        CI_LOG_I("Importing a new model from " + path);
 
-        // Call the lambda to swap the geometry and command manager pointers, etc.
-        // onLoadingComplete Gets called at the beginning of the next draw() cycle.
-        dispatchAsync(onLoadingComplete);
-    });
+        // Queue the loading of the new geometry
+        auto importNewModel = [onLoadingComplete, path, this]() {
+            // Load the geometry
+            mGeometryInProgress->loadNewGeometry(path, mThreadPool);
+
+            // Call the lambda to swap the geometry and command manager pointers, etc.
+            // onLoadingComplete Gets called at the beginning of the next draw() cycle.
+            dispatchAsync(onLoadingComplete);
+        };
+        mThreadPool.enqueue(importNewModel);
+    } else {
+        assert(false);
+    }
 }
 
 void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {
@@ -234,15 +266,14 @@ void MainApplication::setupIcon() {
 #endif
 }
 
-void MainApplication::showImportDialog() {
-    dispatchAsync([this]() {
+void MainApplication::showImportDialog(const std::vector<std::string> extensions) {
+    dispatchAsync([extensions, this]() {
         fs::path initialPath(mGeometryFileName);
         initialPath.remove_filename();
         if(initialPath.empty()) {
             initialPath = getDocumentsDirectory();
         }
 
-        const std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
         auto path = getOpenFilePath(initialPath, extensions);
 
         if(!path.empty()) {
@@ -438,5 +469,17 @@ bool MainApplication::isWindowObscured() {
 #endif
     return false;
 }
+
+void MainApplication::saveProject() const {
+    std::string fileName = "untitled.p3d";
+    CI_LOG_I("Saving project into " + fileName);
+    {
+        std::ofstream os(fileName, std::ios::binary);
+        cereal::BinaryOutputArchive saveArchive(os);
+        saveArchive(mGeometry);
+    }
+}
+
+void MainApplication::loadProject(const std::string fileName) {}
 
 }  // namespace pepr3d

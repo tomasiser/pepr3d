@@ -98,12 +98,15 @@ void Toolbar::drawFileDropDown() {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
             ImGui::PushFont(mApplication.getFontStorage().getSmallFont());
-            // ImGui::Button("Open", glm::ivec2(175, 50));
+            if(ImGui::Button("Open", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
+                mApplication.showImportDialog({"p3d"});
+            }
             // ImGui::Button("Save", glm::ivec2(175, 50));
             // ImGui::Button("Save as", glm::ivec2(175, 50));
             if(ImGui::Button("Import", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.showImportDialog();
+                mApplication.showImportDialog({"stl", "obj", "ply"});
             }
             if(ImGui::Button("Export", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
