@@ -118,7 +118,8 @@ void MainApplication::openFile(const std::string& path) {
         mGeometryInProgress = nullptr;
         mGeometryFileName = path;
         mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
-        getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
+        fs::path fsPath(path);
+        getWindow()->setTitle(fsPath.stem().string() + std::string(" - Pepr3D"));
         mProgressIndicator.setGeometryInProgress(nullptr);
         for(auto& tool : mTools) {
             tool->onNewGeometryLoaded(mModelView);
@@ -470,16 +471,56 @@ bool MainApplication::isWindowObscured() {
     return false;
 }
 
-void MainApplication::saveProject() const {
-    std::string fileName = "untitled.p3d";
-    CI_LOG_I("Saving project into " + fileName);
+void MainApplication::saveProjectAs() {
+    dispatchAsync([this]() {
+        fs::path initialPath(mGeometryFileName);
+        initialPath.remove_filename();
+        if(initialPath.empty()) {
+            initialPath = getDocumentsDirectory();
+        }
+
+        fs::path name = "Untitled";
+        if(mGeometryFileName != "") {
+            fs::path dirToSave = mGeometryFileName;
+            name = dirToSave.stem();
+        }
+
+        auto path = getSaveFilePath(initialPath.append(name), {"p3d"});
+
+        if(path.empty()) {
+            return;
+        }
+        if(path.extension() == "") {
+            path.replace_extension(".p3d");
+        }
+
+        std::string finalPath = path.string();
+        CI_LOG_I("Saving project into " + finalPath);
+        {
+            std::ofstream os(finalPath, std::ios::binary);
+            cereal::BinaryOutputArchive saveArchive(os);
+            saveArchive(mGeometry);
+        }
+
+        mGeometryFileName = finalPath;
+        getWindow()->setTitle(path.stem().string() + std::string(" - Pepr3D"));
+    });
+}
+
+void MainApplication::saveProject() {
+    if(mGeometryFileName == "") {
+        saveProjectAs();
+        return;
+    }
+    fs::path dirToSave = mGeometryFileName;
+    dirToSave.replace_extension(".p3d");
+    std::string finalPath = dirToSave.string();
+    CI_LOG_I("Saving project into " + finalPath);
     {
-        std::ofstream os(fileName, std::ios::binary);
+        std::ofstream os(finalPath, std::ios::binary);
         cereal::BinaryOutputArchive saveArchive(os);
         saveArchive(mGeometry);
     }
 }
-
-void MainApplication::loadProject(const std::string fileName) {}
 
 }  // namespace pepr3d

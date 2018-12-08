@@ -93,7 +93,7 @@ void Toolbar::drawFileDropDown() {
 
     if(props.isToggled) {
         ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
-        ImGui::SetNextWindowSize(glm::ivec2(175, 150));
+        ImGui::SetNextWindowSize(glm::ivec2(175, 300));
         if(ImGui::BeginPopup(filePopupId)) {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
@@ -102,8 +102,14 @@ void Toolbar::drawFileDropDown() {
                 ImGui::CloseCurrentPopup();
                 mApplication.showImportDialog({"p3d"});
             }
-            // ImGui::Button("Save", glm::ivec2(175, 50));
-            // ImGui::Button("Save as", glm::ivec2(175, 50));
+            if(ImGui::Button("Save", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
+                mApplication.saveProject();
+            }
+            if(ImGui::Button("Save as...", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
+                mApplication.saveProjectAs();
+            }
             if(ImGui::Button("Import", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
                 mApplication.showImportDialog({"stl", "obj", "ply"});

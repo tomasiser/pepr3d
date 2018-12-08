@@ -118,8 +118,8 @@ class MainApplication : public App {
         return mFontStorage;
     }
 
-    void saveProject() const;
-    void loadProject(const std::string fileName);
+    void saveProject();
+    void saveProjectAs();
 
    private:
     void setupFonts();
