@@ -138,9 +138,10 @@ void Geometry::generateColorBuffer() {
         const auto& detailTriangles = it.second.getTriangles();
 
         for(const auto& triangle : detailTriangles) {
-            mColorBuffer.push_back(triangle.getColor());
-            mColorBuffer.push_back(triangle.getColor());
-            mColorBuffer.push_back(triangle.getColor());
+            const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
+            mColorBuffer.push_back(triColorIndex);
         }
     }
 
@@ -313,13 +314,21 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
             // Triangles fully inside are colored whole
             setTriangleColor(triangleIdx, settings.color);
         } else {
-            if(settings.respectOriginalTriangles && settings.paintOuterRing) {
-                setTriangleColor(triangleIdx, settings.color);
+            if(settings.respectOriginalTriangles) {
+
+                if(settings.paintOuterRing) {
+                    setTriangleColor(triangleIdx, settings.color);
+                }
+
             } else {
                 updateTriangleDetail(triangleIdx, intersectionPoint, settings);
             }
         }
     }
+
+    // TODO: Delay generating these buffers until when we need to render the geometry
+    //       This will greatly speed up redo process
+    //          And only when we changed triangle detail
 
     // Generate new buffers for OpenGL to see the new data
     generateVertexBuffer();

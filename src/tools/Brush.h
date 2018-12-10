@@ -23,6 +23,12 @@ struct BrushSettings {
 
     /// When respecting original triangles should we paint triangles that are not fully inside the brush?
     bool paintOuterRing = false;
+
+    bool operator==(const BrushSettings& other) const {
+        return color == other.color && size == other.size && continuous == other.continuous &&
+               paintBackfaces == other.paintBackfaces && respectOriginalTriangles == other.respectOriginalTriangles &&
+               paintOuterRing == other.paintOuterRing;
+    }
 };
 
 class Brush : public ITool {
@@ -38,6 +44,7 @@ class Brush : public ITool {
         return ICON_MD_BRUSH;
     }
 
+     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
@@ -57,5 +64,7 @@ class Brush : public ITool {
     CommandManager<class Geometry>& mCommandManager;
 
     BrushSettings mBrushSettings;
+
+    bool mGroupCommands = false;
 };
 }  // namespace pepr3d
