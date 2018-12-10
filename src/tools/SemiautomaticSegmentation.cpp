@@ -4,6 +4,11 @@
 namespace pepr3d {
 
 void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
+    if(!mGeometryCorrect) {
+        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        return;
+    }
+
     Geometry* const currentGeometry = mApplication.getCurrentGeometry();
     assert(currentGeometry != nullptr);
 
@@ -22,8 +27,32 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
         } else {
             sidePane.drawFloatDragger("Spread", mBucketSpread, .01f, 0.0f, 1.f, "%.02f", 70.f);
 
+            // Normal stopping can be enabled by uncommenting this region.
+            // Disabled for the time because it is wonky.
+            // if(ImGui::RadioButton("Normals", mCriterionUsed == Criteria::NORMAL)) {
+            //    mCriterionUsed = Criteria::NORMAL;
+            //}
+            // if(ImGui::RadioButton("SDF", mCriterionUsed == Criteria::SDF)) {
+            //    mCriterionUsed = Criteria::SDF;
+            //}
+
+            if(mCriterionUsed == Criteria::SDF) {
+                sidePane.drawCheckbox("Hard edges", mHardEdges);
+                if(!mHardEdges) {
+                    sidePane.drawCheckbox("Region overlap", mRegionOverlap);
+                }
+            }
+
+            if(mBucketSpread != mBucketSpreadLatest || mHardEdges != mHardEdgesLatest ||
+               mRegionOverlap != mRegionOverlapLatest) {
+                mIsSpreadDirty = true;
+                mBucketSpreadLatest = mBucketSpread;
+                mHardEdgesLatest = mHardEdges;
+                mRegionOverlapLatest = mRegionOverlap;
+            }
+
             // Update only if the bucket setting changed and we should re-fill
-            if(mBucketSpread != mBucketSpreadLatest) {
+            if(mIsSpreadDirty) {
                 spreadColors();
             }
 
@@ -80,9 +109,9 @@ size_t SemiautomaticSegmentation::findClosestColorFromSDF(
         assert(false);
         /// \todo Throw and display error
         return std::numeric_limits<size_t>::max();
-    } else if(find1 == sdfValuesPerColor.end()) {
+    } else if(find1 == sdfValuesPerColor.end() || find1->second.empty()) {
         return color2;
-    } else if(find2 == sdfValuesPerColor.end()) {
+    } else if(find2 == sdfValuesPerColor.end() || find2->second.empty()) {
         return color1;
     } else {
         const double closeToColor1 = findClosestSDFValue(triangleSdfValue, find1->second);
@@ -123,7 +152,6 @@ void SemiautomaticSegmentation::postprocess(
 void SemiautomaticSegmentation::spreadColors() {
     Geometry* const currentGeometry = mApplication.getCurrentGeometry();
     mCurrentColoring.clear();
-    mBucketSpreadLatest = mBucketSpread;
     auto& overrideBuffer = mApplication.getModelView().getOverrideColorBuffer();
     overrideBuffer = mBackupColorBuffer;
 
@@ -131,20 +159,16 @@ void SemiautomaticSegmentation::spreadColors() {
     const std::unordered_map<std::size_t, std::vector<std::size_t>> trianglesByColor =
         collectTrianglesByColor(mStartingTriangles);
 
-    ///// Normal stopping init, uncomment in case we want to include it as a feature
-    // const Geometry* const p = const_cast<const Geometry*>(currentGeometry);
-    // const double angleRads = (1 - mBucketSpread) * 180.f * glm::pi<double>() / 180.0;
-    // NormalStopping stoppingFtor(p, angleRads);
+    /// Normal stopping init, uncomment in case we want to include it as a feature
+    const Geometry* const p = const_cast<const Geometry*>(currentGeometry);
+    const double angleRads = (1 - mBucketSpread) * 180.f * glm::pi<double>() / 180.0;
+    NormalStopping stoppingFtor(p, angleRads);
 
+    // Precompute data - gather all starting triangle SDF data into sdfValuesPerColor
     std::unordered_map<std::size_t, std::vector<double>> sdfValuesPerColor;
-
-    // Bucket spread all the colors
     for(const auto& colorTriangles : trianglesByColor) {
         const size_t currentColor = colorTriangles.first;
         const std::vector<size_t>& startingTriangles = colorTriangles.second;
-        if(startingTriangles.empty()) {
-            continue;
-        }
 
         sdfValuesPerColor.insert({currentColor, {}});
         assert(sdfValuesPerColor.find(currentColor) != sdfValuesPerColor.end());
@@ -154,16 +178,48 @@ void SemiautomaticSegmentation::spreadColors() {
         for(size_t startI : startingTriangles) {
             initialValues.push_back(currentGeometry->getSdfValue(startI));
         }
+    }
 
-        SDFStopping SDFStopping(currentGeometry, initialValues, mBucketSpread);
-        const std::vector<size_t> ret = currentGeometry->bucket(startingTriangles, SDFStopping);
+    // Compute the best region for each triangle
+    std::unordered_map<std::size_t, std::size_t> triangleToBestRegion;
+    for(size_t i = 0; i < currentGeometry->getTriangleCount(); ++i) {
+        triangleToBestRegion.insert({i, 0});
+        for(const auto& region : trianglesByColor) {
+            const size_t regionColor = region.first;
+            const std::vector<size_t>& regionTriangles = region.second;
+            auto find = triangleToBestRegion.find(i);
+            assert(find != triangleToBestRegion.end());
+            find->second = findClosestColorFromSDF(i, find->second, regionColor, sdfValuesPerColor);
+        }
+    }
+
+    // Bucket spread all the colors
+    for(const auto& colorTriangles : trianglesByColor) {
+        const size_t currentColor = colorTriangles.first;
+        const std::vector<size_t>& startingTriangles = colorTriangles.second;
+        if(startingTriangles.empty()) {
+            continue;
+        }
+
+        assert(sdfValuesPerColor.find(currentColor) != sdfValuesPerColor.end());
+        vector<double>& initialValues = sdfValuesPerColor.find(currentColor)->second;
+        std::vector<size_t> ret;
+        if(mCriterionUsed == Criteria::SDF) {
+            SDFStopping SDFStopping(currentGeometry, initialValues, mBucketSpread, triangleToBestRegion, mHardEdges);
+            ret = currentGeometry->bucket(startingTriangles, SDFStopping);
+        } else {
+            assert(mCriterionUsed == Criteria::NORMAL);
+            ret = currentGeometry->bucket(startingTriangles, stoppingFtor);
+        }
 
         // Remember the coloring
         mCurrentColoring.insert({currentColor, ret});
     }
 
     // Postprocess the newly calculated colorings
-    postprocess(sdfValuesPerColor);
+    if(!mRegionOverlap && mCriterionUsed == Criteria::SDF) {
+        postprocess(sdfValuesPerColor);
+    }
 
     // Render all new colorings
     for(const auto& coloring : mCurrentColoring) {
@@ -260,10 +316,17 @@ void SemiautomaticSegmentation::setTriangleColor() {
 }
 
 void SemiautomaticSegmentation::onToolDeselect(ModelView& modelView) {
+    if(!mGeometryCorrect) {
+        return;
+    }
     reset();
 }
 
 void SemiautomaticSegmentation::onNewGeometryLoaded(ModelView& modelView) {
+    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
+    if(!mGeometryCorrect) {
+        return;
+    }
     reset();
 }
 
@@ -286,10 +349,16 @@ void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::a
     // Added the first triangle, override the buffer.
     if(emptyBefore && !mStartingTriangles.empty()) {
         setupOverride();
-    } else {  // Restore the pre-spread buffer
+    } else {  // Restore the pre-spread buffer, reset the setting
         mApplication.getModelView().getOverrideColorBuffer() = mBackupColorBuffer;
         mBucketSpread = 0.f;
         mBucketSpreadLatest = 0.f;
+
+        mRegionOverlap = false;
+        mRegionOverlapLatest = false;
+
+        mHardEdges = false;
+        mHardEdgesLatest = false;
     }
 }
 
@@ -312,6 +381,8 @@ void SemiautomaticSegmentation::reset() {
     mBucketSpread = 0.0f;
     mBucketSpreadLatest = 0.0f;
     mNormalStop = false;
+    mRegionOverlap = false;
+    mGeometryCorrect = true;
 
     mHoveredTriangleId = {};
     mStartingTriangles.clear();

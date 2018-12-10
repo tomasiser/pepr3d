@@ -38,7 +38,20 @@ class SemiautomaticSegmentation : public ITool {
 
     float mBucketSpread = 0.0f;
     float mBucketSpreadLatest = 0.0f;
+
+    bool mRegionOverlap = false;
+    bool mRegionOverlapLatest = false;
+
+    bool mHardEdges = false;
+    bool mHardEdgesLatest = false;
+
+    bool mIsSpreadDirty = false;
+    bool mGeometryCorrect = true;
     bool mNormalStop = false;
+
+    enum Criteria { NORMAL = 1, SDF = 2 };
+
+    Criteria mCriterionUsed = Criteria::SDF;
 
     void reset();
     void setupOverride();
@@ -73,10 +86,17 @@ class SemiautomaticSegmentation : public ITool {
     struct SDFStopping {
         const Geometry* const geo;
         double maximumDifference;
+        bool areEdgesHard;
         std::vector<double> initialValues;
+        std::unordered_map<std::size_t, std::size_t> triangleToBestRegion;
 
-        SDFStopping(const Geometry* const g, const std::vector<double> initialVals, const double maxDiff)
-            : geo(g), maximumDifference(maxDiff), initialValues(initialVals) {
+        SDFStopping(const Geometry* const g, const std::vector<double> initialVals, const double maxDiff,
+                    const std::unordered_map<std::size_t, std::size_t> triangleToRegion, bool hardEdges)
+            : geo(g),
+              maximumDifference(maxDiff),
+              areEdgesHard(hardEdges),
+              initialValues(initialVals),
+              triangleToBestRegion(triangleToRegion) {
             std::sort(initialValues.begin(), initialValues.end());
         }
 
@@ -84,6 +104,16 @@ class SemiautomaticSegmentation : public ITool {
             assert(geo->isSdfComputed());
             if(!geo->isSdfComputed()) {
                 return false;
+            }
+
+            if(areEdgesHard) {
+                auto findCurrent = triangleToBestRegion.find(current);
+                assert(findCurrent != triangleToBestRegion.end());
+                auto findNeighbour = triangleToBestRegion.find(neighbour);
+                assert(findNeighbour != triangleToBestRegion.end());
+                if(findCurrent->second != findNeighbour->second) {
+                    return false;
+                }
             }
 
             const double sdfNeighbour = geo->getSdfValue(neighbour);
