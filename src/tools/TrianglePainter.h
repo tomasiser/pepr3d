@@ -12,8 +12,7 @@ class MainApplication;
 
 class TrianglePainter : public ITool {
    public:
-    TrianglePainter(MainApplication& app, CommandManager<class Geometry>& commandManager)
-        : mApplication(app), mCommandManager(commandManager) {}
+    TrianglePainter(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Triangle Painter";
@@ -29,10 +28,10 @@ class TrianglePainter : public ITool {
     virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onNewGeometryLoaded(ModelView& modelView) override;
 
    private:
     MainApplication& mApplication;
-    CommandManager<class Geometry>& mCommandManager;
     glm::vec2 mLastClick;
     ci::Ray mLastRay;
 

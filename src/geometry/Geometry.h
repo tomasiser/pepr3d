@@ -2,17 +2,23 @@
 
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/exceptions.h>
-#include <cinder/Log.h>
+#include <CGAL/mesh_segmentation.h>
 #include <cinder/Ray.h>
 #include <cinder/gl/gl.h>
+#include "cinder/Log.h"
 
 #include <cassert>
 #include <map>
 #include <optional>
+#include <unordered_map>
 #include <vector>
 
+#include "ThreadPool.h"
+
 #include "geometry/ColorManager.h"
+#include "geometry/GeometryProgress.h"
 #include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
@@ -78,6 +84,9 @@ class Geometry {
     /// Struct representing a highlight around user's cursor
     AreaHighlight mAreaHighlight;
 
+    /// Current progress of import, tree, polyhedron building, export, etc.
+    std::unique_ptr<GeometryProgress> mProgress;
+
     struct GeometryState {
         std::vector<DataTriangle> triangles;
         ColorManager::ColorMap colorMap;
@@ -91,24 +100,24 @@ class Geometry {
         /// Indices to triangles of the polyhedron. Indices are stored in a CCW order, as imported from Assimp.
         std::vector<std::array<size_t, 3>> indices;
 
-        /// CGAL Polyhedral surface class
-        Polyhedron P;
+        typedef CGAL::Surface_mesh<DataTriangle::K::Point_3> Mesh;
+        typedef Mesh::Vertex_index vertex_descriptor;
+        typedef Mesh::Face_index face_descriptor;
 
-        /// A vector with pointers to the polyhedron faces.
-        /// The i-th pointer points to the face of the i-th triangle from the indices vector<>.
-        std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle> faceHandles;
-
-        /// Simple property to check if the Polyhedron is closed or not.
-        bool closeCheck = false;
+        bool isSdfComputed = false;
+        bool valid = false;
+        PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, size_t> mIdMap;
+        PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, double> sdf_property_map;
+        std::vector<PolyhedronData::face_descriptor> mFaceDescs;
+        Mesh mMesh;
     } mPolyhedronData;
 
    public:
     /// Empty constructor
-    Geometry() {
-        mTree = std::make_unique<Tree>();
-    }
+    Geometry() : mTree(std::make_unique<Tree>()), mProgress(std::make_unique<GeometryProgress>()) {}
 
-    Geometry(std::vector<DataTriangle>&& triangles) : mTriangles(std::move(triangles)) {
+    Geometry(std::vector<DataTriangle>&& triangles)
+        : mTriangles(std::move(triangles)), mProgress(std::make_unique<GeometryProgress>()) {
         generateVertexBuffer();
         generateIndexBuffer();
         generateColorBuffer();
@@ -125,8 +134,8 @@ class Geometry {
         return mVertexBuffer;
     }
 
-    bool polyClosedCheck() const {
-        return mPolyhedronData.closeCheck;
+    bool polyhedronValid() const {
+        return mPolyhedronData.mMesh.is_valid() && mPolyhedronData.valid && !mPolyhedronData.mMesh.is_empty();
     }
 
     size_t polyVertCount() const {
@@ -191,8 +200,13 @@ class Geometry {
         return it == mTriangleDetails.end() || it->second.isSingleColor();
     }
 
+    const GeometryProgress& getProgress() const {
+        assert(mProgress != nullptr);
+        return *mProgress;
+    }
+
     /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.
-    void loadNewGeometry(const std::string& fileName);
+    void loadNewGeometry(const std::string& fileName, ::ThreadPool& threadPool);
 
     /// Exports the modified geometry to the file specified by a path, file name and file type.
     void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType);
@@ -231,6 +245,19 @@ class Geometry {
     /// Spread as BFS from starting triangle, until the limits of brush settings are reached
     std::vector<size_t> getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection,
                                                size_t startTriangle, const struct BrushSettings& settings);
+    void preSegmentation() {
+        computeSdf();
+    }
+
+    bool isSdfComputed() const {
+        return mPolyhedronData.isSdfComputed;
+    }
+
+    size_t segmentation(const int numberOfClusters, const float smoothingLambda,
+                        std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
+                        std::unordered_map<size_t, size_t>& triangleToSegmentMap) {
+        return segment(numberOfClusters, smoothingLambda, segmentToTriangleIds, triangleToSegmentMap);
+    }
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
@@ -253,20 +280,6 @@ class Geometry {
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
     void buildPolyhedron();
 
-    /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the
-    /// CGAL Polyhedron construct.
-    std::array<int, 3> gatherNeighbours(
-        const size_t triIndex,
-        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles) const;
-
-    /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
-    template <typename StoppingCondition>
-    void addNeighboursToQueue(
-        const size_t currentVertex,
-        const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
-        std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
-        const StoppingCondition& stopFunctor) const;
-
     void updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOrigin, const struct BrushSettings& settings);
 
     TriangleDetail* createTriangleDetail(size_t triangleIdx);
@@ -279,11 +292,26 @@ class Geometry {
             return &(it->second);
         }
     }
+
+    /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking
+    /// into the CGAL Polyhedron construct.
+    std::array<int, 3> gatherNeighbours(const size_t triIndex) const;
+
+    /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
+    template <typename StoppingCondition>
+    void addNeighboursToQueue(const size_t currentVertex, std::unordered_set<size_t>& alreadyVisited,
+                              std::deque<size_t>& toVisit, const StoppingCondition& stopFunctor) const;
+
+    void computeSdf();
+
+    size_t segment(const int numberOfClusters, const float smoothingLambda,
+                   std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
+                   std::unordered_map<size_t, size_t>& triangleToSegmentMap);
 };
 
 template <typename StoppingCondition>
 std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
-    if(mPolyhedronData.P.is_empty()) {
+    if(mPolyhedronData.mMesh.is_empty()) {
         return {};
     }
 
@@ -306,23 +334,25 @@ std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const Stop
         assert(currentVertex < mTriangles.size());
         assert(toVisit.size() < mTriangles.size());
 
-        // Manage neighbours and grow the queue
-        addNeighboursToQueue(currentVertex, mPolyhedronData.faceHandles, alreadyVisited, toVisit, stopFunctor);
+        // Catching because of unpredictable CGAL errors
+        try {
+            // Manage neighbours and grow the queue
+            addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
+        } catch(CGAL::Assertion_exception* excp) {
+            CI_LOG_E("Exception caught. Returning immediately. " + excp->expression() + " " + excp->message());
+            return {};
+        }
 
-        // Set the color
-        // setTriangleColor(currentVertex, mColorManager.getActiveColorIndex());
+        // Add the triangle to the list
         trianglesToColor.push_back(currentVertex);
     }
     return trianglesToColor;
 }
 
 template <typename StoppingCondition>
-void Geometry::addNeighboursToQueue(
-    const size_t currentVertex,
-    const std::vector<CGAL::Polyhedron_incremental_builder_3<HalfedgeDS>::Face_handle>& faceHandles,
-    std::unordered_set<size_t>& alreadyVisited, std::deque<size_t>& toVisit,
-    const StoppingCondition& stopFunctor) const {
-    const std::array<int, 3> neighbours = gatherNeighbours(currentVertex, faceHandles);
+void Geometry::addNeighboursToQueue(const size_t currentVertex, std::unordered_set<size_t>& alreadyVisited,
+                                    std::deque<size_t>& toVisit, const StoppingCondition& stopFunctor) const {
+    const std::array<int, 3> neighbours = gatherNeighbours(currentVertex);
     for(int i = 0; i < 3; ++i) {
         if(neighbours[i] == -1) {
             continue;

@@ -20,7 +20,7 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     const size_t triSize = mApplication.getCurrentGeometry()->getTriangleCount();
     sidePane.drawText("Vertex count: " + std::to_string(mApplication.getCurrentGeometry()->polyVertCount()) + "\n");
     sidePane.drawText("Triangle count: " + std::to_string(triSize) + "\n");
-    sidePane.drawText("Polyhedron closed 0/1: " + std::to_string(mApplication.getCurrentGeometry()->polyClosedCheck()) +
+    sidePane.drawText("Polyhedron valid 0/1: " + std::to_string(mApplication.getCurrentGeometry()->polyhedronValid()) +
                       "\n");
 
     sidePane.drawSeparator();

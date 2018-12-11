@@ -10,8 +10,7 @@ namespace pepr3d {
 
 class PaintBucket : public ITool {
    public:
-    PaintBucket(MainApplication& app, CommandManager<class Geometry>& commandManager)
-        : mApplication(app), mCommandManager(commandManager) {}
+    PaintBucket(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Paint Bucket";
@@ -26,12 +25,12 @@ class PaintBucket : public ITool {
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onNewGeometryLoaded(ModelView& modelView) override;
 
     enum NormalAngleCompare { NEIGHBOURS = 1, ABSOLUTE = 2 };
 
    private:
     MainApplication& mApplication;
-    CommandManager<class Geometry>& mCommandManager;
     std::optional<std::size_t> mHoveredTriangleId = {};
     bool mStopOnNormal = false;
     int mStopOnNormalDegrees = 30;
@@ -39,6 +38,7 @@ class PaintBucket : public ITool {
     bool mDoNotStop = false;
     bool mShouldPaintWhileDrag = true;
     bool mDragging = false;
+    bool mGeometryCorrect = true;
     NormalAngleCompare mNormalCompare = NormalAngleCompare::NEIGHBOURS;
 
     struct DoNotStop {

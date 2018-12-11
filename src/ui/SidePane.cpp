@@ -40,8 +40,10 @@ void SidePane::draw() {
     drawList->AddLine(cursorPos + glm::ivec2(0, 49), cursorPos + glm::ivec2(size.x, 49),
                       ImColor(ci::ColorA::hex(0xEDEDED)));
 
-    ImGui::SetCursorPos(glm::ivec2(12, 22));
+    ImGui::SetCursorPos(glm::ivec2(12, 13));
+    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     ImGui::Text(currentTool.getIcon().c_str());
+    ImGui::PopFont();
     ImGui::SetCursorPos(glm::ivec2(50, 15));
     ImGui::Text(currentTool.getName().c_str());
 
@@ -66,6 +68,15 @@ bool SidePane::drawButton(std::string label) {
     bool ret = ImGui::Button(label.c_str(), glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
     ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
                                         (ImColor)ci::ColorA::hex(0xEDEDED));
+    return ret;
+}
+
+bool SidePane::drawColoredButton(std::string label, const ci::ColorA color, const float borderThickness) {
+    ImGui::PushStyleColor(ImGuiCol_Border, color);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, borderThickness);
+    bool ret = ImGui::Button(label.c_str(), glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor();
     return ret;
 }
 
@@ -97,6 +108,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
     //         }
     //     }
     // }
+
+    CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
 
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     glm::ivec2 initialCursorPos = ImGui::GetCursorScreenPos();
@@ -153,8 +166,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         if(ImGui::BeginPopup(colorEditPopupId.c_str())) {
             ImGui::PushItemWidth(-0.001f);  // force full width
             if(ImGui::ColorPicker3(colorPickerId.c_str(), &color[0], ImGuiColorEditFlags_NoSidePreview)) {
-                assert(mCommandManager);
-                mCommandManager->execute(std::make_unique<CmdChangeColorManagerColor>(i, color), true);
+                assert(commandManager);
+                commandManager->execute(std::make_unique<CmdChangeColorManagerColor>(i, color), true);
             }
             ImGui::PopItemWidth();
             ImGui::EndPopup();
@@ -174,8 +187,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         for(int i = 0; i < colorManager.size(); ++i) {
             newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
         }
-        assert(mCommandManager);
-        mCommandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
+        assert(commandManager);
+        commandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
     }
 }
 

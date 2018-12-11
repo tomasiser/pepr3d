@@ -4,8 +4,7 @@
 #include "ui/MainApplication.h"
 #include "ui/ModelView.h"
 
-namespace pepr3d
-{
+namespace pepr3d {
 void Brush::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
     if(!event.isLeftDown()) {
         return;
@@ -37,7 +36,11 @@ void Brush::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event
 
 void Brush::paint() {
     mBrushSettings.color = mApplication.getCurrentGeometry()->getColorManager().getActiveColorIndex();
-    mCommandManager.execute(std::make_unique<CmdPaintBrush>(mLastRay, mBrushSettings), mGroupCommands);
+    auto* commandManager = mApplication.getCommandManager();
+    if(commandManager) {
+        commandManager->execute(std::make_unique<CmdPaintBrush>(mLastRay, mBrushSettings), mGroupCommands);
+    }
+
     mGroupCommands = true;
 }
 
@@ -49,8 +52,7 @@ void Brush::updateHighlight() const {
     mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSettings);
 }
 
-void Brush::drawToSidePane(SidePane& sidePane)
-{
+void Brush::drawToSidePane(SidePane& sidePane) {
     sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
     sidePane.drawSeparator();
 
@@ -58,10 +60,8 @@ void Brush::drawToSidePane(SidePane& sidePane)
     sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
     sidePane.drawCheckbox("Respect original triangles", mBrushSettings.respectOriginalTriangles);
 
-    if(mBrushSettings.respectOriginalTriangles)
-    {
+    if(mBrushSettings.respectOriginalTriangles) {
         sidePane.drawCheckbox("Paint outer ring", mBrushSettings.paintOuterRing);
     }
 }
-}
-
+}  // namespace pepr3d

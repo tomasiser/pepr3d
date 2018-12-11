@@ -7,7 +7,11 @@
 
 #include "peprimgui.h"
 
+#include "ThreadPool.h"
+
+#include "FontStorage.h"
 #include "ModelView.h"
+#include "ProgressIndicator.h"
 #include "SidePane.h"
 #include "Toolbar.h"
 #include "commands/CommandManager.h"
@@ -63,6 +67,9 @@ class MainApplication : public App {
         mShowDemoWindow = show;
     }
 
+    void openFile(const std::string& path);
+    void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType);
+
     using ToolsVector = std::vector<std::unique_ptr<ITool>>;
 
     ToolsVector::iterator getToolsBegin() {
@@ -89,6 +96,7 @@ class MainApplication : public App {
     void setCurrentToolIterator(ToolsVector::iterator tool) {
         assert(mTools.size() > 0);
         assert(tool != mTools.end());
+        (*mCurrentToolIterator)->onToolDeselect(mModelView);
         mCurrentToolIterator = tool;
     }
 
@@ -96,21 +104,53 @@ class MainApplication : public App {
         return mGeometry.get();
     }
 
+    CommandManager<Geometry>* getCommandManager() {
+        return mCommandManager.get();
+    }
+
+    void showImportDialog();
+
+    void showExportDialog() {
+        mShowExportDialog = true;
+    }
+
+    FontStorage& getFontStorage() {
+        return mFontStorage;
+    }
+
    private:
+    void setupFonts();
     void setupIcon();
+    void drawExportDialog();
+    void willResignActive();
+    void didBecomeActive();
+    bool isWindowObscured();
+
+    bool mShouldSkipDraw = false;
+    bool mIsFocused = true;
+
+    peprimgui::PeprImGui mImGui;  // ImGui wrapper for Cinder/Pepr3D
+    FontStorage mFontStorage;
 
     Toolbar mToolbar;
     SidePane mSidePane;
     ModelView mModelView;
+    ProgressIndicator mProgressIndicator;
     bool mShowDemoWindow = false;
+    bool mShowExportDialog = false;
+    bool mShouldExportInNewFolder = false;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
 
-    std::unique_ptr<Geometry> mGeometry;
+    std::shared_ptr<Geometry> mGeometry;
+    std::shared_ptr<Geometry>
+        mGeometryInProgress;  // used for async loading of Geometry, is nullptr if nothing is being loaded
     std::unique_ptr<CommandManager<Geometry>> mCommandManager;
 
     std::string mGeometryFileName;
+
+    ::ThreadPool mThreadPool;
 };
 
 }  // namespace pepr3d

@@ -13,7 +13,11 @@
 #include <unordered_set>
 #include <vector>
 
+#include "ThreadPool.h"
+
+#include "geometry/AssimpProgress.h"
 #include "geometry/ColorManager.h"
+#include "geometry/GeometryProgress.h"
 #include "geometry/Triangle.h"
 
 namespace pepr3d {
@@ -28,10 +32,14 @@ class ModelImporter {
     std::vector<glm::vec3> mVertexBuffer;
     std::vector<std::array<size_t, 3>> mIndexBuffer;
 
+    GeometryProgress *mProgress;
+
    public:
-    ModelImporter(const std::string p) : mPath(p) {
-        this->mModelLoaded = loadModel(this->mPath);
-        this->mModelLoaded &= loadModelWithJoinedVertices(this->mPath);
+    ModelImporter(const std::string p, GeometryProgress *progress, ::ThreadPool &threadPool)
+        : mPath(p), mProgress(progress) {
+        auto loadedModel = threadPool.enqueue([this]() { return loadModel(this->mPath); });
+        bool loadedModelWithJoinedVertices = loadModelWithJoinedVertices(this->mPath);
+        this->mModelLoaded = loadedModel.get() & loadedModelWithJoinedVertices;
         assert(mTriangles.size() == mIndexBuffer.size());
     }
 
@@ -106,7 +114,7 @@ class ModelImporter {
                 indices.push_back(
                     {mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]});
             } else {
-                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from index buffer.");
+                CI_LOG_W("Imported a triangle with zero surface area. Ommiting it from index buffer.");
             }
         }
 
@@ -127,6 +135,13 @@ class ModelImporter {
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS | aiComponent_TANGENTS_AND_BITANGENTS |
                                                                 aiComponent_COLORS | aiComponent_TEXCOORDS |
                                                                 aiComponent_BONEWEIGHTS);
+
+        // Progress handler
+        if(mProgress != nullptr) {
+            auto assimpProgress =
+                std::make_unique<AssimpProgress<std::atomic<float>>>(&(mProgress->importComputePercentage));
+            importer.SetProgressHandler(assimpProgress.release());  // importer calls delete on assimpProgress
+        }
 
         /// Scene with some postprocessing
         const aiScene *scene =
@@ -160,6 +175,13 @@ class ModelImporter {
         importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, 1);
         importer.SetPropertyInteger(AI_CONFIG_PP_FD_CHECKAREA, 1);
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
+
+        // Progress handler
+        if(mProgress != nullptr) {
+            auto assimpProgress =
+                std::make_unique<AssimpProgress<std::atomic<float>>>(&(mProgress->importRenderPercentage));
+            importer.SetProgressHandler(assimpProgress.release());  // importer calls delete on assimpProgress
+        }
 
         /// Scene with some postprocessing
         const aiScene *scene =
@@ -269,7 +291,7 @@ class ModelImporter {
                 /// Place the constructed triangle
                 triangles.emplace_back(vertices[0], vertices[1], vertices[2], normal, returnColor);
             } else {
-                CI_LOG_E("Imported a triangle with zero surface area. Ommiting it from geometry data.");
+                CI_LOG_W("Imported a triangle with zero surface area. Ommiting it from geometry data.");
             }
         }
         return triangles;

@@ -33,8 +33,8 @@ struct BrushSettings {
 
 class Brush : public ITool {
    public:
-    Brush(MainApplication& app, CommandManager<class Geometry>& commandManager)
-        : mApplication(app), mCommandManager(commandManager) {}
+    Brush(MainApplication& app)
+        : mApplication(app){}
 
     virtual std::string getName() const override {
         return "Brush";
@@ -61,7 +61,6 @@ class Brush : public ITool {
 
     ci::Ray mLastRay;
     MainApplication& mApplication;
-    CommandManager<class Geometry>& mCommandManager;
 
     BrushSettings mBrushSettings;
 

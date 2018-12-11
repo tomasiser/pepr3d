@@ -5,6 +5,11 @@
 namespace pepr3d {
 
 void PaintBucket::drawToSidePane(SidePane &sidePane) {
+    if(!mGeometryCorrect) {
+        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        return;
+    }
+
     sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
     sidePane.drawSeparator();
 
@@ -28,7 +33,7 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
 }
 
 void PaintBucket::drawToModelView(ModelView &modelView) {
-    if(mHoveredTriangleId) {
+    if(mHoveredTriangleId && mGeometryCorrect) {
         modelView.drawTriangleHighlight(*mHoveredTriangleId);
     }
 }
@@ -40,8 +45,11 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     if(!mHoveredTriangleId) {
         return;
     }
-    auto geometry = mApplication.getCurrentGeometry();
+    const auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
+        return;
+    }
+    if(!mGeometryCorrect) {
         return;
     }
 
@@ -76,7 +84,8 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
 
     // We only want to re-draw if we are not dragging, or if you are dragging and reached a new region
     if(!mDragging || (mDragging && !hoverOverSameTriangle)) {
-        mCommandManager.execute(std::make_unique<CmdPaintSingleColor>(std::move(trianglesToPaint), currentColorIndex),
+        CommandManager<Geometry> *const commandManager = mApplication.getCommandManager();
+        commandManager->execute(std::make_unique<CmdPaintSingleColor>(std::move(trianglesToPaint), currentColorIndex),
                                 mDragging);
     }
 }
@@ -91,13 +100,21 @@ void PaintBucket::onModelViewMouseDrag(class ModelView &modelView, ci::app::Mous
 }
 
 void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent event) {
+    if(!mGeometryCorrect) {
+        return;
+    }
     const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    auto geometry = mApplication.getCurrentGeometry();
+    const auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         mHoveredTriangleId = {};
         return;
     }
     mHoveredTriangleId = geometry->intersectMesh(cameraRay);
+}
+
+void PaintBucket::onNewGeometryLoaded(ModelView &modelView) {
+    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
+    mHoveredTriangleId = {};
 }
 
 }  // namespace pepr3d

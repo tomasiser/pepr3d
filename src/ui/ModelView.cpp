@@ -7,7 +7,7 @@ namespace pepr3d {
 
 void ModelView::setup() {
     resetCamera();
-    mCameraUi = ci::CameraUi(&mCamera);
+    mCameraUi = pepr3d::CameraUi(&mCamera);
     resize();
 
     mModelShader =
@@ -39,7 +39,8 @@ void ModelView::draw() {
 
     if(mIsGridEnabled) {
         ci::gl::ScopedModelMatrix modelScope;
-        ci::gl::multModelMatrix(glm::scale(glm::vec3(0.9f)));  // i.e., new size is 2.0f * 0.9f = 1.8f
+        ci::gl::multModelMatrix(glm::translate(glm::vec3(0.0f, mGridOffset, 0.0f)) *
+                                glm::scale(glm::vec3(0.9f)));  // i.e., new size is 2.0f * 0.9f = 1.8f
         ci::gl::ScopedColor colorScope(ci::ColorA::black());
         ci::gl::ScopedLineWidth widthScope(1.0f);
         auto plane = ci::gl::Batch::create(ci::geom::WirePlane().subdivisions(glm::ivec2(18)),  // i.e., 1 cell = 0.1f
@@ -96,7 +97,7 @@ void ModelView::onMouseMove(MouseEvent event) {
 }
 
 void ModelView::resetCamera() {
-    mCamera.lookAt(glm::vec3(3.0f, 2.5f, 2.0f), glm::vec3(0.0f, 0.25f, 0.0f));
+    mCamera.lookAt(glm::vec3(2.4f, 1.8f, 1.6f), glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 void ModelView::updateModelMatrix() {
@@ -115,7 +116,7 @@ void ModelView::updateModelMatrix() {
     }
 
     // attention: in OpenGL, matrices are applied in reverse order (from the latest to the first)
-    mModelMatrix = glm::scale(glm::vec3(inverseMaxSize, inverseMaxSize, -inverseMaxSize));
+    mModelMatrix = glm::scale(glm::vec3(inverseMaxSize, inverseMaxSize, inverseMaxSize));
     mModelMatrix *= glm::translate(aabbSize / 2.0f);
     mModelMatrix *= glm::rotate(glm::radians(-90.0f), glm::vec3(1, 0, 0));
     mModelMatrix *= glm::translate(-aabbSize / 2.0f);
@@ -126,10 +127,11 @@ void ModelView::updateModelMatrix() {
     const glm::vec4 aabbSizeFit = aabbMaxFit - aabbMinFit;
 
     mModelMatrix =
-        glm::translate(glm::vec3(-aabbSizeFit.x / 2.0f, -aabbSizeFit.z / 2.0f, aabbSizeFit.y / 2.0f)) * mModelMatrix;
+        glm::translate(glm::vec3(-aabbSizeFit.x / 2.0f, aabbSizeFit.z / 2.0f, -aabbSizeFit.y / 2.0f)) * mModelMatrix;
     mModelMatrix = glm::rotate(glm::radians(mModelRoll), glm::vec3(1, 0, 0)) * mModelMatrix;
-    mModelMatrix = glm::translate(glm::vec3(0.0f, aabbSizeFit.z / 2.0f - aabbMaxFit.z, 0.0f)) * mModelMatrix;
     mModelMatrix = glm::translate(mModelTranslate) * mModelMatrix;
+
+    mGridOffset = -(aabbMaxFit.z - aabbSizeFit.z / 2.0f);
 }
 
 ci::Ray ModelView::getRayFromWindowCoordinates(glm::ivec2 windowCoords) const {
@@ -160,6 +162,8 @@ void ModelView::drawGeometry() {
     const std::vector<Geometry::ColorIndex>& colors = mApplication.getCurrentGeometry()->getColorBuffer();
     assert(colors.size() == positions.size());
 
+    assert(!mColorOverride.isOverriden || mColorOverride.overrideColorBuffer.size() == positions.size());
+
     const std::vector<glm::vec3>& normals = mApplication.getCurrentGeometry()->getNormalBuffer();
 
     const auto& areaHighlight = mApplication.getCurrentGeometry()->getAreaHighlight();
@@ -168,6 +172,7 @@ void ModelView::drawGeometry() {
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::POSITION, 3),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::NORMAL, 3),
+        cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::COLOR, 4),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(Attributes::COLOR_IDX, 1),
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(Attributes::HIGHLIGHT_MASK, 1)};
 
@@ -181,6 +186,7 @@ void ModelView::drawGeometry() {
     // Assign the buffers to the attributes
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);
     myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, normals);
+    myVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
     myVboMesh->bufferAttrib<Geometry::ColorIndex>(Attributes::COLOR_IDX, colors);
     myVboMesh->bufferAttrib<GLint>(Attributes::HIGHLIGHT_MASK, areaHighlight.vertexMask);
 
@@ -188,6 +194,7 @@ void ModelView::drawGeometry() {
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
     mModelShader->uniform("uColorPalette", &colorMap[0], static_cast<int>(colorMap.size()));
     mModelShader->uniform("uShowWireframe", mIsWireframeEnabled);
+    mModelShader->uniform("uOverridePalette", mColorOverride.isOverriden);
 
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
@@ -205,7 +212,7 @@ void ModelView::drawGeometry() {
 
 void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
     const Geometry* const geometry = mApplication.getCurrentGeometry();
-    if(geometry == nullptr) {
+    if(geometry == nullptr || triangleIndex >= geometry->getTriangleCount()) {
         return;
     }
 
