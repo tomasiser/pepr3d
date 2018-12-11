@@ -24,7 +24,7 @@ class GnuplotDebug {
     GnuplotDebug(const GnuplotDebug&) = delete;
 
     void addPoly(const TriangleDetail::Polygon& poly, const std::string& rgbStr) {
-        mPolysToDraw.push_back(&poly);
+        mPolysToDraw.push_back(poly);
         mRgbStrings.push_back(rgbStr);
     }
 
@@ -52,15 +52,15 @@ class GnuplotDebug {
         if(oFileData.bad())
             return;
 
-        for(auto* poly : mPolysToDraw) {
+        for(const auto& poly : mPolysToDraw) {
             oFileData << "# X Y\n";
-            for(TriangleDetail::Polygon::Vertex_const_iterator it = poly->vertices_begin(); it != poly->vertices_end();
+            for(TriangleDetail::Polygon::Vertex_const_iterator it = poly.vertices_begin(); it != poly.vertices_end();
                 ++it) {
                 oFileData << it->x() << " " << it->y() << "\n";
             }
 
             // add first point again to connect the poly
-            oFileData << poly->vertices_begin()->x() << " " << poly->vertices_begin()->y() << "\n";
+            oFileData << poly.vertices_begin()->x() << " " << poly.vertices_begin()->y() << "\n";
 
             oFileData << "\n";
             oFileData << "\n";
@@ -68,7 +68,7 @@ class GnuplotDebug {
     }
 
    private:
-    std::vector<const TriangleDetail::Polygon*> mPolysToDraw;
+    std::vector<TriangleDetail::Polygon> mPolysToDraw;
     std::vector<std::string> mRgbStrings;
 };
 
@@ -77,17 +77,12 @@ class GnuplotDebug {
 void TriangleDetail::addCircle(const PeprPoint2& circleOrigin, const PeprPoint2& circleEdge, size_t color) {
     const Polygon circlePoly = polygonFromCircle(circleOrigin, circleEdge);
 
-    GnuplotDebug dbg;
-    dbg.addPoly(mBounds, "#FF0000");
-    dbg.addPoly(circlePoly, "#00FF00");
-    dbg.exportToFile();
-
     PolygonSet addedShape(circlePoly);
     addedShape.intersection(mBounds);
 
-    auto coloredPolys = gatherTrianglesIntoPolys();
+    std::map<size_t, PolygonSet> coloredPolys = gatherTrianglesIntoPolys();
     bool joined = false;
-    for(auto it : coloredPolys) {
+    for(auto& it : coloredPolys) {
         // Join the new shape with PolygonSet of the same color
         // Remove the new shape from other colors
         if(it.first == color) {
@@ -108,13 +103,19 @@ void TriangleDetail::addCircle(const PeprPoint2& circleOrigin, const PeprPoint2&
 
 TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
     const Point2 a = toExactK(mOriginalPlane.to_2d(tri.vertex(0)));
-    const Point2 b = toExactK(mOriginalPlane.to_2d(tri.vertex(1)));
-    const Point2 c = toExactK(mOriginalPlane.to_2d(tri.vertex(2)));
+    Point2 b = toExactK(mOriginalPlane.to_2d(tri.vertex(1)));
+    Point2 c = toExactK(mOriginalPlane.to_2d(tri.vertex(2)));
 
     Polygon pgn;
     pgn.push_back(a);
     pgn.push_back(b);
     pgn.push_back(c);
+
+    assert(!pgn.is_empty());
+
+    if(pgn.is_clockwise_oriented())
+        pgn.reverse_orientation();
+        
     return pgn;
 }
 
@@ -144,6 +145,7 @@ std::map<size_t, TriangleDetail::PolygonSet> TriangleDetail::gatherTrianglesInto
     std::map<size_t, PolygonSet> result;
 
     for(const DataTriangle& tri : mTriangles) {
+        assert(tri.getTri().squared_area() > 0);
         result[tri.getColor()].join(polygonFromTriangle(tri.getTri()));
     }
 
@@ -227,14 +229,25 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
             const glm::vec3 c = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(2)->point())));
 
             DataTriangle tri(a, b, c, mOriginal.getNormal());
-            tri.setColor(color);
-            mTriangles.emplace_back(std::move(tri));
+            if(tri.getTri().squared_area()>0)
+            {
+                tri.setColor(color);
+
+                // Make sure that the original counter-clockwise order is preserved
+                if(glm::dot(mOriginal.getNormal(), glm::cross((b-a), (c-a)))<0)
+                {
+                    tri = DataTriangle(a,c,b, mOriginal.getNormal());
+                }
+                
+                mTriangles.emplace_back(std::move(tri));
+            }
         }
     }
 }
 
 void TriangleDetail::createNewTriangles(const std::map<size_t, PolygonSet>& coloredPolys) {
     mTriangles.clear();
+
 
     for(const auto it : coloredPolys) {
         if(it.second.is_empty())
@@ -246,5 +259,6 @@ void TriangleDetail::createNewTriangles(const std::map<size_t, PolygonSet>& colo
             addTrianglesFromPolygon(poly, it.first);
         }
     }
+
 }
 }  // namespace pepr3d

@@ -247,6 +247,9 @@ class Geometry {
     /// Generate a buffer of normals. Generates only "triangle normals" - all three vertices have the same normal.
     void generateNormalBuffer();
 
+    /// Generate a buffer of highlight information. Saves per-triangle data to each vertex
+    void generateHighlightBuffer(const std::set<size_t>& paintSet, const BrushSettings& settings);
+
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
     void buildPolyhedron();
 

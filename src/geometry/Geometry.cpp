@@ -173,6 +173,51 @@ void Geometry::generateNormalBuffer() {
     assert(mNormalBuffer.size() == mVertexBuffer.size());
 }
 
+void Geometry::generateHighlightBuffer(const std::set<size_t>& paintSet, const BrushSettings& settings) {
+    mAreaHighlight.vertexMask.clear();
+    // Mark all triangles with attribute assigned to vertex
+    mAreaHighlight.vertexMask.reserve(mTriangles.size() * 3);
+    for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
+        // Fill 3 vertices of a triangle
+        if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
+            if(isTriangleSingleColor(triangleIdx)) {
+                mAreaHighlight.vertexMask.emplace_back(0);
+                mAreaHighlight.vertexMask.emplace_back(0);
+                mAreaHighlight.vertexMask.emplace_back(0);
+            }
+
+        } else {
+            if(isTriangleSingleColor(triangleIdx)) {
+                mAreaHighlight.vertexMask.emplace_back(1);
+                mAreaHighlight.vertexMask.emplace_back(1);
+                mAreaHighlight.vertexMask.emplace_back(1);
+            }
+        }
+    }
+
+    // If the original triangle has highlight enabled also enable for detail
+    for(auto& it : mTriangleDetails) {
+        const size_t triangleIdx = it.first;
+        const auto& detailTriangles = it.second.getTriangles();
+
+        const bool enableHighlight = !settings.continuous || paintSet.find(triangleIdx) != paintSet.end();
+
+        for(const auto& triangle : detailTriangles) {
+            if(enableHighlight) {
+                mAreaHighlight.vertexMask.emplace_back(1);
+                mAreaHighlight.vertexMask.emplace_back(1);
+                mAreaHighlight.vertexMask.emplace_back(1);
+            } else {
+                mAreaHighlight.vertexMask.emplace_back(0);
+                mAreaHighlight.vertexMask.emplace_back(0);
+                mAreaHighlight.vertexMask.emplace_back(0);
+            }
+        }
+    }
+
+    assert(mAreaHighlight.vertexMask.size() == mVertexBuffer.size());
+}
+
 /* -------------------- Tool support -------------------- */
 
 std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray) const {
@@ -273,27 +318,13 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
         std::set<size_t> paintSet(trianglesToPaint.begin(), trianglesToPaint.end());
         trianglesToPaint.clear();
 
-        mAreaHighlight.vertexMask.clear();
         mAreaHighlight.size = settings.size;
         mAreaHighlight.origin = intersectionPoint;
         mAreaHighlight.direction = ray.getDirection();
         mAreaHighlight.enabled = true;
         mAreaHighlight.dirty = true;
 
-        // Mark all triangles with attribute assigned to vertex
-        mAreaHighlight.vertexMask.reserve(mTriangles.size() * 3);
-        for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
-            // Fill 3 vertices of a triangle
-            if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
-                mAreaHighlight.vertexMask.emplace_back(0);
-                mAreaHighlight.vertexMask.emplace_back(0);
-                mAreaHighlight.vertexMask.emplace_back(0);
-            } else {
-                mAreaHighlight.vertexMask.emplace_back(1);
-                mAreaHighlight.vertexMask.emplace_back(1);
-                mAreaHighlight.vertexMask.emplace_back(1);
-            }
-        }
+        generateHighlightBuffer(paintSet, settings);
         // TODO: Improvement: Try to avoid doing all this if we are highlighting the same triangle with the same
         // size
     } else {

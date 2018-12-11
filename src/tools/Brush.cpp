@@ -7,15 +7,24 @@
 namespace pepr3d
 {
 void Brush::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
+    if(!event.isLeftDown()) {
+        return;
+    }
     mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
     paint();
 }
 
 void Brush::onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) {
+    if(!event.isLeftDown()) {
+        return;
+    }
     stopPaint();
 }
 
 void Brush::onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) {
+    if(!event.isLeftDown()) {
+        return;
+    }
     mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
     paint();
     updateHighlight();
