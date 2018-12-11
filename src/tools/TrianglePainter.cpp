@@ -51,7 +51,7 @@ void TrianglePainter::onModelViewMouseDrag(ModelView& modelView, ci::app::MouseE
 
 void TrianglePainter::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    auto geometry = mApplication.getCurrentGeometry();
+    const Geometry* geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         mHoveredTriangleId = {};
         return;

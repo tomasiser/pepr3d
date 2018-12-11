@@ -151,10 +151,13 @@ void Geometry::generateColorBuffer() {
 void Geometry::generateNormalBuffer() {
     mNormalBuffer.clear();
     mNormalBuffer.reserve(mVertexBuffer.size());
-    for(const auto& mTriangle : mTriangles) {
-        mNormalBuffer.push_back(mTriangle.getNormal());
-        mNormalBuffer.push_back(mTriangle.getNormal());
-        mNormalBuffer.push_back(mTriangle.getNormal());
+    for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
+        const auto& triangle = mTriangles[idx];
+        if(isTriangleSingleColor(idx)) {
+            mNormalBuffer.push_back(triangle.getNormal());
+            mNormalBuffer.push_back(triangle.getNormal());
+            mNormalBuffer.push_back(triangle.getNormal());
+        }
     }
 
     for(auto& it : mTriangleDetails) {
@@ -291,7 +294,8 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
                 mAreaHighlight.vertexMask.emplace_back(1);
             }
         }
-        // TODO: Improvement: Try to avoid doing all this if we are highlighting the same triangle with the same size
+        // TODO: Improvement: Try to avoid doing all this if we are highlighting the same triangle with the same
+        // size
     } else {
         mAreaHighlight.enabled = false;
     }
@@ -315,7 +319,6 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
             setTriangleColor(triangleIdx, settings.color);
         } else {
             if(settings.respectOriginalTriangles) {
-
                 if(settings.paintOuterRing) {
                     setTriangleColor(triangleIdx, settings.color);
                 }

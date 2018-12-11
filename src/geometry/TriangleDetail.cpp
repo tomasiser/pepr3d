@@ -1,11 +1,9 @@
 #include "geometry/TriangleDetail.h"
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_set_2.h>
-#include <CGAL/Polygon_triangulation_decomposition_2.h>
+
 #include <CGAL/partition_2.h>
 
 #include <cinder/Filesystem.h>
@@ -16,17 +14,6 @@
 // Loss of precision between conversions may move verticies? Needs testing
 
 namespace pepr3d {
-struct FaceInfo {
-    int nestingLevel = -1;
-};
-
-using K = TriangleDetail::K;
-using Fbb = CGAL::Triangulation_face_base_with_info_2<FaceInfo, K>;
-using Fb = CGAL::Constrained_triangulation_face_base_2<K, Fbb>;
-using Tds = CGAL::Triangulation_data_structure_2<CGAL::Triangulation_vertex_base_2<K>, Fb>;
-using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds>;
-
-using XMonotoneCurve = TriangleDetail::CircleSegmentTraits::X_monotone_curve_2;
 
 #ifdef _DEBUG
 #include <fstream>
@@ -67,8 +54,8 @@ class GnuplotDebug {
 
         for(auto* poly : mPolysToDraw) {
             oFileData << "# X Y\n";
-            for(TriangleDetail::Polygon::Vertex_const_iterator it = poly->vertices_begin();
-                it != poly->vertices_end(); ++it) {
+            for(TriangleDetail::Polygon::Vertex_const_iterator it = poly->vertices_begin(); it != poly->vertices_end();
+                ++it) {
                 oFileData << it->x() << " " << it->y() << "\n";
             }
 
@@ -95,8 +82,7 @@ void TriangleDetail::addCircle(const PeprPoint2& circleOrigin, const PeprPoint2&
     dbg.addPoly(circlePoly, "#00FF00");
     dbg.exportToFile();
 
-    PolygonSet addedShape;
-    addedShape.insert(circlePoly);
+    PolygonSet addedShape(circlePoly);
     addedShape.intersection(mBounds);
 
     auto coloredPolys = gatherTrianglesIntoPolys();
@@ -121,9 +107,9 @@ void TriangleDetail::addCircle(const PeprPoint2& circleOrigin, const PeprPoint2&
 }
 
 TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
-    const Point2 a = convertPoint(mOriginalPlane.to_2d(tri.vertex(0)));
-    const Point2 b = convertPoint(mOriginalPlane.to_2d(tri.vertex(1)));
-    const Point2 c = convertPoint(mOriginalPlane.to_2d(tri.vertex(2)));
+    const Point2 a = toExactK(mOriginalPlane.to_2d(tri.vertex(0)));
+    const Point2 b = toExactK(mOriginalPlane.to_2d(tri.vertex(1)));
+    const Point2 c = toExactK(mOriginalPlane.to_2d(tri.vertex(2)));
 
     Polygon pgn;
     pgn.push_back(a);
@@ -134,21 +120,20 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
 
 TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint2& circleOrigin,
                                                           const PeprPoint2& circleEdge) {
-    const Circle circle(convertPoint(circleOrigin), convertPoint(circleEdge));
-    const Vector2 circleDirA{circleOrigin, circleEdge};
-    const Vector2 circleDirB =
-        circleDirA.perpendicular(CGAL::Orientation::COUNTERCLOCKWISE) * CGAL::sqrt(circleDirA.squared_length());
+    const Circle circle(toExactK(circleOrigin), toExactK(circleEdge));
+    const Vector2 circleDirA{toExactK(circleOrigin), toExactK(circleEdge)};
+    const Vector2 circleDirB = circleDirA.perpendicular(CGAL::Orientation::COUNTERCLOCKWISE);
 
     // Scale the vertex count based on the size of the circle
     size_t vertexCount =
-        static_cast<size_t>(CGAL::sqrt(circleDirA.squared_length()) * glm::pi<double>() * 2 * VERTICES_PER_UNIT_CIRCLE);
+        static_cast<size_t>(glm::sqrt(exactToDbl(circleDirA.squared_length().exact())) * VERTICES_PER_UNIT_CIRCLE);
     vertexCount = std::max(vertexCount, static_cast<size_t>(3));
 
     // Construct the polygon.
     Polygon pgn;
     for(size_t i = 0; i < vertexCount; i++) {
         const double circleCoord = (static_cast<double>(i) / vertexCount) * 2 * glm::pi<double>();
-        Point2 pt = circleOrigin + circleDirA * cos(circleCoord) + circleDirB * sin(circleCoord);
+        Point2 pt = toExactK(circleOrigin) + circleDirA * cos(circleCoord) + circleDirB * sin(circleCoord);
 
         pgn.push_back(std::move(pt));
     }
@@ -165,8 +150,8 @@ std::map<size_t, TriangleDetail::PolygonSet> TriangleDetail::gatherTrianglesInto
     return result;
 }
 
-void markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,
-                 std::list<ConstrainedTriangulation::Edge>& border) {
+void TriangleDetail::markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,
+                                 std::list<ConstrainedTriangulation::Edge>& border) {
     if(start->info().nestingLevel != -1) {
         return;
     }
@@ -199,7 +184,7 @@ void markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_ha
 // level of 0. Then we recursively consider the non-explored facets incident
 // to constrained edges bounding the former set and increase the nesting level by 1.
 // Facets in the domain are those with an odd nesting level.
-void markDomains(ConstrainedTriangulation& ct) {
+void TriangleDetail::markDomains(ConstrainedTriangulation& ct) {
     for(auto it = ct.all_faces_begin(); it != ct.all_faces_end(); ++it) {
         it->info().nestingLevel = -1;
     }
@@ -217,20 +202,29 @@ void markDomains(ConstrainedTriangulation& ct) {
 
 void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_t color) {
     ConstrainedTriangulation ct;
-    ct.insert_constraint(poly.outer_boundary().vertices_begin(), poly.outer_boundary().vertices_end());
 
+    // Add outer edge
+    for(auto edgeIt = poly.outer_boundary().edges_begin(); edgeIt != poly.outer_boundary().edges_end(); ++edgeIt) {
+        ct.insert_constraint(edgeIt->source(), edgeIt->target());
+    }
+
+    // Add edges of each hole
     for(auto holeIt = poly.holes_begin(); holeIt != poly.holes_end(); holeIt++) {
-        ct.insert_constraint(holeIt->vertices_begin(), holeIt->vertices_end());
+        for(auto edgeIt = holeIt->edges_begin(); edgeIt != holeIt->edges_end(); ++edgeIt) {
+            ct.insert_constraint(edgeIt->source(), edgeIt->target());
+        }
     }
 
     markDomains(ct);
 
     for(auto faceIt = ct.finite_faces_begin(); faceIt != ct.finite_faces_end(); ++faceIt) {
         // Keep only faces with odd nesting level, those are inside the polygon and not in the hole
+
+        auto& face = *faceIt;
         if(faceIt->info().nestingLevel % 2 > 0) {
-            const glm::vec3 a = convertPoint(mOriginalPlane.to_3d(faceIt->vertex(0)->point()));
-            const glm::vec3 b = convertPoint(mOriginalPlane.to_3d(faceIt->vertex(1)->point()));
-            const glm::vec3 c = convertPoint(mOriginalPlane.to_3d(faceIt->vertex(2)->point()));
+            const glm::vec3 a = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(0)->point())));
+            const glm::vec3 b = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(1)->point())));
+            const glm::vec3 c = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(2)->point())));
 
             DataTriangle tri(a, b, c, mOriginal.getNormal());
             tri.setColor(color);
