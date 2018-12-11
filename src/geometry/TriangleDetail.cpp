@@ -222,7 +222,6 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
     for(auto faceIt = ct.finite_faces_begin(); faceIt != ct.finite_faces_end(); ++faceIt) {
         // Keep only faces with odd nesting level, those are inside the polygon and not in the hole
 
-        auto& face = *faceIt;
         if(faceIt->info().nestingLevel % 2 > 0) {
             const glm::vec3 a = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(0)->point())));
             const glm::vec3 b = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(1)->point())));

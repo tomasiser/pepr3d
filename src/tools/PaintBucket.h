@@ -10,7 +10,7 @@ namespace pepr3d {
 
 class PaintBucket : public ITool {
    public:
-    PaintBucket(MainApplication& app) : mApplication(app) {}
+    explicit PaintBucket(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Paint Bucket";

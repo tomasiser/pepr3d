@@ -13,7 +13,7 @@ class MainApplication;
 
 class LiveDebug : public ITool {
    public:
-    LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}
+    explicit LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}
 
     virtual std::string getName() const override {
         return "Live Debug";

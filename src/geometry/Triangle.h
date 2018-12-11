@@ -12,7 +12,8 @@ namespace pepr3d {
 /// Custom Triangle type holding the CGAL::Triangle_3 and additional data
 class DataTriangle {
    public:
-    //using K = CGAL::Spherical_kernel_3<CGAL::Simple_cartesian<double>, CGAL::Algebraic_kernel_for_spheres_2_3<double>>;
+    // using K = CGAL::Spherical_kernel_3<CGAL::Simple_cartesian<double>,
+    // CGAL::Algebraic_kernel_for_spheres_2_3<double>>;
     using K = CGAL::Simple_cartesian<double>;
     using Point = K::Point_3;
     using Triangle = K::Triangle_3;
@@ -31,10 +32,7 @@ class DataTriangle {
     DataTriangle() : mColor(0) {}
 
     DataTriangle(const glm::vec3 x, const glm::vec3 y, const glm::vec3 z, const glm::vec3 n, const size_t col = 0)
-        : mColor(col) {
-        mTriangleCgal = Triangle(Point(x.x, x.y, x.z), Point(y.x, y.y, y.z), Point(z.x, z.y, z.z));
-        mNormal = n;
-    }
+        : mTriangleCgal(Point(x.x, x.y, x.z), Point(y.x, y.y, y.z), Point(z.x, z.y, z.z)), mColor(col), mNormal(n) {}
 
     /// Method used by the AABB conversion functor to make DataTriangle searchable in AABB tree
     const Triangle &getTri() const {
@@ -81,7 +79,7 @@ struct DataTriangleAABBPrimitive {
 
     // the following constructor is the one that receives the iterators from the
     // iterator range given as input to the AABB_tree
-    DataTriangleAABBPrimitive(Iterator it) : tri(std::move(it)) {}
+    explicit DataTriangleAABBPrimitive(Iterator it) : tri(std::move(it)) {}
 
     const Id &id() const {
         return tri;

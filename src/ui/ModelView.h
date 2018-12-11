@@ -14,7 +14,7 @@ class MainApplication;
 
 class ModelView {
    public:
-    ModelView(MainApplication& app) : mApplication(app) {}
+    explicit ModelView(MainApplication& app) : mApplication(app) {}
     void setup();
     void resize();
     void draw();

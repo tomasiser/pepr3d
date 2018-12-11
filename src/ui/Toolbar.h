@@ -13,7 +13,7 @@ class MainApplication;
 
 class Toolbar {
    public:
-    Toolbar(MainApplication& app) : mApplication(app) {}
+    explicit Toolbar(MainApplication& app) : mApplication(app) {}
 
     float getHeight() {
         return mHeight;

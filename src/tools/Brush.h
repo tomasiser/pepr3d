@@ -33,7 +33,7 @@ struct BrushSettings {
 
 class Brush : public ITool {
    public:
-    Brush(MainApplication& app)
+    explicit Brush(MainApplication& app)
         : mApplication(app){}
 
     virtual std::string getName() const override {
