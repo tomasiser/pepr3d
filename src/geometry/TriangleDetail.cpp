@@ -8,6 +8,8 @@
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/partition_2.h>
 
+#include <cinder/Filesystem.h>
+
 #include <assert.h>
 #include <list>
 
@@ -26,21 +28,93 @@ using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds>;
 
 using XMonotoneCurve = TriangleDetail::CircleSegmentTraits::X_monotone_curve_2;
 
+#ifdef _DEBUG
+#include <fstream>
+
+class GnuplotDebug {
+   public:
+    GnuplotDebug() = default;
+    GnuplotDebug(const GnuplotDebug&) = delete;
+
+    void addPoly(const TriangleDetail::Polygon& poly, const std::string& rgbStr) {
+        mPolysToDraw.push_back(&poly);
+        mRgbStrings.push_back(rgbStr);
+    }
+
+    void exportToFile() {
+        std::ofstream oFileGnuplot("debugOut.gnuplot");
+        if(oFileGnuplot.bad())
+            return;
+
+        for(size_t idx = 0; idx < mRgbStrings.size(); ++idx) {
+            oFileGnuplot << "set style line " << idx + 1 << " linecolor rgb \"" << mRgbStrings[idx]
+                         << "\" linetype 1 linewidth 2\n";
+        }
+
+        const cinder::fs::path filePath("debugOut.data");
+
+        oFileGnuplot << "plot '" << absolute(filePath) << "' index 0 with lines linestyle 1";
+
+        for(size_t idx = 1; idx < mPolysToDraw.size(); ++idx) {
+            oFileGnuplot << ", '" << absolute(filePath) << "' index " << idx << " with lines linestyle " << idx + 1;
+        }
+
+        oFileGnuplot << "\n";
+
+        std::ofstream oFileData(absolute(filePath));
+        if(oFileData.bad())
+            return;
+
+        for(auto* poly : mPolysToDraw) {
+            oFileData << "# X Y\n";
+            for(TriangleDetail::Polygon::Vertex_const_iterator it = poly->vertices_begin();
+                it != poly->vertices_end(); ++it) {
+                oFileData << it->x() << " " << it->y() << "\n";
+            }
+
+            // add first point again to connect the poly
+            oFileData << poly->vertices_begin()->x() << " " << poly->vertices_begin()->y() << "\n";
+
+            oFileData << "\n";
+            oFileData << "\n";
+        }
+    }
+
+   private:
+    std::vector<const TriangleDetail::Polygon*> mPolysToDraw;
+    std::vector<std::string> mRgbStrings;
+};
+
+#endif
+
 void TriangleDetail::addCircle(const PeprPoint2& circleOrigin, const PeprPoint2& circleEdge, size_t color) {
     const Polygon circlePoly = polygonFromCircle(circleOrigin, circleEdge);
+
+    GnuplotDebug dbg;
+    dbg.addPoly(mBounds, "#FF0000");
+    dbg.addPoly(circlePoly, "#00FF00");
+    dbg.exportToFile();
+
     PolygonSet addedShape;
     addedShape.insert(circlePoly);
     addedShape.intersection(mBounds);
 
     auto coloredPolys = gatherTrianglesIntoPolys();
+    bool joined = false;
     for(auto it : coloredPolys) {
         // Join the new shape with PolygonSet of the same color
         // Remove the new shape from other colors
         if(it.first == color) {
             it.second.join(addedShape);
+            joined = true;
         } else {
             it.second.difference(addedShape);
         }
+    }
+
+    // If there is no other polygon of the same color create a new one
+    if(!joined) {
+        coloredPolys.emplace(color, std::move(addedShape));
     }
 
     createNewTriangles(coloredPolys);
@@ -62,7 +136,8 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint2& circ
                                                           const PeprPoint2& circleEdge) {
     const Circle circle(convertPoint(circleOrigin), convertPoint(circleEdge));
     const Vector2 circleDirA{circleOrigin, circleEdge};
-    const Vector2 circleDirB = circleDirA.perpendicular(CGAL::Orientation::COUNTERCLOCKWISE);
+    const Vector2 circleDirB =
+        circleDirA.perpendicular(CGAL::Orientation::COUNTERCLOCKWISE) * CGAL::sqrt(circleDirA.squared_length());
 
     // Scale the vertex count based on the size of the circle
     size_t vertexCount =
@@ -151,14 +226,13 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
     markDomains(ct);
 
     for(auto faceIt = ct.finite_faces_begin(); faceIt != ct.finite_faces_end(); ++faceIt) {
-
-		// Keep only faces with odd nesting level, those are inside the polygon and not in the hole
+        // Keep only faces with odd nesting level, those are inside the polygon and not in the hole
         if(faceIt->info().nestingLevel % 2 > 0) {
             const glm::vec3 a = convertPoint(mOriginalPlane.to_3d(faceIt->vertex(0)->point()));
             const glm::vec3 b = convertPoint(mOriginalPlane.to_3d(faceIt->vertex(1)->point()));
             const glm::vec3 c = convertPoint(mOriginalPlane.to_3d(faceIt->vertex(2)->point()));
 
-            DataTriangle tri(a,b,c, mOriginal.getNormal());
+            DataTriangle tri(a, b, c, mOriginal.getNormal());
             tri.setColor(color);
             mTriangles.emplace_back(std::move(tri));
         }

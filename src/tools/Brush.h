@@ -19,7 +19,7 @@ struct BrushSettings {
     bool paintBackfaces = false;
 
     /// Will not create new triangles to match brush shape
-    bool respectOriginalTriangles = true;
+    bool respectOriginalTriangles = false;
 
     /// When respecting original triangles should we paint triangles that are not fully inside the brush?
     bool paintOuterRing = false;

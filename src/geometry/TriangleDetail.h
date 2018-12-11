@@ -36,6 +36,7 @@ class TriangleDetail {
     explicit TriangleDetail(const DataTriangle& original, size_t colorIdx)
         : mOriginal(original), mOriginalPlane(original.getTri().supporting_plane()) {
         mBounds = polygonFromTriangle(mOriginal.getTri());
+        mTriangles.push_back(mOriginal);
     }
 
     bool isSingleColor() const {
