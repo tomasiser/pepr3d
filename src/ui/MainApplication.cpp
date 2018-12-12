@@ -490,13 +490,16 @@ void MainApplication::saveProjectAs() {
             initialPath = getDocumentsDirectory();
         }
 
-        fs::path name = "Untitled";
+        std::string name = "Untitled";
         if(mGeometryFileName != "") {
             fs::path dirToSave = mGeometryFileName;
-            name = dirToSave.stem();
+            name = dirToSave.stem().string();
         }
 
-        auto path = getSaveFilePath(initialPath.append(name), {"p3d"});
+        const std::string p3dExt = "p3d";
+        std::vector<std::string> extensions;
+        extensions.push_back(p3dExt);
+        auto path = getSaveFilePath(initialPath.append(name), extensions);
 
         if(path.empty()) {
             return;
