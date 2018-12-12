@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/TextureFont.h"
@@ -14,6 +16,7 @@
 #include "ProgressIndicator.h"
 #include "SidePane.h"
 #include "Toolbar.h"
+#include "Dialog.h"
 #include "commands/CommandManager.h"
 
 using namespace ci;
@@ -115,11 +118,10 @@ class MainApplication : public App {
         mShowExportDialog = true;
     }
 
-    void setError(const std::string& caption, const std::string& description = "") {
-        mErrorCaption = caption;
-        mErrorDescription = description;
+    void pushDialog(const pepr3d::Dialog& dialog) {
+        mDialogQueue.push(dialog);
     }
-    
+
     FontStorage& getFontStorage() {
         return mFontStorage;
     }
@@ -128,7 +130,6 @@ class MainApplication : public App {
     void setupFonts();
     void setupIcon();
     void drawExportDialog();
-    void drawErrorDialog();
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
@@ -147,12 +148,7 @@ class MainApplication : public App {
     bool mShowExportDialog = false;
     bool mShouldExportInNewFolder = false;
 
-    std::string mErrorCaption;
-    std::string mErrorDescription;
-    void resetError() {
-        mErrorCaption = "";
-        mErrorDescription = "";
-    }
+    std::priority_queue<pepr3d::Dialog> mDialogQueue;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
