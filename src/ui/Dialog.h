@@ -4,12 +4,7 @@
 
 namespace pepr3d {
 
-enum class DialogType : std::size_t {
-    Information = 0,
-    Warning,
-    Error,
-    FatalError
-};
+enum class DialogType : std::size_t { Information = 0, Warning, Error, FatalError };
 
 class Dialog {
     DialogType mType;

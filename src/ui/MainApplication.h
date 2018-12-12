@@ -11,12 +11,12 @@
 
 #include "ThreadPool.h"
 
+#include "Dialog.h"
 #include "FontStorage.h"
 #include "ModelView.h"
 #include "ProgressIndicator.h"
 #include "SidePane.h"
 #include "Toolbar.h"
-#include "Dialog.h"
 #include "commands/CommandManager.h"
 
 using namespace ci;

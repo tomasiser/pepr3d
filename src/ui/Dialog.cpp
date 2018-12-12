@@ -30,11 +30,11 @@ bool Dialog::draw() const {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
     if(ImGui::BeginPopupModal("##dialog", nullptr, window_flags)) {
-        auto captionColor = ci::ColorA::hex(0xEB5757); // red
-        if (mType == DialogType::Warning) {
-            captionColor = ci::ColorA::hex(0xF2994A); // orange
-        } else if (mType == DialogType::Information) {
-            captionColor = ci::ColorA::hex(0x017BDA); // blue
+        auto captionColor = ci::ColorA::hex(0xEB5757);  // red
+        if(mType == DialogType::Warning) {
+            captionColor = ci::ColorA::hex(0xF2994A);  // orange
+        } else if(mType == DialogType::Information) {
+            captionColor = ci::ColorA::hex(0x017BDA);  // blue
         }
         ImGui::PushStyleColor(ImGuiCol_Text, captionColor);
         ImGui::TextWrapped(mCaption.c_str());

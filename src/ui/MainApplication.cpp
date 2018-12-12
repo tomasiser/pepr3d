@@ -236,7 +236,7 @@ void MainApplication::draw() {
     // draw highest priority dialog:
     if(!mDialogQueue.empty()) {
         const bool shouldClose = mDialogQueue.top().draw();
-        if (shouldClose) {
+        if(shouldClose) {
             mDialogQueue.pop();
         }
     }
