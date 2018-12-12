@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <queue>
 
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
@@ -11,6 +12,7 @@
 
 #include "ThreadPool.h"
 
+#include "Dialog.h"
 #include "FontStorage.h"
 #include "Hotkeys.h"
 #include "ModelView.h"
@@ -128,11 +130,6 @@ class MainApplication : public App {
         mShowExportDialog = true;
     }
 
-    void setError(const std::string& caption, const std::string& description = "") {
-        mErrorCaption = caption;
-        mErrorDescription = description;
-    }
-
     void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
                             const std::string& description = "", const std::string& disabled = "",
                             glm::vec2 position = glm::vec2(-1.0f), glm::vec2 pivot = glm::vec2(0.0f));
@@ -145,11 +142,14 @@ class MainApplication : public App {
         return mHotkeys;
     }
 
+    void pushDialog(const pepr3d::Dialog& dialog) {
+        mDialogQueue.push(dialog);
+    }
+
    private:
     void setupFonts();
     void setupIcon();
     void drawExportDialog();
-    void drawErrorDialog();
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
@@ -172,12 +172,7 @@ class MainApplication : public App {
     bool mShowExportDialog = false;
     bool mShouldExportInNewFolder = false;
 
-    std::string mErrorCaption;
-    std::string mErrorDescription;
-    void resetError() {
-        mErrorCaption = "";
-        mErrorDescription = "";
-    }
+    std::priority_queue<pepr3d::Dialog> mDialogQueue;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;

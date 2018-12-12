@@ -93,7 +93,7 @@ void MainApplication::mouseMove(MouseEvent event) {
 }
 
 void MainApplication::fileDrop(FileDropEvent event) {
-    if(mGeometry == nullptr || event.getFiles().size() < 1) {
+    if(mGeometry == nullptr || !mDialogQueue.empty() || event.getFiles().size() < 1) {
         return;
     }
     openFile(event.getFile(0).string());
@@ -136,8 +136,6 @@ void MainApplication::openFile(const std::string& path) {
         return;  // disallow loading new geometry while another is already being loaded
     }
 
-    resetError();
-
     std::shared_ptr<Geometry> geometry = mGeometryInProgress = std::make_shared<Geometry>();
     mProgressIndicator.setGeometryInProgress(geometry);
 
@@ -152,47 +150,47 @@ void MainApplication::openFile(const std::string& path) {
             const GeometryProgress& progress = mGeometryInProgress->getProgress();
 
             if(progress.importRenderPercentage < 1.0f || progress.importComputePercentage < 1.0f) {
-                const std::string errorCaption = "Failed to import geometry data";
+                const std::string errorCaption = "Error: Invalid file";
                 const std::string errorDescription =
                     "You tried to import a file which did not contain correct geometry data that could be loaded in "
                     "Pepr3D via the Assimp library. The supported files are valid .obj, .stl, and .ply.\n\nThe "
                     "provided file could not be imported.";
-                setError(errorCaption, errorDescription);
+                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
                 mGeometryInProgress = nullptr;
                 mProgressIndicator.setGeometryInProgress(nullptr);
                 return;
             }
 
             if(progress.buffersPercentage < 1.0f) {
-                const std::string errorCaption = "Failed to generate buffers";
+                const std::string errorCaption = "Error: Failed to generate buffers";
                 const std::string errorDescription =
                     "Problems were found in the imported geometry. An error has occured while generating vertex, "
                     "index, color, and normal buffers for rendering the geometry.\n\nThe provided file could not be "
                     "imported.";
-                setError(errorCaption, errorDescription);
+                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
                 mGeometryInProgress = nullptr;
                 mProgressIndicator.setGeometryInProgress(nullptr);
                 return;
             }
 
             if(progress.aabbTreePercentage < 1.0f) {
-                const std::string errorCaption = "Failed to build an AABB tree";
+                const std::string errorCaption = "Error: Failed to build an AABB tree";
                 const std::string errorDescription =
                     "Problems were found in the imported geometry. An AABB tree could not be built using the data "
                     "using the CGAL library.\n\nThe provided file could not be imported.";
-                setError(errorCaption, errorDescription);
+                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
                 mGeometryInProgress = nullptr;
                 mProgressIndicator.setGeometryInProgress(nullptr);
                 return;
             }
 
             if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
-                const std::string errorCaption = "Failed to build a polyhedron";
+                const std::string errorCaption = "Warning: Failed to build a polyhedron";
                 const std::string errorDescription =
                     "Problems were found in the imported geometry. We could not build a valid polyhedron data "
                     "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
                     "You can still edit the imported model with the remaining tools.";
-                setError(errorCaption, errorDescription);
+                pushDialog(Dialog(DialogType::Warning, errorCaption, errorDescription, "Continue"));
             }
 
             mGeometry = mGeometryInProgress;
@@ -242,6 +240,11 @@ void MainApplication::update() {
         }
     }
 #endif
+
+    // pop closed dialogs:
+    // while (!mDialogQueue.empty() && !mDialogQueue.top().isOpen()) {
+    //     mDialogQueue.pop();
+    // }
 }
 
 void MainApplication::draw() {
@@ -264,23 +267,13 @@ void MainApplication::draw() {
         drawExportDialog();
     }
 
-    if(!mErrorCaption.empty()) {
-        drawErrorDialog();
+    // draw highest priority dialog:
+    if(!mDialogQueue.empty()) {
+        const bool shouldClose = mDialogQueue.top().draw();
+        if(shouldClose) {
+            mDialogQueue.pop();
+        }
     }
-
-    // if(mGeometryInProgress != nullptr) {
-    //     std::string progressStatus =
-    //         "%% render: " + std::to_string(mGeometryInProgress->getProgress().importRenderPercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% compute: " + std::to_string(mGeometryInProgress->getProgress().importComputePercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% buffers: " + std::to_string(mGeometryInProgress->getProgress().buffersPercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% aabb: " + std::to_string(mGeometryInProgress->getProgress().aabbTreePercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% polyhedron: " + std::to_string(mGeometryInProgress->getProgress().polyhedronPercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    // }
 }
 
 void MainApplication::setupFonts() {
@@ -475,69 +468,6 @@ void MainApplication::drawExportDialog() {
                     saveFile(filePath, fileName, fileType);
                 }
             });
-        }
-
-        ImGui::EndPopup();
-    }
-    ImGui::PopStyleVar(3);
-    ImGui::PopStyleColor(7);
-}
-
-void MainApplication::drawErrorDialog() {
-    if(!ImGui::IsPopupOpen("##errordialog")) {
-        ImGui::OpenPopup("##errordialog");
-    }
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoScrollbar;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_NoNav;
-    const ImGuiIO& io = ImGui::GetIO();
-    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x / 2.0f, io.DisplaySize.y / 2.0f), ImGuiCond_Always,
-                            ImVec2(0.5f, 0.5f));
-    ImGui::SetNextWindowSize(ImVec2(400.0f, -1.0f));
-    ImGui::SetNextWindowBgAlpha(1.0f);
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
-    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
-    ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
-    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
-    ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
-    if(ImGui::BeginPopupModal("##errordialog", nullptr, window_flags)) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xEB5757));
-        ImGui::TextWrapped(mErrorCaption.c_str());
-        ImGui::PopStyleColor();
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        ImGui::TextWrapped(mErrorDescription.c_str());
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        // ImGui::TextWrapped(
-        //     "https://github.com/tomasiser/pepr3d/wiki/Error-messages");
-
-        // ImGui::Spacing();
-        // ImGui::Separator();
-        // ImGui::Spacing();
-
-        const bool shouldClose = ImGui::Button("Continue", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
-        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
-                                            (ImColor)ci::ColorA::hex(0xEDEDED));
-
-        if(shouldClose) {
-            resetError();
-            ImGui::CloseCurrentPopup();
         }
 
         ImGui::EndPopup();
