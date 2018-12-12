@@ -130,7 +130,9 @@ void Toolbar::drawUndoRedo() {
     glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() { commandManager->undo(); });
-    mApplication.drawTooltipOnHover("Undo", "Ctrl+Z", "Undo last action.", "",
+    const auto undoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Undo);
+    mApplication.drawTooltipOnHover("Undo", undoOptionalHotkey ? undoOptionalHotkey->getString() : "",
+                                    "Undo last action.", props.isEnabled ? "" : "No action to undo.",
                                     buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
     ImGui::SameLine(0.f, 0.f);
     props.label = ICON_MD_REDO;
@@ -138,7 +140,9 @@ void Toolbar::drawUndoRedo() {
     buttonPos = ImGui::GetCursorScreenPos();
     drawButton(props, [&]() { commandManager->redo(); });
     ImGui::PopFont();
-    mApplication.drawTooltipOnHover("Redo", "Ctrl+Y", "Redo last action.", "",
+    const auto redoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Redo);
+    mApplication.drawTooltipOnHover("Redo", redoOptionalHotkey ? redoOptionalHotkey->getString() : "",
+                                    "Redo last action.", props.isEnabled ? "" : "No action to redo.",
                                     buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
 }
 
@@ -158,9 +162,12 @@ void Toolbar::drawToolButtons() {
     std::size_t index = 0;
     for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit, ++index) {
         ImGui::SameLine(0.0f, 0.0f);
-        glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
+        const glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
         drawToolButton(toolit);
-        mApplication.drawTooltipOnHover((*toolit)->getName(), "", (*toolit)->getDescription(), "",
+        const auto toolOptionalHotkey = (*toolit)->getHotkey(mApplication.getHotkeys());
+        mApplication.drawTooltipOnHover((*toolit)->getName(), toolOptionalHotkey ? toolOptionalHotkey->getString() : "",
+                                        (*toolit)->getDescription(),
+                                        (*toolit)->isEnabled() ? "" : "Not available for this geometry.",
                                         buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
         if(index == 4 || index == 7) {
             ImGui::SameLine(0.0f, 0.0f);

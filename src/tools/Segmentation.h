@@ -19,6 +19,10 @@ class Segmentation : public ITool {
         return "Segmentation";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectSegmentation);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_DASHBOARD;
     }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/TextureFont.h"
@@ -10,6 +12,7 @@
 #include "ThreadPool.h"
 
 #include "FontStorage.h"
+#include "Hotkeys.h"
 #include "ModelView.h"
 #include "ProgressIndicator.h"
 #include "SidePane.h"
@@ -37,6 +40,7 @@ class MainApplication : public App {
     void mouseWheel(MouseEvent event) override;
     void mouseMove(MouseEvent event) override;
     void fileDrop(FileDropEvent event) override;
+    void keyDown(KeyEvent event) override;
 
     MainApplication();
 
@@ -101,6 +105,15 @@ class MainApplication : public App {
         mCurrentToolIterator = tool;
     }
 
+    template <typename Tool>
+    void setCurrentTool() {
+        const auto toolIterator = std::find_if(mTools.begin(), mTools.end(),
+                                               [](auto& tool) { return dynamic_cast<Tool*>(tool.get()) != nullptr; });
+        if(toolIterator != mTools.end()) {
+            setCurrentToolIterator(toolIterator);
+        }
+    }
+
     Geometry* getCurrentGeometry() {
         return mGeometry.get();
     }
@@ -128,6 +141,10 @@ class MainApplication : public App {
         return mFontStorage;
     }
 
+    const Hotkeys& getHotkeys() const {
+        return mHotkeys;
+    }
+
    private:
     void setupFonts();
     void setupIcon();
@@ -139,6 +156,8 @@ class MainApplication : public App {
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
+
+    Hotkeys mHotkeys;
 
     glm::vec2 mLastTooltipSize = glm::vec2(0.0f);
 

@@ -141,7 +141,15 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         if(ImGui::IsItemClicked(1)) {
             ImGui::OpenPopup(colorEditPopupId.c_str());
         }
-        mApplication.drawTooltipOnHover("Color " + std::to_string(i + 1), (i < 10) ? std::to_string(i + 1) : "",
+        std::string hotkeyString;
+        if(i < 10) {
+            HotkeyAction action = static_cast<HotkeyAction>(static_cast<std::size_t>(HotkeyAction::SelectColor1) + i);
+            auto hotkey = mApplication.getHotkeys().findHotkey(action);
+            if(hotkey) {
+                hotkeyString = hotkey->getString();
+            }
+        }
+        mApplication.drawTooltipOnHover("Color " + std::to_string(i + 1), hotkeyString,
                                         "Select: left click\nEdit: right click", "",
                                         glm::vec2(-18.0f + cursorPos.x, cursorPos.y), glm::vec2(1.0f, 0.0f));
 
@@ -195,8 +203,8 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
     }
 }
 
-void SidePane::drawTooltip(const std::string& label, const std::string& shortcut, const std::string& description,
-                           const std::string& disabled) {
+void SidePane::drawTooltipOnHover(const std::string& label, const std::string& shortcut, const std::string& description,
+                                  const std::string& disabled) {
     glm::vec2 position = ImGui::GetItemRectMin();
     position += glm::vec2(-18.0f, 0.0f);
     const glm::vec2 pivot(1.0f, 0.0f);

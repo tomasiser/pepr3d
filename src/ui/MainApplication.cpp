@@ -45,6 +45,8 @@ void MainApplication::setup() {
 
     applyLightTheme(ImGui::GetStyle());
 
+    mHotkeys.loadDefaults();
+
     mGeometry = std::make_shared<Geometry>();
     mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), mThreadPool);
 
@@ -95,6 +97,38 @@ void MainApplication::fileDrop(FileDropEvent event) {
         return;
     }
     openFile(event.getFile(0).string());
+}
+
+void MainApplication::keyDown(KeyEvent event) {
+    const Hotkey hotkey{event.getCode(), event.isAccelDown()};
+    const auto action = mHotkeys.findAction(hotkey);
+    if(!action) {
+        return;
+    }
+    switch(*action) {
+    case HotkeyAction::Import: showImportDialog(); break;
+    case HotkeyAction::Export: showExportDialog(); break;
+    case HotkeyAction::Undo: mCommandManager->undo(); break;
+    case HotkeyAction::Redo: mCommandManager->redo(); break;
+    case HotkeyAction::SelectTrianglePainter: setCurrentTool<TrianglePainter>(); break;
+    case HotkeyAction::SelectPaintBucket: setCurrentTool<PaintBucket>(); break;
+    case HotkeyAction::SelectBrush: setCurrentTool<Brush>(); break;
+    case HotkeyAction::SelectTextEditor: setCurrentTool<TextEditor>(); break;
+    case HotkeyAction::SelectSegmentation: setCurrentTool<Segmentation>(); break;
+    case HotkeyAction::SelectDisplayOptions: setCurrentTool<DisplayOptions>(); break;
+    case HotkeyAction::SelectSettings: setCurrentTool<pepr3d::Settings>(); break;
+    case HotkeyAction::SelectInformation: setCurrentTool<Information>(); break;
+    case HotkeyAction::SelectLiveDebug: setCurrentTool<LiveDebug>(); break;
+    }
+    std::size_t actionId = static_cast<std::size_t>(*action);
+    if(mGeometry != nullptr && actionId >= static_cast<std::size_t>(HotkeyAction::SelectColor1) &&
+       actionId <= static_cast<std::size_t>(HotkeyAction::SelectColor10)) {
+        std::size_t colorId = actionId - static_cast<std::size_t>(HotkeyAction::SelectColor1);
+        ColorManager& colorManager = mGeometry->getColorManager();
+        if(colorId < colorManager.size()) {
+            colorManager.setActiveColorIndex(colorId);
+        }
+    }
 }
 
 void MainApplication::openFile(const std::string& path) {
@@ -557,6 +591,16 @@ void MainApplication::drawTooltipOnHover(const std::string& label, const std::st
             ImGui::PushTextWrapPos(250.0f);
             ImGui::TextUnformatted(description.c_str());
             ImGui::PopTextWrapPos();
+            ImGui::PopFont();
+        }
+
+        if(!disabled.empty()) {
+            ImGui::PushFont(mFontStorage.getSmallFont());
+            ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xEB5757));
+            ImGui::PushTextWrapPos(250.0f);
+            ImGui::TextUnformatted(disabled.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::PopStyleColor();
             ImGui::PopFont();
         }
 
