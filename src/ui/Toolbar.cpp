@@ -161,6 +161,7 @@ void Toolbar::drawToolButton(ToolsVector::iterator tool) {
     ButtonProperties props;
     props.label = (*tool)->getIcon();
     props.isToggled = (tool == mApplication.getCurrentToolIterator());
+    props.isEnabled = (*tool)->isEnabled();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() {
         props.isToggled = true;

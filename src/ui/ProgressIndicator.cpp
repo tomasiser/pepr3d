@@ -27,6 +27,7 @@ void ProgressIndicator::draw() {
     ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
     if(ImGui::BeginPopupModal("##progressindicator", nullptr, window_flags)) {
         drawSpinner("##progressindicator#spinner");
         ImGui::SameLine();
@@ -47,7 +48,7 @@ void ProgressIndicator::draw() {
 
         ImGui::EndPopup();
     }
-    ImGui::PopStyleVar(2);
+    ImGui::PopStyleVar(3);
     ImGui::PopStyleColor(4);
 }
 
