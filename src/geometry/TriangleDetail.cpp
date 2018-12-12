@@ -33,6 +33,8 @@ class GnuplotDebug {
         if(oFileGnuplot.bad())
             return;
 
+        oFileGnuplot << "set size ratio -1 \n";
+
         for(size_t idx = 0; idx < mRgbStrings.size(); ++idx) {
             oFileGnuplot << "set style line " << idx + 1 << " linecolor rgb \"" << mRgbStrings[idx]
                          << "\" linetype 1 linewidth 2\n";
@@ -74,15 +76,20 @@ class GnuplotDebug {
 
 #endif
 
-void TriangleDetail::addCircle(const PeprPoint2& circleOrigin, const PeprPoint2& circleEdge, size_t color) {
-    const Polygon circlePoly = polygonFromCircle(circleOrigin, circleEdge);
+void TriangleDetail::addCircle(const PeprPoint3& circleOrigin, double radius, size_t color) {
+    const Polygon circlePoly = polygonFromCircle(circleOrigin, radius);
 
     PolygonSet addedShape(circlePoly);
     addedShape.intersection(mBounds);
 
-    std::map<size_t, PolygonSet> coloredPolys = gatherTrianglesIntoPolys();
+    GnuplotDebug dbg;
+    dbg.addPoly(circlePoly, "#FF0000");
+    dbg.addPoly(mBounds, "#00FF00");
+    dbg.exportToFile();
+
+    // std::map<size_t, PolygonSet> coloredPolys = gatherTrianglesIntoPolys();
     bool joined = false;
-    for(auto& it : coloredPolys) {
+    for(auto& it : mColoredPolys) {
         // Join the new shape with PolygonSet of the same color
         // Remove the new shape from other colors
         if(it.first == color) {
@@ -95,10 +102,10 @@ void TriangleDetail::addCircle(const PeprPoint2& circleOrigin, const PeprPoint2&
 
     // If there is no other polygon of the same color create a new one
     if(!joined) {
-        coloredPolys.emplace(color, std::move(addedShape));
+        mColoredPolys.emplace(color, std::move(addedShape));
     }
 
-    createNewTriangles(coloredPolys);
+    createNewTriangles(mColoredPolys);
 }
 
 TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
@@ -115,28 +122,25 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
 
     if(pgn.is_clockwise_oriented())
         pgn.reverse_orientation();
-        
+
     return pgn;
 }
 
-TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint2& circleOrigin,
-                                                          const PeprPoint2& circleEdge) {
-    const Circle circle(toExactK(circleOrigin), toExactK(circleEdge));
-    const Vector2 circleDirA{toExactK(circleOrigin), toExactK(circleEdge)};
-    const Vector2 circleDirB = circleDirA.perpendicular(CGAL::Orientation::COUNTERCLOCKWISE);
+TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint3& circleOrigin, double radius) {
 
     // Scale the vertex count based on the size of the circle
-    size_t vertexCount =
-        static_cast<size_t>(glm::sqrt(exactToDbl(circleDirA.squared_length().exact())) * VERTICES_PER_UNIT_CIRCLE);
+    size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
     vertexCount = std::max(vertexCount, static_cast<size_t>(3));
 
+    const auto base1 = mOriginalPlane.base1();
+    const auto base2 = mOriginalPlane.base2();
     // Construct the polygon.
     Polygon pgn;
     for(size_t i = 0; i < vertexCount; i++) {
         const double circleCoord = (static_cast<double>(i) / vertexCount) * 2 * glm::pi<double>();
-        Point2 pt = toExactK(circleOrigin) + circleDirA * cos(circleCoord) + circleDirB * sin(circleCoord);
+        PeprPoint3 pt =circleOrigin + base1 * cos(circleCoord)*radius + base2 * sin(circleCoord)*radius;
 
-        pgn.push_back(std::move(pt));
+        pgn.push_back(toExactK(mOriginalPlane.to_2d(pt)));
     }
 
     return pgn;
@@ -228,16 +232,14 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
             const glm::vec3 c = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(2)->point())));
 
             DataTriangle tri(a, b, c, mOriginal.getNormal());
-            if(tri.getTri().squared_area()>0)
-            {
+            if(tri.getTri().squared_area() > 0) {
                 tri.setColor(color);
 
                 // Make sure that the original counter-clockwise order is preserved
-                if(glm::dot(mOriginal.getNormal(), glm::cross((b-a), (c-a)))<0)
-                {
-                    tri = DataTriangle(a,c,b, mOriginal.getNormal());
+                if(glm::dot(mOriginal.getNormal(), glm::cross((b - a), (c - a))) < 0) {
+                    tri = DataTriangle(a, c, b, mOriginal.getNormal());
                 }
-                
+
                 mTriangles.emplace_back(std::move(tri));
             }
         }
@@ -246,7 +248,6 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
 
 void TriangleDetail::createNewTriangles(const std::map<size_t, PolygonSet>& coloredPolys) {
     mTriangles.clear();
-
 
     for(const auto it : coloredPolys) {
         if(it.second.is_empty())
@@ -258,6 +259,5 @@ void TriangleDetail::createNewTriangles(const std::map<size_t, PolygonSet>& colo
             addTrianglesFromPolygon(poly, it.first);
         }
     }
-
 }
 }  // namespace pepr3d

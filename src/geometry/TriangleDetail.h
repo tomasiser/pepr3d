@@ -44,6 +44,7 @@ class TriangleDetail {
         : mOriginal(original), mOriginalPlane(original.getTri().supporting_plane()) {
         mBounds = polygonFromTriangle(mOriginal.getTri());
         mTriangles.push_back(mOriginal);
+        mColoredPolys.emplace(mOriginal.getColor(), polygonFromTriangle(mOriginal.getTri()));
     }
 
     bool isSingleColor() const {
@@ -51,7 +52,7 @@ class TriangleDetail {
     }
 
     /// Paint a circle shape onto the plane of the triangle
-    void addCircle(const PeprPoint2& circleOrigin, const PeprPoint2& circleEdge, size_t color);
+    void addCircle(const PeprPoint3& circleOrigin, double radius, size_t color);
 
     const std::vector<DataTriangle>& getTriangles() const {
         return mTriangles;
@@ -63,6 +64,8 @@ class TriangleDetail {
 
    private:
     std::vector<DataTriangle> mTriangles;
+
+    std::map<size_t, PolygonSet> mColoredPolys;
 
     const DataTriangle mOriginal;
 
@@ -76,7 +79,7 @@ class TriangleDetail {
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
 
     // Construct a polygon from a circle.
-    Polygon polygonFromCircle(const PeprPoint2& circleOrigin, const PeprPoint2& circleEdge);
+    Polygon polygonFromCircle(const PeprPoint3& circleOrigin, double radius);
 
     /// Convert Point_2 from Pepr3d kernel to Exact kernel
     inline static K::Point_2 toExactK(const PeprPoint2& point) {

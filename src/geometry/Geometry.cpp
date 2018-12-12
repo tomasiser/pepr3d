@@ -14,11 +14,12 @@ namespace pepr3d {
 
 Geometry::GeometryState Geometry::saveState() const {
     // Save only necessary data to keep snapshot size low
-    return GeometryState{mTriangles, ColorManager::ColorMap(mColorManager.getColorMap())};
+    return GeometryState{mTriangles, mTriangleDetails, ColorManager::ColorMap(mColorManager.getColorMap())};
 }
 
 void Geometry::loadState(const GeometryState& state) {
     mTriangles = state.triangles;
+    mTriangleDetails = state.triangleDetails;
 
     mColorManager.replaceColors(state.colorMap.begin(), state.colorMap.end());
     assert(!mColorManager.empty());
@@ -388,10 +389,18 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
     //          And only when we changed triangle detail
 
     // Generate new buffers for OpenGL to see the new data
+
+    const auto start = std::chrono::high_resolution_clock::now();
+
     generateVertexBuffer();
     generateIndexBuffer();
     generateColorBuffer();
     generateNormalBuffer();
+
+    const auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> timeMs = end - start;
+
+    CI_LOG_I("Generating buffers took " + std::to_string(timeMs.count()) + " ms");
 }
 
 namespace geometry_internal {
@@ -434,12 +443,8 @@ void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOr
     if(!circleIntersection)
         return;  // Intersection is a point, consider this triangle not hit
 
-    const Point2D circleOrigin = triPlane.to_2d(circleIntersection->center());
-    // Transform the edge as a point, because this transformation does not preserve distances
-    const Point2D circleEdge = triPlane.to_2d(circleIntersection->center() +
-                                              triPlane.base1() * CGAL::sqrt(circleIntersection->squared_radius()));
-
-    getTriangleDetail(triangleIdx)->addCircle(circleOrigin, circleEdge, settings.color);
+    getTriangleDetail(triangleIdx)
+        ->addCircle(circleIntersection->center(), CGAL::sqrt(circleIntersection->squared_radius()), settings.color);
 }
 
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {

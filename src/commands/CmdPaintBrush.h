@@ -6,6 +6,8 @@
 #include "geometry/Geometry.h"
 #include "tools/Brush.h"
 
+#include <chrono>
+
 namespace pepr3d {
 
 class CmdPaintBrush : public CommandBase<Geometry> {
@@ -19,9 +21,17 @@ class CmdPaintBrush : public CommandBase<Geometry> {
 
    protected:
     void run(Geometry& target) const override {
+        const auto start = std::chrono::high_resolution_clock::now();
+
         for(const ci::Ray& ray : mRays) {
             target.paintArea(ray, mSettings);
         }
+
+        const auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeMs = end-start;
+
+        CI_LOG_I("Brush paint took " + std::to_string(timeMs.count()) +
+                 " ms");
     }
 
     bool joinCommand(const CommandBase& otherBase) override {

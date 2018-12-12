@@ -6,7 +6,7 @@
 
 namespace pepr3d {
 void Brush::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
-    if(!event.isLeftDown()) {
+    if(!event.isLeft()) {
         return;
     }
     mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
@@ -14,7 +14,7 @@ void Brush::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event
 }
 
 void Brush::onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) {
-    if(!event.isLeftDown()) {
+    if(!event.isLeft()) {
         return;
     }
     stopPaint();

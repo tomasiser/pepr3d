@@ -89,6 +89,7 @@ class Geometry {
 
     struct GeometryState {
         std::vector<DataTriangle> triangles;
+        std::map<size_t, TriangleDetail> triangleDetails;
         ColorManager::ColorMap colorMap;
     };
 
