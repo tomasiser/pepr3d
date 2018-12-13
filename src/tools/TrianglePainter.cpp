@@ -19,7 +19,7 @@ void TrianglePainter::drawToModelView(ModelView& modelView) {
 }
 
 void TrianglePainter::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
-    if(!event.isLeft()) {
+    if(!event.isLeftDown()) {
         return;
     }
     mLastClick = event.getPos();

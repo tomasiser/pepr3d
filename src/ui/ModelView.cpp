@@ -152,21 +152,9 @@ void ModelView::drawGeometry() {
 
     // \todo Getting const references to the buffers, might want to use pointers, iterators, whatever.
     // TODO: \todo : Do we need to recreate all the buffers every draw call?
-    // Get vertex buffer
-    const std::vector<glm::vec3>& positions = mApplication.getCurrentGeometry()->getVertexBuffer();
-    // Get index buffer
-    const std::vector<uint32_t>& indices = mApplication.getCurrentGeometry()->getIndexBuffer();
-    // Since we use a new vertex for each triangle, we should have vertices == triangles
-    assert(indices.size() == positions.size());
-    // Get the color buffer
-    const std::vector<Geometry::ColorIndex>& colors = mApplication.getCurrentGeometry()->getColorBuffer();
-    assert(colors.size() == positions.size());
 
-    assert(!mColorOverride.isOverriden || mColorOverride.overrideColorBuffer.size() == positions.size());
-
-    const std::vector<glm::vec3>& normals = mApplication.getCurrentGeometry()->getNormalBuffer();
-
-    const auto& areaHighlight = mApplication.getCurrentGeometry()->getAreaHighlight();
+    const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
+    assert(!mColorOverride.isOverriden || mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
 
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
@@ -177,18 +165,18 @@ void ModelView::drawGeometry() {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(Attributes::HIGHLIGHT_MASK, 1)};
 
     // Create elementary buffer of indices
-    const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+    const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, glData.indexBuffer, GL_STATIC_DRAW);
 
     // Create the VBO mesh
-    auto myVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(positions.size()), GL_TRIANGLES, {layout},
-                                             static_cast<uint32_t>(indices.size()), GL_UNSIGNED_INT, ibo);
+    auto myVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(glData.vertexBuffer.size()), GL_TRIANGLES, {layout},
+                                             static_cast<uint32_t>(glData.vertexBuffer.size()), GL_UNSIGNED_INT, ibo);
 
     // Assign the buffers to the attributes
-    myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, positions);
-    myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, normals);
+    myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, glData.vertexBuffer);
+    myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, glData.normalBuffer);
     myVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
-    myVboMesh->bufferAttrib<Geometry::ColorIndex>(Attributes::COLOR_IDX, colors);
-    myVboMesh->bufferAttrib<GLint>(Attributes::HIGHLIGHT_MASK, areaHighlight.vertexMask);
+    myVboMesh->bufferAttrib<Geometry::ColorIndex>(Attributes::COLOR_IDX, glData.colorBuffer);
+    myVboMesh->bufferAttrib<GLint>(Attributes::HIGHLIGHT_MASK, glData.highlightMask);
 
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
@@ -200,6 +188,7 @@ void ModelView::drawGeometry() {
     ci::gl::multModelMatrix(mModelMatrix);
 
     // Assign highlight uniforms
+    auto& areaHighlight = mApplication.getCurrentGeometry()->getAreaHighlight();
     mModelShader->uniform("uAreaHighlightEnabled", areaHighlight.enabled);
     mModelShader->uniform("uAreaHighlightOrigin", areaHighlight.origin);
     mModelShader->uniform("uAreaHighlightSize", static_cast<float>(areaHighlight.size));

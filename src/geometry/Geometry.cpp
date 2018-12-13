@@ -111,16 +111,16 @@ void Geometry::exportGeometry(const std::string filePath, const std::string file
 }
 
 void Geometry::generateVertexBuffer() {
-    mVertexBuffer.clear();
-    mVertexBuffer.reserve(3 * mTriangles.size());
+    mOgl.vertexBuffer.clear();
+    mOgl.vertexBuffer.reserve(3 * mTriangles.size());
 
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
         const auto& triangle = mTriangles[idx];
 
-        if(hasTriangleDetail(idx)) {
-            mVertexBuffer.push_back(triangle.getVertex(0));
-            mVertexBuffer.push_back(triangle.getVertex(1));
-            mVertexBuffer.push_back(triangle.getVertex(2));
+        if(isSimpleTriangle(idx)) {
+            mOgl.vertexBuffer.push_back(triangle.getVertex(0));
+            mOgl.vertexBuffer.push_back(triangle.getVertex(1));
+            mOgl.vertexBuffer.push_back(triangle.getVertex(2));
         }
     }
 
@@ -128,33 +128,33 @@ void Geometry::generateVertexBuffer() {
         const auto& detailTriangles = it.second.getTriangles();
 
         for(const auto& triangle : detailTriangles) {
-            mVertexBuffer.push_back(triangle.getVertex(0));
-            mVertexBuffer.push_back(triangle.getVertex(1));
-            mVertexBuffer.push_back(triangle.getVertex(2));
+            mOgl.vertexBuffer.push_back(triangle.getVertex(0));
+            mOgl.vertexBuffer.push_back(triangle.getVertex(1));
+            mOgl.vertexBuffer.push_back(triangle.getVertex(2));
         }
     }
 }
 
 void Geometry::generateIndexBuffer() {
-    mIndexBuffer.clear();
-    mIndexBuffer.reserve(mVertexBuffer.size());
+    mOgl.indexBuffer.clear();
+    mOgl.indexBuffer.reserve(mOgl.vertexBuffer.size());
 
-    for(uint32_t i = 0; i < mVertexBuffer.size(); ++i) {
-        mIndexBuffer.push_back(i);
+    for(uint32_t i = 0; i < mOgl.vertexBuffer.size(); ++i) {
+        mOgl.indexBuffer.push_back(i);
     }
 }
 
 void Geometry::generateColorBuffer() {
-    mColorBuffer.clear();
-    mColorBuffer.reserve(mVertexBuffer.size());
+    mOgl.colorBuffer.clear();
+    mOgl.colorBuffer.reserve(mOgl.vertexBuffer.size());
 
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
-        if(hasTriangleDetail(idx)) {
+        if(isSimpleTriangle(idx)) {
             const auto& triangle = mTriangles[idx];
             const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
-            mColorBuffer.push_back(triColorIndex);
-            mColorBuffer.push_back(triColorIndex);
-            mColorBuffer.push_back(triColorIndex);
+            mOgl.colorBuffer.push_back(triColorIndex);
+            mOgl.colorBuffer.push_back(triColorIndex);
+            mOgl.colorBuffer.push_back(triColorIndex);
         }
     }
 
@@ -163,24 +163,24 @@ void Geometry::generateColorBuffer() {
 
         for(const auto& triangle : detailTriangles) {
             const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
-            mColorBuffer.push_back(triColorIndex);
-            mColorBuffer.push_back(triColorIndex);
-            mColorBuffer.push_back(triColorIndex);
+            mOgl.colorBuffer.push_back(triColorIndex);
+            mOgl.colorBuffer.push_back(triColorIndex);
+            mOgl.colorBuffer.push_back(triColorIndex);
         }
     }
 
-    assert(mColorBuffer.size() == mVertexBuffer.size());
+    assert(mOgl.colorBuffer.size() == mOgl.vertexBuffer.size());
 }
 
 void Geometry::generateNormalBuffer() {
-    mNormalBuffer.clear();
-    mNormalBuffer.reserve(mVertexBuffer.size());
+    mOgl.normalBuffer.clear();
+    mOgl.normalBuffer.reserve(mOgl.vertexBuffer.size());
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
         const auto& triangle = mTriangles[idx];
-        if(hasTriangleDetail(idx)) {
-            mNormalBuffer.push_back(triangle.getNormal());
-            mNormalBuffer.push_back(triangle.getNormal());
-            mNormalBuffer.push_back(triangle.getNormal());
+        if(isSimpleTriangle(idx)) {
+            mOgl.normalBuffer.push_back(triangle.getNormal());
+            mOgl.normalBuffer.push_back(triangle.getNormal());
+            mOgl.normalBuffer.push_back(triangle.getNormal());
         }
     }
 
@@ -189,30 +189,30 @@ void Geometry::generateNormalBuffer() {
         glm::vec3 normal = it.second.getOriginal().getNormal();
 
         for(const auto& triangle : detailTriangles) {
-            mNormalBuffer.push_back(normal);
-            mNormalBuffer.push_back(normal);
-            mNormalBuffer.push_back(normal);
+            mOgl.normalBuffer.push_back(normal);
+            mOgl.normalBuffer.push_back(normal);
+            mOgl.normalBuffer.push_back(normal);
         }
     }
-    assert(mNormalBuffer.size() == mVertexBuffer.size());
+    assert(mOgl.normalBuffer.size() == mOgl.vertexBuffer.size());
 }
 
 void Geometry::generateHighlightBuffer(const std::set<size_t>& paintSet, const BrushSettings& settings) {
-    mAreaHighlight.vertexMask.clear();
+    mOgl.highlightMask.clear();
     // Mark all triangles with attribute assigned to vertex
-    mAreaHighlight.vertexMask.reserve(mTriangles.size() * 3);
+    mOgl.highlightMask.reserve(mTriangles.size() * 3);
     for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
         // Fill 3 vertices of a triangle
-        if(hasTriangleDetail(triangleIdx)) {
+        if(isSimpleTriangle(triangleIdx)) {
             if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
-                mAreaHighlight.vertexMask.emplace_back(0);
-                mAreaHighlight.vertexMask.emplace_back(0);
-                mAreaHighlight.vertexMask.emplace_back(0);
+                mOgl.highlightMask.emplace_back(0);
+                mOgl.highlightMask.emplace_back(0);
+                mOgl.highlightMask.emplace_back(0);
 
             } else {
-                mAreaHighlight.vertexMask.emplace_back(1);
-                mAreaHighlight.vertexMask.emplace_back(1);
-                mAreaHighlight.vertexMask.emplace_back(1);
+                mOgl.highlightMask.emplace_back(1);
+                mOgl.highlightMask.emplace_back(1);
+                mOgl.highlightMask.emplace_back(1);
             }
         }
     }
@@ -226,18 +226,18 @@ void Geometry::generateHighlightBuffer(const std::set<size_t>& paintSet, const B
 
         for(const auto& triangle : detailTriangles) {
             if(enableHighlight) {
-                mAreaHighlight.vertexMask.emplace_back(1);
-                mAreaHighlight.vertexMask.emplace_back(1);
-                mAreaHighlight.vertexMask.emplace_back(1);
+                mOgl.highlightMask.emplace_back(1);
+                mOgl.highlightMask.emplace_back(1);
+                mOgl.highlightMask.emplace_back(1);
             } else {
-                mAreaHighlight.vertexMask.emplace_back(0);
-                mAreaHighlight.vertexMask.emplace_back(0);
-                mAreaHighlight.vertexMask.emplace_back(0);
+                mOgl.highlightMask.emplace_back(0);
+                mOgl.highlightMask.emplace_back(0);
+                mOgl.highlightMask.emplace_back(0);
             }
         }
     }
 
-    assert(mAreaHighlight.vertexMask.size() == mVertexBuffer.size());
+    assert(mOgl.highlightMask.size() == mOgl.vertexBuffer.size());
 }  // namespace pepr3d
 
 /* -------------------- Tool support -------------------- */
@@ -377,6 +377,7 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
                 }
 
             } else {
+
                 updateTriangleDetail(triangleIdx, intersectionPoint, settings);
             }
         }
@@ -446,26 +447,27 @@ void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOr
 }
 
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {
-    // Change it in the buffer
-    // Color buffer has 1 ColorA for each vertex, each triangle has 3 vertices
-    const size_t vertexPosition = triangleIndex * 3;
+    if(isSimpleTriangle(triangleIndex)) {
+        // Change it in the buffer
+        // Color buffer has 1 ColorA for each vertex, each triangle has 3 vertices
+        const size_t vertexPosition = triangleIndex * 3;
 
-    // Change all vertices of the triangle to the same new color
-    assert(vertexPosition + 2 < mColorBuffer.size());
+        // Change all vertices of the triangle to the same new color
+        assert(vertexPosition + 2 < mOgl.colorBuffer.size());
 
-    ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
-    mColorBuffer[vertexPosition] = newColorIndex;
-    mColorBuffer[vertexPosition + 1] = newColorIndex;
-    mColorBuffer[vertexPosition + 2] = newColorIndex;
+        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
+        mOgl.colorBuffer[vertexPosition] = newColorIndex;
+        mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
+        mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
+     } else
+     {
+      // TODO: Mark dirty
+         mTriangleDetails.erase(triangleIndex);
+     }
 
     /// Change it in the triangle soup
     assert(triangleIndex < mTriangles.size());
     mTriangles[triangleIndex].setColor(newColor);
-
-    // If the triangle had a detail remove it
-    if(!hasTriangleDetail(triangleIndex)) {
-        mTriangleDetails.erase(triangleIndex);
-    }
 }
 
 void Geometry::buildPolyhedron() {
