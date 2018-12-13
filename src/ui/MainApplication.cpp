@@ -36,7 +36,7 @@ MainApplication::MainApplication()
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
-    getWindow()->setTitle("Pepr3D - Unsaved project");
+    getWindow()->setTitle("Untitled - Pepr3D");
     setupIcon();
     gl::enableVerticalSync(true);
     disableFrameRate();
@@ -278,7 +278,7 @@ void MainApplication::setupIcon() {
 #endif
 }
 
-void MainApplication::showImportDialog(const std::vector<std::string> extensions) {
+void MainApplication::showImportDialog(const std::vector<std::string>& extensions) {
     dispatchAsync([extensions, this]() {
         fs::path initialPath(mGeometryFileName);
         initialPath.remove_filename();
@@ -496,10 +496,7 @@ void MainApplication::saveProjectAs() {
             name = dirToSave.stem().string();
         }
 
-        const std::string p3dExt = "p3d";
-        std::vector<std::string> extensions;
-        extensions.push_back(p3dExt);
-        auto path = getSaveFilePath(initialPath.append(name), extensions);
+        auto path = getSaveFilePath(initialPath.append(name), {"p3d"});
 
         if(path.empty()) {
             return;

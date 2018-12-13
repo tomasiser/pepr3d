@@ -108,7 +108,7 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
-    void showImportDialog(const std::vector<std::string> extensions);
+    void showImportDialog(const std::vector<std::string>& extensions);
 
     void showExportDialog() {
         mShowExportDialog = true;

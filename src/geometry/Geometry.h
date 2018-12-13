@@ -21,6 +21,7 @@
 
 #include "geometry/ColorManager.h"
 #include "geometry/GeometryProgress.h"
+#include "geometry/GlmSerialization.h"
 #include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
