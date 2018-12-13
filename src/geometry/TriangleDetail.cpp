@@ -9,6 +9,7 @@
 #include <cinder/Filesystem.h>
 
 #include <assert.h>
+#include <cinder/Log.h>
 #include <list>
 
 // Loss of precision between conversions may move verticies? Needs testing
@@ -82,10 +83,10 @@ void TriangleDetail::addCircle(const PeprPoint3& circleOrigin, double radius, si
     PolygonSet addedShape(circlePoly);
     addedShape.intersection(mBounds);
 
-    GnuplotDebug dbg;
+    /*GnuplotDebug dbg;
     dbg.addPoly(circlePoly, "#FF0000");
     dbg.addPoly(mBounds, "#00FF00");
-    dbg.exportToFile();
+    dbg.exportToFile();*/
 
     // std::map<size_t, PolygonSet> coloredPolys = gatherTrianglesIntoPolys();
     bool joined = false;
@@ -127,7 +128,6 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
 }
 
 TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint3& circleOrigin, double radius) {
-
     // Scale the vertex count based on the size of the circle
     size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
     vertexCount = std::max(vertexCount, static_cast<size_t>(3));
@@ -138,13 +138,39 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint3& circ
     Polygon pgn;
     for(size_t i = 0; i < vertexCount; i++) {
         const double circleCoord = (static_cast<double>(i) / vertexCount) * 2 * glm::pi<double>();
-        PeprPoint3 pt =circleOrigin + base1 * cos(circleCoord)*radius + base2 * sin(circleCoord)*radius;
+        PeprPoint3 pt = circleOrigin + base1 * cos(circleCoord) * radius + base2 * sin(circleCoord) * radius;
 
         pgn.push_back(toExactK(mOriginalPlane.to_2d(pt)));
     }
 
     return pgn;
 }
+
+bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
+    using Segment = CGAL::Segment_2<K>;
+    Polygon& boundary = poly.outer_boundary();
+
+    std::vector<size_t> verticesToRemove;
+    size_t edgeCount = boundary.edges_end() - boundary.edges_begin();
+    for(size_t i = 1; i < edgeCount; i++) {
+        Segment lastEdge = boundary.edge(i - 1);
+        Segment edge = boundary.edge(i);
+        if(lastEdge.supporting_line() == edge.supporting_line()) {
+            // Edges are on the same line
+            // Remove their shared vertex to connect them
+            verticesToRemove.push_back(i);
+        }
+    }
+
+    // Remove from the back so that we dont have to move that much data
+    for(auto it = verticesToRemove.rbegin(); it != verticesToRemove.rend(); ++it) {
+        size_t vertexId = *it;
+        boundary.erase(boundary.vertices_begin() + vertexId);
+    }
+
+    return !verticesToRemove.empty();
+}
+
 std::map<size_t, TriangleDetail::PolygonSet> TriangleDetail::gatherTrianglesIntoPolys() {
     std::map<size_t, PolygonSet> result;
 
@@ -246,17 +272,27 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
     }
 }
 
-void TriangleDetail::createNewTriangles(const std::map<size_t, PolygonSet>& coloredPolys) {
+void TriangleDetail::createNewTriangles(std::map<size_t, PolygonSet>& coloredPolys) {
     mTriangles.clear();
 
-    for(const auto it : coloredPolys) {
+    for(auto& it : coloredPolys) {
         if(it.second.is_empty())
             continue;
 
+        bool simplified = false;
         std::vector<PolygonWithHoles> polys(it.second.number_of_polygons_with_holes());
         it.second.polygons_with_holes(polys.begin());
         for(PolygonWithHoles& poly : polys) {
+            simplified |= simplifyPolygon(poly);
             addTrianglesFromPolygon(poly, it.first);
+        }
+
+        // Update this polygon set with simplified representation
+        if(simplified) {
+            it.second.clear();
+            for(PolygonWithHoles& poly : polys) {
+                it.second.join(poly);
+            }
         }
     }
 }

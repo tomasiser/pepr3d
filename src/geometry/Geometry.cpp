@@ -117,7 +117,7 @@ void Geometry::generateVertexBuffer() {
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
         const auto& triangle = mTriangles[idx];
 
-        if(isTriangleSingleColor(idx)) {
+        if(hasTriangleDetail(idx)) {
             mVertexBuffer.push_back(triangle.getVertex(0));
             mVertexBuffer.push_back(triangle.getVertex(1));
             mVertexBuffer.push_back(triangle.getVertex(2));
@@ -149,7 +149,7 @@ void Geometry::generateColorBuffer() {
     mColorBuffer.reserve(mVertexBuffer.size());
 
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
-        if(isTriangleSingleColor(idx)) {
+        if(hasTriangleDetail(idx)) {
             const auto& triangle = mTriangles[idx];
             const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
             mColorBuffer.push_back(triColorIndex);
@@ -177,7 +177,7 @@ void Geometry::generateNormalBuffer() {
     mNormalBuffer.reserve(mVertexBuffer.size());
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
         const auto& triangle = mTriangles[idx];
-        if(isTriangleSingleColor(idx)) {
+        if(hasTriangleDetail(idx)) {
             mNormalBuffer.push_back(triangle.getNormal());
             mNormalBuffer.push_back(triangle.getNormal());
             mNormalBuffer.push_back(triangle.getNormal());
@@ -203,15 +203,13 @@ void Geometry::generateHighlightBuffer(const std::set<size_t>& paintSet, const B
     mAreaHighlight.vertexMask.reserve(mTriangles.size() * 3);
     for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
         // Fill 3 vertices of a triangle
-        if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
-            if(isTriangleSingleColor(triangleIdx)) {
+        if(hasTriangleDetail(triangleIdx)) {
+            if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
                 mAreaHighlight.vertexMask.emplace_back(0);
                 mAreaHighlight.vertexMask.emplace_back(0);
                 mAreaHighlight.vertexMask.emplace_back(0);
-            }
 
-        } else {
-            if(isTriangleSingleColor(triangleIdx)) {
+            } else {
                 mAreaHighlight.vertexMask.emplace_back(1);
                 mAreaHighlight.vertexMask.emplace_back(1);
                 mAreaHighlight.vertexMask.emplace_back(1);
@@ -240,7 +238,7 @@ void Geometry::generateHighlightBuffer(const std::set<size_t>& paintSet, const B
     }
 
     assert(mAreaHighlight.vertexMask.size() == mVertexBuffer.size());
-}
+}  // namespace pepr3d
 
 /* -------------------- Tool support -------------------- */
 
@@ -465,7 +463,7 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
     mTriangles[triangleIndex].setColor(newColor);
 
     // If the triangle had a detail remove it
-    if(!isTriangleSingleColor(triangleIndex)) {
+    if(!hasTriangleDetail(triangleIndex)) {
         mTriangleDetails.erase(triangleIndex);
     }
 }

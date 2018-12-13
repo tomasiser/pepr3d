@@ -7,8 +7,10 @@
 #include <CGAL/Polygon_set_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <map>
 #include <vector>
+#include <CGAL/General_polygon_2.h>
 
 namespace pepr3d {
 /**
@@ -21,6 +23,7 @@ class TriangleDetail {
     // using K = DataTriangle::K;  // Lets try using our normal kernel if its possible. (Should be way faster)
     using Polygon = CGAL::Polygon_2<K>;
     using PolygonWithHoles = CGAL::Polygon_with_holes_2<K>;
+    using GeneralPolygon = CGAL::General_polygon_2<K>;
     using Circle = TriangleDetail::K::Circle_2;
 
     using PolygonSet = CGAL::Polygon_set_2<K>;
@@ -81,6 +84,10 @@ class TriangleDetail {
     // Construct a polygon from a circle.
     Polygon polygonFromCircle(const PeprPoint3& circleOrigin, double radius);
 
+    /// Simplify polygon, removing unnecessary vertices
+    /// @return was simplified
+    bool simplifyPolygon(PolygonWithHoles& poly);
+
     /// Convert Point_2 from Pepr3d kernel to Exact kernel
     inline static K::Point_2 toExactK(const PeprPoint2& point) {
         return K::Point_2(point.x(), point.y());
@@ -111,7 +118,8 @@ class TriangleDetail {
     void addTrianglesFromPolygon(const PolygonWithHoles& poly, size_t color);
 
     /// Create new triangles from a set of colored polygons
-    void createNewTriangles(const std::map<size_t, PolygonSet>& coloredPolys);
+    /// Tries to simplify the polygons in the process
+    void createNewTriangles(std::map<size_t, PolygonSet>& coloredPolys);
 
     /// ( From CGAL User Manual )
     /// ---------------------------

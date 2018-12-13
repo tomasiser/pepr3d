@@ -195,10 +195,10 @@ class Geometry {
         return mColorManager;
     }
 
-    bool isTriangleSingleColor(size_t triangleIdx) const {
+    bool hasTriangleDetail(size_t triangleIdx) const {
         // Triangle is single color when it has no detail triangles
         auto it = mTriangleDetails.find(triangleIdx);
-        return it == mTriangleDetails.end() || it->second.isSingleColor();
+        return it == mTriangleDetails.end();
     }
 
     const GeometryProgress& getProgress() const {

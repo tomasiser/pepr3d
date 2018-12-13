@@ -26,7 +26,8 @@ namespace pepr3d {
 // At least 2 threads in thread pool must be created, or importing will never finish!
 // std::thread::hardware_concurrency() may return 0
 MainApplication::MainApplication()
-    : mToolbar(*this),
+    : mFontStorage{},
+      mToolbar(*this),
       mSidePane(*this),
       mModelView(*this),
       mThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
