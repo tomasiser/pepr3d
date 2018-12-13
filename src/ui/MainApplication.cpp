@@ -94,10 +94,58 @@ void MainApplication::mouseMove(MouseEvent event) {
 }
 
 void MainApplication::fileDrop(FileDropEvent event) {
-    if(mGeometry == nullptr || event.getFiles().size() < 1) {
+    if(mGeometry == nullptr || !mDialogQueue.empty() || event.getFiles().size() < 1) {
         return;
     }
     openFile(event.getFile(0).string());
+}
+
+void MainApplication::showLoadingErrorDialog() {
+    const GeometryProgress& progress = mGeometryInProgress->getProgress();
+
+    if(progress.importRenderPercentage < 1.0f || progress.importComputePercentage < 1.0f) {
+        const std::string errorCaption = "Error: Invalid file";
+        const std::string errorDescription =
+            "You tried to import a file which did not contain correct geometry data that could be loaded in "
+            "Pepr3D via the Assimp library. The supported files are valid .obj, .stl, and .ply.\n\nThe "
+            "provided file could not be imported.";
+        pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+        mGeometryInProgress = nullptr;
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        return;
+    }
+
+    if(progress.buffersPercentage < 1.0f) {
+        const std::string errorCaption = "Error: Failed to generate buffers";
+        const std::string errorDescription =
+            "Problems were found in the imported geometry. An error has occured while generating vertex, "
+            "index, color, and normal buffers for rendering the geometry.\n\nThe provided file could not be "
+            "imported.";
+        pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+        mGeometryInProgress = nullptr;
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        return;
+    }
+
+    if(progress.aabbTreePercentage < 1.0f) {
+        const std::string errorCaption = "Error: Failed to build an AABB tree";
+        const std::string errorDescription =
+            "Problems were found in the imported geometry. An AABB tree could not be built using the data "
+            "using the CGAL library.\n\nThe provided file could not be imported.";
+        pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+        mGeometryInProgress = nullptr;
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        return;
+    }
+
+    if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
+        const std::string errorCaption = "Warning: Failed to build a polyhedron";
+        const std::string errorDescription =
+            "Problems were found in the imported geometry. We could not build a valid polyhedron data "
+            "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
+            "You can still edit the imported model with the remaining tools.";
+        pushDialog(Dialog(DialogType::Warning, errorCaption, errorDescription, "Continue"));
+    }
 }
 
 void MainApplication::openFile(const std::string& path) {
@@ -117,6 +165,10 @@ void MainApplication::openFile(const std::string& path) {
     // Lambda that will be called once the loading finishes.
     // Put all updates to saved states here.
     auto onLoadingComplete = [path, this]() {
+        // Handle errors
+        showLoadingErrorDialog();
+
+        // Swap geometry if no errors occured
         mGeometry = mGeometryInProgress;
         mGeometryInProgress = nullptr;
         mGeometryFileName = path;
@@ -130,7 +182,7 @@ void MainApplication::openFile(const std::string& path) {
         CI_LOG_I("Loading complete.");
     };
 
-    if(ext == ".p3d") {
+    if(ext == ".p3d" || ext == ".P3D" || ext == ".p3D" || ext == ".P3d") {
         CI_LOG_I("Loading project from " + path);
         {
             std::ifstream is(path, std::ios::binary);
@@ -142,13 +194,12 @@ void MainApplication::openFile(const std::string& path) {
         }
         auto asyncCalculation = [onLoadingComplete, path, this]() {
             mGeometryInProgress->recomputeFromData(mThreadPool);
-
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
             dispatchAsync(onLoadingComplete);
         };
         mThreadPool.enqueue(asyncCalculation);
-    } else if(ext == ".stl" || ext == ".ply" || ext == ".obj") {
+    } else {
         CI_LOG_I("Importing a new model from " + path);
 
         // Queue the loading of the new geometry
@@ -161,8 +212,6 @@ void MainApplication::openFile(const std::string& path) {
             dispatchAsync(onLoadingComplete);
         };
         mThreadPool.enqueue(importNewModel);
-    } else {
-        assert(false);
     }
 }
 
@@ -179,6 +228,11 @@ void MainApplication::saveFile(const std::string& filePath, const std::string& f
 }
 
 void MainApplication::update() {
+    // verify that a selected tool is enabled, otherwise select Triangle Painter, which is always enabled:
+    if(!(*mCurrentToolIterator)->isEnabled()) {
+        mCurrentToolIterator = mTools.begin();
+    }
+
 #if defined(CINDER_MSW_DESKTOP)
     // on Microsoft Windows, when window is not focused, periodically check
     // if it is obscured (not visible) every 2 seconds
@@ -221,19 +275,13 @@ void MainApplication::draw() {
         drawExportDialog();
     }
 
-    // if(mGeometryInProgress != nullptr) {
-    //     std::string progressStatus =
-    //         "%% render: " + std::to_string(mGeometryInProgress->getProgress().importRenderPercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% compute: " + std::to_string(mGeometryInProgress->getProgress().importComputePercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% buffers: " + std::to_string(mGeometryInProgress->getProgress().buffersPercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% aabb: " + std::to_string(mGeometryInProgress->getProgress().aabbTreePercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    //     progressStatus = "%% polyhedron: " + std::to_string(mGeometryInProgress->getProgress().polyhedronPercentage);
-    //     ImGui::Text(progressStatus.c_str());
-    // }
+    // draw highest priority dialog:
+    if(!mDialogQueue.empty()) {
+        const bool shouldClose = mDialogQueue.top().draw();
+        if(shouldClose) {
+            mDialogQueue.pop();
+        }
+    }
 }
 
 void MainApplication::setupFonts() {
@@ -328,6 +376,7 @@ void MainApplication::drawExportDialog() {
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
     if(ImGui::BeginPopupModal("##exportdialog", nullptr, window_flags)) {
         ImGui::Text("Exporting geometry");
         ImGui::Spacing();
@@ -430,7 +479,7 @@ void MainApplication::drawExportDialog() {
 
         ImGui::EndPopup();
     }
-    ImGui::PopStyleVar(2);
+    ImGui::PopStyleVar(3);
     ImGui::PopStyleColor(7);
 }
 

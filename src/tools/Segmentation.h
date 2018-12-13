@@ -23,6 +23,10 @@ class Segmentation : public ITool {
         return ICON_MD_DASHBOARD;
     }
 
+    virtual bool isEnabled() const override {
+        return mGeometryCorrect;
+    }
+
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;

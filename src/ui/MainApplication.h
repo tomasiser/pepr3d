@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/TextureFont.h"
@@ -9,6 +11,7 @@
 
 #include "ThreadPool.h"
 
+#include "Dialog.h"
 #include "FontStorage.h"
 #include "ModelView.h"
 #include "ProgressIndicator.h"
@@ -96,6 +99,7 @@ class MainApplication : public App {
     void setCurrentToolIterator(ToolsVector::iterator tool) {
         assert(mTools.size() > 0);
         assert(tool != mTools.end());
+        assert((*tool)->isEnabled());
         (*mCurrentToolIterator)->onToolDeselect(mModelView);
         mCurrentToolIterator = tool;
     }
@@ -114,6 +118,10 @@ class MainApplication : public App {
         mShowExportDialog = true;
     }
 
+    void pushDialog(const pepr3d::Dialog& dialog) {
+        mDialogQueue.push(dialog);
+    }
+
     FontStorage& getFontStorage() {
         return mFontStorage;
     }
@@ -128,6 +136,7 @@ class MainApplication : public App {
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
+    void showLoadingErrorDialog();
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
@@ -142,6 +151,8 @@ class MainApplication : public App {
     bool mShowDemoWindow = false;
     bool mShowExportDialog = false;
     bool mShouldExportInNewFolder = false;
+
+    std::priority_queue<pepr3d::Dialog> mDialogQueue;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
