@@ -75,8 +75,13 @@ class ModelView {
         return mColorOverride.overrideColorBuffer;
     }
 
+    void updateVboAndBatch();
+
    private:
     MainApplication& mApplication;
+    ci::gl::VboMeshRef mVboMesh;
+    ci::gl::BatchRef mBatch;
+
     std::pair<glm::ivec2, glm::ivec2> mViewport;
     ci::CameraPersp mCamera;
     pepr3d::CameraUi mCameraUi;

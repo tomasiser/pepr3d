@@ -24,6 +24,7 @@
 #include "geometry/PolyhedronBuilder.h"
 #include "geometry/Triangle.h"
 #include "geometry/TriangleDetail.h"
+#include "tools/Brush.h"
 
 namespace pepr3d {
 
@@ -39,6 +40,10 @@ class Geometry {
     using ColorIndex = GLuint;
 
     struct AreaHighlight {
+        // all the triangles in highlight
+        std::set<size_t> triangles;
+        BrushSettings settings;
+        ci::Ray ray;
         glm::vec3 origin{};
         glm::vec3 direction{};
         double size{};
@@ -67,6 +72,24 @@ class Geometry {
         /// boolen for each triangle that indicates if the triangle should display cursor highlight
         /// Used to limit the highlight to continuous surface
         std::vector<GLint> highlightMask;  // Possibly needs to be GLint, had problems getting GLbyte through cinder
+
+        bool isDirty{true};
+
+        /// Always editable struct that keeps track of changes since last frame
+        /// Updates to color/highlight buffer set this flag to true
+        /// ModelView resets the flag to false when it updates OpenGl data
+        struct Info {
+            mutable bool didColorUpdate{false};
+            mutable bool didHighlightUpdate{false};
+
+            void unsetColorFlag() const {
+                didColorUpdate = false;
+            }
+
+            void unsetHighlightFlag() const {
+                didHighlightUpdate = false;
+            }
+        } info;
     };
 
    private:
@@ -150,8 +173,7 @@ class Geometry {
         return mPolyhedronData.vertices.size();
     }
 
-    const OpenGlData& getOpenGlData() const
-    {
+    const OpenGlData& getOpenGlData() const {
         // Since we use a new vertex for each triangle, we should have vertices == triangles
         assert(mOgl.indexBuffer.size() == mOgl.vertexBuffer.size());
         assert(mOgl.vertexBuffer.size() == mOgl.normalBuffer.size());
@@ -159,6 +181,28 @@ class Geometry {
         assert(mOgl.colorBuffer.size() == mOgl.vertexBuffer.size());
 
         return mOgl;
+    }
+
+    /// Update buffers used by openGl. Should only be called when they are dirty
+    void updateOpenGlBuffers() {
+        assert(mOgl.isDirty);  // Called unnecessarily. Most likely by error.
+
+        const auto start = std::chrono::high_resolution_clock::now();
+
+        generateVertexBuffer();
+        generateIndexBuffer();
+        generateColorBuffer();
+        generateNormalBuffer();
+        generateHighlightBuffer();
+
+        mOgl.isDirty = false;
+        mOgl.info.didColorUpdate = false;
+        mOgl.info.didHighlightUpdate = false;
+
+        const auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeMs = end - start;
+
+        CI_LOG_I("Generating buffers took " + std::to_string(timeMs.count()) + " ms");
     }
 
     glm::vec3 getBoundingBoxMin() const {
@@ -282,12 +326,13 @@ class Geometry {
     void generateNormalBuffer();
 
     /// Generate a buffer of highlight information. Saves per-triangle data to each vertex
-    void generateHighlightBuffer(const std::set<size_t>& paintSet, const BrushSettings& settings);
+    void generateHighlightBuffer();
 
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
     void buildPolyhedron();
 
     void updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOrigin, const struct BrushSettings& settings);
+    void removeTriangleDetail(size_t triangleIndex);
 
     TriangleDetail* createTriangleDetail(size_t triangleIdx);
 

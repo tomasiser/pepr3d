@@ -26,9 +26,11 @@ void Geometry::loadState(const GeometryState& state) {
 
     // TODO Improve: Can we reuse something?
 
-    // Set opengl state to dirty so it gets updated eventually
-    // Note: Updating straight away would hide this change from ModelView
-    mOgl.isDirty = true;
+    // Generate new buffers from the new triangles
+    generateVertexBuffer();
+    generateColorBuffer();
+    generateNormalBuffer();
+    generateIndexBuffer();
 
     // Tree needs to be rebuilt to match loaded triangles
     mTree->rebuild(mTriangles.begin(), mTriangles.end());
@@ -239,8 +241,6 @@ void Geometry::generateHighlightBuffer() {
     }
 
     assert(mOgl.highlightMask.size() == mOgl.vertexBuffer.size());
-
-    mOgl.info.didHighlightUpdate = true;
 }
 
 /* -------------------- Tool support -------------------- */
@@ -349,12 +349,7 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
         mAreaHighlight.enabled = true;
         mAreaHighlight.dirty = true;
 
-        // Generate highlight buffer only if our openGlBuffers are valid
-        // Otherwise delay until everything is generated again
-        if(!mOgl.isDirty) {
-             generateHighlightBuffer();
-        }
-           
+        generateHighlightBuffer();
         // TODO: Improvement: Try to avoid doing all this if we are highlighting the same triangle with the same
         // size
     } else {
@@ -385,12 +380,29 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
                 }
 
             } else {
+
                 updateTriangleDetail(triangleIdx, intersectionPoint, settings);
             }
         }
     }
 
-    mOgl.isDirty = true;
+    // TODO: Delay generating these buffers until when we need to render the geometry
+    //       This will greatly speed up redo process
+    //          And only when we changed triangle detail
+
+    // Generate new buffers for OpenGL to see the new data
+
+    const auto start = std::chrono::high_resolution_clock::now();
+
+    generateVertexBuffer();
+    generateIndexBuffer();
+    generateColorBuffer();
+    generateNormalBuffer();
+
+    const auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> timeMs = end - start;
+
+    CI_LOG_I("Generating buffers took " + std::to_string(timeMs.count()) + " ms");
 }
 
 namespace geometry_internal {
@@ -437,11 +449,6 @@ void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOr
         ->addCircle(circleIntersection->center(), CGAL::sqrt(circleIntersection->squared_radius()), settings.color);
 }
 
-void Geometry::removeTriangleDetail(const size_t triangleIndex) {
-    mOgl.isDirty = true;
-    mTriangleDetails.erase(triangleIndex);
-}
-
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {
     if(isSimpleTriangle(triangleIndex)) {
         // Change it in the buffer
@@ -455,14 +462,15 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
         mOgl.colorBuffer[vertexPosition] = newColorIndex;
         mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
         mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
-    } else {
-        removeTriangleDetail(triangleIndex);
-    }
+     } else
+     {
+      // TODO: Mark dirty
+         mTriangleDetails.erase(triangleIndex);
+     }
 
     /// Change it in the triangle soup
     assert(triangleIndex < mTriangles.size());
     mTriangles[triangleIndex].setColor(newColor);
-    mOgl.info.didColorUpdate = true;
 }
 
 void Geometry::buildPolyhedron() {
