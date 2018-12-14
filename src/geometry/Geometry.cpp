@@ -455,6 +455,7 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
         mOgl.colorBuffer[vertexPosition] = newColorIndex;
         mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
         mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
+        mOgl.info.didColorUpdate = true;
     } else {
         removeTriangleDetail(triangleIndex);
     }
@@ -462,7 +463,6 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
     /// Change it in the triangle soup
     assert(triangleIndex < mTriangles.size());
     mTriangles[triangleIndex].setColor(newColor);
-    mOgl.info.didColorUpdate = true;
 }
 
 void Geometry::buildPolyhedron() {

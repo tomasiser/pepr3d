@@ -17,7 +17,7 @@ class CmdPaintBrush : public CommandBase<Geometry> {
     }
 
     CmdPaintBrush(ci::Ray ray, const BrushSettings settings)
-        : CommandBase(false, true), mRays{ray}, mSettings(settings) {}
+        : CommandBase(true, true), mRays{ray}, mSettings(settings) {}
 
    protected:
     void run(Geometry& target) const override {

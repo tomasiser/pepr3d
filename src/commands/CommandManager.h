@@ -140,7 +140,19 @@ void CommandManager<Target>::redo() {
         return;
 
     const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
-    mCommandHistory[nextCommandIdx]->run(mTarget);
+    if(mCommandHistory[nextCommandIdx]->isSlowCommand()) {
+        // Try to restore future snapshot to avoid doing a slow command again
+        auto nextSnapshotIt = std::next(getPrevSnapshotIterator());
+        if(nextSnapshotIt != mTargetSnapshots.end()) {
+            mTarget.loadState(nextSnapshotIt->state);
+        } else {
+            mCommandHistory[nextCommandIdx]->run(mTarget);
+        }
+
+    } else {
+        mCommandHistory[nextCommandIdx]->run(mTarget);
+    }
+
     mPosFromEnd--;
 }
 
