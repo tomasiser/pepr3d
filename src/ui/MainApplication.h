@@ -136,7 +136,7 @@ class MainApplication : public App {
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
-    void showLoadingErrorDialog();
+    bool showLoadingErrorDialog();
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;

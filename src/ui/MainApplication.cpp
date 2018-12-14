@@ -100,7 +100,7 @@ void MainApplication::fileDrop(FileDropEvent event) {
     openFile(event.getFile(0).string());
 }
 
-void MainApplication::showLoadingErrorDialog() {
+bool MainApplication::showLoadingErrorDialog() {
     const GeometryProgress& progress = mGeometryInProgress->getProgress();
 
     if(progress.importRenderPercentage < 1.0f || progress.importComputePercentage < 1.0f) {
@@ -112,7 +112,7 @@ void MainApplication::showLoadingErrorDialog() {
         pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
         mGeometryInProgress = nullptr;
         mProgressIndicator.setGeometryInProgress(nullptr);
-        return;
+        return false;
     }
 
     if(progress.buffersPercentage < 1.0f) {
@@ -124,7 +124,7 @@ void MainApplication::showLoadingErrorDialog() {
         pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
         mGeometryInProgress = nullptr;
         mProgressIndicator.setGeometryInProgress(nullptr);
-        return;
+        return false;
     }
 
     if(progress.aabbTreePercentage < 1.0f) {
@@ -135,7 +135,7 @@ void MainApplication::showLoadingErrorDialog() {
         pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
         mGeometryInProgress = nullptr;
         mProgressIndicator.setGeometryInProgress(nullptr);
-        return;
+        return false;
     }
 
     if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
@@ -145,7 +145,9 @@ void MainApplication::showLoadingErrorDialog() {
             "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
             "You can still edit the imported model with the remaining tools.";
         pushDialog(Dialog(DialogType::Warning, errorCaption, errorDescription, "Continue"));
+        return true;
     }
+    return true;
 }
 
 void MainApplication::openFile(const std::string& path) {
@@ -166,7 +168,10 @@ void MainApplication::openFile(const std::string& path) {
     // Put all updates to saved states here.
     auto onLoadingComplete = [path, this]() {
         // Handle errors
-        showLoadingErrorDialog();
+        const bool isLoadedCorrectly = showLoadingErrorDialog();
+        if(!isLoadedCorrectly) {
+            return;
+        }
 
         // Swap geometry if no errors occured
         mGeometry = mGeometryInProgress;
