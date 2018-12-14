@@ -177,6 +177,7 @@ void MainApplication::openFile(const std::string& path) {
         mGeometry = mGeometryInProgress;
         mGeometryInProgress = nullptr;
         mGeometryFileName = path;
+        mIsGeometryDirty = false;
         mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
         fs::path fsPath(path);
         getWindow()->setTitle(fsPath.stem().string() + std::string(" - Pepr3D"));
