@@ -119,6 +119,12 @@ void Geometry::generateVertexBuffer() {
             mOgl.vertexBuffer.push_back(triangle.getVertex(0));
             mOgl.vertexBuffer.push_back(triangle.getVertex(1));
             mOgl.vertexBuffer.push_back(triangle.getVertex(2));
+        } else
+        {
+            // Pass dummy triangle to keep triangleIdx consistent with array position
+            mOgl.vertexBuffer.push_back(glm::vec3{0, 0, 0});
+            mOgl.vertexBuffer.push_back(glm::vec3{0, 0, 0});
+            mOgl.vertexBuffer.push_back(glm::vec3{0, 0, 0});
         }
     }
 
@@ -147,13 +153,11 @@ void Geometry::generateColorBuffer() {
     mOgl.colorBuffer.reserve(mOgl.vertexBuffer.size());
 
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
-        if(isSimpleTriangle(idx)) {
             const auto& triangle = mTriangles[idx];
             const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
             mOgl.colorBuffer.push_back(triColorIndex);
             mOgl.colorBuffer.push_back(triColorIndex);
             mOgl.colorBuffer.push_back(triColorIndex);
-        }
     }
 
     for(auto& it : mTriangleDetails) {
@@ -175,11 +179,9 @@ void Geometry::generateNormalBuffer() {
     mOgl.normalBuffer.reserve(mOgl.vertexBuffer.size());
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
         const auto& triangle = mTriangles[idx];
-        if(isSimpleTriangle(idx)) {
             mOgl.normalBuffer.push_back(triangle.getNormal());
             mOgl.normalBuffer.push_back(triangle.getNormal());
             mOgl.normalBuffer.push_back(triangle.getNormal());
-        }
     }
 
     for(auto& it : mTriangleDetails) {
@@ -204,7 +206,6 @@ void Geometry::generateHighlightBuffer() {
     mOgl.highlightMask.reserve(mTriangles.size() * 3);
     for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
         // Fill 3 vertices of a triangle
-        if(isSimpleTriangle(triangleIdx)) {
             if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
                 mOgl.highlightMask.emplace_back(0);
                 mOgl.highlightMask.emplace_back(0);
@@ -215,7 +216,6 @@ void Geometry::generateHighlightBuffer() {
                 mOgl.highlightMask.emplace_back(1);
                 mOgl.highlightMask.emplace_back(1);
             }
-        }
     }
 
     // If the original triangle has highlight enabled also enable for detail
