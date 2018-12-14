@@ -163,6 +163,7 @@ class MainApplication : public App {
     std::unique_ptr<CommandManager<Geometry>> mCommandManager;
 
     std::string mGeometryFileName;
+    bool mShouldSaveAs = true;
     std::size_t mLastVersionSaved = std::numeric_limits<std::size_t>::max();
     bool mIsGeometryDirty = false;
 

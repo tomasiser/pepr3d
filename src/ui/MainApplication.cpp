@@ -177,6 +177,7 @@ void MainApplication::openFile(const std::string& path) {
         mGeometry = mGeometryInProgress;
         mGeometryInProgress = nullptr;
         mGeometryFileName = path;
+        mShouldSaveAs = true;
         mIsGeometryDirty = false;
         mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
         fs::path fsPath(path);
@@ -544,7 +545,6 @@ void MainApplication::saveProjectAs() {
         if(initialPath.empty()) {
             initialPath = getDocumentsDirectory();
         }
-
         std::string name = "Untitled";
         if(mGeometryFileName != "") {
             fs::path dirToSave = mGeometryFileName;
@@ -572,11 +572,12 @@ void MainApplication::saveProjectAs() {
         mLastVersionSaved = mCommandManager->getVersionNumber();
         mIsGeometryDirty = false;
         getWindow()->setTitle(path.stem().string() + std::string(" - Pepr3D"));
+        mShouldSaveAs = false;
     });
 }
 
 void MainApplication::saveProject() {
-    if(mGeometryFileName == "") {
+    if(mGeometryFileName == "" || mShouldSaveAs) {
         saveProjectAs();
         return;
     }
