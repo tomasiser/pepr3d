@@ -1,4 +1,13 @@
 #include <cereal/archives/binary.hpp>
+#ifdef _MSC_VER
+// because cereal json does not conform to C++17
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+#include <cereal/archives/json.hpp>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <cereal/types/memory.hpp>
 
 #include "ui/MainApplication.h"
@@ -48,7 +57,15 @@ void MainApplication::setup() {
 
     applyLightTheme(ImGui::GetStyle());
 
-    mHotkeys.loadDefaults();
+    // Uncomment the following line to save mHotkeys on startup
+    // (only useful for updating the .json file after a change in hotkeys):
+    // saveHotkeysToFile((getAssetPath("") / "hotkeys.json").string());
+    try {
+        loadHotkeysFromFile(getAssetPath("hotkeys.json").string());
+    } catch(const cereal::Exception&) {
+        CI_LOG_I("Failed to load hotkeys from hotkeys.json, using default hotkeys");
+        mHotkeys.loadDefaults();
+    }
 
     mGeometry = std::make_shared<Geometry>();
     mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), mThreadPool);
@@ -184,6 +201,18 @@ bool MainApplication::showLoadingErrorDialog() {
         return true;
     }
     return true;
+}
+
+void MainApplication::loadHotkeysFromFile(const std::string& path) {
+    std::ifstream is(path);
+    cereal::JSONInputArchive loadArchive(is);
+    loadArchive(cereal::make_nvp("hotkeys", mHotkeys));
+}
+
+void MainApplication::saveHotkeysToFile(const std::string& path) {
+    std::ofstream os(path);
+    cereal::JSONOutputArchive saveArchive(os);
+    saveArchive(cereal::make_nvp("hotkeys", mHotkeys));
 }
 
 void MainApplication::openFile(const std::string& path) {

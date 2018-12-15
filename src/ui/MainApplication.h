@@ -159,6 +159,8 @@ class MainApplication : public App {
     void didBecomeActive();
     bool isWindowObscured();
     bool showLoadingErrorDialog();
+    void loadHotkeysFromFile(const std::string& path);
+    void saveHotkeysToFile(const std::string& path);
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
