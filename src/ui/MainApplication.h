@@ -124,7 +124,7 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
-    void showImportDialog();
+    void showImportDialog(const std::vector<std::string>& extensions);
 
     void showExportDialog() {
         mShowExportDialog = true;
@@ -145,6 +145,9 @@ class MainApplication : public App {
     void pushDialog(const pepr3d::Dialog& dialog) {
         mDialogQueue.push(dialog);
     }
+    
+    void saveProject();
+    void saveProjectAs();
 
    private:
     void setupFonts();
@@ -153,6 +156,7 @@ class MainApplication : public App {
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
+    bool showLoadingErrorDialog();
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
@@ -183,6 +187,9 @@ class MainApplication : public App {
     std::unique_ptr<CommandManager<Geometry>> mCommandManager;
 
     std::string mGeometryFileName;
+    bool mShouldSaveAs = true;
+    std::size_t mLastVersionSaved = std::numeric_limits<std::size_t>::max();
+    bool mIsGeometryDirty = false;
 
     ::ThreadPool mThreadPool;
 };

@@ -30,65 +30,79 @@ void Geometry::loadState(const GeometryState& state) {
 
 /* -------------------- Mesh loading -------------------- */
 
+void Geometry::recomputeFromData(::ThreadPool& threadPool) {
+    // We already loaded the model
+    assert(mProgress->importRenderPercentage == 1.0f);
+    assert(mProgress->importComputePercentage == 1.0f);
+
+    /// Async build the polyhedron data structure
+    auto buildPolyhedronFuture = threadPool.enqueue([this]() {
+        assert(!mPolyhedronData.vertices.empty());
+        assert(!mPolyhedronData.indices.empty());
+        buildPolyhedron();
+    });
+
+    /// Async build the AABB tree
+    auto buildTreeFuture = threadPool.enqueue([this]() {
+        mProgress->aabbTreePercentage = 0.0f;
+
+        mTree->rebuild(mTriangles.cbegin(), mTriangles.cend());
+        assert(mTree->size() == mTriangles.size());
+
+        /// Get the new bounding box
+        if(!mTree->empty()) {
+            mBoundingBox = std::make_unique<BoundingBox>(mTree->bbox());
+        }
+
+        mProgress->aabbTreePercentage = 1.0f;
+    });
+
+    mProgress->buffersPercentage = 0.0f;
+
+    /// Generate new vertex buffer
+    generateVertexBuffer();
+    mProgress->buffersPercentage = 0.25f;
+
+    /// Generate new index buffer
+    generateIndexBuffer();
+    mProgress->buffersPercentage = 0.50f;
+
+    /// Generate new color buffer from triangle color data
+    generateColorBuffer();
+    mProgress->buffersPercentage = 0.75f;
+
+    /// Generate new normal buffer, copying the triangle normal to each vertex
+    generateNormalBuffer();
+    mProgress->buffersPercentage = 1.0f;
+
+    /// Wait for building the polyhedron and tree
+    buildTreeFuture.get();
+    buildPolyhedronFuture.get();
+}
+
 void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& threadPool) {
     // Reset progress
     mProgress->resetLoad();
 
-    /// Load into mTriangles
+    /// Import the object via Assimp
     ModelImporter modelImporter(fileName, mProgress.get(), threadPool);  // only first mesh [0]
 
     if(modelImporter.isModelLoaded()) {
+        /// Fill triangle data to compute AABB
         mTriangles = modelImporter.getTriangles();
 
-        /// Async build the polyhedron data structure
-        auto buildPolyhedronFuture = threadPool.enqueue([&modelImporter, this]() {
-            mPolyhedronData.vertices.clear();
-            mPolyhedronData.indices.clear();
-            mPolyhedronData.vertices = modelImporter.getVertexBuffer();
-            mPolyhedronData.indices = modelImporter.getIndexBuffer();
-            buildPolyhedron();
-        });
-
-        /// Async build the AABB tree
-        auto buildTreeFuture = threadPool.enqueue([this]() {
-            mProgress->aabbTreePercentage = 0.0f;
-
-            mTree->rebuild(mTriangles.cbegin(), mTriangles.cend());
-            assert(mTree->size() == mTriangles.size());
-
-            /// Get the new bounding box
-            if(!mTree->empty()) {
-                mBoundingBox = std::make_unique<BoundingBox>(mTree->bbox());
-            }
-
-            mProgress->aabbTreePercentage = 1.0f;
-        });
-
-        mProgress->buffersPercentage = 0.0f;
-
-        /// Generate new vertex buffer
-        generateVertexBuffer();
-        mProgress->buffersPercentage = 0.25f;
-
-        /// Generate new index buffer
-        generateIndexBuffer();
-        mProgress->buffersPercentage = 0.50f;
-
-        /// Generate new color buffer from triangle color data
-        generateColorBuffer();
-        mProgress->buffersPercentage = 0.75f;
-
-        /// Generate new normal buffer, copying the triangle normal to each vertex
-        generateNormalBuffer();
-        mProgress->buffersPercentage = 1.0f;
-
-        /// Wait for building the polyhedron and tree
-        buildTreeFuture.get();
-        buildPolyhedronFuture.get();
+        /// Fill Polyhedron data to compute SurfaceMesh
+        mPolyhedronData.vertices.clear();
+        mPolyhedronData.indices.clear();
+        mPolyhedronData.vertices = modelImporter.getVertexBuffer();
+        mPolyhedronData.indices = modelImporter.getIndexBuffer();
 
         /// Get the generated color palette of the model, replace the current one
         mColorManager = modelImporter.getColorManager();
         assert(!mColorManager.empty());
+
+        /// Do the computations in parallel
+        recomputeFromData(threadPool);
     } else {
         CI_LOG_E("Model not loaded --> write out message for user");
     }
