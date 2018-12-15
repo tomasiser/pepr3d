@@ -124,6 +124,8 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
+    const std::vector<std::string> supportedImportExtensions = {"stl", "obj", "ply"};
+    const std::vector<std::string> supportedOpenExtensions = {"p3d"};
     void showImportDialog(const std::vector<std::string>& extensions);
 
     void showExportDialog() {
@@ -145,7 +147,7 @@ class MainApplication : public App {
     void pushDialog(const pepr3d::Dialog& dialog) {
         mDialogQueue.push(dialog);
     }
-    
+
     void saveProject();
     void saveProjectAs();
 

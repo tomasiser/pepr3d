@@ -109,7 +109,9 @@ void MainApplication::keyDown(KeyEvent event) {
         return;
     }
     switch(*action) {
-    case HotkeyAction::Import: showImportDialog(); break;
+    case HotkeyAction::Open: showImportDialog(supportedOpenExtensions); break;
+    case HotkeyAction::Save: saveProject(); break;
+    case HotkeyAction::Import: showImportDialog(supportedImportExtensions); break;
     case HotkeyAction::Export: showExportDialog(); break;
     case HotkeyAction::Undo: mCommandManager->undo(); break;
     case HotkeyAction::Redo: mCommandManager->redo(); break;

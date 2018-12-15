@@ -103,7 +103,7 @@ void Toolbar::drawFileDropDown() {
             ImGui::PushFont(mApplication.getFontStorage().getSmallFont());
             if(ImGui::Button("Open", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.showImportDialog({"p3d"});
+                mApplication.showImportDialog(mApplication.supportedOpenExtensions);
             }
             if(ImGui::Button("Save", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
@@ -115,7 +115,7 @@ void Toolbar::drawFileDropDown() {
             }
             if(ImGui::Button("Import", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.showImportDialog({"stl", "obj", "ply"});
+                mApplication.showImportDialog(mApplication.supportedImportExtensions);
             }
             if(ImGui::Button("Export", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();

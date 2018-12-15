@@ -9,6 +9,8 @@
 namespace pepr3d {
 
 enum class HotkeyAction : std::size_t {
+    Open,
+    Save,
     Import,
     Export,
     Undo,
@@ -95,6 +97,8 @@ class Hotkeys {
     void loadDefaults() {
         mKeysToActions.clear();
         mActionsToKeys.clear();
+        add({ci::app::KeyEvent::KEY_o, true}, HotkeyAction::Open);
+        add({ci::app::KeyEvent::KEY_s, true}, HotkeyAction::Save);
         add({ci::app::KeyEvent::KEY_i, true}, HotkeyAction::Import);
         add({ci::app::KeyEvent::KEY_e, true}, HotkeyAction::Export);
         add({ci::app::KeyEvent::KEY_z, true}, HotkeyAction::Undo);
