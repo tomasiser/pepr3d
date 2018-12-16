@@ -78,7 +78,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<TextEditor>());
     mTools.emplace_back(make_unique<Segmentation>(*this));
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
-    mTools.emplace_back(make_unique<pepr3d::Settings>());
+    mTools.emplace_back(make_unique<pepr3d::Settings>(*this));
     mTools.emplace_back(make_unique<Information>());
     mTools.emplace_back(make_unique<LiveDebug>(*this));
     mCurrentToolIterator = mTools.begin();
@@ -375,6 +375,8 @@ void MainApplication::setupFonts() {
         iconsRangeBuilder.AddText(tool->getIcon().c_str());
     }
     iconsRangeBuilder.AddText(ICON_MD_ARROW_DROP_DOWN);
+    iconsRangeBuilder.AddText(ICON_MD_KEYBOARD_ARROW_RIGHT);
+    iconsRangeBuilder.AddText(ICON_MD_KEYBOARD_ARROW_DOWN);
     iconsRangeBuilder.AddText(ICON_MD_FOLDER_OPEN);
     iconsRangeBuilder.AddText(ICON_MD_UNDO);
     iconsRangeBuilder.AddText(ICON_MD_REDO);

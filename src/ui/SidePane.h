@@ -22,7 +22,7 @@ class SidePane {
     bool drawButton(std::string label);
     bool drawColoredButton(std::string label, const ci::ColorA color, const float borderThickness = 3.0f);
     void drawSeparator();
-    void drawColorPalette(ColorManager& colorManager);
+    void drawColorPalette(const std::string& label = "Color Palette", bool isEditable = false);
 
     template <typename Callback>
     void drawCheckbox(std::string label, bool isChecked, Callback onChanged) {
@@ -58,6 +58,32 @@ class SidePane {
 
     void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
                             const std::string& description = "", const std::string& disabled = "");
+
+    class Category {
+        std::string mCaption;
+        bool mIsOpen;
+
+        void drawHeader(SidePane& sidePane);
+
+       public:
+        explicit Category(const std::string& caption, bool isOpen = false) : mCaption(caption), mIsOpen(isOpen) {}
+
+        bool isOpen() const {
+            return mIsOpen;
+        }
+
+        template <typename DrawInsideFunction>
+        void draw(SidePane& sidePane, DrawInsideFunction drawInside) {
+            ImGui::PushID(mCaption.c_str());
+            drawHeader(sidePane);
+            if(mIsOpen) {
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
+                drawInside();
+            }
+            sidePane.drawSeparator();
+            ImGui::PopID();
+        }
+    };
 
    private:
     MainApplication& mApplication;

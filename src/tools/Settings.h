@@ -6,7 +6,12 @@
 namespace pepr3d {
 
 class Settings : public ITool {
+    MainApplication& mApplication;
+    SidePane::Category mColorPaletteCategory;
+
    public:
+    Settings(MainApplication& app) : mApplication(app), mColorPaletteCategory("Edit Color Palette") {}
+
     virtual std::string getName() const override {
         return "Settings";
     }
@@ -18,5 +23,7 @@ class Settings : public ITool {
     virtual std::string getIcon() const override {
         return ICON_MD_SETTINGS;
     }
+
+    virtual void drawToSidePane(SidePane& sidePane) override;
 };
 }  // namespace pepr3d

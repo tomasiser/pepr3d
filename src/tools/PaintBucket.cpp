@@ -10,7 +10,7 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
         return;
     }
 
-    sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
+    sidePane.drawColorPalette();
     sidePane.drawSeparator();
 
     sidePane.drawCheckbox("Paint while dragging", mShouldPaintWhileDrag);
