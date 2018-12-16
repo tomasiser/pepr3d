@@ -10,7 +10,7 @@ class Settings : public ITool {
     SidePane::Category mColorPaletteCategory;
 
    public:
-    Settings(MainApplication& app) : mApplication(app), mColorPaletteCategory("Edit Color Palette") {}
+    Settings(MainApplication& app) : mApplication(app), mColorPaletteCategory("Edit Color Palette", true) {}
 
     virtual std::string getName() const override {
         return "Settings";

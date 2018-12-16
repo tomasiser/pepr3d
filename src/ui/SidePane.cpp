@@ -1,7 +1,6 @@
 #include "SidePane.h"
 #include "MainApplication.h"
-#include "commands/CmdChangeColorManagerColor.h"
-#include "commands/CmdReplaceColorManagerColors.h"
+#include "commands/CmdColorManager.h"
 #include "geometry/Geometry.h"
 #include "tools/Tool.h"
 
@@ -98,29 +97,24 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
         return;
     }
 
+    ColorManager& colorManager = geometry->getColorManager();
+    CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
+    assert(commandManager != nullptr);
+
     if(!label.empty()) {
         drawText(label.c_str());
     }
 
-    // TODO: https://github.com/tomasiser/pepr3d/issues/41
-
-    // int colorCount = colorManager.size();
-    // if (ImGui::DragInt("##colorPaletteAmount", &colorCount, 0.05f, 1, PEPR3D_MAX_PALETTE_COLORS)) {
-    //     int diff = colorManager.size() - colorCount;
-    //     while (diff != 0) {
-    //         if (diff > 0) {
-    //             colorManager.popColor();
-    //             --diff;
-    //         } else {
-    //             colorManager.addColor(colorManager.getColor(colorManager.size() - 1));
-    //             ++diff;
-    //         }
-    //     }
-    // }
-
     if(isEditable) {
         ImGui::TextWrapped("Edit palette by left clicking on the colors. Also try drag & dropping!");
-        drawButton("Add color");
+        if(drawButton("Add color")) {
+            if(colorManager.size() >= PEPR3D_MAX_PALETTE_COLORS) {
+                mApplication.pushDialog(
+                    Dialog(DialogType::Error, "Could not add color", "The maximum number of colors has been reached."));
+            } else {
+                commandManager->execute(std::make_unique<CmdColorManagerAddColor>());
+            }
+        }
     }
 
     if(isEditable) {
@@ -137,10 +131,13 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
                 assert(payload->DataSize == sizeof(size_t));
                 isActiveDragDropTarget = true;
                 if(payload->IsDelivery()) {
-                    // size_t payloadi = *static_cast<const size_t*>(payload->Data);
-                    // const glm::vec4 temp = colorManager.getColor(i);
-                    // colorManager.setColor(i, colorManager.getColor(payloadi));
-                    // colorManager.setColor(payloadi, temp);
+                    if(colorManager.size() > 1) {
+                        commandManager->execute(
+                            std::make_unique<CmdColorManagerRemoveColor>(*static_cast<const size_t*>(payload->Data)));
+                    } else {
+                        mApplication.pushDialog(Dialog(DialogType::Error, "Could not remove color",
+                                                       "There has to be at least 1 color in the palette."));
+                    }
                 }
             }
             ImGui::EndDragDropTarget();
@@ -157,9 +154,6 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
         }
         drawList->AddText(textPosition, (ImColor)textColor, text.c_str());
     }
-
-    ColorManager& colorManager = geometry->getColorManager();
-    CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
 
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     glm::ivec2 initialCursorPos = ImGui::GetCursorScreenPos();
@@ -211,7 +205,6 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
         bool isActiveDragDropTarget = false;
         if(isEditable) {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(0.0f));
-            // if(ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoPreviewTooltip)) {
             if(ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
                 ImGui::SetDragDropPayload("colorPaletteDragDrop", &i, sizeof(size_t));
                 ImDrawList* const tooltipDrawList = ImGui::GetWindowDrawList();
@@ -220,7 +213,6 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
                 tooltipDrawList->AddRectFilled(tooltipCursorPos, tooltipCursorPos + tooltipSize,
                                                (ImColor)colorManager.getColor(i));
                 ImGui::SetCursorScreenPos(tooltipCursorPos + tooltipSize);
-                // ImGui::Text((std::string("Color ") + std::to_string(i + 1)).c_str());
                 ImGui::EndDragDropSource();
             }
             ImGui::PopStyleVar(1);
@@ -231,9 +223,13 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
                     isActiveDragDropTarget = true;
                     if(payload->IsDelivery()) {
                         size_t payloadi = *static_cast<const size_t*>(payload->Data);
-                        const glm::vec4 temp = colorManager.getColor(i);
-                        colorManager.setColor(i, colorManager.getColor(payloadi));
-                        colorManager.setColor(payloadi, temp);
+                        if(ImGui::GetIO().KeyCtrl) {
+                            // swap colors if Ctrl is held:
+                            commandManager->execute(std::make_unique<CmdColorManagerSwapColors>(i, payloadi));
+                        } else {
+                            // reorder colors:
+                            commandManager->execute(std::make_unique<CmdColorManagerReorderColors>(i, payloadi));
+                        }
                     }
                 }
                 ImGui::EndDragDropTarget();
@@ -246,9 +242,6 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
             (ImColor)ci::ColorA::hex(0xEDEDED));
 
         glm::vec4 color = colorManager.getColor(i);
-        // glm::vec3 hsvColor = ci::rgbToHsv(static_cast<ci::ColorA>(color));
-        // hsvButtonColor.y = 0.75;  // reduce the saturation
-        // ci::ColorA borderColor = ci::hsvToRgb(hsvButtonColor);
         const float boxAlpha = (isHovered || isHeld) ? (isHeld ? 0.8f : 0.9f) : 1.0f;
         const glm::vec4 boxColor(color.r, color.g, color.b, boxAlpha);
         drawList->AddRectFilled(
@@ -266,13 +259,20 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
                               (ImColor)selectColor, 0.0f, 15, thickness);
         }
         if(isEditable) {
-            ImGui::SetNextWindowPos(cursorPos + glm::ivec2(0, static_cast<int>(boxHeight) + 2));
-            ImGui::SetNextWindowSize(glm::vec2(ImGui::GetContentRegionAvailWidth(), 285));
+            const glm::vec2 colorPickerSize(ImGui::GetContentRegionAvailWidth(), 285.0f);
+            glm::vec2 colorPickerPos(ImGui::GetIO().DisplaySize.x - mWidth - colorPickerSize.x + 1.0f,
+                                     cursorPos.y + boxHeight - colorPickerSize.y / 2.0f);
+            if(colorPickerPos.y + colorPickerSize.y > ImGui::GetIO().DisplaySize.y) {
+                colorPickerPos.y = ImGui::GetIO().DisplaySize.y - colorPickerSize.y - 1.0f;
+            } else if(colorPickerPos.y < mApplication.getToolbar().getHeight() - 1.0f) {
+                colorPickerPos.y = mApplication.getToolbar().getHeight() - 1.0f;
+            }
+            ImGui::SetNextWindowPos(colorPickerPos);
+            ImGui::SetNextWindowSize(colorPickerSize);
             if(ImGui::BeginPopup(colorEditPopupId.c_str())) {
                 ImGui::PushItemWidth(-0.001f);  // force full width
                 if(ImGui::ColorPicker3(colorPickerId.c_str(), &color[0], ImGuiColorEditFlags_NoSidePreview)) {
-                    assert(commandManager);
-                    commandManager->execute(std::make_unique<CmdChangeColorManagerColor>(i, color), true);
+                    commandManager->execute(std::make_unique<CmdColorManagerChangeColor>(i, color), true);
                 }
                 ImGui::PopItemWidth();
                 ImGui::EndPopup();
@@ -286,33 +286,10 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + rowCount * (boxHeight + 2.f) + 10.0f);
 
     if(isEditable) {
-        drawButton("Reset palette to default");
+        if(drawButton("Reset all colors to default")) {
+            commandManager->execute(std::make_unique<CmdColorManagerResetColors>());
+        }
     }
-
-    // if (isEditable) {
-    //     bool isSwapMode = false;
-    //     ImGui::Text("Drag & drop to");
-    //     ImGui::SameLine();
-    //     if(ImGui::RadioButton("reorder", !isSwapMode)) {
-    //         isSwapMode = false;
-    //     }
-    //     ImGui::SameLine();
-    //     if(ImGui::RadioButton("swap", isSwapMode)) {
-    //         isSwapMode = true;
-    //     }
-    // }
-
-    // if(drawButton("Randomize Colors")) {
-    //     std::random_device rd;   // Will be used to obtain a seed for the random number engine
-    //     std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-    //     uniform_real_distribution<> dis(0.0, 1.0);
-    //     std::vector<glm::vec4> newColors;
-    //     for(int i = 0; i < colorManager.size(); ++i) {
-    //         newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
-    //     }
-    //     assert(commandManager);
-    //     commandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
-    // }
 }
 
 void SidePane::drawTooltipOnHover(const std::string& label, const std::string& shortcut, const std::string& description,
