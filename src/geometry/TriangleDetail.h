@@ -1,16 +1,17 @@
 #pragma once
 #include "geometry/Triangle.h"
 
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/General_polygon_2.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_set_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <deque>
 #include <map>
 #include <vector>
-#include <CGAL/General_polygon_2.h>
 
 namespace pepr3d {
 /**
@@ -41,7 +42,7 @@ class TriangleDetail {
     using Fbb = CGAL::Triangulation_face_base_with_info_2<FaceInfo, K>;
     using Fb = CGAL::Constrained_triangulation_face_base_2<K, Fbb>;
     using Tds = CGAL::Triangulation_data_structure_2<CGAL::Triangulation_vertex_base_2<K>, Fb>;
-    using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds>;
+    using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds, CGAL::No_intersection_tag>;
 
     explicit TriangleDetail(const DataTriangle& original, size_t colorIdx)
         : mOriginal(original), mOriginalPlane(original.getTri().supporting_plane()) {
@@ -128,6 +129,6 @@ class TriangleDetail {
     static void markDomains(ConstrainedTriangulation& ct);
 
     static void markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,
-                            std::list<ConstrainedTriangulation::Edge>& border);
+                            std::deque<ConstrainedTriangulation::Edge>& border);
 };
 }  // namespace pepr3d

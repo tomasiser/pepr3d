@@ -8,6 +8,8 @@
 
 #include "ui/CameraUi.h"
 
+#include <chrono>
+
 namespace pepr3d {
 
 class MainApplication;

@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <cinder/Log.h>
 #include <list>
+#include <deque>
 
 // Loss of precision between conversions may move verticies? Needs testing
 
@@ -183,11 +184,11 @@ std::map<size_t, TriangleDetail::PolygonSet> TriangleDetail::gatherTrianglesInto
 }
 
 void TriangleDetail::markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,
-                                 std::list<ConstrainedTriangulation::Edge>& border) {
+                                 std::deque<ConstrainedTriangulation::Edge>& border) {
     if(start->info().nestingLevel != -1) {
         return;
     }
-    std::list<ConstrainedTriangulation::Face_handle> queue;
+    std::deque<ConstrainedTriangulation::Face_handle> queue;
     queue.push_back(start);
     while(!queue.empty()) {
         ConstrainedTriangulation::Face_handle fh = queue.front();
@@ -220,7 +221,7 @@ void TriangleDetail::markDomains(ConstrainedTriangulation& ct) {
     for(auto it = ct.all_faces_begin(); it != ct.all_faces_end(); ++it) {
         it->info().nestingLevel = -1;
     }
-    std::list<ConstrainedTriangulation::Edge> border;
+    std::deque<ConstrainedTriangulation::Edge> border;
     markDomains(ct, ct.infinite_face(), 0, border);
     while(!border.empty()) {
         ConstrainedTriangulation::Edge e = border.front();

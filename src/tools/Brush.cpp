@@ -35,6 +35,13 @@ void Brush::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event
 }
 
 void Brush::paint() {
+    // Prevents blocking the rendering if painting takes too long
+    if(mPaintsSinceDraw >= MAX_PAINTS_WITHOUT_DRAW) {
+        return;
+    }
+
+    mPaintsSinceDraw++;
+
     mBrushSettings.color = mApplication.getCurrentGeometry()->getColorManager().getActiveColorIndex();
     auto* commandManager = mApplication.getCommandManager();
     if(commandManager) {
@@ -63,5 +70,7 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     if(mBrushSettings.respectOriginalTriangles) {
         sidePane.drawCheckbox("Paint outer ring", mBrushSettings.paintOuterRing);
     }
+
+    mPaintsSinceDraw = 0;
 }
 }  // namespace pepr3d

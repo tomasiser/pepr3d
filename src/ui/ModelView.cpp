@@ -183,6 +183,8 @@ void ModelView::drawGeometry() {
     if(glData.isDirty || !mBatch) {
         mApplication.getCurrentGeometry()->updateOpenGlBuffers();
         updateVboAndBatch();
+
+        CI_LOG_I("Vbo updated");
     }
 
     // Pass new highlight data if required

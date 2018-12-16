@@ -65,5 +65,9 @@ class Brush : public ITool {
     BrushSettings mBrushSettings;
 
     bool mGroupCommands = false;
+
+    /// How many times can we run this tool without updating the screen
+    int mPaintsSinceDraw = 0;
+    const int MAX_PAINTS_WITHOUT_DRAW = 1;
 };
 }  // namespace pepr3d
