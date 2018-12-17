@@ -342,6 +342,9 @@ void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::a
         return;
     }
 
+    // Mark the spread dirty if we add a new triangle
+    mIsSpreadDirty = true;
+
     const bool emptyBefore = mStartingTriangles.empty();
 
     setTriangleColor();
