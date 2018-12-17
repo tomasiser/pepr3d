@@ -197,7 +197,7 @@ void MainApplication::openFile(const std::string& path) {
             // CAREFUL! Replaces the shared_ptr in mGeometryInProgress!
             try {
                 loadArchive(mGeometryInProgress);
-            } catch(const cereal::Exception& excp) {
+            } catch(const cereal::Exception&) {
                 const std::string errorCaption = "Error: Pepr project file (.p3d) corrupted";
                 const std::string errorDescription =
                     "The project file you attempted to open is corrupted and cannot be loaded. "
@@ -283,11 +283,18 @@ void MainApplication::draw() {
     // draw highest priority dialog:
     if(!mDialogQueue.empty()) {
         const bool shouldClose = mDialogQueue.top().draw();
+        const bool isTopDialogFatal = mDialogQueue.top().isFatalError();
+
         if(shouldClose) {
-            if(mDialogQueue.top().isFatalError()) {
+            if(isTopDialogFatal) {
                 quit();
             }
             mDialogQueue.pop();
+        }
+
+        // Do not draw anything if the fault is fatal
+        if(isTopDialogFatal) {
+            return;
         }
     }
 

@@ -16,7 +16,7 @@ std::optional<std::size_t> Tool::safeIntersectMesh(MainApplication& mainApplicat
         const std::string errorCaption = "Fatal Error: Pepr project file (.p3d) corrupted";
         const std::string errorDescription =
             "The project file you attempted to open is corrupted and was loaded incorrectly. "
-            "The geometry data inside does not correspond to a valid geometry object and cannot be display or "
+            "The geometry data inside does not correspond to a valid geometry object and cannot be displayed or "
             "modified. "
             "Pepr3D will now exit. Try loading an earlier backup version, which might not be corrupted yet.";
         mainApplication.pushDialog(Dialog(DialogType::FatalError, errorCaption, errorDescription, "Exit Pepr3D"));
