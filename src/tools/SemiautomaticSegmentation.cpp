@@ -11,6 +11,9 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
     Geometry* const currentGeometry = mApplication.getCurrentGeometry();
     assert(currentGeometry != nullptr);
+    if (currentGeometry == nullptr) {
+        return;
+    }
 
     const bool isSdfComputed = currentGeometry->isSdfComputed();
     if(!isSdfComputed) {
@@ -77,6 +80,8 @@ size_t SemiautomaticSegmentation::findClosestColorFromSDF(
     const size_t triangle, const size_t color1, const size_t color2,
     const std::unordered_map<std::size_t, std::vector<double>>& sdfValuesPerColor) {
     const Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
+
     double triangleSdfValue = currentGeometry->getSdfValue(triangle);
 
     auto findClosestSDFValue = [](double target, const std::vector<double>& values) -> double {
@@ -151,6 +156,8 @@ void SemiautomaticSegmentation::postprocess(
 
 void SemiautomaticSegmentation::spreadColors() {
     Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
+
     mCurrentColoring.clear();
     auto& overrideBuffer = mApplication.getModelView().getOverrideColorBuffer();
     overrideBuffer = mBackupColorBuffer;
@@ -238,6 +245,7 @@ std::unordered_map<std::size_t, std::vector<std::size_t>> SemiautomaticSegmentat
     const std::unordered_map<std::size_t, std::size_t>& sourceTriangles) {
     std::unordered_map<std::size_t, std::vector<std::size_t>> result;
     const Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
 
     for(size_t i = 0; i < currentGeometry->getColorManager().size(); ++i) {
         result.insert({i, {}});
@@ -383,13 +391,23 @@ void SemiautomaticSegmentation::onModelViewMouseMove(ModelView& modelView, ci::a
 void SemiautomaticSegmentation::reset() {
     mBucketSpread = 0.0f;
     mBucketSpreadLatest = 0.0f;
-    mNormalStop = false;
+
     mRegionOverlap = false;
+    mRegionOverlapLatest = false;
+
+    mHardEdges = false;
+    mHardEdgesLatest = false;
+
+    mIsSpreadDirty = false;
     mGeometryCorrect = true;
+    mNormalStop = false;
+
+    mCriterionUsed = Criteria::SDF;
 
     mHoveredTriangleId = {};
     mStartingTriangles.clear();
     mBackupColorBuffer.clear();
+    mCurrentColoring.clear();
 
     mApplication.getModelView().getOverrideColorBuffer().clear();
     mApplication.getModelView().setColorOverride(false);
