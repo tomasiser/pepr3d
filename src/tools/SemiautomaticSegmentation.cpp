@@ -112,7 +112,6 @@ size_t SemiautomaticSegmentation::findClosestColorFromSDF(
 
     if(find1 == sdfValuesPerColor.end() && find2 == sdfValuesPerColor.end()) {
         assert(false);
-        /// \todo Throw and display error
         return std::numeric_limits<size_t>::max();
     } else if(find1 == sdfValuesPerColor.end() || find1->second.empty()) {
         return color2;
@@ -232,6 +231,11 @@ void SemiautomaticSegmentation::spreadColors() {
     if(!mRegionOverlap && mCriterionUsed == Criteria::SDF) {
         bool isPostOk = postprocess(sdfValuesPerColor);
         if(!isPostOk) {
+            const std::string errorCaption = "Error: Failed to spread colors";
+            const std::string errorDescription =
+                "An invalid color setup was detected and the semiautomatic segmentation will be reset. "
+                "Please report this bug to the developers.";
+            mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Reset segmentation"));
             reset();
             return;
         }
