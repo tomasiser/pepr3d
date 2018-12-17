@@ -195,7 +195,18 @@ void MainApplication::openFile(const std::string& path) {
             std::ifstream is(path, std::ios::binary);
             cereal::BinaryInputArchive loadArchive(is);
             // CAREFUL! Replaces the shared_ptr in mGeometryInProgress!
-            loadArchive(mGeometryInProgress);
+            try {
+                loadArchive(mGeometryInProgress);
+            } catch(const cereal::Exception& excp) {
+                const std::string errorCaption = "Error: Pepr project file (.p3d) corrupted";
+                const std::string errorDescription =
+                    "The project file you attempted to open is corrupted and cannot be loaded. "
+                    "Try loading an earlier backup version, which might not be corrupted yet.";
+                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+                mGeometryInProgress = nullptr;
+                mProgressIndicator.setGeometryInProgress(nullptr);
+                return;
+            }
             // Pointer changed, replace it in progress indicator
             mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
         }
