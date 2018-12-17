@@ -109,7 +109,7 @@ void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent
         mHoveredTriangleId = {};
         return;
     }
-    mHoveredTriangleId = geometry->intersectMesh(cameraRay);
+    mHoveredTriangleId = safeIntersectMesh(mApplication, cameraRay);
 }
 
 void PaintBucket::onNewGeometryLoaded(ModelView &modelView) {

@@ -1,3 +1,6 @@
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/memory.hpp>
+
 #include "ui/MainApplication.h"
 
 #include "IconsMaterialDesign.h"
@@ -33,7 +36,7 @@ MainApplication::MainApplication()
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
-    getWindow()->setTitle("Pepr3D - Unsaved project");
+    getWindow()->setTitle("Untitled - Pepr3D");
     setupIcon();
     gl::enableVerticalSync(true);
     disableFrameRate();
@@ -97,83 +100,137 @@ void MainApplication::fileDrop(FileDropEvent event) {
     openFile(event.getFile(0).string());
 }
 
+bool MainApplication::showLoadingErrorDialog() {
+    const GeometryProgress& progress = mGeometryInProgress->getProgress();
+
+    if(progress.importRenderPercentage < 1.0f || progress.importComputePercentage < 1.0f) {
+        const std::string errorCaption = "Error: Invalid file";
+        const std::string errorDescription =
+            "You tried to import a file which did not contain correct geometry data that could be loaded in "
+            "Pepr3D via the Assimp library. The supported files are valid .obj, .stl, and .ply.\n\nThe "
+            "provided file could not be imported.";
+        pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+        mGeometryInProgress = nullptr;
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        return false;
+    }
+
+    if(progress.buffersPercentage < 1.0f) {
+        const std::string errorCaption = "Error: Failed to generate buffers";
+        const std::string errorDescription =
+            "Problems were found in the imported geometry. An error has occured while generating vertex, "
+            "index, color, and normal buffers for rendering the geometry.\n\nThe provided file could not be "
+            "imported.";
+        pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+        mGeometryInProgress = nullptr;
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        return false;
+    }
+
+    if(progress.aabbTreePercentage < 1.0f) {
+        const std::string errorCaption = "Error: Failed to build an AABB tree";
+        const std::string errorDescription =
+            "Problems were found in the imported geometry. An AABB tree could not be built using the data "
+            "using the CGAL library.\n\nThe provided file could not be imported.";
+        pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+        mGeometryInProgress = nullptr;
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        return false;
+    }
+
+    if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
+        const std::string errorCaption = "Warning: Failed to build a polyhedron";
+        const std::string errorDescription =
+            "Problems were found in the imported geometry. We could not build a valid polyhedron data "
+            "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
+            "You can still edit the imported model with the remaining tools.";
+        pushDialog(Dialog(DialogType::Warning, errorCaption, errorDescription, "Continue"));
+        return true;
+    }
+    return true;
+}
+
 void MainApplication::openFile(const std::string& path) {
     if(mGeometryInProgress != nullptr) {
         return;  // disallow loading new geometry while another is already being loaded
     }
 
-    std::shared_ptr<Geometry> geometry = mGeometryInProgress = std::make_shared<Geometry>();
-    mProgressIndicator.setGeometryInProgress(geometry);
+    mLastVersionSaved = 0;
+    mIsGeometryDirty = false;
 
-    // Queue the loading of the new geometry
-    mThreadPool.enqueue([geometry, path, this]() {
-        // Load the geometry
-        geometry->loadNewGeometry(path, mThreadPool);
+    mGeometryInProgress = std::make_shared<Geometry>();
+    mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
 
-        // Lambda that will be called once the loading finishes.
-        // Put all updates to saved states here.
-        auto onLoadingComplete = [path, this]() {
-            const GeometryProgress& progress = mGeometryInProgress->getProgress();
+    fs::path fsPath(path);
+    fs::path ext = fsPath.extension();
 
-            if(progress.importRenderPercentage < 1.0f || progress.importComputePercentage < 1.0f) {
-                const std::string errorCaption = "Error: Invalid file";
+    // Lambda that will be called once the loading finishes.
+    // Put all updates to saved states here.
+    auto onLoadingComplete = [path, this]() {
+        // Handle errors
+        const bool isLoadedCorrectly = showLoadingErrorDialog();
+        if(!isLoadedCorrectly) {
+            return;
+        }
+
+        // Swap geometry if no errors occured
+        mGeometry = mGeometryInProgress;
+        mGeometryInProgress = nullptr;
+        mGeometryFileName = path;
+        mShouldSaveAs = true;
+        mIsGeometryDirty = false;
+        mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
+        fs::path fsPath(path);
+        getWindow()->setTitle(fsPath.stem().string() + std::string(" - Pepr3D"));
+        mProgressIndicator.setGeometryInProgress(nullptr);
+        for(auto& tool : mTools) {
+            tool->onNewGeometryLoaded(mModelView);
+        }
+        CI_LOG_I("Loading complete.");
+    };
+
+    if(ext == ".p3d" || ext == ".P3D" || ext == ".p3D" || ext == ".P3d") {
+        CI_LOG_I("Loading project from " + path);
+        {
+            std::ifstream is(path, std::ios::binary);
+            cereal::BinaryInputArchive loadArchive(is);
+            // CAREFUL! Replaces the shared_ptr in mGeometryInProgress!
+            try {
+                loadArchive(mGeometryInProgress);
+            } catch(const cereal::Exception&) {
+                const std::string errorCaption = "Error: Pepr project file (.p3d) corrupted";
                 const std::string errorDescription =
-                    "You tried to import a file which did not contain correct geometry data that could be loaded in "
-                    "Pepr3D via the Assimp library. The supported files are valid .obj, .stl, and .ply.\n\nThe "
-                    "provided file could not be imported.";
+                    "The project file you attempted to open is corrupted and cannot be loaded. "
+                    "Try loading an earlier backup version, which might not be corrupted yet.";
                 pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
                 mGeometryInProgress = nullptr;
                 mProgressIndicator.setGeometryInProgress(nullptr);
                 return;
             }
-
-            if(progress.buffersPercentage < 1.0f) {
-                const std::string errorCaption = "Error: Failed to generate buffers";
-                const std::string errorDescription =
-                    "Problems were found in the imported geometry. An error has occured while generating vertex, "
-                    "index, color, and normal buffers for rendering the geometry.\n\nThe provided file could not be "
-                    "imported.";
-                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
-                mGeometryInProgress = nullptr;
-                mProgressIndicator.setGeometryInProgress(nullptr);
-                return;
-            }
-
-            if(progress.aabbTreePercentage < 1.0f) {
-                const std::string errorCaption = "Error: Failed to build an AABB tree";
-                const std::string errorDescription =
-                    "Problems were found in the imported geometry. An AABB tree could not be built using the data "
-                    "using the CGAL library.\n\nThe provided file could not be imported.";
-                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
-                mGeometryInProgress = nullptr;
-                mProgressIndicator.setGeometryInProgress(nullptr);
-                return;
-            }
-
-            if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
-                const std::string errorCaption = "Warning: Failed to build a polyhedron";
-                const std::string errorDescription =
-                    "Problems were found in the imported geometry. We could not build a valid polyhedron data "
-                    "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
-                    "You can still edit the imported model with the remaining tools.";
-                pushDialog(Dialog(DialogType::Warning, errorCaption, errorDescription, "Continue"));
-            }
-
-            mGeometry = mGeometryInProgress;
-            mGeometryInProgress = nullptr;
-            mGeometryFileName = path;
-            mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
-            getWindow()->setTitle(std::string("Pepr3D - ") + mGeometryFileName);
-            mProgressIndicator.setGeometryInProgress(nullptr);
-            for(auto& tool : mTools) {
-                tool->onNewGeometryLoaded(mModelView);
-            }
+            // Pointer changed, replace it in progress indicator
+            mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
+        }
+        auto asyncCalculation = [onLoadingComplete, path, this]() {
+            mGeometryInProgress->recomputeFromData(mThreadPool);
+            // Call the lambda to swap the geometry and command manager pointers, etc.
+            // onLoadingComplete Gets called at the beginning of the next draw() cycle.
+            dispatchAsync(onLoadingComplete);
         };
+        mThreadPool.enqueue(asyncCalculation);
+    } else {
+        CI_LOG_I("Importing a new model from " + path);
 
-        // Call the lambda to swap the geometry and command manager pointers, etc.
-        // onLoadingComplete Gets called at the beginning of the next draw() cycle.
-        dispatchAsync(onLoadingComplete);
-    });
+        // Queue the loading of the new geometry
+        auto importNewModel = [onLoadingComplete, path, this]() {
+            // Load the geometry
+            mGeometryInProgress->loadNewGeometry(path, mThreadPool);
+
+            // Call the lambda to swap the geometry and command manager pointers, etc.
+            // onLoadingComplete Gets called at the beginning of the next draw() cycle.
+            dispatchAsync(onLoadingComplete);
+        };
+        mThreadPool.enqueue(importNewModel);
+    }
 }
 
 void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {
@@ -206,11 +263,14 @@ void MainApplication::update() {
         }
     }
 #endif
+    if(!mIsGeometryDirty && mLastVersionSaved != mCommandManager->getVersionNumber()) {
+        mIsGeometryDirty = true;
+        fs::path path(mGeometryFileName);
 
-    // pop closed dialogs:
-    // while (!mDialogQueue.empty() && !mDialogQueue.top().isOpen()) {
-    //     mDialogQueue.pop();
-    // }
+        std::string title = path.has_stem() ? path.stem().string() : "Untitled";
+        title += std::string("* - Pepr3D");
+        getWindow()->setTitle(title);
+    }
 }
 
 void MainApplication::draw() {
@@ -219,6 +279,24 @@ void MainApplication::draw() {
     }
 
     gl::clear(ColorA::hex(0xFCFCFC));
+
+    // draw highest priority dialog:
+    if(!mDialogQueue.empty()) {
+        const bool shouldClose = mDialogQueue.top().draw();
+        const bool isTopDialogFatal = mDialogQueue.top().isFatalError();
+
+        if(shouldClose) {
+            if(isTopDialogFatal) {
+                quit();
+            }
+            mDialogQueue.pop();
+        }
+
+        // Do not draw anything if the fault is fatal
+        if(isTopDialogFatal) {
+            return;
+        }
+    }
 
     if(mShowDemoWindow) {
         ImGui::ShowDemoWindow();
@@ -231,14 +309,6 @@ void MainApplication::draw() {
 
     if(mShowExportDialog) {
         drawExportDialog();
-    }
-
-    // draw highest priority dialog:
-    if(!mDialogQueue.empty()) {
-        const bool shouldClose = mDialogQueue.top().draw();
-        if(shouldClose) {
-            mDialogQueue.pop();
-        }
     }
 }
 
@@ -284,15 +354,14 @@ void MainApplication::setupIcon() {
 #endif
 }
 
-void MainApplication::showImportDialog() {
-    dispatchAsync([this]() {
+void MainApplication::showImportDialog(const std::vector<std::string>& extensions) {
+    dispatchAsync([extensions, this]() {
         fs::path initialPath(mGeometryFileName);
         initialPath.remove_filename();
         if(initialPath.empty()) {
             initialPath = getDocumentsDirectory();
         }
 
-        const std::vector<std::string> extensions{"stl", "obj", "ply"};  // TODO: add more
         auto path = getOpenFilePath(initialPath, extensions);
 
         if(!path.empty()) {
@@ -488,6 +557,63 @@ bool MainApplication::isWindowObscured() {
     }
 #endif
     return false;
+}
+
+void MainApplication::saveProjectAs() {
+    dispatchAsync([this]() {
+        fs::path initialPath(mGeometryFileName);
+        initialPath.remove_filename();
+        if(initialPath.empty()) {
+            initialPath = getDocumentsDirectory();
+        }
+        std::string name = "Untitled";
+        if(mGeometryFileName != "") {
+            fs::path dirToSave = mGeometryFileName;
+            name = dirToSave.stem().string();
+        }
+
+        auto path = getSaveFilePath(initialPath.append(name), {"p3d"});
+
+        if(path.empty()) {
+            return;
+        }
+        if(path.extension() == "") {
+            path.replace_extension(".p3d");
+        }
+
+        std::string finalPath = path.string();
+        CI_LOG_I("Saving project into " + finalPath);
+        {
+            std::ofstream os(finalPath, std::ios::binary);
+            cereal::BinaryOutputArchive saveArchive(os);
+            saveArchive(mGeometry);
+        }
+
+        mGeometryFileName = finalPath;
+        mLastVersionSaved = mCommandManager->getVersionNumber();
+        mIsGeometryDirty = false;
+        getWindow()->setTitle(path.stem().string() + std::string(" - Pepr3D"));
+        mShouldSaveAs = false;
+    });
+}
+
+void MainApplication::saveProject() {
+    if(mGeometryFileName == "" || mShouldSaveAs) {
+        saveProjectAs();
+        return;
+    }
+    fs::path dirToSave = mGeometryFileName;
+    dirToSave.replace_extension(".p3d");
+    std::string finalPath = dirToSave.string();
+    CI_LOG_I("Saving project into " + finalPath);
+    {
+        std::ofstream os(finalPath, std::ios::binary);
+        cereal::BinaryOutputArchive saveArchive(os);
+        saveArchive(mGeometry);
+    }
+    mLastVersionSaved = mCommandManager->getVersionNumber();
+    mIsGeometryDirty = false;
+    getWindow()->setTitle(dirToSave.stem().string() + std::string(" - Pepr3D"));
 }
 
 }  // namespace pepr3d
