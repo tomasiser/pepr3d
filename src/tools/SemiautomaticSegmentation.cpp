@@ -131,7 +131,7 @@ size_t SemiautomaticSegmentation::findClosestColorFromSDF(
     }
 }
 
-void SemiautomaticSegmentation::postprocess(
+bool SemiautomaticSegmentation::postprocess(
     const std::unordered_map<std::size_t, std::vector<double>>& sdfValuesPerColor) {
     std::unordered_map<std::size_t, std::size_t> triangleToColor;
     // Go through each color, create an assignment triangle->color
@@ -145,13 +145,18 @@ void SemiautomaticSegmentation::postprocess(
             } else {  // If we did assign, check the SDF values and assign it to the closest color
                 const size_t oldColor = findTri->second;
                 const size_t currentColor = oneColor.first;
-                findTri->second = findClosestColorFromSDF(tri, oldColor, currentColor, sdfValuesPerColor);
+                const size_t retVal = findClosestColorFromSDF(tri, oldColor, currentColor, sdfValuesPerColor);
+                if (retVal == std::numeric_limits<size_t>::max()) {
+                    return false;
+                }
+                findTri->second = retVal;
             }
         }
     }
 
     // Re-collect the triangles by colors to get the resulting
     mCurrentColoring = collectTrianglesByColor(triangleToColor);
+    return true;
 }
 
 void SemiautomaticSegmentation::spreadColors() {
@@ -225,7 +230,11 @@ void SemiautomaticSegmentation::spreadColors() {
 
     // Postprocess the newly calculated colorings
     if(!mRegionOverlap && mCriterionUsed == Criteria::SDF) {
-        postprocess(sdfValuesPerColor);
+        bool isPostOk = postprocess(sdfValuesPerColor);
+        if (!isPostOk) {
+            reset();
+            return;
+        }
     }
 
     // Render all new colorings
