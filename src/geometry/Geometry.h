@@ -7,6 +7,9 @@
 #include <CGAL/mesh_segmentation.h>
 #include <cinder/Ray.h>
 #include <cinder/gl/gl.h>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/array.hpp>
+#include <cereal/types/vector.hpp>
 #include "cinder/Log.h"
 
 #include <cassert>
@@ -18,6 +21,7 @@
 
 #include "geometry/ColorManager.h"
 #include "geometry/GeometryProgress.h"
+#include "geometry/GlmSerialization.h"
 #include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
@@ -100,6 +104,8 @@ class Geometry {
         /// The data-structure itself
         Mesh mMesh;
     } mPolyhedronData;
+
+    friend class cereal::access;
 
    public:
     /// Empty constructor
@@ -243,6 +249,8 @@ class Geometry {
         return mPolyhedronData.sdf_property_map[faceDescForTri];
     }
 
+    void recomputeFromData(::ThreadPool& threadPool);
+
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
     /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing
@@ -275,6 +283,14 @@ class Geometry {
     size_t segment(const int numberOfClusters, const float smoothingLambda,
                    std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
                    std::unordered_map<size_t, size_t>& triangleToSegmentMap);
+
+    /// Method to allow the Cereal library to serialize this class. Used for saving a .p3d project.
+    template <class Archive>
+    void save(Archive& saveArchive) const;
+
+    /// Method to allow the Cereal library to deserialize this class. Used for loading a .p3d project.
+    template <class Archive>
+    void load(Archive& loadArchive);
 
     template <typename StoppingCondition>
     std::vector<size_t> bucketSpread(const StoppingCondition& stopFunctor, std::deque<size_t>& toVisit,
@@ -361,6 +377,36 @@ void Geometry::addNeighboursToQueue(const size_t currentVertex, std::unordered_s
             }
         }
     }
+}
+
+/* -------------------- Serialization -------------------- */
+
+template <class Archive>
+void Geometry::save(Archive& saveArchive) const {
+    saveArchive(mColorManager);
+    saveArchive(mTriangles);
+    saveArchive(mPolyhedronData.vertices);
+    saveArchive(mPolyhedronData.indices);
+}
+
+template <class Archive>
+void Geometry::load(Archive& loadArchive) {
+    loadArchive(mColorManager);
+    loadArchive(mTriangles);
+    loadArchive(mPolyhedronData.vertices);
+    loadArchive(mPolyhedronData.indices);
+
+    // Reset progress
+    mProgress->resetLoad();
+
+    // Geometry loaded via Cereal
+    mProgress->importRenderPercentage = 1.0f;
+    mProgress->importComputePercentage = 1.0f;
+
+    assert(!mTriangles.empty());
+    assert(!mColorManager.empty());
+    assert(!mPolyhedronData.vertices.empty());
+    assert(!mPolyhedronData.indices.empty());
 }
 
 }  // namespace pepr3d

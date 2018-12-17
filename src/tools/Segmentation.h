@@ -11,7 +11,7 @@
 
 namespace pepr3d {
 
-class Segmentation : public ITool {
+class Segmentation : public Tool {
    public:
     Segmentation(MainApplication& app) : mApplication(app) {}
 
@@ -21,6 +21,10 @@ class Segmentation : public ITool {
 
     virtual std::string getIcon() const override {
         return ICON_MD_DASHBOARD;
+    }
+
+    virtual bool isEnabled() const override {
+        return mGeometryCorrect;
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;

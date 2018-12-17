@@ -8,7 +8,7 @@
 
 namespace pepr3d {
 
-class PaintBucket : public ITool {
+class PaintBucket : public Tool {
    public:
     PaintBucket(MainApplication& app) : mApplication(app) {}
 
@@ -18,6 +18,10 @@ class PaintBucket : public ITool {
 
     virtual std::string getIcon() const override {
         return ICON_MD_FORMAT_COLOR_FILL;
+    }
+
+    virtual bool isEnabled() const override {
+        return mGeometryCorrect;
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;

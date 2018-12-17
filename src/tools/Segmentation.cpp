@@ -117,7 +117,7 @@ void Segmentation::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEven
         mHoveredTriangleId = {};
         return;
     }
-    mHoveredTriangleId = geometry->intersectMesh(mLastRay);
+    mHoveredTriangleId = safeIntersectMesh(mApplication, mLastRay);
 }
 
 void Segmentation::drawToModelView(ModelView& modelView) {

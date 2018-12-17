@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/vector.hpp>
 #include <random>
 #include <vector>
 #include "cinder/Color.h"
@@ -19,6 +21,8 @@ class ColorManager {
 
     /// Index of a currently selected / active color
     size_t mActiveColorIndex = 0;
+
+    friend class cereal::access;
 
    public:
     ColorManager() {
@@ -132,6 +136,13 @@ class ColorManager {
             ci::ColorA r = cinder::hsvToRgb(glm::vec4(fractional, 1, randomGenValue(gen), 1));
             outNewColors.emplace_back(r.r, r.g, r.b, 1);
         }
+    }
+
+   private:
+    template <class Archive>
+    void serialize(Archive& ar) {
+        ar(mColorMap);
+        ar(mActiveColorIndex);
     }
 };
 

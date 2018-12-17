@@ -8,7 +8,7 @@
 
 namespace pepr3d {
 
-class SemiautomaticSegmentation : public ITool {
+class SemiautomaticSegmentation : public Tool {
    public:
     SemiautomaticSegmentation(MainApplication& app) : mApplication(app) {}
 

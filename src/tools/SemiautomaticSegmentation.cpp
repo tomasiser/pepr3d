@@ -11,7 +11,7 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
     Geometry* const currentGeometry = mApplication.getCurrentGeometry();
     assert(currentGeometry != nullptr);
-    if (currentGeometry == nullptr) {
+    if(currentGeometry == nullptr) {
         return;
     }
 
@@ -146,7 +146,7 @@ bool SemiautomaticSegmentation::postprocess(
                 const size_t oldColor = findTri->second;
                 const size_t currentColor = oneColor.first;
                 const size_t retVal = findClosestColorFromSDF(tri, oldColor, currentColor, sdfValuesPerColor);
-                if (retVal == std::numeric_limits<size_t>::max()) {
+                if(retVal == std::numeric_limits<size_t>::max()) {
                     return false;
                 }
                 findTri->second = retVal;
@@ -231,7 +231,7 @@ void SemiautomaticSegmentation::spreadColors() {
     // Postprocess the newly calculated colorings
     if(!mRegionOverlap && mCriterionUsed == Criteria::SDF) {
         bool isPostOk = postprocess(sdfValuesPerColor);
-        if (!isPostOk) {
+        if(!isPostOk) {
             reset();
             return;
         }

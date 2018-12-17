@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/TextureFont.h"
@@ -9,6 +11,8 @@
 
 #include "ThreadPool.h"
 
+#include "Dialog.h"
+#include "FontStorage.h"
 #include "ModelView.h"
 #include "ProgressIndicator.h"
 #include "SidePane.h"
@@ -21,7 +25,7 @@ using namespace std;
 
 namespace pepr3d {
 
-class ITool;
+class Tool;
 class Geometry;
 
 class MainApplication : public App {
@@ -69,7 +73,7 @@ class MainApplication : public App {
     void openFile(const std::string& path);
     void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType);
 
-    using ToolsVector = std::vector<std::unique_ptr<ITool>>;
+    using ToolsVector = std::vector<std::unique_ptr<Tool>>;
 
     ToolsVector::iterator getToolsBegin() {
         return mTools.begin();
@@ -85,7 +89,7 @@ class MainApplication : public App {
         return mCurrentToolIterator;
     }
 
-    ITool* getCurrentTool() {
+    Tool* getCurrentTool() {
         if(mTools.size() < 1 || mCurrentToolIterator == mTools.end()) {
             return nullptr;
         }
@@ -95,6 +99,7 @@ class MainApplication : public App {
     void setCurrentToolIterator(ToolsVector::iterator tool) {
         assert(mTools.size() > 0);
         assert(tool != mTools.end());
+        assert((*tool)->isEnabled());
         (*mCurrentToolIterator)->onToolDeselect(mModelView);
         mCurrentToolIterator = tool;
     }
@@ -107,21 +112,37 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
-    void showImportDialog();
+    void showImportDialog(const std::vector<std::string>& extensions);
 
     void showExportDialog() {
         mShowExportDialog = true;
     }
 
+    void pushDialog(const pepr3d::Dialog& dialog) {
+        mDialogQueue.push(dialog);
+    }
+
+    FontStorage& getFontStorage() {
+        return mFontStorage;
+    }
+
+    void saveProject();
+    void saveProjectAs();
+
    private:
+    void setupFonts();
     void setupIcon();
     void drawExportDialog();
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
+    bool showLoadingErrorDialog();
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
+
+    peprimgui::PeprImGui mImGui;  // ImGui wrapper for Cinder/Pepr3D
+    FontStorage mFontStorage;
 
     Toolbar mToolbar;
     SidePane mSidePane;
@@ -130,6 +151,8 @@ class MainApplication : public App {
     bool mShowDemoWindow = false;
     bool mShowExportDialog = false;
     bool mShouldExportInNewFolder = false;
+
+    std::priority_queue<pepr3d::Dialog> mDialogQueue;
 
     ToolsVector mTools;
     ToolsVector::iterator mCurrentToolIterator;
@@ -140,6 +163,9 @@ class MainApplication : public App {
     std::unique_ptr<CommandManager<Geometry>> mCommandManager;
 
     std::string mGeometryFileName;
+    bool mShouldSaveAs = true;
+    std::size_t mLastVersionSaved = std::numeric_limits<std::size_t>::max();
+    bool mIsGeometryDirty = false;
 
     ::ThreadPool mThreadPool;
 };
