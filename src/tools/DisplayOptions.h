@@ -7,7 +7,7 @@ namespace pepr3d {
 
 class MainApplication;
 
-class DisplayOptions : public ITool {
+class DisplayOptions : public Tool {
    public:
     DisplayOptions(MainApplication& app) : mApplication(app) {}
 

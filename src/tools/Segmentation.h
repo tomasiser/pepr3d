@@ -11,7 +11,7 @@
 
 namespace pepr3d {
 
-class Segmentation : public ITool {
+class Segmentation : public Tool {
    public:
     Segmentation(MainApplication& app) : mApplication(app) {}
 

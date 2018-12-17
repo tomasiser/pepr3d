@@ -5,7 +5,7 @@
 
 namespace pepr3d {
 
-class Settings : public ITool {
+class Settings : public Tool {
    public:
     virtual std::string getName() const override {
         return "Settings";

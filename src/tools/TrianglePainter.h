@@ -10,7 +10,7 @@ namespace pepr3d {
 
 class MainApplication;
 
-class TrianglePainter : public ITool {
+class TrianglePainter : public Tool {
    public:
     TrianglePainter(MainApplication& app) : mApplication(app) {}
 
