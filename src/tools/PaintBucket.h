@@ -8,7 +8,7 @@
 
 namespace pepr3d {
 
-class PaintBucket : public ITool {
+class PaintBucket : public Tool {
    public:
     PaintBucket(MainApplication& app) : mApplication(app) {}
 

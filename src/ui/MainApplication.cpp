@@ -280,6 +280,17 @@ void MainApplication::draw() {
 
     gl::clear(ColorA::hex(0xFCFCFC));
 
+    // draw highest priority dialog:
+    if(!mDialogQueue.empty()) {
+        const bool shouldClose = mDialogQueue.top().draw();
+        if(shouldClose) {
+            if(mDialogQueue.top().isFatalError()) {
+                quit();
+            }
+            mDialogQueue.pop();
+        }
+    }
+
     if(mShowDemoWindow) {
         ImGui::ShowDemoWindow();
     }
@@ -291,14 +302,6 @@ void MainApplication::draw() {
 
     if(mShowExportDialog) {
         drawExportDialog();
-    }
-
-    // draw highest priority dialog:
-    if(!mDialogQueue.empty()) {
-        const bool shouldClose = mDialogQueue.top().draw();
-        if(shouldClose) {
-            mDialogQueue.pop();
-        }
     }
 }
 

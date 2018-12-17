@@ -5,7 +5,7 @@
 
 namespace pepr3d {
 
-class TextEditor : public ITool {
+class TextEditor : public Tool {
    public:
     virtual std::string getName() const override {
         return "Text Editor";

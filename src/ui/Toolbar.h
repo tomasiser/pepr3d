@@ -44,7 +44,7 @@ class Toolbar {
     void drawUndoRedo();
     void drawDemoWindowToggle();
 
-    using ToolsVector = std::vector<std::unique_ptr<ITool>>;
+    using ToolsVector = std::vector<std::unique_ptr<Tool>>;
     void drawToolButtons();
     void drawToolButton(ToolsVector::iterator tool);
 };
