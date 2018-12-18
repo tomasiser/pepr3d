@@ -159,7 +159,7 @@ void Toolbar::drawToolButtons() {
     for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit, ++index) {
         ImGui::SameLine(0.0f, 0.0f);
         drawToolButton(toolit);
-        if(index == 4 || index == 7) {
+        if(index == 5 || index == 8) {
             ImGui::SameLine(0.0f, 0.0f);
             drawSeparator();
         }

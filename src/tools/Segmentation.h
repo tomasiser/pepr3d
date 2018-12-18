@@ -16,7 +16,7 @@ class Segmentation : public Tool {
     Segmentation(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
-        return "Segmentation";
+        return "Automatic Segmentation";
     }
 
     virtual std::string getIcon() const override {
