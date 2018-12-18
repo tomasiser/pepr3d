@@ -407,6 +407,10 @@ void SemiautomaticSegmentation::onModelViewMouseMove(ModelView& modelView, ci::a
     mHoveredTriangleId = geometry->intersectMesh(lastRay);
 }
 
+bool SemiautomaticSegmentation::isEnabled() const {
+    return mGeometryCorrect;
+}
+
 void SemiautomaticSegmentation::reset() {
     mBucketSpread = 0.0f;
     mBucketSpreadLatest = 0.0f;

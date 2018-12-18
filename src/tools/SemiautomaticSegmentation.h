@@ -27,6 +27,7 @@ class SemiautomaticSegmentation : public Tool {
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onNewGeometryLoaded(ModelView& modelView) override;
     virtual void onToolDeselect(ModelView& modelView) override;
+    virtual bool isEnabled() const override;
 
    private:
     MainApplication& mApplication;
