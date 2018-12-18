@@ -64,6 +64,9 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
 
                 for(auto& toPaint : mCurrentColoring) {
+                    if(toPaint.second.empty()) {
+                        continue;
+                    }
                     commandManager->execute(
                         std::make_unique<CmdPaintSingleColor>(std::move(toPaint.second), toPaint.first), false);
                 }
