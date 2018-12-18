@@ -57,6 +57,7 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
             // Update only if the bucket setting changed and we should re-fill
             if(mIsSpreadDirty) {
                 spreadColors();
+                mIsSpreadDirty = false;
             }
 
             if(sidePane.drawButton("Apply")) {
