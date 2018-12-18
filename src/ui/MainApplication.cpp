@@ -24,6 +24,7 @@
 #include "tools/LiveDebug.h"
 #include "tools/PaintBucket.h"
 #include "tools/Segmentation.h"
+#include "tools/SemiautomaticSegmentation.h"
 #include "tools/Settings.h"
 #include "tools/TextEditor.h"
 #include "tools/Tool.h"
@@ -77,6 +78,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
     mTools.emplace_back(make_unique<Segmentation>(*this));
+    mTools.emplace_back(make_unique<SemiautomaticSegmentation>(*this));
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>());
     mTools.emplace_back(make_unique<Information>());
