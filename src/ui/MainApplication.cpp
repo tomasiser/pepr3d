@@ -58,8 +58,9 @@ void MainApplication::setup() {
 
     applyLightTheme(ImGui::GetStyle());
 
-    // Uncomment the following line to save mHotkeys on startup
+    // Uncomment the following lines to save mHotkeys on startup
     // (only useful for updating the .json file after a change in hotkeys):
+    // mHotkeys.loadDefaults();
     // saveHotkeysToFile((getAssetPath("") / "hotkeys.json").string());
     try {
         loadHotkeysFromFile(getAssetPath("hotkeys.json").string());
@@ -139,6 +140,7 @@ void MainApplication::keyDown(KeyEvent event) {
     case HotkeyAction::SelectBrush: setCurrentTool<Brush>(); break;
     case HotkeyAction::SelectTextEditor: setCurrentTool<TextEditor>(); break;
     case HotkeyAction::SelectSegmentation: setCurrentTool<Segmentation>(); break;
+    case HotkeyAction::SelectSemiautomaticSegmentation: setCurrentTool<SemiautomaticSegmentation>(); break;
     case HotkeyAction::SelectDisplayOptions: setCurrentTool<DisplayOptions>(); break;
     case HotkeyAction::SelectSettings: setCurrentTool<pepr3d::Settings>(); break;
     case HotkeyAction::SelectInformation: setCurrentTool<Information>(); break;

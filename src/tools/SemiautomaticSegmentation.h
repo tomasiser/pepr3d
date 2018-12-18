@@ -16,6 +16,10 @@ class SemiautomaticSegmentation : public Tool {
         return "Manual Segmentation";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectSemiautomaticSegmentation);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_WIDGETS;
     }
