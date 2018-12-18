@@ -115,11 +115,14 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
                 commandManager->execute(std::make_unique<CmdColorManagerAddColor>());
             }
         }
+        drawTooltipOnHover("Add a new color to the palette.", "", "", "");
     }
 
     if(isEditable) {
         const glm::vec2 size(ImGui::GetContentRegionAvailWidth(), 33.0f);
         ImGui::InvisibleButton("colorPaletteRemoveButton", size);
+        drawTooltipOnHover("Drag & drop color here to delete it entirely.", "",
+                           "The removed color on the model will be replaced by the 1st color in the palette.", "");
         ImDrawList* const drawList = ImGui::GetWindowDrawList();
         drawList->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), (ImColor)ci::ColorA::hex(0xEDEDED));
 
@@ -289,6 +292,8 @@ void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
         if(drawButton("Reset all colors to default")) {
             commandManager->execute(std::make_unique<CmdColorManagerResetColors>());
         }
+        drawTooltipOnHover("Remove all colors and replace them with defaults.", "",
+                           "This will also reset colors of all triangles.", "");
     }
 }
 
