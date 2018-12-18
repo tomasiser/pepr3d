@@ -45,9 +45,10 @@ class SemiautomaticSegmentation : public Tool {
     bool mHardEdges = false;
     bool mHardEdgesLatest = false;
 
-    bool mIsSpreadDirty = false;
     bool mGeometryCorrect = true;
     bool mNormalStop = false;
+
+    bool mDragging = false;
 
     enum Criteria { NORMAL = 1, SDF = 2 };
 

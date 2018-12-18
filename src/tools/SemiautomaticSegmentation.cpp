@@ -48,16 +48,10 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
             if(mBucketSpread != mBucketSpreadLatest || mHardEdges != mHardEdgesLatest ||
                mRegionOverlap != mRegionOverlapLatest) {
-                mIsSpreadDirty = true;
                 mBucketSpreadLatest = mBucketSpread;
                 mHardEdgesLatest = mHardEdges;
                 mRegionOverlapLatest = mRegionOverlap;
-            }
-
-            // Update only if the bucket setting changed and we should re-fill
-            if(mIsSpreadDirty) {
-                spreadColors();
-                mIsSpreadDirty = false;
+                spreadColors();  // Recompute the new color spread
             }
 
             if(sidePane.drawButton("Apply")) {
@@ -367,9 +361,6 @@ void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::a
         return;
     }
 
-    // Mark the spread dirty if we add a new triangle
-    mIsSpreadDirty = true;
-
     const bool emptyBefore = mStartingTriangles.empty();
 
     setTriangleColor();
@@ -377,7 +368,7 @@ void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::a
     // Added the first triangle, override the buffer.
     if(emptyBefore && !mStartingTriangles.empty()) {
         setupOverride();
-    } else {  // Restore the pre-spread buffer, reset the setting
+    } else if(!mDragging) {  // Restore the pre-spread buffer, reset the setting
         mApplication.getModelView().getOverrideColorBuffer() = mBackupColorBuffer;
         mBucketSpread = 0.f;
         mBucketSpreadLatest = 0.f;
@@ -388,8 +379,22 @@ void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::a
 }
 
 void SemiautomaticSegmentation::onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) {
+    if(!event.isLeftDown()) {
+        return;
+    }
+
+    mDragging = true;
     onModelViewMouseMove(modelView, event);
     onModelViewMouseDown(modelView, event);
+    mDragging = false;
+
+    // Restore the pre-spread buffer, reset the setting
+    mApplication.getModelView().getOverrideColorBuffer() = mBackupColorBuffer;
+    mBucketSpread = 0.f;
+    mBucketSpreadLatest = 0.f;
+
+    mRegionOverlapLatest = mRegionOverlap;
+    mHardEdgesLatest = mHardEdges;
 }
 
 void SemiautomaticSegmentation::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
@@ -412,7 +417,6 @@ void SemiautomaticSegmentation::reset() {
     mHardEdges = false;
     mHardEdgesLatest = false;
 
-    mIsSpreadDirty = false;
     mGeometryCorrect = true;
     mNormalStop = false;
 
