@@ -12,6 +12,7 @@
 #include <cinder/Log.h>
 #include <deque>
 #include <list>
+#include <optional>
 
 // Loss of precision between conversions may move verticies? Needs testing
 
@@ -78,8 +79,8 @@ class GnuplotDebug {
 
 #endif
 
-void TriangleDetail::addCircle(const PeprPoint3& circleOrigin, double radius, size_t color) {
-    const Polygon circlePoly = polygonFromCircle(circleOrigin, radius);
+void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
+    const Polygon circlePoly = polygonFromCircle(circle);
 
     PolygonSet addedShape(circlePoly);
     addedShape.intersection(mBounds);
@@ -110,6 +111,24 @@ void TriangleDetail::addCircle(const PeprPoint3& circleOrigin, double radius, si
     createNewTriangles(mColoredPolys);
 }
 
+void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
+    // Need to calculate everything using exact kernels
+
+    const Sphere sphere(toExactK(peprSphere.center()), peprSphere.squared_radius());
+
+    const Plane plane(mOriginalPlane.a(), mOriginalPlane.b(), mOriginalPlane.c(), mOriginalPlane.d());
+    auto intersection = CGAL::intersection(sphere, plane);
+
+    if(!intersection) {
+        return;
+    }
+
+    std::optional<Circle3> circleIntersection = boost::apply_visitor(SphereIntersectionVisitor{}, *intersection);
+    if(circleIntersection) {
+        addCircle(*circleIntersection, color);
+    }
+}
+
 TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
     const Point2 a = toExactK(mOriginalPlane.to_2d(tri.vertex(0)));
     Point2 b = toExactK(mOriginalPlane.to_2d(tri.vertex(1)));
@@ -128,8 +147,12 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
     return pgn;
 }
 
-TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint3& circleOrigin, double radius) {
+TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle) {
+    // We don't care about exactness here, so we do all the math using standard kernel
+
     // Scale the vertex count based on the size of the circle
+    const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
+
     size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
     vertexCount = std::max(vertexCount, static_cast<size_t>(3));
     const auto base1 = mOriginalPlane.base1() / CGAL::sqrt(mOriginalPlane.base1().squared_length());
@@ -139,11 +162,12 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint3& circ
     assert(base1.squared_length() == 1);
     assert(base2.squared_length() == 1);
 
+    const PeprPoint3 circleOrigin = toNormalK(circle.center());
     // Construct the polygon.
     Polygon pgn;
     for(size_t i = 0; i < vertexCount; i++) {
         const double circleCoord = (static_cast<double>(i) / vertexCount) * 2 * glm::pi<double>();
-        PeprPoint3 pt = circleOrigin + base1 * cos(circleCoord) * radius + base2 * sin(circleCoord) * radius;
+        const PeprPoint3 pt = circleOrigin + base1 * cos(circleCoord) * radius + base2 * sin(circleCoord) * radius;
 
         pgn.push_back(toExactK(mOriginalPlane.to_2d(pt)));
     }

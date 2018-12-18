@@ -12,6 +12,7 @@
 #include <deque>
 #include <map>
 #include <vector>
+#include <optional>
 
 namespace pepr3d {
 /**
@@ -26,15 +27,20 @@ class TriangleDetail {
     using PolygonWithHoles = CGAL::Polygon_with_holes_2<K>;
     using GeneralPolygon = CGAL::General_polygon_2<K>;
     using Circle = TriangleDetail::K::Circle_2;
+    using Circle3 = TriangleDetail::K::Circle_3;
+    using Sphere = TriangleDetail::K::Sphere_3;
 
     using PolygonSet = CGAL::Polygon_set_2<K>;
     using PeprPoint2 = DataTriangle::K::Point_2;
     using PeprPoint3 = DataTriangle::K::Point_3;
     using Point2 = TriangleDetail::K::Point_2;
+    using Point3 = TriangleDetail::K::Point_3;
     using Vector2 = TriangleDetail::K::Vector_2;
+    using Plane = TriangleDetail::K::Plane_3;
 
     using PeprTriangle = DataTriangle::Triangle;
     using PeprPlane = DataTriangle::K::Plane_3;
+    using PeprSphere = DataTriangle::K::Sphere_3;
 
     struct FaceInfo {
         int nestingLevel = -1;
@@ -55,8 +61,8 @@ class TriangleDetail {
         return mTriangles.size() <= 1;
     }
 
-    /// Paint a circle shape onto the plane of the triangle
-    void addCircle(const PeprPoint3& circleOrigin, double radius, size_t color);
+    void paintSphere(const PeprSphere& sphere, size_t color);
+
 
     const std::vector<DataTriangle>& getTriangles() const {
         return mTriangles;
@@ -83,7 +89,10 @@ class TriangleDetail {
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
 
     // Construct a polygon from a circle.
-    Polygon polygonFromCircle(const PeprPoint3& circleOrigin, double radius);
+    Polygon polygonFromCircle(const Circle3& circle);
+
+    /// Paint a circle shape onto the plane of the triangle
+    void addCircle(const Circle3& circle, size_t color);
 
     /// Simplify polygon, removing unnecessary vertices
     /// @return was simplified
@@ -94,9 +103,19 @@ class TriangleDetail {
         return K::Point_2(point.x(), point.y());
     }
 
+    /// Convert Point_3 from Pepr3d kernel to Exact kernel
+    inline static K::Point_3 toExactK(const PeprPoint3& point) {
+        return K::Point_3(point.x(), point.y(), point.z());
+    }
+
     /// Convert Exact kernel Point_2 to normal Pepr3d kernel
     inline static PeprPoint2 toNormalK(const K::Point_2& point) {
         return PeprPoint2(exactToDbl(point.x().exact()), exactToDbl(point.y().exact()));
+    }
+
+    /// Convert Exact kernel Point_3 to normal Pepr3d kernel
+    inline static PeprPoint3 toNormalK(const K::Point_3& point) {
+        return PeprPoint3(exactToDbl(point.x().exact()), exactToDbl(point.y().exact()), exactToDbl(point.z().exact()));
     }
 
     /// Convert Exact kernel Point_3 to vec3
@@ -130,5 +149,15 @@ class TriangleDetail {
 
     static void markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,
                             std::deque<ConstrainedTriangulation::Edge>& border);
+
+    struct SphereIntersectionVisitor : public boost::static_visitor<std::optional<Circle3>> {
+        std::optional<Circle3> operator()(const Circle3& circle) const {
+            return circle;
+        }
+
+        std::optional<Circle3> operator()(const Point3) const {
+            return {};
+        }
+    };
 };
 }  // namespace pepr3d

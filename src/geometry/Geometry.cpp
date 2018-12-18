@@ -393,18 +393,6 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
     mOgl.isDirty = true;
 }
 
-namespace geometry_internal {
-/// Helps get intersection data without potentionally generating exception code
-struct TriangleDetailVisitor : public boost::static_visitor<std::optional<DataTriangle::K::Circle_3>> {
-    std::optional<DataTriangle::K::Circle_3> operator()(const DataTriangle::K::Circle_3& circle) const {
-        return circle;
-    }
-
-    std::optional<DataTriangle::K::Circle_3> operator()(const DataTriangle::K::Point_3) const {
-        return {};
-    }
-};
-}  // namespace geometry_internal
 
 TriangleDetail* Geometry::createTriangleDetail(size_t triangleIdx) {
     auto result =
@@ -425,16 +413,7 @@ void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOr
     const Plane triPlane = tri.supporting_plane();
 
     const Sphere brushShape(Point(brushOrigin.x, brushOrigin.y, brushOrigin.z), settings.size * settings.size);
-
-    auto intersection = CGAL::intersection(brushShape, triPlane);
-    assert(intersection);
-
-    auto circleIntersection = boost::apply_visitor(geometry_internal::TriangleDetailVisitor{}, *intersection);
-    if(!circleIntersection)
-        return;  // Intersection is a point, consider this triangle not hit
-
-    getTriangleDetail(triangleIdx)
-        ->addCircle(circleIntersection->center(), CGAL::sqrt(circleIntersection->squared_radius()), settings.color);
+    getTriangleDetail(triangleIdx)->paintSphere(brushShape, settings.color);
 }
 
 void Geometry::removeTriangleDetail(const size_t triangleIndex) {
