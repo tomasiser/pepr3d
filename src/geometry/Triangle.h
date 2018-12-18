@@ -12,9 +12,10 @@ namespace pepr3d {
 /// Custom Triangle type holding the CGAL::Triangle_3 and additional data
 class DataTriangle {
    public:
-    // using K = CGAL::Spherical_kernel_3<CGAL::Simple_cartesian<double>,
-    // CGAL::Algebraic_kernel_for_spheres_2_3<double>>;
-    using K = CGAL::Simple_cartesian<double>;
+    // Use spherical kernel otherwise some CGAL operations on spheres will assert fail
+     using K = CGAL::Spherical_kernel_3<CGAL::Simple_cartesian<double>,
+     CGAL::Algebraic_kernel_for_spheres_2_3<double>>;
+    //using K = CGAL::Simple_cartesian<double>;
     using Point = K::Point_3;
     using Triangle = K::Triangle_3;
 

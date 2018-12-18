@@ -246,4 +246,13 @@ void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
     ci::gl::drawLine(triangle.getVertex(2), triangle.getVertex(0));
 }
 
+void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color) {
+    const ci::gl::ScopedModelMatrix scopedModelMatrix;
+    ci::gl::multModelMatrix(mModelMatrix);
+    ci::gl::ScopedColor drawColor(color);
+    ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
+    gl::ScopedDepth depth(false);
+    ci::gl::drawLine(from, to);
+}
+
 }  // namespace pepr3d

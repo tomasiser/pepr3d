@@ -6,6 +6,7 @@
 
 #include "commands/CommandManager.h"
 #include "commands/ExampleCommand.h"
+#include <optional>
 
 namespace pepr3d {
 
@@ -24,6 +25,7 @@ class LiveDebug : public ITool {
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
+    virtual void drawToModelView(ModelView& modelView) override;
 
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
 
@@ -32,6 +34,7 @@ class LiveDebug : public ITool {
     IntegerState mIntegerState;
     CommandManager<IntegerState> mIntegerManager;
     glm::ivec2 mMousePos;
+    std::optional<std::size_t> mTriangleUnderRay = 0;
 };
 
 }  // namespace pepr3d

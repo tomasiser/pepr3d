@@ -10,8 +10,8 @@
 
 #include <assert.h>
 #include <cinder/Log.h>
-#include <list>
 #include <deque>
+#include <list>
 
 // Loss of precision between conversions may move verticies? Needs testing
 
@@ -132,9 +132,13 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const PeprPoint3& circ
     // Scale the vertex count based on the size of the circle
     size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
     vertexCount = std::max(vertexCount, static_cast<size_t>(3));
+    const auto base1 = mOriginalPlane.base1() / CGAL::sqrt(mOriginalPlane.base1().squared_length());
+    const auto base2 = mOriginalPlane.base2() / CGAL::sqrt(mOriginalPlane.base2().squared_length());
 
-    const auto base1 = mOriginalPlane.base1();
-    const auto base2 = mOriginalPlane.base2();
+    assert(base1 * base2 == 0);
+    assert(base1.squared_length() == 1);
+    assert(base2.squared_length() == 1);
+
     // Construct the polygon.
     Polygon pgn;
     for(size_t i = 0; i < vertexCount; i++) {

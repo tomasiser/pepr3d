@@ -31,6 +31,8 @@ class ModelView {
     ci::Ray getRayFromWindowCoordinates(glm::ivec2 windowCoords) const;
     void drawTriangleHighlight(const size_t triangleIndex);
 
+    void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white());
+
     bool isWireframeEnabled() const {
         return mIsWireframeEnabled;
     }
