@@ -379,11 +379,8 @@ void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::a
         mBucketSpread = 0.f;
         mBucketSpreadLatest = 0.f;
 
-        mRegionOverlap = false;
-        mRegionOverlapLatest = false;
-
-        mHardEdges = false;
-        mHardEdgesLatest = false;
+        mRegionOverlapLatest = mRegionOverlap;
+        mHardEdgesLatest = mHardEdges;
     }
 }
 
