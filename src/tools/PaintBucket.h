@@ -16,6 +16,14 @@ class PaintBucket : public Tool {
         return "Paint Bucket";
     }
 
+    virtual std::string getDescription() const override {
+        return "Color whole regions with a single click.";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectPaintBucket);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_FORMAT_COLOR_FILL;
     }

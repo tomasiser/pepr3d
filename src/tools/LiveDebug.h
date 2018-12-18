@@ -19,6 +19,10 @@ class LiveDebug : public Tool {
         return "Live Debug";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectLiveDebug);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_DEVELOPER_BOARD;
     }

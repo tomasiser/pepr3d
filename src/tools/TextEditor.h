@@ -11,6 +11,10 @@ class TextEditor : public Tool {
         return "Text Editor";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectTextEditor);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_TEXT_FIELDS;
     }

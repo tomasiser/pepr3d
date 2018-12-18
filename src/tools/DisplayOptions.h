@@ -15,6 +15,10 @@ class DisplayOptions : public Tool {
         return "Display Options";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectDisplayOptions);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_VISIBILITY;
     }

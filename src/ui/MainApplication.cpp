@@ -1,4 +1,13 @@
 #include <cereal/archives/binary.hpp>
+#ifdef _MSC_VER
+// because cereal json does not conform to C++17
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+#include <cereal/archives/json.hpp>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <cereal/types/memory.hpp>
 
 #include "ui/MainApplication.h"
@@ -48,6 +57,17 @@ void MainApplication::setup() {
     mImGui.setup(this, getWindow());
 
     applyLightTheme(ImGui::GetStyle());
+
+    // Uncomment the following lines to save mHotkeys on startup
+    // (only useful for updating the .json file after a change in hotkeys):
+    // mHotkeys.loadDefaults();
+    // saveHotkeysToFile((getAssetPath("") / "hotkeys.json").string());
+    try {
+        loadHotkeysFromFile(getAssetPath("hotkeys.json").string());
+    } catch(const cereal::Exception&) {
+        CI_LOG_I("Failed to load hotkeys from hotkeys.json, using default hotkeys");
+        mHotkeys.loadDefaults();
+    }
 
     mGeometry = std::make_shared<Geometry>();
     mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), mThreadPool);
@@ -102,6 +122,41 @@ void MainApplication::fileDrop(FileDropEvent event) {
     openFile(event.getFile(0).string());
 }
 
+void MainApplication::keyDown(KeyEvent event) {
+    const Hotkey hotkey{event.getCode(), event.isAccelDown()};
+    const auto action = mHotkeys.findAction(hotkey);
+    if(!action) {
+        return;
+    }
+    switch(*action) {
+    case HotkeyAction::Open: showImportDialog(supportedOpenExtensions); break;
+    case HotkeyAction::Save: saveProject(); break;
+    case HotkeyAction::Import: showImportDialog(supportedImportExtensions); break;
+    case HotkeyAction::Export: showExportDialog(); break;
+    case HotkeyAction::Undo: mCommandManager->undo(); break;
+    case HotkeyAction::Redo: mCommandManager->redo(); break;
+    case HotkeyAction::SelectTrianglePainter: setCurrentTool<TrianglePainter>(); break;
+    case HotkeyAction::SelectPaintBucket: setCurrentTool<PaintBucket>(); break;
+    case HotkeyAction::SelectBrush: setCurrentTool<Brush>(); break;
+    case HotkeyAction::SelectTextEditor: setCurrentTool<TextEditor>(); break;
+    case HotkeyAction::SelectSegmentation: setCurrentTool<Segmentation>(); break;
+    case HotkeyAction::SelectSemiautomaticSegmentation: setCurrentTool<SemiautomaticSegmentation>(); break;
+    case HotkeyAction::SelectDisplayOptions: setCurrentTool<DisplayOptions>(); break;
+    case HotkeyAction::SelectSettings: setCurrentTool<pepr3d::Settings>(); break;
+    case HotkeyAction::SelectInformation: setCurrentTool<Information>(); break;
+    case HotkeyAction::SelectLiveDebug: setCurrentTool<LiveDebug>(); break;
+    }
+    std::size_t actionId = static_cast<std::size_t>(*action);
+    if(mGeometry != nullptr && actionId >= static_cast<std::size_t>(HotkeyAction::SelectColor1) &&
+       actionId <= static_cast<std::size_t>(HotkeyAction::SelectColor10)) {
+        std::size_t colorId = actionId - static_cast<std::size_t>(HotkeyAction::SelectColor1);
+        ColorManager& colorManager = mGeometry->getColorManager();
+        if(colorId < colorManager.size()) {
+            colorManager.setActiveColorIndex(colorId);
+        }
+    }
+}
+
 bool MainApplication::showLoadingErrorDialog() {
     const GeometryProgress& progress = mGeometryInProgress->getProgress();
 
@@ -150,6 +205,18 @@ bool MainApplication::showLoadingErrorDialog() {
         return true;
     }
     return true;
+}
+
+void MainApplication::loadHotkeysFromFile(const std::string& path) {
+    std::ifstream is(path);
+    cereal::JSONInputArchive loadArchive(is);
+    loadArchive(cereal::make_nvp("hotkeys", mHotkeys));
+}
+
+void MainApplication::saveHotkeysToFile(const std::string& path) {
+    std::ofstream os(path);
+    cereal::JSONOutputArchive saveArchive(os);
+    saveArchive(cereal::make_nvp("hotkeys", mHotkeys));
 }
 
 void MainApplication::openFile(const std::string& path) {
@@ -511,6 +578,72 @@ void MainApplication::drawExportDialog() {
     }
     ImGui::PopStyleVar(3);
     ImGui::PopStyleColor(7);
+}
+
+void MainApplication::drawTooltipOnHover(const std::string& label, const std::string& shortcut,
+                                         const std::string& description, const std::string& disabled,
+                                         glm::vec2 position, glm::vec2 pivot) {
+    if(ImGui::IsItemHovered()) {
+        ImGui::PushFont(mFontStorage.getRegularFont());
+        ImGui::PushStyleColor(ImGuiCol_PopupBg, ci::ColorA::hex(0x1C2A35));
+        ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0x1C2A35));
+        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
+
+        const bool isStaticPosition = position.x > -1.0f || position.y > -1.0f;  // do not follow mouse
+        if(isStaticPosition) {
+            if(position.x < 6.0f) {
+                position.x = 6.0f;
+            }
+            const float bottomY = position.y + (1.0f - pivot.y) * mLastTooltipSize.y;
+            if(bottomY > ImGui::GetIO().DisplaySize.y - 6.0f) {
+                position.y = ImGui::GetIO().DisplaySize.y - 6.0f;
+                pivot.y = 1.0f;
+            }
+            ImGui::SetNextWindowPos(position, ImGuiCond_Always, pivot);
+        }
+
+        ImGui::BeginTooltip();
+
+        mLastTooltipSize = ImGui::GetWindowSize();
+
+        ImGui::PushTextWrapPos(200.0f);
+        ImGui::TextUnformatted(label.c_str());
+        ImGui::PopTextWrapPos();
+
+        if(!shortcut.empty()) {
+            ImGui::SameLine(0.0f, 4.0f);
+            ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xAAAAAA));
+            ImGui::Text("(%s)", shortcut.c_str());
+            ImGui::PopStyleColor();
+        }
+
+        if(!description.empty()) {
+            ImGui::PushFont(mFontStorage.getSmallFont());
+            ImGui::PushTextWrapPos(250.0f);
+            ImGui::TextUnformatted(description.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::PopFont();
+        }
+
+        if(!disabled.empty()) {
+            ImGui::PushFont(mFontStorage.getSmallFont());
+            ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xEB5757));
+            ImGui::PushTextWrapPos(250.0f);
+            ImGui::TextUnformatted(disabled.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::PopStyleColor();
+            ImGui::PopFont();
+        }
+
+        ImGui::EndTooltip();
+
+        ImGui::PopStyleVar(3);
+        ImGui::PopStyleColor(3);
+        ImGui::PopFont();
+    }
 }
 
 void MainApplication::willResignActive() {

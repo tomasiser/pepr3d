@@ -1,0 +1,188 @@
+{
+    "hotkeys": {
+        "keysToActions": [
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 100
+                },
+                "value": "SelectDisplayOptions"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 101
+                },
+                "value": "SelectTextEditor"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 103
+                },
+                "value": "SelectSettings"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 105
+                },
+                "value": "SelectInformation"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 108
+                },
+                "value": "SelectLiveDebug"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 109
+                },
+                "value": "SelectSemiautomaticSegmentation"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 112
+                },
+                "value": "SelectPaintBucket"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 115
+                },
+                "value": "SelectSegmentation"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 116
+                },
+                "value": "SelectTrianglePainter"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 48
+                },
+                "value": "SelectColor10"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 49
+                },
+                "value": "SelectColor1"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 50
+                },
+                "value": "SelectColor2"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 51
+                },
+                "value": "SelectColor3"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 52
+                },
+                "value": "SelectColor4"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 53
+                },
+                "value": "SelectColor5"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 54
+                },
+                "value": "SelectColor6"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 55
+                },
+                "value": "SelectColor7"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 56
+                },
+                "value": "SelectColor8"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 57
+                },
+                "value": "SelectColor9"
+            },
+            {
+                "key": {
+                    "ctrl": false,
+                    "keycode": 98
+                },
+                "value": "SelectBrush"
+            },
+            {
+                "key": {
+                    "ctrl": true,
+                    "keycode": 101
+                },
+                "value": "Export"
+            },
+            {
+                "key": {
+                    "ctrl": true,
+                    "keycode": 105
+                },
+                "value": "Import"
+            },
+            {
+                "key": {
+                    "ctrl": true,
+                    "keycode": 111
+                },
+                "value": "Open"
+            },
+            {
+                "key": {
+                    "ctrl": true,
+                    "keycode": 115
+                },
+                "value": "Save"
+            },
+            {
+                "key": {
+                    "ctrl": true,
+                    "keycode": 121
+                },
+                "value": "Redo"
+            },
+            {
+                "key": {
+                    "ctrl": true,
+                    "keycode": 122
+                },
+                "value": "Undo"
+            }
+        ]
+    }
+}

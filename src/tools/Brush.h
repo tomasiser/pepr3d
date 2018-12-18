@@ -11,6 +11,10 @@ class Brush : public Tool {
         return "Brush";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectBrush);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_BRUSH;
     }

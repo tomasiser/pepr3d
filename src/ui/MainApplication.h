@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <queue>
 
 #include "cinder/app/App.h"
@@ -13,6 +14,7 @@
 
 #include "Dialog.h"
 #include "FontStorage.h"
+#include "Hotkeys.h"
 #include "ModelView.h"
 #include "ProgressIndicator.h"
 #include "SidePane.h"
@@ -40,6 +42,7 @@ class MainApplication : public App {
     void mouseWheel(MouseEvent event) override;
     void mouseMove(MouseEvent event) override;
     void fileDrop(FileDropEvent event) override;
+    void keyDown(KeyEvent event) override;
 
     MainApplication();
 
@@ -104,6 +107,15 @@ class MainApplication : public App {
         mCurrentToolIterator = tool;
     }
 
+    template <typename Tool>
+    void setCurrentTool() {
+        const auto toolIterator = std::find_if(mTools.begin(), mTools.end(),
+                                               [](auto& tool) { return dynamic_cast<Tool*>(tool.get()) != nullptr; });
+        if(toolIterator != mTools.end()) {
+            setCurrentToolIterator(toolIterator);
+        }
+    }
+
     Geometry* getCurrentGeometry() {
         return mGeometry.get();
     }
@@ -112,18 +124,28 @@ class MainApplication : public App {
         return mCommandManager.get();
     }
 
+    const std::vector<std::string> supportedImportExtensions = {"stl", "obj", "ply"};
+    const std::vector<std::string> supportedOpenExtensions = {"p3d"};
     void showImportDialog(const std::vector<std::string>& extensions);
 
     void showExportDialog() {
         mShowExportDialog = true;
     }
 
-    void pushDialog(const pepr3d::Dialog& dialog) {
-        mDialogQueue.push(dialog);
-    }
+    void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
+                            const std::string& description = "", const std::string& disabled = "",
+                            glm::vec2 position = glm::vec2(-1.0f), glm::vec2 pivot = glm::vec2(0.0f));
 
     FontStorage& getFontStorage() {
         return mFontStorage;
+    }
+
+    const Hotkeys& getHotkeys() const {
+        return mHotkeys;
+    }
+
+    void pushDialog(const pepr3d::Dialog& dialog) {
+        mDialogQueue.push(dialog);
     }
 
     void saveProject();
@@ -137,9 +159,15 @@ class MainApplication : public App {
     void didBecomeActive();
     bool isWindowObscured();
     bool showLoadingErrorDialog();
+    void loadHotkeysFromFile(const std::string& path);
+    void saveHotkeysToFile(const std::string& path);
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
+
+    Hotkeys mHotkeys;
+
+    glm::vec2 mLastTooltipSize = glm::vec2(0.0f);
 
     peprimgui::PeprImGui mImGui;  // ImGui wrapper for Cinder/Pepr3D
     FontStorage mFontStorage;

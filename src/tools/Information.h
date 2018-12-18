@@ -11,6 +11,10 @@ class Information : public Tool {
         return "Information";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectInformation);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_INFO_OUTLINE;
     }

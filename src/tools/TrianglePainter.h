@@ -18,6 +18,14 @@ class TrianglePainter : public Tool {
         return "Triangle Painter";
     }
 
+    virtual std::string getDescription() const override {
+        return "Color individual triangles by clicking or dragging the mouse.";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectTrianglePainter);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_EDIT;
     }

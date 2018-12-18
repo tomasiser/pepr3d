@@ -11,6 +11,10 @@ class Settings : public Tool {
         return "Settings";
     }
 
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectSettings);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_SETTINGS;
     }
