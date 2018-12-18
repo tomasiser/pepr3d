@@ -27,7 +27,7 @@ using namespace std;
 
 namespace pepr3d {
 
-class ITool;
+class Tool;
 class Geometry;
 
 class MainApplication : public App {
@@ -76,7 +76,7 @@ class MainApplication : public App {
     void openFile(const std::string& path);
     void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType);
 
-    using ToolsVector = std::vector<std::unique_ptr<ITool>>;
+    using ToolsVector = std::vector<std::unique_ptr<Tool>>;
 
     ToolsVector::iterator getToolsBegin() {
         return mTools.begin();
@@ -92,7 +92,7 @@ class MainApplication : public App {
         return mCurrentToolIterator;
     }
 
-    ITool* getCurrentTool() {
+    Tool* getCurrentTool() {
         if(mTools.size() < 1 || mCurrentToolIterator == mTools.end()) {
             return nullptr;
         }

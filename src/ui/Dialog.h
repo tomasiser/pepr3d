@@ -22,6 +22,10 @@ class Dialog {
     bool operator<(const Dialog& dialog) const {
         return static_cast<std::size_t>(mType) < static_cast<std::size_t>(dialog.mType);
     }
+
+    bool isFatalError() const {
+        return mType == DialogType::FatalError;
+    }
 };
 
 }  // namespace pepr3d

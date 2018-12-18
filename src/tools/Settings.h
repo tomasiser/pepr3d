@@ -5,7 +5,7 @@
 
 namespace pepr3d {
 
-class Settings : public ITool {
+class Settings : public Tool {
     MainApplication& mApplication;
     SidePane::Category mColorPaletteCategory;
 

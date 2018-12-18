@@ -22,6 +22,7 @@ enum class HotkeyAction : std::size_t {
     SelectBrush,
     SelectTextEditor,
     SelectSegmentation,
+    SelectSemiautomaticSegmentation,
     SelectDisplayOptions,
     SelectSettings,
     SelectInformation,
@@ -53,6 +54,7 @@ std::string save_minimal(const Archive&, const HotkeyAction& action) {
     case HotkeyAction::SelectBrush: return "SelectBrush";
     case HotkeyAction::SelectTextEditor: return "SelectTextEditor";
     case HotkeyAction::SelectSegmentation: return "SelectSegmentation";
+    case HotkeyAction::SelectSemiautomaticSegmentation: return "SelectSemiautomaticSegmentation";
     case HotkeyAction::SelectDisplayOptions: return "SelectDisplayOptions";
     case HotkeyAction::SelectSettings: return "SelectSettings";
     case HotkeyAction::SelectInformation: return "SelectInformation";
@@ -95,6 +97,8 @@ void load_minimal(const Archive&, HotkeyAction& action, const std::string& value
         action = HotkeyAction::SelectTextEditor;
     } else if(value == "SelectSegmentation") {
         action = HotkeyAction::SelectSegmentation;
+    } else if(value == "SelectSemiautomaticSegmentation") {
+        action = HotkeyAction::SelectSemiautomaticSegmentation;
     } else if(value == "SelectDisplayOptions") {
         action = HotkeyAction::SelectDisplayOptions;
     } else if(value == "SelectSettings") {
@@ -207,6 +211,7 @@ class Hotkeys {
         add({ci::app::KeyEvent::KEY_b, false}, HotkeyAction::SelectBrush);
         add({ci::app::KeyEvent::KEY_e, false}, HotkeyAction::SelectTextEditor);
         add({ci::app::KeyEvent::KEY_s, false}, HotkeyAction::SelectSegmentation);
+        add({ci::app::KeyEvent::KEY_m, false}, HotkeyAction::SelectSemiautomaticSegmentation);
         add({ci::app::KeyEvent::KEY_d, false}, HotkeyAction::SelectDisplayOptions);
         add({ci::app::KeyEvent::KEY_g, false}, HotkeyAction::SelectSettings);
         add({ci::app::KeyEvent::KEY_i, false}, HotkeyAction::SelectInformation);

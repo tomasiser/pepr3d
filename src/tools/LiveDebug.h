@@ -11,7 +11,7 @@ namespace pepr3d {
 
 class MainApplication;
 
-class LiveDebug : public ITool {
+class LiveDebug : public Tool {
    public:
     LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}
 

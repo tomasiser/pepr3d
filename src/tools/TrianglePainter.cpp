@@ -57,7 +57,7 @@ void TrianglePainter::onModelViewMouseMove(ModelView& modelView, ci::app::MouseE
         mHoveredTriangleId = {};
         return;
     }
-    mHoveredTriangleId = geometry->intersectMesh(mLastRay);
+    mHoveredTriangleId = safeIntersectMesh(mApplication, mLastRay);
 }
 
 void TrianglePainter::onNewGeometryLoaded(ModelView& modelView) {

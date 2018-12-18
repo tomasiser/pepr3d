@@ -24,6 +24,7 @@
 #include "tools/LiveDebug.h"
 #include "tools/PaintBucket.h"
 #include "tools/Segmentation.h"
+#include "tools/SemiautomaticSegmentation.h"
 #include "tools/Settings.h"
 #include "tools/TextEditor.h"
 #include "tools/Tool.h"
@@ -57,8 +58,9 @@ void MainApplication::setup() {
 
     applyLightTheme(ImGui::GetStyle());
 
-    // Uncomment the following line to save mHotkeys on startup
+    // Uncomment the following lines to save mHotkeys on startup
     // (only useful for updating the .json file after a change in hotkeys):
+    // mHotkeys.loadDefaults();
     // saveHotkeysToFile((getAssetPath("") / "hotkeys.json").string());
     try {
         loadHotkeysFromFile(getAssetPath("hotkeys.json").string());
@@ -77,6 +79,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<Brush>());
     mTools.emplace_back(make_unique<TextEditor>());
     mTools.emplace_back(make_unique<Segmentation>(*this));
+    mTools.emplace_back(make_unique<SemiautomaticSegmentation>(*this));
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>(*this));
     mTools.emplace_back(make_unique<Information>());
@@ -137,6 +140,7 @@ void MainApplication::keyDown(KeyEvent event) {
     case HotkeyAction::SelectBrush: setCurrentTool<Brush>(); break;
     case HotkeyAction::SelectTextEditor: setCurrentTool<TextEditor>(); break;
     case HotkeyAction::SelectSegmentation: setCurrentTool<Segmentation>(); break;
+    case HotkeyAction::SelectSemiautomaticSegmentation: setCurrentTool<SemiautomaticSegmentation>(); break;
     case HotkeyAction::SelectDisplayOptions: setCurrentTool<DisplayOptions>(); break;
     case HotkeyAction::SelectSettings: setCurrentTool<pepr3d::Settings>(); break;
     case HotkeyAction::SelectInformation: setCurrentTool<Information>(); break;
@@ -260,7 +264,18 @@ void MainApplication::openFile(const std::string& path) {
             std::ifstream is(path, std::ios::binary);
             cereal::BinaryInputArchive loadArchive(is);
             // CAREFUL! Replaces the shared_ptr in mGeometryInProgress!
-            loadArchive(mGeometryInProgress);
+            try {
+                loadArchive(mGeometryInProgress);
+            } catch(const cereal::Exception&) {
+                const std::string errorCaption = "Error: Pepr project file (.p3d) corrupted";
+                const std::string errorDescription =
+                    "The project file you attempted to open is corrupted and cannot be loaded. "
+                    "Try loading an earlier backup version, which might not be corrupted yet.";
+                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "Cancel import"));
+                mGeometryInProgress = nullptr;
+                mProgressIndicator.setGeometryInProgress(nullptr);
+                return;
+            }
             // Pointer changed, replace it in progress indicator
             mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
         }
@@ -334,6 +349,24 @@ void MainApplication::draw() {
 
     gl::clear(ColorA::hex(0xFCFCFC));
 
+    // draw highest priority dialog:
+    if(!mDialogQueue.empty()) {
+        const bool shouldClose = mDialogQueue.top().draw();
+        const bool isTopDialogFatal = mDialogQueue.top().isFatalError();
+
+        if(shouldClose) {
+            if(isTopDialogFatal) {
+                quit();
+            }
+            mDialogQueue.pop();
+        }
+
+        // Do not draw anything if the fault is fatal
+        if(isTopDialogFatal) {
+            return;
+        }
+    }
+
     if(mShowDemoWindow) {
         ImGui::ShowDemoWindow();
     }
@@ -345,14 +378,6 @@ void MainApplication::draw() {
 
     if(mShowExportDialog) {
         drawExportDialog();
-    }
-
-    // draw highest priority dialog:
-    if(!mDialogQueue.empty()) {
-        const bool shouldClose = mDialogQueue.top().draw();
-        if(shouldClose) {
-            mDialogQueue.pop();
-        }
     }
 }
 

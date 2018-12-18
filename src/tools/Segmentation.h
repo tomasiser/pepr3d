@@ -11,12 +11,12 @@
 
 namespace pepr3d {
 
-class Segmentation : public ITool {
+class Segmentation : public Tool {
    public:
     Segmentation(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
-        return "Segmentation";
+        return "Automatic Segmentation";
     }
 
     virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {

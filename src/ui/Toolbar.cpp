@@ -178,7 +178,7 @@ void Toolbar::drawToolButtons() {
                                         (*toolit)->getDescription(),
                                         (*toolit)->isEnabled() ? "" : "Not available for this geometry.",
                                         buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
-        if(index == 4 || index == 7) {
+        if(index == 5 || index == 8) {
             ImGui::SameLine(0.0f, 0.0f);
             drawSeparator();
         }
