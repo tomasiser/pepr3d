@@ -154,7 +154,7 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle)
     const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
 
     size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
-    vertexCount = std::max(vertexCount, static_cast<size_t>(3));
+    vertexCount = std::max(vertexCount, static_cast<size_t>(MIN_VERTICES_IN_CIRCLE));
     const auto base1 = mOriginalPlane.base1() / CGAL::sqrt(mOriginalPlane.base1().squared_length());
     const auto base2 = mOriginalPlane.base2() / CGAL::sqrt(mOriginalPlane.base2().squared_length());
 

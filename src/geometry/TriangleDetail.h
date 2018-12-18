@@ -80,6 +80,7 @@ class TriangleDetail {
     const DataTriangle mOriginal;
 
     static const int VERTICES_PER_UNIT_CIRCLE = 100;
+    static const int MIN_VERTICES_IN_CIRCLE = 24;
 
     /// Bounds of the original triangle
     Polygon mBounds;

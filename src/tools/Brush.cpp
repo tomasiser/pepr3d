@@ -63,6 +63,8 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
     sidePane.drawSeparator();
 
+    sidePane.drawFloatDragger("Size", mBrushSettings.size, 0.01f, 0.0001f, 1, "%.02f", 70.f);
+
     sidePane.drawCheckbox("Continuous", mBrushSettings.continuous);
     sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
     sidePane.drawCheckbox("Respect original triangles", mBrushSettings.respectOriginalTriangles);
@@ -72,5 +74,17 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     }
 
     mPaintsSinceDraw = 0;
+}
+
+void Brush::drawToModelView(ModelView& modelView) {
+    Geometry* geometry = mApplication.getCurrentGeometry();
+
+    if(mBrushSettings.respectOriginalTriangles && geometry->getAreaHighlight().enabled)
+    {
+        for(size_t triIdx : geometry->getAreaHighlight().triangles)
+        {
+            modelView.drawTriangleHighlight(triIdx);
+        }
+    }
 }
 }  // namespace pepr3d

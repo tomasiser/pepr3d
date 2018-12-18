@@ -10,7 +10,7 @@ struct BrushSettings {
     size_t color = 0;
 
     /// Size of a brush in model space units
-    double size = 0.2;
+    float size = 0.2f;
 
     /// Paint only to triangles connected to the origin
     bool continuous = true;
@@ -45,6 +45,7 @@ class Brush : public ITool {
     }
 
      virtual void drawToSidePane(SidePane& sidePane) override;
+    virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
