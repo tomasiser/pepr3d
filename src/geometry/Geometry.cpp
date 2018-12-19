@@ -119,8 +119,7 @@ void Geometry::generateVertexBuffer() {
             mOgl.vertexBuffer.push_back(triangle.getVertex(0));
             mOgl.vertexBuffer.push_back(triangle.getVertex(1));
             mOgl.vertexBuffer.push_back(triangle.getVertex(2));
-        } else
-        {
+        } else {
             // Pass dummy triangle to keep triangleIdx consistent with array position
             mOgl.vertexBuffer.push_back(glm::vec3{0, 0, 0});
             mOgl.vertexBuffer.push_back(glm::vec3{0, 0, 0});
@@ -153,11 +152,11 @@ void Geometry::generateColorBuffer() {
     mOgl.colorBuffer.reserve(mOgl.vertexBuffer.size());
 
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
-            const auto& triangle = mTriangles[idx];
-            const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
-            mOgl.colorBuffer.push_back(triColorIndex);
-            mOgl.colorBuffer.push_back(triColorIndex);
-            mOgl.colorBuffer.push_back(triColorIndex);
+        const auto& triangle = mTriangles[idx];
+        const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
+        mOgl.colorBuffer.push_back(triColorIndex);
+        mOgl.colorBuffer.push_back(triColorIndex);
+        mOgl.colorBuffer.push_back(triColorIndex);
     }
 
     for(auto& it : mTriangleDetails) {
@@ -179,9 +178,9 @@ void Geometry::generateNormalBuffer() {
     mOgl.normalBuffer.reserve(mOgl.vertexBuffer.size());
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
         const auto& triangle = mTriangles[idx];
-            mOgl.normalBuffer.push_back(triangle.getNormal());
-            mOgl.normalBuffer.push_back(triangle.getNormal());
-            mOgl.normalBuffer.push_back(triangle.getNormal());
+        mOgl.normalBuffer.push_back(triangle.getNormal());
+        mOgl.normalBuffer.push_back(triangle.getNormal());
+        mOgl.normalBuffer.push_back(triangle.getNormal());
     }
 
     for(auto& it : mTriangleDetails) {
@@ -206,16 +205,16 @@ void Geometry::generateHighlightBuffer() {
     mOgl.highlightMask.reserve(mTriangles.size() * 3);
     for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
         // Fill 3 vertices of a triangle
-            if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
-                mOgl.highlightMask.emplace_back(0);
-                mOgl.highlightMask.emplace_back(0);
-                mOgl.highlightMask.emplace_back(0);
+        if(settings.continuous && paintSet.find(triangleIdx) == paintSet.end()) {
+            mOgl.highlightMask.emplace_back(0);
+            mOgl.highlightMask.emplace_back(0);
+            mOgl.highlightMask.emplace_back(0);
 
-            } else {
-                mOgl.highlightMask.emplace_back(1);
-                mOgl.highlightMask.emplace_back(1);
-                mOgl.highlightMask.emplace_back(1);
-            }
+        } else {
+            mOgl.highlightMask.emplace_back(1);
+            mOgl.highlightMask.emplace_back(1);
+            mOgl.highlightMask.emplace_back(1);
+        }
     }
 
     // If the original triangle has highlight enabled also enable for detail
@@ -352,9 +351,9 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
         // Generate highlight buffer only if our openGlBuffers are valid
         // Otherwise delay until everything is generated again
         if(!mOgl.isDirty) {
-             generateHighlightBuffer();
+            generateHighlightBuffer();
         }
-           
+
         // TODO: Improvement: Try to avoid doing all this if we are highlighting the same triangle with the same
         // size
     } else {
@@ -385,14 +384,16 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
                 }
 
             } else {
-                updateTriangleDetail(triangleIdx, intersectionPoint, settings);
+                // Do not paint triangles that are already the same color
+                if(!isSimpleTriangle(triangleIdx) || getTriangle(triangleIdx).getColor() != settings.color) {
+                    updateTriangleDetail(triangleIdx, intersectionPoint, settings);
+                }
             }
         }
     }
 
     mOgl.isDirty = true;
 }
-
 
 TriangleDetail* Geometry::createTriangleDetail(size_t triangleIdx) {
     auto result =

@@ -13,7 +13,7 @@ struct BrushSettings {
     float size = 0.2f;
 
     /// Paint only to triangles connected to the origin
-    bool continuous = true;
+    bool continuous = false;
 
     /// Paint onto backward facing triangles
     bool paintBackfaces = false;
@@ -64,6 +64,9 @@ class Brush : public ITool {
     MainApplication& mApplication;
 
     BrushSettings mBrushSettings;
+
+    float mMaxSize = 1.f;
+    static const int SIZE_SLIDER_STEPS = 100;
 
     bool mGroupCommands = false;
 

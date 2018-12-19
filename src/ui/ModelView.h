@@ -79,7 +79,9 @@ class ModelView {
         return mColorOverride.overrideColorBuffer;
     }
 
-    void updateVboAndBatch();
+    float getMaxSize() const {
+        return mMaxSize;
+    }
 
    private:
     MainApplication& mApplication;
@@ -96,6 +98,7 @@ class ModelView {
     glm::mat4 mModelMatrix;
     float mModelRoll = 0.0f;
     glm::vec3 mModelTranslate = glm::vec3(0);
+    float mMaxSize = 1.f;
 
     struct ColorOverrideData {
         bool isOverriden = false;
@@ -103,6 +106,8 @@ class ModelView {
     } mColorOverride;
 
     void updateModelMatrix();
+    void updateVboAndBatch();
+
     struct Attributes {
         static const cinder::geom::Attrib COLOR_IDX = cinder::geom::Attrib::CUSTOM_0;
         static const cinder::geom::Attrib HIGHLIGHT_MASK = cinder::geom::Attrib::CUSTOM_1;

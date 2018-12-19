@@ -138,6 +138,7 @@ void ModelView::updateModelMatrix() {
     const glm::vec3 aabbMax = geometry->getBoundingBoxMax();
     const glm::vec3 aabbSize = aabbMax - aabbMin;
     const float maxSize = glm::max(glm::max(aabbSize.x, aabbSize.y), aabbSize.z);
+    mMaxSize = maxSize;
     float inverseMaxSize = 1.0f / maxSize;
 
     if(std::isnan(inverseMaxSize)) {
@@ -218,7 +219,7 @@ void ModelView::drawGeometry() {
     // Assign highlight uniforms
     auto& areaHighlight = mApplication.getCurrentGeometry()->getAreaHighlight();
     mModelShader->uniform("uAreaHighlightEnabled", areaHighlight.enabled);
-    mModelShader->uniform("uAreaHighlightOrigin", areaHighlight.origin);
+    mModelShader->uniform("uAreaHighlightOrigin", areaHighlight.origin - mModelTranslate);
     mModelShader->uniform("uAreaHighlightSize", static_cast<float>(areaHighlight.size));
     mModelShader->uniform("uAreaHighlightColor", vec3(0.f, 1.f, 0.f));
 

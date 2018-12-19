@@ -63,7 +63,8 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
     sidePane.drawSeparator();
 
-    sidePane.drawFloatDragger("Size", mBrushSettings.size, 0.01f, 0.0001f, 1, "%.02f", 70.f);
+    sidePane.drawFloatDragger("Size", mBrushSettings.size, mMaxSize / SIZE_SLIDER_STEPS, 0.0001f, mMaxSize, "%.02f",
+                              70.f);
 
     sidePane.drawCheckbox("Continuous", mBrushSettings.continuous);
     sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
@@ -78,12 +79,13 @@ void Brush::drawToSidePane(SidePane& sidePane) {
 
 void Brush::drawToModelView(ModelView& modelView) {
     Geometry* geometry = mApplication.getCurrentGeometry();
+    if(geometry) {
+        mMaxSize = modelView.getMaxSize();
 
-    if(mBrushSettings.respectOriginalTriangles && geometry->getAreaHighlight().enabled)
-    {
-        for(size_t triIdx : geometry->getAreaHighlight().triangles)
-        {
-            modelView.drawTriangleHighlight(triIdx);
+        if(mBrushSettings.respectOriginalTriangles && geometry->getAreaHighlight().enabled) {
+            for(size_t triIdx : geometry->getAreaHighlight().triangles) {
+                modelView.drawTriangleHighlight(triIdx);
+            }
         }
     }
 }
