@@ -2,6 +2,7 @@
 
 #include "commands/CommandManager.h"
 #include "geometry/ColorManager.h"
+#include "geometry/Geometry.h"
 #include "peprimgui.h"
 
 namespace pepr3d {
@@ -88,6 +89,10 @@ class SidePane {
    private:
     MainApplication& mApplication;
     float mWidth = 235.0f;
+
+    void drawColorPaletteAddRemoveButtons(ColorManager& colorManager, CommandManager<Geometry>& commandManager);
+    void drawColorPaletteColorBoxes(ColorManager& colorManager, CommandManager<Geometry>& commandManager,
+                                    bool isEditable);
 };
 
 }  // namespace pepr3d

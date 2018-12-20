@@ -140,7 +140,10 @@ class CmdColorManagerAddColor : public CommandBase<Geometry> {
     void run(Geometry& target) const override {
         ColorManager& colorManager = target.getColorManager();
         assert(colorManager.size() > 0);
-        colorManager.addColor(colorManager.getColor(colorManager.size() - 1));
+        std::random_device rd;   // Will be used to obtain a seed for the random number engine
+        std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
+        uniform_real_distribution<> dis(0.0, 1.0);
+        colorManager.addColor(glm::vec4(dis(gen), dis(gen), dis(gen), 1.0f));
     }
 };
 
@@ -156,9 +159,12 @@ class CmdColorManagerResetColors : public CommandBase<Geometry> {
     void run(Geometry& target) const override {
         ColorManager& colorManager = target.getColorManager();
         colorManager = ColorManager();
-        // reset all model colors to 0:
         for(size_t i = 0; i < target.getTriangleCount(); ++i) {
-            target.setTriangleColor(i, 0);
+            const auto& triangle = target.getTriangle(i);
+            const size_t triangleColor = triangle.getColor();
+            if(triangleColor >= colorManager.size()) {
+                target.setTriangleColor(i, colorManager.size() - 1);
+            }
         }
     }
 };
