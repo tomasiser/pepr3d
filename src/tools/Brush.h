@@ -33,8 +33,7 @@ struct BrushSettings {
 
 class Brush : public ITool {
    public:
-    explicit Brush(MainApplication& app)
-        : mApplication(app){}
+    explicit Brush(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Brush";
@@ -44,7 +43,7 @@ class Brush : public ITool {
         return ICON_MD_BRUSH;
     }
 
-     virtual void drawToSidePane(SidePane& sidePane) override;
+    virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;

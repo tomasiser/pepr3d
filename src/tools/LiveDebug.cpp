@@ -123,6 +123,5 @@ void LiveDebug::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent e
     mMousePos = event.getPos();
     auto ray = modelView.getRayFromWindowCoordinates(event.getPos());
     mTriangleUnderRay = mApplication.getCurrentGeometry()->intersectMesh(ray);
-
 }
 }  // namespace pepr3d

@@ -4,9 +4,9 @@
 #include "ui/IconsMaterialDesign.h"
 #include "ui/SidePane.h"
 
+#include <optional>
 #include "commands/CommandManager.h"
 #include "commands/ExampleCommand.h"
-#include <optional>
 
 namespace pepr3d {
 

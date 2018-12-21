@@ -28,10 +28,9 @@ class CmdPaintBrush : public CommandBase<Geometry> {
         }
 
         const auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> timeMs = end-start;
+        std::chrono::duration<double, std::milli> timeMs = end - start;
 
-        CI_LOG_I("Brush paint took " + std::to_string(timeMs.count()) +
-                 " ms");
+        CI_LOG_I("Brush paint took " + std::to_string(timeMs.count()) + " ms");
     }
 
     bool joinCommand(const CommandBase& otherBase) override {

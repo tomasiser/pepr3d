@@ -11,8 +11,8 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <deque>
 #include <map>
-#include <vector>
 #include <optional>
+#include <vector>
 
 namespace pepr3d {
 /**
@@ -62,7 +62,6 @@ class TriangleDetail {
     }
 
     void paintSphere(const PeprSphere& sphere, size_t color);
-
 
     const std::vector<DataTriangle>& getTriangles() const {
         return mTriangles;

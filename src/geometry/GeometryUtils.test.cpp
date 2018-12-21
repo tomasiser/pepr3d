@@ -20,5 +20,4 @@ TEST(GeometryUtils, segmentPointDistanceSquared) {
     EXPECT_FLOAT_EQ(dist, 0.f);
 }
 
-
 #endif

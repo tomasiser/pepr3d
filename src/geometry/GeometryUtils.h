@@ -1,6 +1,6 @@
 #pragma once
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Nef_polyhedron_2.h>
+#include <CGAL/Simple_cartesian.h>
 #include <glm/glm.hpp>
 #include <optional>
 #include "CGAL/Vector_3.h"
@@ -42,8 +42,6 @@ class GeometryUtils {
     static bool isFullyInsideASphere(const DataTriangle::K::Triangle_3& tri, const glm::vec3& origin, double radius) {
         return isFullyInsideASphere(tri, DataTriangle::K::Point_3(origin.x, origin.y, origin.z), radius);
     }
-
-    
 };
 
 }  // namespace pepr3d
