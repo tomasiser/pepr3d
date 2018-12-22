@@ -8,7 +8,7 @@
 namespace pepr3d {
 
 void TrianglePainter::drawToSidePane(SidePane& sidePane) {
-    sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
+    sidePane.drawColorPalette();
     sidePane.drawSeparator();
 }
 

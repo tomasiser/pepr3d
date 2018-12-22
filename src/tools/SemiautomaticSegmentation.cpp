@@ -22,7 +22,7 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
             currentGeometry->computeSdfValues();
         }
     } else {
-        sidePane.drawColorPalette(currentGeometry->getColorManager());
+        sidePane.drawColorPalette();
         sidePane.drawSeparator();
 
         if(mStartingTriangles.empty()) {

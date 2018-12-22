@@ -32,7 +32,7 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
         sidePane.drawText("Segmented into " + std::to_string(mNumberOfSegments) +
                           " segments.\nAssign a color from the palette\nto each segment.");
 
-        sidePane.drawColorPalette(colorManager);
+        sidePane.drawColorPalette();
 
         for(const auto& toPaint : mSegmentToTriangleIds) {
             std::string displayText = "Segment " + std::to_string(toPaint.first);

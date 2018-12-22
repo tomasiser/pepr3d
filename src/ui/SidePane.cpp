@@ -1,7 +1,6 @@
 #include "SidePane.h"
 #include "MainApplication.h"
-#include "commands/CmdChangeColorManagerColor.h"
-#include "commands/CmdReplaceColorManagerColors.h"
+#include "commands/CmdColorManager.h"
 #include "geometry/Geometry.h"
 #include "tools/Tool.h"
 
@@ -90,27 +89,90 @@ void SidePane::drawSeparator() {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 }
 
-void SidePane::drawColorPalette(ColorManager& colorManager) {
-    drawText("Color");
+void SidePane::drawColorPalette(const std::string& label, bool isEditable) {
+    Geometry* const geometry = mApplication.getCurrentGeometry();
+    if(geometry == nullptr) {
+        return;
+    }
 
-    // TODO: https://github.com/tomasiser/pepr3d/issues/41
-
-    // int colorCount = colorManager.size();
-    // if (ImGui::DragInt("##colorPaletteAmount", &colorCount, 0.05f, 1, PEPR3D_MAX_PALETTE_COLORS)) {
-    //     int diff = colorManager.size() - colorCount;
-    //     while (diff != 0) {
-    //         if (diff > 0) {
-    //             colorManager.popColor();
-    //             --diff;
-    //         } else {
-    //             colorManager.addColor(colorManager.getColor(colorManager.size() - 1));
-    //             ++diff;
-    //         }
-    //     }
-    // }
-
+    ColorManager& colorManager = geometry->getColorManager();
     CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
+    assert(commandManager != nullptr);
 
+    // Header:
+    if(!label.empty()) {
+        drawText(label.c_str());
+    }
+
+    // Add button and drag&drop box for deleting colors:
+    if(isEditable) {
+        drawColorPaletteAddRemoveButtons(colorManager, *commandManager);
+    }
+
+    // Color boxes (selectable or editable):
+    drawColorPaletteColorBoxes(colorManager, *commandManager, isEditable);
+
+    // Reset to defaults button:
+    if(isEditable) {
+        if(drawButton("Reset all colors to default")) {
+            commandManager->execute(std::make_unique<CmdColorManagerResetColors>());
+        }
+        drawTooltipOnHover("Remove all colors and replace them with defaults.", "", "", "");
+    }
+}
+
+void SidePane::drawColorPaletteAddRemoveButtons(ColorManager& colorManager, CommandManager<Geometry>& commandManager) {
+    ImGui::TextWrapped("Edit palette by left clicking on the colors. Also try drag & dropping!");
+    if(drawButton("Add color")) {
+        if(colorManager.size() >= PEPR3D_MAX_PALETTE_COLORS) {
+            mApplication.pushDialog(
+                Dialog(DialogType::Error, "Could not add color", "The maximum number of colors has been reached."));
+        } else {
+            commandManager.execute(std::make_unique<CmdColorManagerAddColor>());
+        }
+    }
+    drawTooltipOnHover("Add a new color to the palette.", "", "", "");
+
+    const glm::vec2 size(ImGui::GetContentRegionAvailWidth(), 33.0f);
+    ImGui::InvisibleButton("colorPaletteRemoveButton", size);
+    drawTooltipOnHover("Drag & drop color here to delete it entirely.", "",
+                       "The removed color on the model will be replaced by the 1st color in the palette.", "");
+    ImDrawList* const drawList = ImGui::GetWindowDrawList();
+    drawList->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), (ImColor)ci::ColorA::hex(0xEDEDED));
+
+    bool isActiveDragDropTarget = false;
+
+    if(ImGui::BeginDragDropTarget()) {
+        if(const ImGuiPayload* payload =
+               ImGui::AcceptDragDropPayload("colorPaletteDragDrop", ImGuiDragDropFlags_AcceptPeekOnly)) {
+            assert(payload->DataSize == sizeof(size_t));
+            isActiveDragDropTarget = true;
+            if(payload->IsDelivery()) {
+                if(colorManager.size() > 1) {
+                    commandManager.execute(
+                        std::make_unique<CmdColorManagerRemoveColor>(*static_cast<const size_t*>(payload->Data)));
+                } else {
+                    mApplication.pushDialog(Dialog(DialogType::Error, "Could not remove color",
+                                                   "There has to be at least 1 color in the palette."));
+                }
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+
+    const std::string text = isActiveDragDropTarget ? "Drop to delete!" : "Drag color here to delete";
+    const glm::vec2 textSize = ImGui::CalcTextSize(text.c_str());
+    const glm::vec2 textPosition = static_cast<glm::vec2>(ImGui::GetItemRectMin()) + (size - textSize) / 2.0f;
+    glm::vec4 textColor = ci::ColorA::hex(0xEB5757);
+    if(isActiveDragDropTarget) {
+        drawList->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), (ImColor)ci::ColorA::hex(0xEB5757));
+        textColor = ci::ColorA::hex(0xFFFFFF);
+    }
+    drawList->AddText(textPosition, (ImColor)textColor, text.c_str());
+}
+
+void SidePane::drawColorPaletteColorBoxes(ColorManager& colorManager, CommandManager<Geometry>& commandManager,
+                                          bool isEditable) {
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     glm::ivec2 initialCursorPos = ImGui::GetCursorScreenPos();
     ImDrawList* const drawList = ImGui::GetWindowDrawList();
@@ -136,22 +198,61 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
         ImGui::SetCursorScreenPos(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1), 1));
         if(ImGui::InvisibleButton((std::string("colorPaletteButton") + std::to_string(i)).c_str(),
                                   glm::vec2(boxWidth, boxHeight))) {
-            colorManager.setActiveColorIndex(i);
+            if(isEditable) {
+                ImGui::OpenPopup(colorEditPopupId.c_str());
+            } else {
+                colorManager.setActiveColorIndex(i);
+            }
         }
-        if(ImGui::IsItemClicked(1)) {
-            ImGui::OpenPopup(colorEditPopupId.c_str());
-        }
+        const bool isHovered = ImGui::IsItemHovered();
+        const bool isHeld = ImGui::IsItemActive();
         std::string hotkeyString;
-        if(i < 10) {
+        if(!isEditable && i < 10) {
             HotkeyAction action = static_cast<HotkeyAction>(static_cast<std::size_t>(HotkeyAction::SelectColor1) + i);
             auto hotkey = mApplication.getHotkeys().findHotkey(action);
             if(hotkey) {
                 hotkeyString = hotkey->getString();
             }
         }
-        mApplication.drawTooltipOnHover("Color " + std::to_string(i + 1), hotkeyString,
-                                        "Select: left click\nEdit: right click", "",
-                                        glm::vec2(-18.0f + cursorPos.x, cursorPos.y), glm::vec2(1.0f, 0.0f));
+        mApplication.drawTooltipOnHover(
+            "Color " + std::to_string(i + 1), hotkeyString,
+            isEditable ? "Click to change color\nDrag & drop to reorder colors\nCtrl + Drag & drop to swap colors"
+                       : "Click to select",
+            "", glm::vec2(-18.0f + cursorPos.x, cursorPos.y), glm::vec2(1.0f, 0.0f));
+
+        bool isActiveDragDropTarget = false;
+        if(isEditable) {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(0.0f));
+            if(ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                ImGui::SetDragDropPayload("colorPaletteDragDrop", &i, sizeof(size_t));
+                ImDrawList* const tooltipDrawList = ImGui::GetWindowDrawList();
+                const glm::vec2 tooltipCursorPos = ImGui::GetCursorScreenPos();
+                const glm::vec2 tooltipSize(boxWidth, boxHeight);
+                tooltipDrawList->AddRectFilled(tooltipCursorPos, tooltipCursorPos + tooltipSize,
+                                               (ImColor)colorManager.getColor(i));
+                ImGui::SetCursorScreenPos(tooltipCursorPos + tooltipSize);
+                ImGui::EndDragDropSource();
+            }
+            ImGui::PopStyleVar(1);
+            if(ImGui::BeginDragDropTarget()) {
+                if(const ImGuiPayload* payload =
+                       ImGui::AcceptDragDropPayload("colorPaletteDragDrop", ImGuiDragDropFlags_AcceptPeekOnly)) {
+                    assert(payload->DataSize == sizeof(size_t));
+                    isActiveDragDropTarget = true;
+                    if(payload->IsDelivery()) {
+                        size_t payloadi = *static_cast<const size_t*>(payload->Data);
+                        if(ImGui::GetIO().KeyCtrl) {
+                            // swap colors if Ctrl is held:
+                            commandManager.execute(std::make_unique<CmdColorManagerSwapColors>(i, payloadi));
+                        } else {
+                            // reorder colors:
+                            commandManager.execute(std::make_unique<CmdColorManagerReorderColors>(i, payloadi));
+                        }
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+        }
 
         drawList->AddRect(
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX), 0),
@@ -159,48 +260,49 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
             (ImColor)ci::ColorA::hex(0xEDEDED));
 
         glm::vec4 color = colorManager.getColor(i);
+        const float boxAlpha = (isHovered || isHeld) ? (isHeld ? 0.8f : 0.9f) : 1.0f;
+        const glm::vec4 boxColor(color.r, color.g, color.b, boxAlpha);
         drawList->AddRectFilled(
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1), 1),
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + boxWidth), static_cast<int>(boxHeight + 1)),
-            (ImColor)color);
-        if(isSelected) {
-            float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
-            glm::vec4 selectColor = (brightness > 0.75f) ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC);
-            drawList->AddRect(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + 2), 1 + 2),
-                              cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + boxWidth - 2),
-                                                     static_cast<int>(boxHeight + 1 - 2)),
-                              (ImColor)selectColor, 0.0f, 15, 5.0f);
+            (ImColor)boxColor);
+        if(isActiveDragDropTarget || (!isEditable && isSelected)) {
+            const float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+            const glm::vec4 selectColor = (brightness > 0.75f) ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC);
+            const float thickness = 5.0f;
+            const float offset = (thickness - 1.0f) / 2.0f;
+            drawList->AddRect(cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + offset), 1 + offset),
+                              cursorPos + glm::ivec2(static_cast<int>(leftCornerX + 1 + boxWidth - offset),
+                                                     static_cast<int>(boxHeight + 1 - offset)),
+                              (ImColor)selectColor, 0.0f, 15, thickness);
         }
-
-        ImGui::SetNextWindowPos(cursorPos + glm::ivec2(0, static_cast<int>(boxHeight) + 2));
-        ImGui::SetNextWindowSize(glm::vec2(ImGui::GetContentRegionAvailWidth(), 285));
-        if(ImGui::BeginPopup(colorEditPopupId.c_str())) {
-            ImGui::PushItemWidth(-0.001f);  // force full width
-            if(ImGui::ColorPicker3(colorPickerId.c_str(), &color[0], ImGuiColorEditFlags_NoSidePreview)) {
-                assert(commandManager);
-                commandManager->execute(std::make_unique<CmdChangeColorManagerColor>(i, color), true);
+        if(isEditable) {
+            const glm::vec2 colorPickerSize(ImGui::GetContentRegionAvailWidth(), 285.0f);
+            glm::vec2 colorPickerPos(ImGui::GetIO().DisplaySize.x - mWidth - colorPickerSize.x + 1.0f,
+                                     cursorPos.y + boxHeight - colorPickerSize.y / 2.0f);
+            if(colorPickerPos.y + colorPickerSize.y > ImGui::GetIO().DisplaySize.y) {
+                colorPickerPos.y = ImGui::GetIO().DisplaySize.y - colorPickerSize.y - 1.0f;
+            } else if(colorPickerPos.y < mApplication.getToolbar().getHeight() - 1.0f) {
+                colorPickerPos.y = mApplication.getToolbar().getHeight() - 1.0f;
             }
-            ImGui::PopItemWidth();
-            ImGui::EndPopup();
+            ImGui::SetNextWindowPos(colorPickerPos);
+            ImGui::SetNextWindowSize(colorPickerSize);
+            if(ImGui::BeginPopup(colorEditPopupId.c_str())) {
+                ImGui::PushItemWidth(-0.001f);  // force full width
+                if(ImGui::ColorPicker3(colorPickerId.c_str(), &color[0], ImGuiColorEditFlags_NoSidePreview)) {
+                    commandManager.execute(std::make_unique<CmdColorManagerChangeColor>(i, color), true);
+                }
+                ImGui::PopItemWidth();
+                ImGui::EndPopup();
+            }
         }
 
         leftCornerX += boxWidth + 1;
     }
 
+    // Move cursor under the boxes:
     ImGui::SetCursorScreenPos(initialCursorPos);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + rowCount * (boxHeight + 2.f) + 10.0f);
-
-    if(drawButton("Randomize Colors")) {
-        std::random_device rd;   // Will be used to obtain a seed for the random number engine
-        std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-        uniform_real_distribution<> dis(0.0, 1.0);
-        std::vector<glm::vec4> newColors;
-        for(int i = 0; i < colorManager.size(); ++i) {
-            newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);
-        }
-        assert(commandManager);
-        commandManager->execute(std::make_unique<CmdReplaceColorManagerColors>(std::move(newColors)));
-    }
 }
 
 void SidePane::drawTooltipOnHover(const std::string& label, const std::string& shortcut, const std::string& description,
@@ -209,6 +311,35 @@ void SidePane::drawTooltipOnHover(const std::string& label, const std::string& s
     position += glm::vec2(-18.0f, 0.0f);
     const glm::vec2 pivot(1.0f, 0.0f);
     mApplication.drawTooltipOnHover(label, shortcut, description, disabled, position, pivot);
+}
+
+void SidePane::Category::drawHeader(SidePane& sidePane) {
+    glm::vec2 cursorPos = ImGui::GetCursorScreenPos();
+    cursorPos += glm::vec2(-11.0f, -11.0f);
+    ImGui::SetCursorScreenPos(cursorPos);
+
+    const glm::vec2 size(sidePane.mWidth, 40.0f);
+
+    if(ImGui::InvisibleButton("categoryHeader", size)) {
+        mIsOpen = !mIsOpen;
+    }
+    const bool isHovered = ImGui::IsItemHovered();
+    const bool isHeld = ImGui::IsItemActive();
+
+    auto* const drawList = ImGui::GetWindowDrawList();
+    drawList->PushClipRectFullScreen();
+    if(isHovered || isHeld) {
+        drawList->AddRectFilled(cursorPos, cursorPos + size,
+                                isHeld ? (ImColor)ci::ColorA::hex(0xA3B2BF) : (ImColor)ci::ColorA::hex(0xCFD5DA));
+    }
+    drawList->PopClipRect();
+
+    ImGui::PushFont(sidePane.mApplication.getFontStorage().getRegularIconFont());
+    ImGui::SetCursorScreenPos(cursorPos + glm::vec2(12.0f, 9.0f));
+    ImGui::Text(mIsOpen ? ICON_MD_KEYBOARD_ARROW_DOWN : ICON_MD_KEYBOARD_ARROW_RIGHT);
+    ImGui::PopFont();
+    ImGui::SetCursorScreenPos(cursorPos + glm::vec2(50.0f, 11.0f));
+    ImGui::Text(mCaption.c_str());
 }
 
 }  // namespace pepr3d
