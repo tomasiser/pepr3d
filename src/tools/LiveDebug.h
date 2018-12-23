@@ -12,12 +12,16 @@ namespace pepr3d {
 
 class MainApplication;
 
-class LiveDebug : public ITool {
+class LiveDebug : public Tool {
    public:
     explicit LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}
 
     virtual std::string getName() const override {
         return "Live Debug";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectLiveDebug);
     }
 
     virtual std::string getIcon() const override {

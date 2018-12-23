@@ -7,6 +7,9 @@
 #include <CGAL/mesh_segmentation.h>
 #include <cinder/Ray.h>
 #include <cinder/gl/gl.h>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/array.hpp>
+#include <cereal/types/vector.hpp>
 #include "cinder/Log.h"
 
 #include <cassert>
@@ -19,6 +22,7 @@
 
 #include "geometry/ColorManager.h"
 #include "geometry/GeometryProgress.h"
+#include "geometry/GlmSerialization.h"
 #include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronBuilder.h"
@@ -137,11 +141,22 @@ class Geometry {
 
         bool isSdfComputed = false;
         bool valid = false;
+
+        /// Map converting a face_descriptor into an ID, that corresponds to the mTriangles vector
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, size_t> mIdMap;
+
+        /// Map converting a face_descriptor into the SDF value of the given face.
+        /// Note: the SDF values are linearly normalized so min=0, max=1
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, double> sdf_property_map;
+
+        /// A "map" converting the ID of each triangle (from mTriangles) into a face_descriptor
         std::vector<PolyhedronData::face_descriptor> mFaceDescs;
+
+        /// The data-structure itself
         Mesh mMesh;
     } mPolyhedronData;
+
+    friend class cereal::access;
 
    public:
     /// Empty constructor
@@ -293,22 +308,45 @@ class Geometry {
     template <typename StoppingCondition>
     std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor);
 
+    template <typename StoppingCondition>
+    std::vector<size_t> bucket(const std::vector<size_t>& startTriangle, const StoppingCondition& stopFunctor);
+
     /// Spread as BFS from starting triangle, until the limits of brush settings are reached
     std::vector<size_t> getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection,
                                                size_t startTriangle, const struct BrushSettings& settings);
-    void preSegmentation() {
+
+    /// Segmentation is CPU heavy because it needs to calculate a lot of data.
+    /// This method allows to pre-compute the heaviest calculation.
+    void computeSdfValues() {
         computeSdf();
     }
 
+    /// Segmentation algorithms will not work if SDF values are not pre-computed
     bool isSdfComputed() const {
-        return mPolyhedronData.isSdfComputed;
+        if(mPolyhedronData.sdf_property_map == nullptr) {
+            return false;
+        } else {
+            assert(mPolyhedronData.indices.size() ==
+                   (mPolyhedronData.sdf_property_map.end() - mPolyhedronData.sdf_property_map.begin()));
+            return mPolyhedronData.isSdfComputed;
+        }
     }
 
+    /// Once SDF is computed, segment the whole SurfaceMesh automatically
     size_t segmentation(const int numberOfClusters, const float smoothingLambda,
                         std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
                         std::unordered_map<size_t, size_t>& triangleToSegmentMap) {
         return segment(numberOfClusters, smoothingLambda, segmentToTriangleIds, triangleToSegmentMap);
     }
+
+    double getSdfValue(const size_t triangleIndex) const {
+        assert(triangleIndex < mPolyhedronData.mFaceDescs.size());
+        assert(triangleIndex < mTriangles.size());
+        PolyhedronData::face_descriptor faceDescForTri = mPolyhedronData.mFaceDescs[triangleIndex];
+        return mPolyhedronData.sdf_property_map[faceDescForTri];
+    }
+
+    void recomputeFromData(::ThreadPool& threadPool);
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
@@ -359,23 +397,24 @@ class Geometry {
     size_t segment(const int numberOfClusters, const float smoothingLambda,
                    std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
                    std::unordered_map<size_t, size_t>& triangleToSegmentMap);
+
+    /// Method to allow the Cereal library to serialize this class. Used for saving a .p3d project.
+    template <class Archive>
+    void save(Archive& saveArchive) const;
+
+    /// Method to allow the Cereal library to deserialize this class. Used for loading a .p3d project.
+    template <class Archive>
+    void load(Archive& loadArchive);
+
+    template <typename StoppingCondition>
+    std::vector<size_t> bucketSpread(const StoppingCondition& stopFunctor, std::deque<size_t>& toVisit,
+                                     std::unordered_set<size_t>& alreadyVisited);
 };
 
 template <typename StoppingCondition>
-std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
-    if(mPolyhedronData.mMesh.is_empty()) {
-        return {};
-    }
-
+std::vector<size_t> Geometry::bucketSpread(const StoppingCondition& stopFunctor, std::deque<size_t>& toVisit,
+                                           std::unordered_set<size_t>& alreadyVisited) {
     std::vector<size_t> trianglesToColor;
-
-    std::deque<size_t> toVisit;
-    const size_t startingFace = startTriangle;
-    toVisit.push_back(startingFace);
-
-    std::unordered_set<size_t> alreadyVisited;
-    alreadyVisited.insert(startingFace);
-
     assert(mPolyhedronData.indices.size() == mTriangles.size());
 
     while(!toVisit.empty()) {
@@ -402,6 +441,40 @@ std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const Stop
 }
 
 template <typename StoppingCondition>
+std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
+    if(mPolyhedronData.mMesh.is_empty()) {
+        return {};
+    }
+
+    std::deque<size_t> toVisit;
+    const size_t startingFace = startTriangle;
+    toVisit.push_back(startingFace);
+
+    std::unordered_set<size_t> alreadyVisited;
+    alreadyVisited.insert(startingFace);
+
+    return bucketSpread(stopFunctor, toVisit, alreadyVisited);
+}
+
+template <typename StoppingCondition>
+std::vector<size_t> Geometry::bucket(const std::vector<size_t>& startingTriangles,
+                                     const StoppingCondition& stopFunctor) {
+    if(mPolyhedronData.mMesh.is_empty()) {
+        return {};
+    }
+
+    std::deque<size_t> toVisit;
+    std::unordered_set<size_t> alreadyVisited;
+
+    for(const size_t startTriangle : startingTriangles) {
+        toVisit.push_back(startTriangle);
+        alreadyVisited.insert(startTriangle);
+    }
+
+    return bucketSpread(stopFunctor, toVisit, alreadyVisited);
+}
+
+template <typename StoppingCondition>
 void Geometry::addNeighboursToQueue(const size_t currentVertex, std::unordered_set<size_t>& alreadyVisited,
                                     std::deque<size_t>& toVisit, const StoppingCondition& stopFunctor) const {
     const std::array<int, 3> neighbours = gatherNeighbours(currentVertex);
@@ -418,6 +491,36 @@ void Geometry::addNeighboursToQueue(const size_t currentVertex, std::unordered_s
             }
         }
     }
+}
+
+/* -------------------- Serialization -------------------- */
+
+template <class Archive>
+void Geometry::save(Archive& saveArchive) const {
+    saveArchive(mColorManager);
+    saveArchive(mTriangles);
+    saveArchive(mPolyhedronData.vertices);
+    saveArchive(mPolyhedronData.indices);
+}
+
+template <class Archive>
+void Geometry::load(Archive& loadArchive) {
+    loadArchive(mColorManager);
+    loadArchive(mTriangles);
+    loadArchive(mPolyhedronData.vertices);
+    loadArchive(mPolyhedronData.indices);
+
+    // Reset progress
+    mProgress->resetLoad();
+
+    // Geometry loaded via Cereal
+    mProgress->importRenderPercentage = 1.0f;
+    mProgress->importComputePercentage = 1.0f;
+
+    assert(!mTriangles.empty());
+    assert(!mColorManager.empty());
+    assert(!mPolyhedronData.vertices.empty());
+    assert(!mPolyhedronData.indices.empty());
 }
 
 }  // namespace pepr3d

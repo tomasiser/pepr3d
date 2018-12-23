@@ -47,6 +47,11 @@ class CommandManager {
     /// Get next command to be redoed if it exists @see canRedo()
     const CommandBaseType& getNextCommand() const;
 
+    /// Return the current version number, used to compare any dirty unsaved changes
+    size_t getVersionNumber() const {
+        return mVersion;
+    }
+
    private:
     Target& mTarget;
     /// Executed and possibly future commands
@@ -62,6 +67,9 @@ class CommandManager {
 
     /// Position from end of the stack
     size_t mPosFromEnd = 0;
+
+    /// Cumulative version number which gets incremented every single time a command is executed or Undo/Redo is done
+    size_t mVersion = 0;
 
     void clearFutureState();
 
@@ -103,8 +111,10 @@ template <typename Target>
 void CommandManager<Target>::execute(std::unique_ptr<CommandBaseType>&& command, bool join) {
     clearFutureState();
 
-    // Command is either stored in history or joined to the last one
+    // Increment the version counter
+    mVersion++;
 
+    // Command is either stored in history or joined to the last one
     if(!join || !joinWithLastCommand(*command)) {
         // Save target's state every few commands
         if(shouldSaveState()) {
@@ -124,6 +134,9 @@ void CommandManager<Target>::undo() {
     if(!canUndo())
         return;
 
+    // Increment the version counter
+    mVersion++;
+
     mPosFromEnd++;
     auto prevSnapshotIt = getPrevSnapshotIterator();
     mTarget.loadState(prevSnapshotIt->state);
@@ -138,6 +151,9 @@ template <typename Target>
 void CommandManager<Target>::redo() {
     if(!canRedo())
         return;
+
+    // Increment the version counter
+    mVersion++;
 
     const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
     if(mCommandHistory[nextCommandIdx]->isSlowCommand()) {

@@ -82,6 +82,7 @@ void Toolbar::drawFileDropDown() {
     props.label = ICON_MD_FOLDER_OPEN;
     props.isDropDown = true;
     props.isToggled = ImGui::IsPopupOpen(filePopupId);
+    glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() {
         props.isToggled = !props.isToggled;
@@ -90,20 +91,31 @@ void Toolbar::drawFileDropDown() {
         }
     });
     ImGui::PopFont();
+    mApplication.drawTooltipOnHover("File", "", "Open, save, import, and export a model.", "",
+                                    buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
 
     if(props.isToggled) {
         ImGui::SetNextWindowPos(glm::ivec2(0, mHeight - 1));
-        ImGui::SetNextWindowSize(glm::ivec2(175, 150));
+        ImGui::SetNextWindowSize(glm::ivec2(175, 300));
         if(ImGui::BeginPopup(filePopupId)) {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
             ImGui::PushFont(mApplication.getFontStorage().getSmallFont());
-            // ImGui::Button("Open", glm::ivec2(175, 50));
-            // ImGui::Button("Save", glm::ivec2(175, 50));
-            // ImGui::Button("Save as", glm::ivec2(175, 50));
+            if(ImGui::Button("Open", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
+                mApplication.showImportDialog(mApplication.supportedOpenExtensions);
+            }
+            if(ImGui::Button("Save", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
+                mApplication.saveProject();
+            }
+            if(ImGui::Button("Save as...", glm::ivec2(175, 50))) {
+                ImGui::CloseCurrentPopup();
+                mApplication.saveProjectAs();
+            }
             if(ImGui::Button("Import", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.showImportDialog();
+                mApplication.showImportDialog(mApplication.supportedImportExtensions);
             }
             if(ImGui::Button("Export", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
@@ -124,13 +136,23 @@ void Toolbar::drawUndoRedo() {
     ButtonProperties props;
     props.label = ICON_MD_UNDO;
     props.isEnabled = commandManager && commandManager->canUndo();
+    glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() { commandManager->undo(); });
+    const auto undoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Undo);
+    mApplication.drawTooltipOnHover("Undo", undoOptionalHotkey ? undoOptionalHotkey->getString() : "",
+                                    "Undo last action.", props.isEnabled ? "" : "No action to undo.",
+                                    buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
     ImGui::SameLine(0.f, 0.f);
     props.label = ICON_MD_REDO;
     props.isEnabled = commandManager && commandManager->canRedo();
+    buttonPos = ImGui::GetCursorScreenPos();
     drawButton(props, [&]() { commandManager->redo(); });
     ImGui::PopFont();
+    const auto redoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Redo);
+    mApplication.drawTooltipOnHover("Redo", redoOptionalHotkey ? redoOptionalHotkey->getString() : "",
+                                    "Redo last action.", props.isEnabled ? "" : "No action to redo.",
+                                    buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
 }
 
 void Toolbar::drawDemoWindowToggle() {
@@ -149,8 +171,14 @@ void Toolbar::drawToolButtons() {
     std::size_t index = 0;
     for(auto toolit = mApplication.getToolsBegin(); toolit != mApplication.getToolsEnd(); ++toolit, ++index) {
         ImGui::SameLine(0.0f, 0.0f);
+        const glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
         drawToolButton(toolit);
-        if(index == 4 || index == 7) {
+        const auto toolOptionalHotkey = (*toolit)->getHotkey(mApplication.getHotkeys());
+        mApplication.drawTooltipOnHover((*toolit)->getName(), toolOptionalHotkey ? toolOptionalHotkey->getString() : "",
+                                        (*toolit)->getDescription(),
+                                        (*toolit)->isEnabled() ? "" : "Not available for this geometry.",
+                                        buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
+        if(index == 5 || index == 8) {
             ImGui::SameLine(0.0f, 0.0f);
             drawSeparator();
         }
@@ -161,6 +189,7 @@ void Toolbar::drawToolButton(ToolsVector::iterator tool) {
     ButtonProperties props;
     props.label = (*tool)->getIcon();
     props.isToggled = (tool == mApplication.getCurrentToolIterator());
+    props.isEnabled = (*tool)->isEnabled();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
     drawButton(props, [&]() {
         props.isToggled = true;

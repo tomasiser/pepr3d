@@ -10,12 +10,20 @@ namespace pepr3d {
 
 class MainApplication;
 
-class TrianglePainter : public ITool {
+class TrianglePainter : public Tool {
    public:
     explicit TrianglePainter(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Triangle Painter";
+    }
+
+    virtual std::string getDescription() const override {
+        return "Color individual triangles by clicking or dragging the mouse.";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectTrianglePainter);
     }
 
     virtual std::string getIcon() const override {

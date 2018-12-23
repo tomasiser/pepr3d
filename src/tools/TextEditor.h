@@ -5,10 +5,14 @@
 
 namespace pepr3d {
 
-class TextEditor : public ITool {
+class TextEditor : public Tool {
    public:
     virtual std::string getName() const override {
         return "Text Editor";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectTextEditor);
     }
 
     virtual std::string getIcon() const override {

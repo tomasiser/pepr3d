@@ -227,6 +227,9 @@ class ModelImporter {
     std::vector<DataTriangle> processFirstMesh(aiMesh *mesh) {
         std::vector<DataTriangle> triangles;
 
+        /// Obtaining triangle color. Default color is set if there is no color information
+        std::unordered_map<std::array<float, 3>, size_t, boost::hash<std::array<float, 3>>> colorLookup;
+
         for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
 
@@ -252,9 +255,6 @@ class ModelImporter {
             /// Calculation of surface normals from vertices and vertex normals or only from vertices.
             normal = calculateNormal(vertices, normals);
 
-            /// Obtaining triangle color. Default color is set if there is no color information
-            std::unordered_map<std::array<float, 3>, size_t, boost::hash<std::array<float, 3>>> colorLookup;
-
             glm::vec4 color;
             size_t returnColor = 0;
             if(mesh->GetNumColorChannels() > 0) {
@@ -267,7 +267,7 @@ class ModelImporter {
                 const auto result = colorLookup.find(rgbArray);
                 if(result != colorLookup.end()) {
                     assert(result->second < mPalette.size());
-                    assert(result->second > 0);
+                    assert(result->second >= 0);
                     returnColor = result->second;
                 } else {
                     mPalette.addColor(color);

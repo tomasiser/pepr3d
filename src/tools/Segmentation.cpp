@@ -15,7 +15,7 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
     if(!isSdfComputed) {
         sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            mApplication.getCurrentGeometry()->preSegmentation();
+            mApplication.getCurrentGeometry()->computeSdfValues();
         }
     } else {
         if(sidePane.drawButton("Segment!")) {
@@ -117,7 +117,7 @@ void Segmentation::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEven
         mHoveredTriangleId = {};
         return;
     }
-    mHoveredTriangleId = geometry->intersectMesh(mLastRay);
+    mHoveredTriangleId = safeIntersectMesh(mApplication, mLastRay);
 }
 
 void Segmentation::drawToModelView(ModelView& modelView) {

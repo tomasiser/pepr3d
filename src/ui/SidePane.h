@@ -56,6 +56,9 @@ class SidePane {
         ImGui::PopItemWidth();
     }
 
+    void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
+                            const std::string& description = "", const std::string& disabled = "");
+
    private:
     MainApplication& mApplication;
     float mWidth = 235.0f;

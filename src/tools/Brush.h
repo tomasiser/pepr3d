@@ -31,12 +31,16 @@ struct BrushSettings {
     }
 };
 
-class Brush : public ITool {
+class Brush : public Tool {
    public:
     explicit Brush(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Brush";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectBrush);
     }
 
     virtual std::string getIcon() const override {

@@ -7,3 +7,6 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "lib/cereal"]
+	path = lib/cereal
+	url = https://github.com/USCiLab/cereal.git

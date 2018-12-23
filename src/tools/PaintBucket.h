@@ -8,7 +8,7 @@
 
 namespace pepr3d {
 
-class PaintBucket : public ITool {
+class PaintBucket : public Tool {
    public:
     explicit PaintBucket(MainApplication& app) : mApplication(app) {}
 
@@ -16,8 +16,20 @@ class PaintBucket : public ITool {
         return "Paint Bucket";
     }
 
+    virtual std::string getDescription() const override {
+        return "Color whole regions with a single click.";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectPaintBucket);
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_FORMAT_COLOR_FILL;
+    }
+
+    virtual bool isEnabled() const override {
+        return mGeometryCorrect;
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;

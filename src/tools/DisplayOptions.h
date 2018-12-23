@@ -7,12 +7,16 @@ namespace pepr3d {
 
 class MainApplication;
 
-class DisplayOptions : public ITool {
+class DisplayOptions : public Tool {
    public:
     explicit DisplayOptions(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Display Options";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectDisplayOptions);
     }
 
     virtual std::string getIcon() const override {

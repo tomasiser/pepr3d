@@ -5,10 +5,14 @@
 
 namespace pepr3d {
 
-class Settings : public ITool {
+class Settings : public Tool {
    public:
     virtual std::string getName() const override {
         return "Settings";
+    }
+
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
+        return hotkeys.findHotkey(HotkeyAction::SelectSettings);
     }
 
     virtual std::string getIcon() const override {
