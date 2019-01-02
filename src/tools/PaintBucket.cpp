@@ -15,12 +15,33 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
 
     sidePane.drawCheckbox("Paint while dragging", mShouldPaintWhileDrag);
     sidePane.drawTooltipOnHover("When enabled, you can drag your mouse over regions to continuously color them.");
-    sidePane.drawCheckbox("Color whole model", mDoNotStop);
+
+    if(ImGui::RadioButton("Color whole model", mDoNotStop)) {
+        mDoNotStop = true;
+        mStopOnColor = false;
+        mStopOnNormal = false;
+    }
     sidePane.drawTooltipOnHover("When enabled, the selected color will always be applied to the whole model.");
+
+    if(ImGui::RadioButton("Color based on criteria", !mDoNotStop)) {
+        mDoNotStop = false;
+        mStopOnColor = true;  // default
+        mStopOnNormal = false;
+    }
+    sidePane.drawTooltipOnHover("When enabled, coloring will stop on boundaries based on the selected criteria.");
+
     if(!mDoNotStop) {
-        sidePane.drawCheckbox("Stop on different color", mStopOnColor);
+        if(ImGui::Checkbox("Stop on different color", &mStopOnColor)) {
+            if(!mStopOnColor && !mStopOnNormal) {
+                mStopOnNormal = true;  // make sure at least 1 option is selected
+            }
+        }
         sidePane.drawTooltipOnHover("When enabled, coloring will stop on a boundary with a different color.");
-        sidePane.drawCheckbox("Stop on sharp edges", mStopOnNormal);
+        if(ImGui::Checkbox("Stop on sharp edges", &mStopOnNormal)) {
+            if(!mStopOnColor && !mStopOnNormal) {
+                mStopOnColor = true;  // make sure at least 1 option is selected
+            }
+        }
         sidePane.drawTooltipOnHover("When enabled, coloring will stop on a boundary with a sharp edge.");
         if(mStopOnNormal) {
             sidePane.drawIntDragger("Maximum angle", mStopOnNormalDegrees, 0.25f, 0, 180, "%.0f°", 40.0f);
