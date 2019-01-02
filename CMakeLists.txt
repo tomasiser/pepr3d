@@ -60,6 +60,11 @@ if(NOT ASSIMP_FOUND )
   return()
 endif()
 
+# -- Freetype --
+# Needs FREETYPE_DIR environment variable defined to the path of Freetype, with directories include/ and lib/ inside
+find_package(Freetype REQUIRED)
+message(STATUS "Freetype library found at " ${FREETYPE_LIBRARIES})
+
 # -- Cinder --
 set(CINDER_BOOST_USE_SYSTEM TRUE CACHE BOOL "Use system boost for Cinder")
 
@@ -106,7 +111,7 @@ list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_MAIN_FILE})
 ci_make_app(APP_NAME "pepr3d"
             CINDER_PATH ${CINDER_PATH}
             SOURCES     ${SRC_FILES_IMGUI} ${APP_PATH}/resources/Resources.rc ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE}
-            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cereal/include ${APP_PATH}/lib/threadpool ${APP_PATH}/lib/peprimgui ${APP_PATH}/lib/imgui
+            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cereal/include ${APP_PATH}/lib/threadpool ${APP_PATH}/lib/peprimgui ${APP_PATH}/lib/imgui ${FREETYPE_INCLUDE_DIRS}
             RESOURCES   ${APP_PATH}/resources/icon.ico
             # ASSETS_PATH
             # BLOCKS
@@ -115,6 +120,8 @@ ci_make_app(APP_NAME "pepr3d"
 
 target_include_directories(pepr3d PRIVATE ${ASSIMP_INCLUDE_DIR})
 target_link_libraries(pepr3d ${ASSIMP_LIBRARY_RELEASE})
+
+target_link_libraries(pepr3d ${FREETYPE_LIBRARIES})
 
 target_link_libraries(pepr3d ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 #add_dependencies(pepr3d CGAL::CGAL CGAL::CGAL_Core)
@@ -141,7 +148,8 @@ target_include_directories(pepr3dtests
                                    ${APP_PATH}/lib/cinder/include
                                    ${APP_PATH}/lib/googletest/googletest/include)
 target_include_directories(pepr3dtests PRIVATE ${ASSIMP_INCLUDE_DIR})
-target_link_libraries(pepr3dtests gtest ${ASSIMP_LIBRARY_RELEASE} cinder)
+target_include_directories(pepr3dtests PRIVATE ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(pepr3dtests gtest ${ASSIMP_LIBRARY_RELEASE} cinder ${FREETYPE_LIBRARIES})
 target_link_libraries(pepr3dtests ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
 # copy dlls into working directory on Windows
