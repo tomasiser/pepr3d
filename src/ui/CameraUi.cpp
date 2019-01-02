@@ -35,12 +35,12 @@ CameraUi::CameraUi()
     : mCamera(nullptr),
       mWindowSize(640, 480),
       mMouseWheelMultiplier(1.2f),
-      mMinimumPivotDistance(1.0f),
+      mMinimumPivotDistance(0.1f),
       mEnabled(true),
       mLastAction(ACTION_NONE) {}
 
 CameraUi::CameraUi(ci::CameraPersp *camera, const ci::app::WindowRef &window, int signalPriority)
-    : mCamera(camera), mWindowSize(640, 480), mMouseWheelMultiplier(1.2f), mMinimumPivotDistance(1.0f), mEnabled(true) {
+    : mCamera(camera), mWindowSize(640, 480), mMouseWheelMultiplier(1.2f), mMinimumPivotDistance(0.1f), mEnabled(true) {
     connect(window, signalPriority);
 }
 
@@ -256,10 +256,21 @@ void CameraUi::mouseWheel(float increment) {
         multiplier = powf(mMouseWheelMultiplier, increment);
     else
         multiplier = powf(-mMouseWheelMultiplier, -increment);
-    glm::vec3 newEye =
-        mCamera->getEyePoint() + mCamera->getViewDirection() * (mCamera->getPivotDistance() * (1 - multiplier));
-    mCamera->setEyePoint(newEye);
-    mCamera->setPivotDistance(std::max<float>(mCamera->getPivotDistance() * multiplier, mMinimumPivotDistance));
+
+    if(mIsFovZoomEnabled) {
+        // FOV zoom (change field of view):
+        float fov = mCamera->getFov();
+        fov *= multiplier;
+        fov = std::max<float>(std::min<float>(120.0f, fov), 1.0f);
+        mCamera->setFov(fov);
+    } else {
+        // dolly (move closer / further from the pivot point):
+        multiplier = std::max<float>(multiplier, mMinimumPivotDistance / mCamera->getPivotDistance());
+        glm::vec3 newEye =
+            mCamera->getEyePoint() + mCamera->getViewDirection() * (mCamera->getPivotDistance() * (1 - multiplier));
+        mCamera->setEyePoint(newEye);
+        mCamera->setPivotDistance(std::max<float>(mCamera->getPivotDistance() * multiplier, mMinimumPivotDistance));
+    }
 
     mSignalCameraChange.emit();
 }

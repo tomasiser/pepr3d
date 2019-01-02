@@ -115,6 +115,14 @@ class CameraUi {
         return mMinimumPivotDistance;
     }
 
+    bool isFovZoomEnabled() const {
+        return mIsFovZoomEnabled;
+    }
+
+    void setFovZoomEnabled(bool enabled) {
+        mIsFovZoomEnabled = enabled;
+    }
+
    private:
     enum { ACTION_NONE, ACTION_ZOOM, ACTION_PAN, ACTION_TUMBLE };
 
@@ -127,6 +135,8 @@ class CameraUi {
     float mInitialPivotDistance;
     float mMouseWheelMultiplier, mMinimumPivotDistance;
     int mLastAction;
+
+    bool mIsFovZoomEnabled = false;  // default is dolly zoom (not FOV based)
 
     glm::ivec2 mWindowSize;  // used when mWindow is null
     ci::app::WindowRef mWindow;

@@ -97,6 +97,7 @@ void ModelView::onMouseMove(MouseEvent event) {
 
 void ModelView::resetCamera() {
     mCamera.lookAt(glm::vec3(2.4f, 1.8f, 1.6f), glm::vec3(0.0f, 0.0f, 0.0f));
+    mCamera.setFov(35.0f);
 }
 
 void ModelView::updateModelMatrix() {
