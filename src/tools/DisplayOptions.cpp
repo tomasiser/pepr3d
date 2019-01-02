@@ -7,6 +7,14 @@ namespace pepr3d {
 void DisplayOptions::drawToSidePane(SidePane& sidePane) {
     ModelView& modelView = mApplication.getModelView();
 
+    bool isFovZoomEnabled = modelView.isFovZoomEnabled();
+    sidePane.drawText("Camera zoom behavior:");
+    if(ImGui::RadioButton("Dolly (move closer / further)", !isFovZoomEnabled)) {
+        modelView.setFovZoomEnabled(false);
+    }
+    if(ImGui::RadioButton("Change field of view", isFovZoomEnabled)) {
+        modelView.setFovZoomEnabled(true);
+    }
     if(sidePane.drawButton("Reset camera")) {
         modelView.resetCamera();
     }
