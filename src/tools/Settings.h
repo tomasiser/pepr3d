@@ -8,9 +8,11 @@ namespace pepr3d {
 class Settings : public Tool {
     MainApplication& mApplication;
     SidePane::Category mColorPaletteCategory;
+    SidePane::Category mUiCategory;
 
    public:
-    Settings(MainApplication& app) : mApplication(app), mColorPaletteCategory("Edit Color Palette", true) {}
+    Settings(MainApplication& app)
+        : mApplication(app), mColorPaletteCategory("Edit Color Palette", true), mUiCategory("User Interface", true) {}
 
     virtual std::string getName() const override {
         return "Settings";
@@ -25,5 +27,7 @@ class Settings : public Tool {
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
+
+    void drawUiSettings(SidePane& sidePane);
 };
 }  // namespace pepr3d

@@ -48,6 +48,13 @@ void SidePane::draw() {
 
     ImGui::End();
 
+    window_flags = 0;
+    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    window_flags |= ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoResize;
+    window_flags |= ImGuiWindowFlags_NoCollapse;
+    window_flags |= ImGuiWindowFlags_NoNav;
+
     ImGui::SetNextWindowPos(glm::ivec2(mApplication.getWindowSize().x - size.x, 49));
     ImGui::SetNextWindowSize(glm::ivec2(size.x + 1.0f, size.y - mApplication.getToolbar().getHeight() + 1.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
@@ -57,6 +64,10 @@ void SidePane::draw() {
 
     ImGui::PopStyleVar(5);
     ImGui::PopStyleColor(6);
+}
+
+void SidePane::resize() {
+    mWidth = std::max<float>(200.0f, std::min<float>(mApplication.getWindowSize().x - 250.0f, mWidth));
 }
 
 void SidePane::drawText(std::string text) {
@@ -80,11 +91,14 @@ bool SidePane::drawColoredButton(std::string label, const ci::ColorA color, cons
 }
 
 void SidePane::drawSeparator() {
+    const float width = ImGui::GetContentRegionAvailWidth();
+    const float padding = ImGui::GetStyle().WindowPadding.x;
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     auto* drawList = ImGui::GetWindowDrawList();
     drawList->PushClipRectFullScreen();
-    drawList->AddLine(glm::ivec2(mApplication.getWindowSize().x - mWidth, cursorPos.y),
-                      glm::ivec2(mApplication.getWindowSize().x, cursorPos.y), (ImColor)ci::ColorA::hex(0xEDEDED));
+    drawList->AddLine(glm::vec2(mApplication.getWindowSize().x - mWidth, cursorPos.y),
+                      glm::vec2(mApplication.getWindowSize().x - mWidth + width + 2.0f * padding, cursorPos.y),
+                      (ImColor)ci::ColorA::hex(0xEDEDED));
     drawList->PopClipRect();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 }
