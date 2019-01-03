@@ -12,8 +12,59 @@
 #include "poly2tri/poly2tri.h"
 #pragma warning(pop)
 
+#include <string>
+
+#include <cinder/gl/gl.h>
+#include "cinder/Log.h"
+
 namespace pepr3d {
 
-class FontRasterizer {};
+class FontRasterizer {
+   public:
+   private:
+    struct Tri {
+        glm::vec3 a, b, c;
+    };
+
+    std::string mFontFile;
+    bool mFontLoaded = false;
+
+    FT_Library mLibrary;
+    FT_Face mFace;
+
+   public:
+    FontRasterizer(const std::string fontFile) : mFontFile(fontFile) {
+        mFontLoaded = true;
+
+        if(FT_Init_FreeType(&mLibrary)) {
+            CI_LOG_E("FT_Init_FreeType failed");
+            mFontLoaded = false;
+        }
+
+        if(FT_New_Face(mLibrary, mFontFile.c_str(), 0, &mFace)) {
+            CI_LOG_E("FT_New_Face failed (there is probably a problem with your font file\n");
+            mFontLoaded = false;
+        }
+    };
+
+    std::string getCurrentFont() const {
+        return mFontFile;
+    }
+
+    bool isValid() const {
+        return mFontLoaded;
+    }
+
+    std::vector<std::vector<FontRasterizer::Tri>> rasterizeText(const std::string textString, const size_t fontHeight,
+                                                                const size_t bezierSteps) const;
+
+   private:
+    double addOneCharacter(const FT_Face face, const char& ch, const size_t bezierSteps, double offset,
+                           std::vector<Tri>& outTriangles) const;
+
+    void outlinePostprocess(std::vector<std::vector<Tri>>& trianglesPerLetter) const;
+
+    static std::vector<p2t::Point*> triangulateContour(Vectoriser* vectoriser, int c, float offset);
+};
 
 }  // namespace pepr3d
