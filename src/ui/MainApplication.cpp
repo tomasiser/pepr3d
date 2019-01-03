@@ -45,7 +45,7 @@ MainApplication::MainApplication()
       mThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
 
 void MainApplication::setup() {
-    setWindowSize(950, 570);
+    setWindowSize(1024, 614);
     getWindow()->setTitle("Untitled - Pepr3D");
     setupIcon();
     gl::enableVerticalSync(true);
@@ -92,7 +92,8 @@ void MainApplication::setup() {
 }
 
 void MainApplication::resize() {
-    mModelView.resize();
+    mSidePane.resize();   // side pane has to be resized first (it modifies its width if necessary)
+    mModelView.resize();  // model view uses the width of the side pane, so it has to be second
 }
 
 void MainApplication::mouseDown(MouseEvent event) {
@@ -456,7 +457,6 @@ void MainApplication::drawExportDialog() {
     }
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoScrollbar;
     window_flags |= ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoCollapse;
