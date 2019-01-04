@@ -28,7 +28,7 @@ void DisplayOptions::drawToSidePane(SidePane& sidePane) {
     sidePane.drawVec3Dragger("Model position", modelTranslate, 0.01f, -1.0f, 1.0f, "%.2f", 120.0f);
     modelView.setModelTranslate(modelTranslate);
 
-    if(sidePane.drawButton("Reset model translation")) {
+    if(sidePane.drawButton("Reset model transformation")) {
         modelView.setModelRoll(0.0f);
         modelView.setModelTranslate(glm::vec3(0.0f));
     }
