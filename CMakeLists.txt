@@ -155,6 +155,9 @@ endif()
 # ------------------------------------------------------------------------
 # --------------------------- COMPILER FLAGS -----------------------------
 # ------------------------------------------------------------------------
+
+target_compile_definitions(pepr3d PRIVATE $<$<CONFIG:RELEASE>:CI_MIN_LOG_LEVEL=3>)
+
 if(MSVC)
   target_compile_options(pepr3d PRIVATE /W3 /std:c++17 /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
   target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_ /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
