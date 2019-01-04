@@ -12,8 +12,8 @@ void ModelView::setup() {
 
     mModelShader =
         ci::gl::GlslProg::create(ci::gl::GlslProg::Format()
-                                     .vertex(ci::loadString(mApplication.loadAsset("shaders/ModelView.vert")))
-                                     .fragment(ci::loadString(mApplication.loadAsset("shaders/ModelView.frag")))
+                                     .vertex(ci::loadString(mApplication.loadRequiredAsset("shaders/ModelView.vert")))
+                                     .fragment(ci::loadString(mApplication.loadRequiredAsset("shaders/ModelView.frag")))
                                      .attrib(ci::geom::Attrib::CUSTOM_0, "aColorIndex"));
 }
 

@@ -70,7 +70,11 @@ void MainApplication::setup() {
     }
 
     mGeometry = std::make_shared<Geometry>();
-    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), mThreadPool);
+    try {
+        mGeometry->loadNewGeometry(getRequiredAssetPath("models/defaultcube.stl").string(), mThreadPool);
+    } catch(const AssetNotFoundException&) {
+        // do nothing, a Fatal Error dialog has already been created
+    }
 
     mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
 
@@ -86,9 +90,12 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<LiveDebug>(*this));
     mCurrentToolIterator = mTools.begin();
 
-    setupFonts();
-
-    mModelView.setup();
+    try {
+        setupFonts();
+        mModelView.setup();
+    } catch(const AssetNotFoundException&) {
+        // do nothing, a Fatal Error dialog has already been created
+    }
 }
 
 void MainApplication::resize() {
@@ -385,15 +392,19 @@ void MainApplication::draw() {
 void MainApplication::setupFonts() {
     ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
 
+    // if the following fonts are not found, exception is thrown, font atlas is not cleared and a default font is used:
+    ci::fs::path sourceSansProSemiBoldPath = getRequiredAssetPath("fonts/SourceSansPro-SemiBold.ttf");
+    ci::fs::path materialIconsRegularPath = getRequiredAssetPath("fonts/MaterialIcons-Regular.ttf");
+
     fontAtlas->Clear();
 
     std::vector<ImWchar> textRange = {0x0001, 0x00FF, 0};
     ImFontConfig fontConfig;
     fontConfig.GlyphExtraSpacing.x = -0.2f;
-    mFontStorage.mRegularFont = fontAtlas->AddFontFromFileTTF(
-        getAssetPath("fonts/SourceSansPro-SemiBold.ttf").string().c_str(), 18.0f, &fontConfig, textRange.data());
-    mFontStorage.mSmallFont = fontAtlas->AddFontFromFileTTF(
-        getAssetPath("fonts/SourceSansPro-SemiBold.ttf").string().c_str(), 16.0f, &fontConfig, textRange.data());
+    mFontStorage.mRegularFont =
+        fontAtlas->AddFontFromFileTTF(sourceSansProSemiBoldPath.string().c_str(), 18.0f, &fontConfig, textRange.data());
+    mFontStorage.mSmallFont =
+        fontAtlas->AddFontFromFileTTF(sourceSansProSemiBoldPath.string().c_str(), 16.0f, &fontConfig, textRange.data());
 
     ImVector<ImWchar> iconsRange;
     ImFontAtlas::GlyphRangesBuilder iconsRangeBuilder;
@@ -409,8 +420,8 @@ void MainApplication::setupFonts() {
     iconsRangeBuilder.AddText(ICON_MD_CHILD_FRIENDLY);
     iconsRangeBuilder.BuildRanges(&iconsRange);
     fontConfig.GlyphExtraSpacing.x = 0.0f;
-    mFontStorage.mRegularIcons = fontAtlas->AddFontFromFileTTF(
-        getAssetPath("fonts/MaterialIcons-Regular.ttf").string().c_str(), 24.0f, &fontConfig, iconsRange.Data);
+    mFontStorage.mRegularIcons =
+        fontAtlas->AddFontFromFileTTF(materialIconsRegularPath.string().c_str(), 24.0f, &fontConfig, iconsRange.Data);
     mFontStorage.mRegularIcons->DisplayOffset.y = -1.0f;
 
     mImGui.refreshFontTexture();
