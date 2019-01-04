@@ -104,6 +104,7 @@ void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& thread
         /// Do the computations in parallel
         recomputeFromData(threadPool);
     } else {
+        throw std::runtime_error("Model loading failed.");
         CI_LOG_E("Model not loaded --> write out message for user");
     }
 }
@@ -300,53 +301,72 @@ void Geometry::computeSdf() {
     boost::tie(mPolyhedronData.sdf_property_map, created) =
         mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, double>("f:sdf");
     assert(created);
-
-    CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true);
-    mPolyhedronData.isSdfComputed = true;
-    CI_LOG_I("SDF values computed.");
+    if(created) {
+        try {
+            CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true);
+        } catch(...) {
+            throw std::runtime_error("Computation of the SDF values failed.");
+        }
+        mPolyhedronData.isSdfComputed = true;
+        CI_LOG_I("SDF values computed.");
+    } else {
+        mPolyhedronData.isSdfComputed = false;
+        throw std::runtime_error("Computation of the SDF values failed.");
+    }
 }
 
 size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda,
                          std::map<size_t, std::vector<size_t>>& segmentToTriangleIds,
                          std::unordered_map<size_t, size_t>& triangleToSegmentMap) {
     if(!mPolyhedronData.isSdfComputed) {
+        throw std::runtime_error("Cannot calculate the segmentation - SDF values not computed.");
         return 0;
     }
     bool created;
     PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, std::size_t> segment_property_map;
     boost::tie(segment_property_map, created) =
         mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, std::size_t>("f:sid");
+
     assert(created);
 
-    const std::size_t numberOfSegments =
-        CGAL::segmentation_from_sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map,
-                                           segment_property_map, numberOfClusters, smoothingLambda);
+    if(created) {
+        std::size_t numberOfSegments = std::numeric_limits<size_t>::min();
+        try {
+            numberOfSegments =
+                CGAL::segmentation_from_sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map,
+                                                   segment_property_map, numberOfClusters, smoothingLambda);
+        } catch(...) {
+            throw std::runtime_error("Computation of the segmentation failed.");
+        }
 
-    if(numberOfSegments > PEPR3D_MAX_PALETTE_COLORS) {
+        if(numberOfSegments > PEPR3D_MAX_PALETTE_COLORS) {
+            mPolyhedronData.mMesh.remove_property_map(segment_property_map);
+            return 0;
+        }
+
+        for(size_t seg = 0; seg < numberOfSegments; ++seg) {
+            segmentToTriangleIds.insert({seg, {}});
+        }
+
+        // Assign the colors to the triangles
+        for(const auto& face : mPolyhedronData.mFaceDescs) {
+            const size_t id = mPolyhedronData.mIdMap[face];
+            const size_t color = segment_property_map[face];
+            assert(id < mTriangles.size());
+            assert(color < numberOfSegments);
+            triangleToSegmentMap.insert({id, color});
+            segmentToTriangleIds[color].push_back(id);
+        }
+
+        CI_LOG_I("Segmentation finished. Number of segments: " + std::to_string(numberOfSegments));
+
+        // End, clean up
         mPolyhedronData.mMesh.remove_property_map(segment_property_map);
-        return 0;
+
+        return numberOfSegments;
+    } else {
+        throw std::runtime_error("Computation of the segmentation failed.");
     }
-
-    for(size_t seg = 0; seg < numberOfSegments; ++seg) {
-        segmentToTriangleIds.insert({seg, {}});
-    }
-
-    // Assign the colors to the triangles
-    for(const auto& face : mPolyhedronData.mFaceDescs) {
-        const size_t id = mPolyhedronData.mIdMap[face];
-        const size_t color = segment_property_map[face];
-        assert(id < mTriangles.size());
-        assert(color < numberOfSegments);
-        triangleToSegmentMap.insert({id, color});
-        segmentToTriangleIds[color].push_back(id);
-    }
-
-    CI_LOG_I("Segmentation finished. Number of segments: " + std::to_string(numberOfSegments));
-
-    // End, clean up
-    mPolyhedronData.mMesh.remove_property_map(segment_property_map);
-
-    return numberOfSegments;
 }
 
 }  // namespace pepr3d
