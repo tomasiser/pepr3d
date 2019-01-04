@@ -100,7 +100,17 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
         return result;
     };
 
-    std::vector<size_t> trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+    std::vector<size_t> trianglesToPaint;
+    try {
+        trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+    } catch(std::exception &e) {
+        const std::string errorCaption = "Error: Failed to bucket paint";
+        const std::string errorDescription =
+            "An internal error occured while bucket painting. If the problem persists, try re-loading the mesh.\n\n"
+            "Please report this bug to the developers. The full description of the problem is:\n";
+        mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+        return;
+    }
 
     if(trianglesToPaint.empty()) {
         return;
