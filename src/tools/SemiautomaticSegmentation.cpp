@@ -19,7 +19,17 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!isSdfComputed) {
         sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            currentGeometry->computeSdfValues();
+            try {
+                currentGeometry->computeSdfValues();
+            } catch(std::exception& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "An internal error occured while computing the SDF values. If the problem persists, try re-loading "
+                    "the mesh.\n\n"
+                    "Please report this bug to the developers. The full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
+            }
         }
     } else {
         sidePane.drawColorPalette();
@@ -51,7 +61,19 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 mBucketSpreadLatest = mBucketSpread;
                 mHardEdgesLatest = mHardEdges;
                 mRegionOverlapLatest = mRegionOverlap;
-                spreadColors();  // Recompute the new color spread
+
+                try {
+                    spreadColors();  // Recompute the new color spread
+                } catch(std::exception& e) {
+                    const std::string errorCaption = "Error: Failed to spread the colors";
+                    const std::string errorDescription =
+                        "An internal error occured while spreading the colors. If the problem persists, try re-loading "
+                        "the mesh. The coloring will now be reset.\n\n"
+                        "Please report this bug to the developers. The full description of the problem is:\n";
+                    mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                    reset();
+                    return;
+                }
             }
 
             if(sidePane.drawButton("Apply")) {
