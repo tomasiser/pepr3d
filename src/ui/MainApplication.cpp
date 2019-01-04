@@ -722,6 +722,13 @@ void MainApplication::saveProjectAs() {
         CI_LOG_I("Saving project into " + finalPath);
         {
             std::ofstream os(finalPath, std::ios::binary);
+            if(!os.is_open()) {
+                const std::string errorCaption = "Error: Failed to open the file";
+                const std::string errorDescription =
+                    "The file you selected to save into could not be opened. Your project was NOT saved.\n";
+                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "OK"));
+                return;
+            }
             cereal::BinaryOutputArchive saveArchive(os);
             saveArchive(mGeometry);
         }
@@ -745,6 +752,13 @@ void MainApplication::saveProject() {
     CI_LOG_I("Saving project into " + finalPath);
     {
         std::ofstream os(finalPath, std::ios::binary);
+        if(!os.is_open()) {
+            const std::string errorCaption = "Error: Failed to open the file";
+            const std::string errorDescription =
+                "The file you selected to save into could not be opened. Your project was NOT saved.\n";
+            pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "OK"));
+            return;
+        }
         cereal::BinaryOutputArchive saveArchive(os);
         saveArchive(mGeometry);
     }
