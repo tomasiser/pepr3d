@@ -301,17 +301,18 @@ void Geometry::computeSdf() {
     boost::tie(mPolyhedronData.sdf_property_map, created) =
         mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, double>("f:sdf");
     assert(created);
+
     if(created) {
         try {
             CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true);
         } catch(...) {
-            throw std::runtime_error("Computation of the SDF values failed.");
+            throw std::runtime_error("Computation of the SDF values failed internally in CGAL.");
         }
         mPolyhedronData.isSdfComputed = true;
         CI_LOG_I("SDF values computed.");
     } else {
         mPolyhedronData.isSdfComputed = false;
-        throw std::runtime_error("Computation of the SDF values failed.");
+        throw std::runtime_error("Computation of the SDF values failed, a new property map could not be tied");
     }
 }
 
@@ -336,7 +337,7 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
                 CGAL::segmentation_from_sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map,
                                                    segment_property_map, numberOfClusters, smoothingLambda);
         } catch(...) {
-            throw std::runtime_error("Computation of the segmentation failed.");
+            throw std::runtime_error("Computation of the segmentation failed internally in CGAL.");
         }
 
         if(numberOfSegments > PEPR3D_MAX_PALETTE_COLORS) {
@@ -365,7 +366,7 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
 
         return numberOfSegments;
     } else {
-        throw std::runtime_error("Computation of the segmentation failed.");
+        throw std::runtime_error("Computation of the segmentation failed, a new property map could not be tied.");
     }
 }
 
