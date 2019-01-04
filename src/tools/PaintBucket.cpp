@@ -6,7 +6,7 @@ namespace pepr3d {
 
 void PaintBucket::drawToSidePane(SidePane &sidePane) {
     if(!mGeometryCorrect) {
-        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        sidePane.drawText("Polyhedron not built, since the geometry was damaged. Tool disabled.");
         return;
     }
 

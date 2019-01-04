@@ -5,7 +5,7 @@ namespace pepr3d {
 
 void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!mGeometryCorrect) {
-        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        sidePane.drawText("Polyhedron not built, since the geometry was damaged. Tool disabled.");
         return;
     }
 
@@ -17,16 +17,17 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
     const bool isSdfComputed = currentGeometry->isSdfComputed();
     if(!isSdfComputed) {
-        sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
+        sidePane.drawText("Warning: This computation may take a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
             currentGeometry->computeSdfValues();
         }
+        sidePane.drawSeparator();
     } else {
         sidePane.drawColorPalette();
         sidePane.drawSeparator();
 
         if(mStartingTriangles.empty()) {
-            sidePane.drawText("Draw with several colors to\nenable segmentation.");
+            sidePane.drawText("Draw with several colors to enable segmentation.");
         } else {
             sidePane.drawFloatDragger("Spread", mBucketSpread, .01f, 0.0f, 1.f, "%.02f", 70.f);
 
