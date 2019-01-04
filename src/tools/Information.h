@@ -18,5 +18,7 @@ class Information : public Tool {
     virtual std::string getIcon() const override {
         return ICON_MD_INFO_OUTLINE;
     }
+
+    virtual void drawToSidePane(SidePane& sidePane) override;
 };
 }  // namespace pepr3d
