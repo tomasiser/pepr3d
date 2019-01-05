@@ -315,9 +315,9 @@ std::vector<size_t> Geometry::bucketSpread(const StoppingCondition& stopFunctor,
         try {
             // Manage neighbours and grow the queue
             addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
-        } catch(CGAL::Assertion_exception* excp) {
-            CI_LOG_E("Exception caught. Returning immediately. " + excp->expression() + " " + excp->message());
-            return {};
+        } catch(CGAL::Assertion_exception& excp) {
+            CI_LOG_E("Exception caught. Returning immediately. " + excp.expression() + " " + excp.message());
+            throw std::runtime_error("Bucket spread failed inside the CGAL library.");
         }
 
         // Add the triangle to the list

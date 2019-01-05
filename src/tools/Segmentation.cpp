@@ -15,7 +15,17 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
     if(!isSdfComputed) {
         sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            mApplication.getCurrentGeometry()->computeSdfValues();
+            try {
+                mApplication.getCurrentGeometry()->computeSdfValues();
+            } catch(std::exception& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "An internal error occured while computing the SDF values. If the problem persists, try re-loading "
+                    "the mesh.\n\n"
+                    "Please report this bug to the developers. The full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
+            }
         }
     } else {
         if(sidePane.drawButton("Segment!")) {
@@ -184,9 +194,18 @@ void Segmentation::computeSegmentation() {
     assert(2 <= mNumberOfClusters && mNumberOfClusters <= mApplication.getCurrentGeometry()->getTriangleCount() &&
            mNumberOfClusters <= 15);
 
-    mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(mNumberOfClusters, mSmoothingLambda,
-                                                                        mSegmentToTriangleIds, mTriangleToSegmentMap);
-
+    try {
+        mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(
+            mNumberOfClusters, mSmoothingLambda, mSegmentToTriangleIds, mTriangleToSegmentMap);
+    } catch(std::exception& e) {
+        const std::string errorCaption = "Error: Failed to compute the segmentation";
+        const std::string errorDescription =
+            "An internal error occured while computing the the segmentation. If the problem persists, try re-loading "
+            "the mesh.\n\n"
+            "Please report this bug to the developers. The full description of the problem is:\n";
+        mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+        return;
+    }
     if(mNumberOfSegments > 0) {
         mPickState = true;
 
