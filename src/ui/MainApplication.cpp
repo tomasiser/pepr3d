@@ -281,7 +281,12 @@ void MainApplication::openFile(const std::string& path) {
             mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
         }
         auto asyncCalculation = [onLoadingComplete, path, this]() {
-            mGeometryInProgress->recomputeFromData(mThreadPool);
+            try {
+                mGeometryInProgress->recomputeFromData(mThreadPool);
+            } catch(const std::exception& e) {
+                // ignore the exception as we will detect the loading failed in the onLoadingComplete
+                CI_LOG_E("exception occured while loading geometry: " << e.what());
+            }
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
             dispatchAsync(onLoadingComplete);
@@ -293,7 +298,12 @@ void MainApplication::openFile(const std::string& path) {
         // Queue the loading of the new geometry
         auto importNewModel = [onLoadingComplete, path, this]() {
             // Load the geometry
-            mGeometryInProgress->loadNewGeometry(path, mThreadPool);
+            try {
+                mGeometryInProgress->loadNewGeometry(path, mThreadPool);
+            } catch(const std::exception& e) {
+                // ignore the exception as we will detect the loading failed in the onLoadingComplete
+                CI_LOG_E("exception occured while loading geometry: " << e.what());
+            }
 
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
