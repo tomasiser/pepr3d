@@ -83,7 +83,9 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>(*this));
     mTools.emplace_back(make_unique<Information>());
+#if !defined(NDEBUG)
     mTools.emplace_back(make_unique<LiveDebug>(*this));
+#endif
     mCurrentToolIterator = mTools.begin();
 
     setupFonts();
