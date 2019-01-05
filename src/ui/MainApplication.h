@@ -12,6 +12,7 @@
 
 #include "ThreadPool.h"
 
+#include "AssetNotFoundException.h"
 #include "Dialog.h"
 #include "FontStorage.h"
 #include "Hotkeys.h"
@@ -150,6 +151,26 @@ class MainApplication : public App {
 
     void saveProject();
     void saveProjectAs();
+
+    ci::fs::path getRequiredAssetPath(const ci::fs::path& relativePath) {
+        ci::fs::path path = getAssetPath(relativePath);
+        if(path.empty()) {
+            std::string message;
+            message += "Pepr3D could not find the following file:\n\n";
+            message += (ci::fs::path("assets") / relativePath).string();
+            message += "\n\nThis file is necessary and since it was not found, Pepr3D has to be terminated. ";
+            message += "Downloading Pepr3D again or reinstalling it should solve this problem.";
+            pushDialog(Dialog(DialogType::FatalError, "Could not find a required asset", message, "Exit Pepr3D"));
+            throw AssetNotFoundException(
+                std::string("Could not find required asset ").append(relativePath.string()).c_str());
+        }
+        return path;
+    }
+
+    ci::DataSourceRef loadRequiredAsset(const ci::fs::path& relativePath) {
+        getRequiredAssetPath(relativePath);
+        return loadAsset(relativePath);
+    }
 
    private:
     void setupFonts();
