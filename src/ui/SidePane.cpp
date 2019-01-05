@@ -71,7 +71,7 @@ void SidePane::resize() {
 }
 
 void SidePane::drawText(std::string text) {
-    ImGui::Text(text.c_str());
+    ImGui::TextWrapped(text.c_str());
 }
 
 bool SidePane::drawButton(std::string label) {

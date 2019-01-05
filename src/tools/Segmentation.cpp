@@ -8,12 +8,12 @@ namespace pepr3d {
 
 void Segmentation::drawToSidePane(SidePane& sidePane) {
     if(!mGeometryCorrect) {
-        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        sidePane.drawText("Polyhedron not built, since the geometry was damaged. Tool disabled.");
         return;
     }
     const bool isSdfComputed = mApplication.getCurrentGeometry()->isSdfComputed();
     if(!isSdfComputed) {
-        sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
+        sidePane.drawText("Warning: This computation may take a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
             try {
                 mApplication.getCurrentGeometry()->computeSdfValues();
@@ -40,7 +40,7 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
     ColorManager& colorManager = mApplication.getCurrentGeometry()->getColorManager();
     if(mPickState) {
         sidePane.drawText("Segmented into " + std::to_string(mNumberOfSegments) +
-                          " segments.\nAssign a color from the palette\nto each segment.");
+                          " segments. Assign a color from the palette to each segment.");
 
         sidePane.drawColorPalette();
 
