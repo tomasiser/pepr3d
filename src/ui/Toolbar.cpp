@@ -100,7 +100,6 @@ void Toolbar::drawFileDropDown() {
         if(ImGui::BeginPopup(filePopupId)) {
             ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.5f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::ivec2(0, 0));
-            ImGui::PushFont(mApplication.getFontStorage().getSmallFont());
             if(ImGui::Button("Open", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
                 mApplication.showImportDialog(mApplication.supportedOpenExtensions);
@@ -124,7 +123,6 @@ void Toolbar::drawFileDropDown() {
             if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
                 mApplication.quit();
             }
-            ImGui::PopFont();
             ImGui::PopStyleVar(2);
             ImGui::EndPopup();
         }
