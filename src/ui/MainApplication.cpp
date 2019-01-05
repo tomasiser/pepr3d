@@ -95,17 +95,17 @@ void MainApplication::setup() {
 }
 
 void MainApplication::setupLogging() {
-    ci::fs::path fatalLogPath = ci::fs::current_path() / "pepr3d.fatal.log";
-    if(ci::fs::exists(fatalLogPath)) {
-        ci::fs::path logBackupPath = ci::fs::current_path() / "pepr3d.fatal.0.log";
+    ci::fs::path crashDetectPath = ci::fs::current_path() / "pepr3d.crashed";
+    if(ci::fs::exists(crashDetectPath)) {
+        ci::fs::path logBackupPath = ci::fs::current_path() / "pepr3d.crash.0.log";
         size_t logBackupId = 0;
         while(ci::fs::exists(logBackupPath)) {
             logBackupPath = ci::fs::current_path() /
-                            (std::string("pepr3d.fatal.").append(std::to_string(logBackupId)).append(".log"));
+                            (std::string("pepr3d.crash.").append(std::to_string(logBackupId)).append(".log"));
             ++logBackupId;
         }
         ci::fs::copy_file(ci::fs::current_path() / "pepr3d.log", logBackupPath);
-        ci::fs::remove(fatalLogPath);
+        ci::fs::remove(crashDetectPath);
 
         std::string message;
         message +=
@@ -120,7 +120,7 @@ void MainApplication::setupLogging() {
     }
 
     ci::log::makeLogger<ci::log::LoggerFile>("pepr3d.log", false);
-    ci::log::makeLogger<FatalLogger>("pepr3d.fatal.log", false);
+    ci::log::makeLogger<FatalLogger>("pepr3d.crashed", false);
 }
 
 void MainApplication::resize() {

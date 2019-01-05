@@ -13,7 +13,7 @@ class FatalLogger : public ci::log::LoggerFile {
             return;
         }
 
-        LoggerFile::write(meta, text);
+        LoggerFile::write(meta, "A fatal error has occured and Pepr3D will terminate.");
     }
 };
 
