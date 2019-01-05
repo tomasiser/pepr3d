@@ -12,6 +12,7 @@
 
 #include "ui/MainApplication.h"
 
+#include "FatalLogger.h"
 #include "IconsMaterialDesign.h"
 #include "LightTheme.h"
 
@@ -45,6 +46,8 @@ MainApplication::MainApplication()
       mThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
 
 void MainApplication::setup() {
+    setupLogging();
+
     setWindowSize(1024, 614);
     getWindow()->setTitle("Untitled - Pepr3D");
     setupIcon();
@@ -98,6 +101,35 @@ void MainApplication::setup() {
     } catch(const AssetNotFoundException&) {
         // do nothing, a Fatal Error dialog has already been created
     }
+}
+
+void MainApplication::setupLogging() {
+    ci::fs::path crashDetectPath = ci::fs::current_path() / "pepr3d.crashed";
+    if(ci::fs::exists(crashDetectPath)) {
+        ci::fs::path logBackupPath = ci::fs::current_path() / "pepr3d.crash.0.log";
+        size_t logBackupId = 0;
+        while(ci::fs::exists(logBackupPath)) {
+            logBackupPath = ci::fs::current_path() /
+                            (std::string("pepr3d.crash.").append(std::to_string(logBackupId)).append(".log"));
+            ++logBackupId;
+        }
+        ci::fs::copy_file(ci::fs::current_path() / "pepr3d.log", logBackupPath);
+        ci::fs::remove(crashDetectPath);
+
+        std::string message;
+        message +=
+            "The last time you used Pepr3D, it terminated because of a fatal error. Detailed information about the "
+            "problem may be found in the appropriate log file that we saved for you.\n\n";
+        message += "The related log file is located in the following place:\n\n";
+        message += logBackupPath.string();
+        message +=
+            "\n\nIf you wish to report this problem to the developers, please attach the mentioned log file together "
+            "with your report.";
+        pushDialog(Dialog(DialogType::Information, "Pepr3D previously terminated with a fatal error", message));
+    }
+
+    ci::log::makeLogger<ci::log::LoggerFile>("pepr3d.log", false);
+    ci::log::makeLogger<FatalLogger>("pepr3d.crashed", false);
 }
 
 void MainApplication::resize() {

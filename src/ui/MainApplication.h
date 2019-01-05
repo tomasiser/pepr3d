@@ -1,5 +1,9 @@
 #pragma once
 
+//#if defined(NDEBUG)
+//#define CI_MIN_LOG_LEVEL 3 // warnings
+//#endif
+
 #include <algorithm>
 #include <queue>
 
@@ -49,7 +53,7 @@ class MainApplication : public App {
 
     static void prepareSettings(Settings* settings) {
         assert(settings != nullptr);
-#if defined(CINDER_MSW_DESKTOP)
+#if defined(CINDER_MSW_DESKTOP) && !defined(NDEBUG)
         settings->setConsoleWindowEnabled(true);
 #endif
     }
@@ -147,6 +151,14 @@ class MainApplication : public App {
 
     void pushDialog(const pepr3d::Dialog& dialog) {
         mDialogQueue.push(dialog);
+
+        // log dialog details via Cinder:
+        switch(dialog.getType()) {
+        case DialogType::Information: CI_LOG_I(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        case DialogType::Warning: CI_LOG_W(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        case DialogType::Error: CI_LOG_E(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        case DialogType::FatalError: CI_LOG_F(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        }
     }
 
     void saveProject();
@@ -173,6 +185,7 @@ class MainApplication : public App {
     }
 
    private:
+    void setupLogging();
     void setupFonts();
     void setupIcon();
     void drawExportDialog();
