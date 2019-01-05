@@ -1,12 +1,13 @@
 #pragma once
 
 #include <exception>
+#include <stdexcept>
 
 namespace pepr3d {
 
-class AssetNotFoundException : public std::exception {
+class AssetNotFoundException : public std::runtime_error {
    public:
-    using std::exception::exception;
+    using std::runtime_error::runtime_error;
 };
 
 }  // namespace pepr3d
