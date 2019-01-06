@@ -37,12 +37,20 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 return;
             }
         }
+        sidePane.drawTooltipOnHover("Compute the shape diameter function of the model to enable the segmentation.");
     } else {
         if(sidePane.drawButton("Segment!")) {
             computeSegmentation();
         }
+        sidePane.drawTooltipOnHover("Start segmentation on the model.");
         sidePane.drawIntDragger("Robustness [2,15]", mNumberOfClusters, 0.25f, 2, 15, "%.0f", 40.0f);
+        sidePane.drawTooltipOnHover(
+            "Higher values increase the computation time and might result in better region grouping. The default value "
+            "should be good for most use cases.");
         sidePane.drawFloatDragger("Edge tolerance [0,1]", mSmoothingLambda, .01f, 0.01f, 1.f, "%.02f", 70.f);
+        sidePane.drawTooltipOnHover(
+            "The higher the number, the more the segmentation will tolerate sharp edges and thus make less segments. "
+            "If you have more segments than you wanted, increase this value. If you have less, decrease.");
     }
 
     sidePane.drawSeparator();
@@ -82,6 +90,8 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 const glm::vec4 newColor = colorManager.getColor(colorManager.getActiveColorIndex());
                 setSegmentColor(toPaint.first, newColor);
             }
+            sidePane.drawTooltipOnHover(
+                "Click to color this segment with the currently active color from the palette.");
         }
 
         if(sidePane.drawButton("Accept")) {
@@ -110,9 +120,11 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 CI_LOG_W("Please assign all segments to a color from the palette first.");
             }
         }
+        sidePane.drawTooltipOnHover("Apply the results to the model.");
         if(sidePane.drawButton("Cancel")) {
             cancel();
         }
+        sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
     }
 }
 

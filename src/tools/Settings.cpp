@@ -17,6 +17,7 @@ void Settings::drawUiSettings(SidePane& sidePane) {
         sidePane.setWidth(static_cast<float>(width));
         mApplication.resize();
     }
+    sidePane.drawTooltipOnHover("Adjust the width of the side pane.");
 }
 
 }  // namespace pepr3d

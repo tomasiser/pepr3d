@@ -16,6 +16,10 @@ class SemiautomaticSegmentation : public Tool {
         return "Manual Segmentation";
     }
 
+    virtual std::string getDescription() const override {
+        return "Manually expand specified regions to create a segmentation of the model.";
+    }
+
     virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
         return hotkeys.findHotkey(HotkeyAction::SelectSemiautomaticSegmentation);
     }
