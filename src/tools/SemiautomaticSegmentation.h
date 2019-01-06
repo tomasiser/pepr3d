@@ -54,6 +54,7 @@ class SemiautomaticSegmentation : public Tool {
     bool mNormalStop = false;
 
     bool mDragging = false;
+    bool const* mSdfEnabled = nullptr;
 
     enum Criteria { NORMAL = 1, SDF = 2 };
 
