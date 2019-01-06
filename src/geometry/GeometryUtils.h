@@ -29,6 +29,11 @@ class GeometryUtils {
     };
 
    public:
+    /// Convert CGAL point to GLM point
+    static glm::vec3 toGlm(const DataTriangle::Point& point) {
+        return glm::vec3(point.x(), point.y(), point.z());
+    }
+
     /// Find squared distance between a line segment and a point in 3D space
     static float segmentPointDistanceSquared(const glm::vec3& start, const glm::vec3& end, const glm::vec3& point);
 

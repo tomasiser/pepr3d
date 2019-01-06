@@ -71,6 +71,17 @@ class TriangleDetail {
         return mOriginal;
     }
 
+    /// Set color of a detail triangle
+    void setColor(size_t detailIdx, size_t color)
+    {
+        assert(detailIdx < mTriangles.size());
+        if(mTriangles[detailIdx].getColor!=color)
+        {
+            mTriangles[detailIdx].setColor(color);
+            colorChanged = true;
+        }
+    }
+
    private:
     std::vector<DataTriangle> mTriangles;
 
@@ -85,6 +96,9 @@ class TriangleDetail {
     Polygon mBounds;
 
     const PeprPlane mOriginalPlane;
+
+    /// Did color of any detail triangle change since last triangulation?
+    bool colorChanged = false;
 
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
 
@@ -132,7 +146,8 @@ class TriangleDetail {
     }
 
     /// Generate one colored polygon set for each color inside the triangle
-    std::map<size_t, PolygonSet> gatherTrianglesIntoPolys();
+    /// This is a slow operation
+    void updatePolysFromTriangles();
 
     /// Add triangles from this polygon to our triangles
     void addTrianglesFromPolygon(const PolygonWithHoles& poly, size_t color);
@@ -160,4 +175,5 @@ class TriangleDetail {
         }
     };
 };
+
 }  // namespace pepr3d

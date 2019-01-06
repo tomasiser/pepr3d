@@ -1,12 +1,10 @@
 #pragma once
 
+#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Spherical_kernel_3.h>
-#include <cinder/Color.h>
-
-#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-#include <vector>
 #include <cereal/cereal.hpp>
+#include <glm/glm.hpp>
 
 namespace pepr3d {
 
@@ -65,46 +63,7 @@ class DataTriangle {
     }
 };
 
-using Iterator = std::vector<DataTriangle>::const_iterator;
-
-/// Provides the conversion facilities between the custom triangle DataTriangle and the CGAL
-/// Triangle_3 class. Taken from CGAL/examples/AABB_tree/custom_example.cpp, modified.
-struct DataTriangleAABBPrimitive {
-   public:
-    // this is the type of data that the queries returns
-    using Id = std::vector<DataTriangle>::const_iterator;
-
-    // CGAL types returned
-    using Point = pepr3d::DataTriangle::K::Point_3;     // CGAL 3D point type
-    using Datum = pepr3d::DataTriangle::K::Triangle_3;  // CGAL 3D triangle type
-    using Datum_reference = const pepr3d::DataTriangle::K::Triangle_3&;
-
-   private:
-    Id tri;  // this is what the AABB tree stores internally
-
-   public:
-    DataTriangleAABBPrimitive() = default;  // default constructor needed
-
-    // the following constructor is the one that receives the iterators from the
-    // iterator range given as input to the AABB_tree
-    explicit DataTriangleAABBPrimitive(Iterator it) : tri(std::move(it)) {}
-
-    const Id& id() const {
-        return tri;
-    }
-
-    // on the fly conversion from the internal data to the CGAL types
-    Datum_reference datum() const {
-        return tri->getTri();
-    }
-
-    // returns a reference point which must be on the primitive
-    Point reference_point() const {
-        return tri->getTri().vertex(0);
-    }
-};
-
-}  // namespace pepr3d
+}
 
 namespace CGAL {
 template <typename Archive>

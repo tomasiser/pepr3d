@@ -53,6 +53,10 @@ class MainApplication : public App {
 #endif
     }
 
+    static ::ThreadPool& getThreadPool() {
+        return sThreadPool;
+    }
+
     Toolbar& getToolbar() {
         return mToolbar;
     }
@@ -195,7 +199,7 @@ class MainApplication : public App {
     std::size_t mLastVersionSaved = std::numeric_limits<std::size_t>::max();
     bool mIsGeometryDirty = false;
 
-    ::ThreadPool mThreadPool;
+    static ::ThreadPool sThreadPool;
 };
 
 }  // namespace pepr3d

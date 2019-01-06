@@ -13,6 +13,7 @@
 #include <deque>
 #include <list>
 #include <optional>
+#include <glm/gtc/constants.inl>
 
 // Loss of precision between conversions may move verticies? Needs testing
 
@@ -90,7 +91,12 @@ void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
     dbg.addPoly(mBounds, "#00FF00");
     dbg.exportToFile();*/
 
-    // std::map<size_t, PolygonSet> coloredPolys = gatherTrianglesIntoPolys();
+
+    if(colorChanged)
+    {
+       updatePolysFromTriangles();
+    }
+
     bool joined = false;
     for(auto& it : mColoredPolys) {
         // Join the new shape with PolygonSet of the same color
@@ -199,16 +205,13 @@ bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
 
     return !verticesToRemove.empty();
 }
-
-std::map<size_t, TriangleDetail::PolygonSet> TriangleDetail::gatherTrianglesIntoPolys() {
-    std::map<size_t, PolygonSet> result;
+void TriangleDetail::updatePolysFromTriangles() {
+    mColoredPolys.clear();
 
     for(const DataTriangle& tri : mTriangles) {
         assert(tri.getTri().squared_area() > 0);
-        result[tri.getColor()].join(polygonFromTriangle(tri.getTri()));
+        mColoredPolys[tri.getColor()].join(polygonFromTriangle(tri.getTri()));
     }
-
-    return result;
 }
 
 void TriangleDetail::markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,

@@ -36,14 +36,15 @@
 
 namespace pepr3d {
 
+::ThreadPool MainApplication::sThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1);
+
 // At least 2 threads in thread pool must be created, or importing will never finish!
 // std::thread::hardware_concurrency() may return 0
 MainApplication::MainApplication()
     : mFontStorage{},
       mToolbar(*this),
       mSidePane(*this),
-      mModelView(*this),
-      mThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1) {}
+      mModelView(*this) {}
 
 void MainApplication::setup() {
     setWindowSize(950, 570);
@@ -71,7 +72,7 @@ void MainApplication::setup() {
     }
 
     mGeometry = std::make_shared<Geometry>();
-    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), mThreadPool);
+    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), sThreadPool);
 
     mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
 
@@ -281,25 +282,25 @@ void MainApplication::openFile(const std::string& path) {
             mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
         }
         auto asyncCalculation = [onLoadingComplete, path, this]() {
-            mGeometryInProgress->recomputeFromData(mThreadPool);
+            mGeometryInProgress->recomputeFromData(sThreadPool);
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
             dispatchAsync(onLoadingComplete);
         };
-        mThreadPool.enqueue(asyncCalculation);
+        sThreadPool.enqueue(asyncCalculation);
     } else {
         CI_LOG_I("Importing a new model from " + path);
 
         // Queue the loading of the new geometry
         auto importNewModel = [onLoadingComplete, path, this]() {
             // Load the geometry
-            mGeometryInProgress->loadNewGeometry(path, mThreadPool);
+            mGeometryInProgress->loadNewGeometry(path, sThreadPool);
 
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
             dispatchAsync(onLoadingComplete);
         };
-        mThreadPool.enqueue(importNewModel);
+        sThreadPool.enqueue(importNewModel);
     }
 }
 
@@ -309,7 +310,7 @@ void MainApplication::saveFile(const std::string& filePath, const std::string& f
     }
 
     mProgressIndicator.setGeometryInProgress(mGeometry);
-    mThreadPool.enqueue([filePath, fileName, fileType, this]() {
+    sThreadPool.enqueue([filePath, fileName, fileType, this]() {
         mGeometry->exportGeometry(filePath, fileName, fileType);
         dispatchAsync([this]() { mProgressIndicator.setGeometryInProgress(nullptr); });
     });

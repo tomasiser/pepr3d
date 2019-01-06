@@ -1,12 +1,16 @@
 #include "geometry/Geometry.h"
 #include "GeometryUtils.h"
 #include "tools/Brush.h"
+#include "ui/MainApplication.h"
 
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Sphere_3.h>
 #include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Spherical_kernel_intersections.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <functional>
 #include <set>
+#include <unordered_map>
 
 namespace pepr3d {
 
@@ -31,13 +35,18 @@ void Geometry::loadState(const GeometryState& state) {
     mOgl.isDirty = true;
 
     // Tree needs to be rebuilt to match loaded triangles
-    mTree->rebuild(mTriangles.begin(), mTriangles.end());
+    buildTree();
     assert(mTree->size() == mTriangles.size());
+
+    invalidateTemporaryDetailedData();
+
+    buildDetailedTree();
 }
 
 /* -------------------- Mesh loading -------------------- */
 
-void Geometry::recomputeFromData(::ThreadPool& threadPool) {
+void Geometry::recomputeFromData() {
+    ::ThreadPool& threadPool = MainApplication::getThreadPool();
     // We already loaded the model
     assert(mProgress->importRenderPercentage == 1.0f);
     assert(mProgress->importComputePercentage == 1.0f);
@@ -53,7 +62,7 @@ void Geometry::recomputeFromData(::ThreadPool& threadPool) {
     auto buildTreeFuture = threadPool.enqueue([this]() {
         mProgress->aabbTreePercentage = 0.0f;
 
-        mTree->rebuild(mTriangles.cbegin(), mTriangles.cend());
+        buildTree();
         assert(mTree->size() == mTriangles.size());
 
         /// Get the new bounding box
@@ -87,12 +96,22 @@ void Geometry::recomputeFromData(::ThreadPool& threadPool) {
     buildPolyhedronFuture.get();
 }
 
-void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& threadPool) {
+void Geometry::buildTree() {
+    mTree = std::make_unique<Tree>();
+
+    for(size_t triIdx = 0; triIdx < mTriangles.size(); triIdx++) {
+        mTree->insert(DataTriangleAABBPrimitive(this, DetailedTriangleId(triIdx)));
+    }
+
+    mTree->build();
+}
+
+void Geometry::loadNewGeometry(const std::string& fileName) {
     // Reset progress
     mProgress->resetLoad();
 
     /// Import the object via Assimp
-    ModelImporter modelImporter(fileName, mProgress.get(), threadPool);  // only first mesh [0]
+    ModelImporter modelImporter(fileName, mProgress.get(), MainApplication::getThreadPool());  // only first mesh [0]
 
     if(modelImporter.isModelLoaded()) {
         /// Fill triangle data to compute AABB
@@ -109,7 +128,7 @@ void Geometry::loadNewGeometry(const std::string& fileName, ::ThreadPool& thread
         assert(!mColorManager.empty());
 
         /// Do the computations in parallel
-        recomputeFromData(threadPool);
+        recomputeFromData();
     } else {
         CI_LOG_E("Model not loaded --> write out message for user");
     }
@@ -273,14 +292,12 @@ std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray) const {
     Ray_intersection intersection = mTree->first_intersection(rayQuery);
     if(intersection) {
         // The intersected triangle
-        if(boost::get<DataTriangleAABBPrimitive::Id>(intersection->second) != mTriangles.end()) {
-            const DataTriangleAABBPrimitive::Id intersectedTriIter =
-                boost::get<DataTriangleAABBPrimitive::Id>(intersection->second);
-            assert(intersectedTriIter != mTriangles.end());
-            const size_t retValue = intersectedTriIter - mTriangles.begin();
-            assert(retValue < mTriangles.size());
-            return retValue;  // convert the iterator into an index
-        }
+        const DetailedTriangleId triangleId = boost::get<DataTriangleAABBPrimitive::Id>(intersection->second).second;
+
+        assert(triangleId.getBaseId() < mTriangles.size());
+        assert(!triangleId.getDetailId());  // We are intersecting base mesh, there should be no detail
+
+        return triangleId.getBaseId();
     }
 
     /// No intersection detected.
@@ -301,6 +318,42 @@ std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray, glm::vec3& out
     }
 
     return intersection;
+}
+
+std::optional<DetailedTriangleId> Geometry::intersectDetailedMesh(const ci::Ray& ray) const {
+    if(mTree->empty()) {
+        return {};
+    }
+
+    if(!mTreeDetailed || mTreeDetailed->empty()) {
+        return {};
+    }
+
+    const glm::vec3 source = ray.getOrigin();
+    const glm::vec3 direction = ray.getDirection();
+
+    const pepr3d::Geometry::Ray rayQuery(pepr3d::DataTriangle::Point(source.x, source.y, source.z),
+                                         pepr3d::Geometry::Direction(direction.x, direction.y, direction.z));
+
+    // Find the two intersection parameters - place and triangle
+    Ray_intersection intersection = mTreeDetailed->first_intersection(rayQuery);
+    if(intersection) {
+        // The intersected triangle
+        const DetailedTriangleId triangleId = boost::get<DataTriangleAABBPrimitive::Id>(intersection->second).second;
+
+        assert(triangleId.getBaseId() < mTriangles.size());
+        assert(!triangleId.getDetailId() || isSimpleTriangle(triangleId.getBaseId()));
+
+        if(!isSimpleTriangle(triangleId.getBaseId())) {
+            assert(triangleId.getDetailId());
+            assert(triangleId.getDetailId() < getTriangleDetailCount(triangleId.getBaseId()));
+        }
+
+        return triangleId;
+    }
+
+    /// No intersection detected.
+    return {};
 }
 
 std::vector<size_t> Geometry::getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection,
@@ -419,21 +472,21 @@ TriangleDetail* Geometry::createTriangleDetail(size_t triangleIdx) {
 void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOrigin,
                                     const struct BrushSettings& settings) {
     using Point = DataTriangle::K::Point_3;
-    using Point2D = DataTriangle::K::Point_2;
     using Sphere = DataTriangle::K::Sphere_3;
-    using Plane = DataTriangle::K::Plane_3;
-    using Triangle = DataTriangle::Triangle;
-
-    const Triangle& tri = getTriangle(triangleIdx).getTri();
-    const Plane triPlane = tri.supporting_plane();
 
     const Sphere brushShape(Point(brushOrigin.x, brushOrigin.y, brushOrigin.z), settings.size * settings.size);
     getTriangleDetail(triangleIdx)->paintSphere(brushShape, settings.color);
+
+    // Chaning triangle detail invalidates detailed tree and mesh
+    invalidateTemporaryDetailedData();
 }
 
 void Geometry::removeTriangleDetail(const size_t triangleIndex) {
     mOgl.isDirty = true;
     mTriangleDetails.erase(triangleIndex);
+
+    // Chaning triangle detail invalidates detailed tree and mesh
+    invalidateTemporaryDetailedData();
 }
 
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {
@@ -457,6 +510,24 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
     /// Change it in the triangle soup
     assert(triangleIndex < mTriangles.size());
     mTriangles[triangleIndex].setColor(newColor);
+}
+
+void Geometry::setTriangleColor(const DetailedTriangleId triangleId, const size_t newColor) {
+    const size_t baseId = triangleId.getBaseId();
+    assert(baseId < mTriangles.size());
+
+    if(triangleId.getDetailId()) {
+        const size_t detailId = *triangleId.getDetailId();
+        assert(!isSimpleTriangle(baseId));
+        assert(detailId < getTriangleDetailCount(baseId));
+
+        TriangleDetail* detail = getTriangleDetail(baseId);
+        detail->setColor(detailId, newColor);
+
+    } else {
+        // No detail ID, do the baseID behavior
+        setTriangleColor(triangleId.getBaseId(), newColor);
+    }
 }
 
 void Geometry::buildPolyhedron() {
@@ -517,6 +588,103 @@ void Geometry::buildPolyhedron() {
              ", faces: " + std::to_string(mPolyhedronData.indices.size()));
     mPolyhedronData.valid = true;
     mProgress->polyhedronPercentage = 1.0f;
+}
+
+void Geometry::buildDetailedTree() {
+    mTreeDetailed = std::make_unique<Tree>();
+
+    for(size_t triangleIdx = 0; triangleIdx < mTriangles.size(); triangleIdx++) {
+        if(isSimpleTriangle(triangleIdx)) {
+            // Insert Original triangle
+            mTreeDetailed->insert(DataTriangleAABBPrimitive(this, DetailedTriangleId(triangleIdx)));
+        } else {
+            // Insert all detail triangles for this tri
+            const TriangleDetail* detail = getTriangleDetail(triangleIdx);
+            assert(detail);
+            const auto& detailTriangles = detail->getTriangles();
+            for(size_t detailIdx = 0; detailIdx < detailTriangles.size(); detailIdx++) {
+                mTreeDetailed->insert(DataTriangleAABBPrimitive(this, DetailedTriangleId(triangleIdx, detailIdx)));
+            }
+        }
+    }
+
+    mTreeDetailed->build();
+}
+
+void Geometry::buildDetailedMesh() {
+    mMeshDetailed = std::make_unique<PolyhedronData::Mesh>(mPolyhedronData.mMesh);
+
+    /**
+     *  Yes, we are about to hash floating point values.
+     *  These values come from CGAL exact kernel, so they should be bit-equal and safe to hash.
+     *  There is no betters way to get indices before this, as different color parts are stored in different polygons.
+     */
+    auto hashFunc = [](const glm::vec3& vec) {
+        return std::hash<float>{}(vec.x) ^ std::hash<float>{}(vec.y) ^ std::hash<float>{}(vec.z);
+    };
+
+    for(const auto& triDetailIt : mTriangleDetails) {
+        const size_t triangleId = triDetailIt.first;
+        const auto& detailTriangles = triDetailIt.second.getTriangles();
+        const DataTriangle& triangle = getTriangle(triangleId);
+        auto faceHalfedge = mMeshDetailed->halfedge(mPolyhedronData.mFaceDescs[triangleId]);
+
+        std::unordered_map<glm::vec3, PolyhedronData::vertex_descriptor, decltype(hashFunc)> ptToVertexDesc(
+            3 * detailTriangles.size(), hashFunc);
+
+        // Add original vertices of the triangle from rough mesh
+        for(int i = 0; i < 3; i++) {
+            auto vertexDesc0 = mMeshDetailed->vertex(mMeshDetailed->edge(faceHalfedge), 0);
+            auto vertexDesc1 = mMeshDetailed->vertex(mMeshDetailed->edge(faceHalfedge), 1);
+
+            glm::vec3 point0 = GeometryUtils::toGlm(mMeshDetailed->point(vertexDesc0));
+            glm::vec3 point1 = GeometryUtils::toGlm(mMeshDetailed->point(vertexDesc1));
+
+            ptToVertexDesc.insert(std::make_pair(point0, vertexDesc0));
+            ptToVertexDesc.insert(std::make_pair(point1, vertexDesc1));
+
+            faceHalfedge = mMeshDetailed->next(faceHalfedge);
+        }
+
+        // Remove old face
+        mMeshDetailed->edge(faceHalfedge);
+        CGAL::Euler::remove_face(faceHalfedge, *mMeshDetailed);
+
+        // Add detail triangles while combining common vertices
+        for(const DataTriangle& detail : detailTriangles) {
+            // Vertex descriptors of current detail triangle
+            std::array<PolyhedronData::vertex_descriptor, 3> vertDescriptors;
+
+            for(int i = 0; i < 3; i++) {
+                // Get iterator to vertex ID for current vertex
+                auto it = ptToVertexDesc.find(detail.getVertex(i));
+                if(it == ptToVertexDesc.end()) {
+                    auto vertexDesc = mMeshDetailed->add_vertex(detail.getTri().vertex(i));
+                    it = ptToVertexDesc.insert(std::make_pair(detail.getVertex(i), vertexDesc)).first;
+                }
+
+                vertDescriptors[i] = it->second;
+            }
+
+            mMeshDetailed->add_face(vertDescriptors[0], vertDescriptors[1], vertDescriptors[2]);
+        }
+    }
+}
+
+void Geometry::updateTemporaryDetailedData() {
+    ::ThreadPool& threadPool = MainApplication::getThreadPool();
+
+    /// Async build the data
+    auto buildDetailedMeshFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
+    auto buildDetailedTreeFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
+
+    buildDetailedMeshFuture.get();
+    buildDetailedTreeFuture.get();
+}
+
+void Geometry::invalidateTemporaryDetailedData() {
+    mTreeDetailed.reset();
+    mMeshDetailed.reset();
 }
 
 std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
