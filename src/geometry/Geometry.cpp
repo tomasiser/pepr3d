@@ -1,4 +1,5 @@
 #include "geometry/Geometry.h"
+#include "geometry/SdfValuesException.h"
 
 namespace pepr3d {
 
@@ -296,6 +297,7 @@ std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
 
 void Geometry::computeSdf() {
     mPolyhedronData.isSdfComputed = false;
+    mPolyhedronData.sdfValuesValid = true;
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
     bool created;
     boost::tie(mPolyhedronData.sdf_property_map, created) =
@@ -303,10 +305,19 @@ void Geometry::computeSdf() {
     assert(created);
 
     if(created) {
+        std::pair<double, double> minMaxSdf;
         try {
-            CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true);
+            minMaxSdf = CGAL::sdf_values(mPolyhedronData.mMesh, mPolyhedronData.sdf_property_map, 2.0 / 3.0 * CGAL_PI,
+                                         25, true);
         } catch(...) {
+            mPolyhedronData.sdfValuesValid = false;
             throw std::runtime_error("Computation of the SDF values failed internally in CGAL.");
+        }
+        if(minMaxSdf.first == minMaxSdf.second) {
+            mPolyhedronData.sdfValuesValid = false;
+            // This happens when the object is flat and thus has no volume
+            throw SdfValuesException("The SDF computation returned a non-valid result. The values were both equal to " +
+                                     std::to_string(minMaxSdf.first) + ".");
         }
         mPolyhedronData.isSdfComputed = true;
         CI_LOG_I("SDF values computed.");

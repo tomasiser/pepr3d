@@ -28,7 +28,10 @@ class Segmentation : public Tool {
     }
 
     virtual bool isEnabled() const override {
-        return mGeometryCorrect;
+        if(mSdfEnabled == nullptr) {
+            return mGeometryCorrect;
+        }
+        return mGeometryCorrect && *mSdfEnabled;
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
@@ -48,6 +51,7 @@ class Segmentation : public Tool {
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
     bool mGeometryCorrect = true;
+    const bool* mSdfEnabled = nullptr;
 
     std::vector<size_t> mNewColors;
     std::vector<glm::vec4> mSegmentationColors;

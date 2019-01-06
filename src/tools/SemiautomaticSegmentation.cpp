@@ -1,5 +1,6 @@
 #include "tools/SemiautomaticSegmentation.h"
 #include "commands/CmdPaintSingleColor.h"
+#include "geometry/SdfValuesException.h"
 
 namespace pepr3d {
 
@@ -21,6 +22,15 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
         if(sidePane.drawButton("Compute SDF")) {
             try {
                 currentGeometry->computeSdfValues();
+            } catch(SdfValuesException& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "The SDF values returned by the computation were not valid. This can happen when you use the "
+                    "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
+                    "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
+                    "cannot be segmented.\n\nThe full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
             } catch(std::exception& e) {
                 const std::string errorCaption = "Error: Failed to compute SDF";
                 const std::string errorDescription =
@@ -365,11 +375,17 @@ void SemiautomaticSegmentation::onToolDeselect(ModelView& modelView) {
 }
 
 void SemiautomaticSegmentation::onNewGeometryLoaded(ModelView& modelView) {
-    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
+    Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
+    if(currentGeometry == nullptr) {
+        return;
+    }
+    mGeometryCorrect = currentGeometry->polyhedronValid();
     if(!mGeometryCorrect) {
         return;
     }
     reset();
+    mSdfEnabled = currentGeometry->sdfValuesValid();
 }
 
 void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
@@ -431,7 +447,10 @@ void SemiautomaticSegmentation::onModelViewMouseMove(ModelView& modelView, ci::a
 }
 
 bool SemiautomaticSegmentation::isEnabled() const {
-    return mGeometryCorrect;
+    if(mSdfEnabled == nullptr) {
+        return mGeometryCorrect;
+    }
+    return mGeometryCorrect && *mSdfEnabled;
 }
 
 void SemiautomaticSegmentation::reset() {
@@ -446,6 +465,8 @@ void SemiautomaticSegmentation::reset() {
 
     mGeometryCorrect = true;
     mNormalStop = false;
+
+    mSdfEnabled = nullptr;
 
     mCriterionUsed = Criteria::SDF;
 

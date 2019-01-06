@@ -2,6 +2,7 @@
 #include <random>
 #include <vector>
 #include "commands/CmdPaintSingleColor.h"
+#include "geometry/SdfValuesException.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
@@ -17,6 +18,15 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
         if(sidePane.drawButton("Compute SDF")) {
             try {
                 mApplication.getCurrentGeometry()->computeSdfValues();
+            } catch(SdfValuesException& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "The SDF values returned by the computation were not valid. This can happen when you use the "
+                    "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
+                    "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
+                    "cannot be segmented.\n\nThe full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
             } catch(std::exception& e) {
                 const std::string errorCaption = "Error: Failed to compute SDF";
                 const std::string errorDescription =
@@ -171,6 +181,7 @@ void Segmentation::reset() {
 
     mNumberOfSegments = 0;
     mPickState = false;
+    mSdfEnabled = nullptr;
 
     mNewColors.clear();
     mSegmentationColors.clear();
@@ -258,12 +269,18 @@ void Segmentation::setSegmentColor(const size_t segmentId, const glm::vec4 newCo
 }
 
 void Segmentation::onNewGeometryLoaded(ModelView& modelView) {
-    mHoveredTriangleId = {};
-    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
+    Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
+    if(currentGeometry == nullptr) {
+        return;
+    }
+
+    mGeometryCorrect = currentGeometry->polyhedronValid();
     if(!mGeometryCorrect) {
         return;
     }
     CI_LOG_I("Model changed, segmentation reset");
     reset();
+    mSdfEnabled = currentGeometry->sdfValuesValid();
 }
 }  // namespace pepr3d

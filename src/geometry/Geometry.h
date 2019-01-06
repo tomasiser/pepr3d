@@ -90,6 +90,7 @@ class Geometry {
 
         bool isSdfComputed = false;
         bool valid = false;
+        bool sdfValuesValid = true;
 
         /// Map converting a face_descriptor into an ID, that corresponds to the mTriangles vector
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, size_t> mIdMap;
@@ -250,6 +251,10 @@ class Geometry {
     }
 
     void recomputeFromData(::ThreadPool& threadPool);
+
+    const bool* sdfValuesValid() const {
+        return &mPolyhedronData.sdfValuesValid;
+    }
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
