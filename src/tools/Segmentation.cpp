@@ -24,8 +24,7 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                     "The SDF values returned by the computation were not valid. This can happen when you use the "
                     "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
                     "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
-                    "cannot be segmented.\n\n"
-                    "Please report this bug to the developers. The full description of the problem is:\n";
+                    "cannot be segmented.\n\nThe full description of the problem is:\n";
                 mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
                 return;
             } catch(std::exception& e) {

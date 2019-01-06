@@ -252,7 +252,7 @@ class Geometry {
 
     void recomputeFromData(::ThreadPool& threadPool);
 
-    bool const* sdfValuesValid() const {
+    const bool* sdfValuesValid() const {
         return &mPolyhedronData.sdfValuesValid;
     }
 

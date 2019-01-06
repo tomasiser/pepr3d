@@ -51,7 +51,7 @@ class Segmentation : public Tool {
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
     bool mGeometryCorrect = true;
-    bool const* mSdfEnabled = nullptr;
+    const bool* mSdfEnabled = nullptr;
 
     std::vector<size_t> mNewColors;
     std::vector<glm::vec4> mSegmentationColors;
