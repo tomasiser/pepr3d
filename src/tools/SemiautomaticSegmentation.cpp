@@ -41,6 +41,7 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 return;
             }
         }
+        sidePane.drawTooltipOnHover("Compute the shape diameter function of the model to enable the segmentation.");
         sidePane.drawSeparator();
     } else {
         sidePane.drawColorPalette();
@@ -50,6 +51,8 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
             sidePane.drawText("Draw with several colors to enable segmentation.");
         } else {
             sidePane.drawFloatDragger("Spread", mBucketSpread, .01f, 0.0f, 1.f, "%.02f", 70.f);
+            sidePane.drawTooltipOnHover(
+                "The amount of growth each region will do. If your regions are small, increase this number.");
 
             // Normal stopping can be enabled by uncommenting this region.
             // Disabled for the time because it is wonky.
@@ -62,8 +65,12 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
             if(mCriterionUsed == Criteria::SDF) {
                 sidePane.drawCheckbox("Hard edges", mHardEdges);
+                sidePane.drawTooltipOnHover(
+                    "The growth will stop once meeting another color and will neither go under the color nor overwrite "
+                    "the color.");
                 if(!mHardEdges) {
                     sidePane.drawCheckbox("Region overlap", mRegionOverlap);
+                    sidePane.drawTooltipOnHover("The colors will overwrite each other on the borders.");
                 }
             }
 
@@ -99,10 +106,12 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 }
                 reset();
             }
+            sidePane.drawTooltipOnHover("Apply the results to the model.");
 
             if(sidePane.drawButton("Cancel")) {
                 reset();
             }
+            sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
         }
     }
 }

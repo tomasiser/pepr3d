@@ -18,6 +18,10 @@ class Settings : public Tool {
         return "Settings";
     }
 
+    virtual std::string getDescription() const override {
+        return "Configure the color palette and application.";
+    }
+
     virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
         return hotkeys.findHotkey(HotkeyAction::SelectSettings);
     }

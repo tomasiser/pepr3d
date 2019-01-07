@@ -51,9 +51,12 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
             if(ImGui::RadioButton("With starting triangle", mNormalCompare == NormalAngleCompare::ABSOLUTE)) {
                 mNormalCompare = NormalAngleCompare::ABSOLUTE;
             }
+            sidePane.drawTooltipOnHover("The angles are compared with respect to the initial triangle.");
             if(ImGui::RadioButton("Neighbouring triangles", mNormalCompare == NormalAngleCompare::NEIGHBOURS)) {
                 mNormalCompare = NormalAngleCompare::NEIGHBOURS;
             }
+            sidePane.drawTooltipOnHover(
+                "The angles are compared with respect to the actual neighbours of the individual triangles.");
         }
     }
     sidePane.drawSeparator();

@@ -19,6 +19,11 @@ class Segmentation : public Tool {
         return "Automatic Segmentation";
     }
 
+    virtual std::string getDescription() const override {
+        return "Automatically separate the model into regions based on the thickness of the model and color each "
+               "region.";
+    }
+
     virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
         return hotkeys.findHotkey(HotkeyAction::SelectSegmentation);
     }

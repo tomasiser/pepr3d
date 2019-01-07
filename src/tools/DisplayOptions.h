@@ -15,6 +15,10 @@ class DisplayOptions : public Tool {
         return "Display Options";
     }
 
+    virtual std::string getDescription() const override {
+        return "Adjust how the model is displayed.";
+    }
+
     virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
         return hotkeys.findHotkey(HotkeyAction::SelectDisplayOptions);
     }
