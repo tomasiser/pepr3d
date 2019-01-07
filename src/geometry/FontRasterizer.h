@@ -12,6 +12,8 @@
 #include "poly2tri/poly2tri.h"
 #pragma warning(pop)
 
+#include <exception>
+#include <memory>
 #include <string>
 
 #include <cinder/gl/gl.h>
@@ -31,6 +33,9 @@ class FontRasterizer {
 
     FT_Library mLibrary;
     FT_Face mFace;
+
+    FT_UInt mPrevCharIndex = 0, mCurCharIndex = 0;
+    FT_Pos mPrev_rsb_delta = 0;
 
    public:
     FontRasterizer(const std::string fontFile) : mFontFile(fontFile) {
@@ -56,11 +61,10 @@ class FontRasterizer {
     }
 
     std::vector<std::vector<FontRasterizer::Tri>> rasterizeText(const std::string textString, const size_t fontHeight,
-                                                                const size_t bezierSteps) const;
+                                                                const size_t bezierSteps);
 
    private:
-    double addOneCharacter(const FT_Face face, const char& ch, const size_t bezierSteps, double offset,
-                           std::vector<Tri>& outTriangles) const;
+    double addOneCharacter(const char ch, const size_t bezierSteps, double offset, std::vector<Tri>& outTriangles);
 
     void outlinePostprocess(std::vector<std::vector<Tri>>& trianglesPerLetter) const;
 

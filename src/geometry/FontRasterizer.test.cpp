@@ -149,19 +149,19 @@ TEST(FontRasterizer, rasterizeText_hardcodeCheck) {
     EXPECT_EQ(trisByLetters.size(), 1);          // one letters
     EXPECT_EQ(trisByLetters.front().size(), 6);  // six triangles
 
-    std::vector<std::array<std::array<float, 2>, 3>> a = {
+    std::vector<std::array<std::array<float, 2>, 3>> correctPoints = {
         {std::array<float, 2>({62.4063f, 0.f}), std::array<float, 2>({3.125f, 0.f}),
-         std::array<float, 2>({39.7188, 11.7656})},
-        {std::array<float, 2>({39.7188, 11.7656}), std::array<float, 2>({62.4063, 11.7656}),
-         std::array<float, 2>({62.4063, 0})},
-        {std::array<float, 2>({3.125, 0}), std::array<float, 2>({25.7969, 11.7656}),
-         std::array<float, 2>({39.7188, 11.7656})},
-        {std::array<float, 2>({3.125, 0}), std::array<float, 2>({3.125, 11.7656}),
-         std::array<float, 2>({25.7969, 11.7656})},
-        {std::array<float, 2>({25.7969, 11.7656}), std::array<float, 2>({39.7188, 78.4844}),
-         std::array<float, 2>({39.7188, 11.7656})},
-        {std::array<float, 2>({25.7969, 11.7656}), std::array<float, 2>({25.7969, 78.4844}),
-         std::array<float, 2>({39.7188, 78.4844})}};
+         std::array<float, 2>({39.7188f, 11.7656f})},
+        {std::array<float, 2>({39.7188f, 11.7656f}), std::array<float, 2>({62.4063f, 11.7656f}),
+         std::array<float, 2>({62.4063f, 0.f})},
+        {std::array<float, 2>({3.125f, 0.f}), std::array<float, 2>({25.7969f, 11.7656f}),
+         std::array<float, 2>({39.7188f, 11.7656f})},
+        {std::array<float, 2>({3.125f, 0.f}), std::array<float, 2>({3.125f, 11.7656f}),
+         std::array<float, 2>({25.7969f, 11.7656f})},
+        {std::array<float, 2>({25.7969f, 11.7656f}), std::array<float, 2>({39.7188f, 78.4844f}),
+         std::array<float, 2>({39.7188f, 11.7656f})},
+        {std::array<float, 2>({25.7969f, 11.7656f}), std::array<float, 2>({25.7969f, 78.4844f}),
+         std::array<float, 2>({39.7188f, 78.4844f})}};
 
     EXPECT_TRUE(glm::epsilonEqual<float>(1.0f, 1.00001f, 0.5f));
 
@@ -170,16 +170,78 @@ TEST(FontRasterizer, rasterizeText_hardcodeCheck) {
     for(size_t i = 0; i < trisByLetters.front().size(); ++i) {
         auto& tri = trisByLetters.front()[i];
 
-        EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.x, a[i][0][0], EPS));
-        EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.y, a[i][0][1], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.x, correctPoints[i][0][0], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.y, correctPoints[i][0][1], EPS));
         EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.z, 0.f, EPS));
 
-        EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.x, a[i][1][0], EPS));
-        EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.y, a[i][1][1], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.x, correctPoints[i][1][0], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.y, correctPoints[i][1][1], EPS));
         EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.z, 0.f, EPS));
 
-        EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.x, a[i][2][0], EPS));
-        EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.y, a[i][2][1], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.x, correctPoints[i][2][0], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.y, correctPoints[i][2][1], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.z, 0.f, EPS));
+    }
+}
+
+TEST(FontRasterizer, addOneCharacter_kerningCheck) {
+    /**
+     * The original code had a static variable in AddOneCharacter, replaced it with member variables
+     */
+
+    std::vector<std::array<std::array<float, 2>, 3>> correctPoints = {
+        {std::array<float, 2>({246.672f, 94.f}), std::array<float, 2>({265.063f, 0.f}),
+         std::array<float, 2>({201.f, 163.f})},
+        {std::array<float, 2>({265.063f, 0.f}), std::array<float, 2>({246.672f, 94.f}),
+         std::array<float, 2>({265.734f, 43.9063f})},
+        {std::array<float, 2>({265.063f, 0.f}), std::array<float, 2>({265.734f, 43.9063f}),
+         std::array<float, 2>({272.719f, 20.5625f})},
+        {std::array<float, 2>({265.063f, 0.f}), std::array<float, 2>({272.719f, 20.5625f}),
+         std::array<float, 2>({280.922f, 0.f})},
+        {std::array<float, 2>({272.719f, 20.5625f}), std::array<float, 2>({280.25f, 43.9063f}),
+         std::array<float, 2>({280.922f, 0.f})},
+        {std::array<float, 2>({280.922f, 0.f}), std::array<float, 2>({280.25f, 43.9063f}),
+         std::array<float, 2>({299.094f, 94.f})},
+        {std::array<float, 2>({344.656f, 163.f}), std::array<float, 2>({280.922f, 0.f}),
+         std::array<float, 2>({299.094f, 94.f})},
+        {std::array<float, 2>({304.969f, 110.953f}), std::array<float, 2>({344.656f, 163.f}),
+         std::array<float, 2>({299.094f, 94.f})},
+        {std::array<float, 2>({344.656f, 163.f}), std::array<float, 2>({304.969f, 110.953f}),
+         std::array<float, 2>({325.141f, 163.f})},
+        {std::array<float, 2>({299.094f, 94.f}), std::array<float, 2>({246.672f, 94.f}),
+         std::array<float, 2>({304.969f, 110.953f})},
+        {std::array<float, 2>({246.672f, 94.f}), std::array<float, 2>({240.016f, 110.953f}),
+         std::array<float, 2>({304.969f, 110.953f})},
+        {std::array<float, 2>({201.f, 163.f}), std::array<float, 2>({240.016f, 110.953f}),
+         std::array<float, 2>({246.672f, 94.f})},
+        {std::array<float, 2>({201.f, 163.f}), std::array<float, 2>({220.063f, 163.f}),
+         std::array<float, 2>({240.016f, 110.953f})}};
+
+    FontRasterizer fr(getAssetPath("fonts/OpenSans-Regular.ttf"));
+    EXPECT_TRUE(fr.isValid());
+
+    auto trisByLetters = fr.rasterizeText("WAR", 170, 1);
+
+    EXPECT_EQ(trisByLetters.size(), 3);
+    EXPECT_EQ(trisByLetters.front().size(), 18);
+    EXPECT_EQ(trisByLetters.at(1).size(), 13);
+    EXPECT_EQ(trisByLetters.at(2).size(), 18);
+
+    const float EPS = 0.001f;
+
+    for(size_t i = 0; i < trisByLetters.at(1).size(); ++i) {
+        auto& tri = trisByLetters.at(1)[i];
+
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.x, correctPoints[i][0][0], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.y, correctPoints[i][0][1], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.a.z, 0.f, EPS));
+
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.x, correctPoints[i][1][0], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.y, correctPoints[i][1][1], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.b.z, 0.f, EPS));
+
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.x, correctPoints[i][2][0], EPS));
+        EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.y, correctPoints[i][2][1], EPS));
         EXPECT_TRUE(glm::epsilonEqual<float>(tri.c.z, 0.f, EPS));
     }
 }

@@ -4,15 +4,20 @@ namespace pepr3d {
 
 std::vector<std::vector<FontRasterizer::Tri>> FontRasterizer::rasterizeText(const std::string textString,
                                                                             const size_t fontHeight,
-                                                                            const size_t bezierSteps) const {
-    FT_Set_Char_Size(mFace, static_cast<FT_F26Dot6>(fontHeight << 6), static_cast<FT_F26Dot6>(fontHeight << 6), 96, 96);
+                                                                            const size_t bezierSteps) {
+    mPrevCharIndex = 0;
+    mCurCharIndex = 0;
+    mPrev_rsb_delta = 0;
+
+    const FT_F26Dot6 converted = static_cast<FT_F26Dot6>(fontHeight << 6);
+    FT_Set_Char_Size(mFace, converted, converted, 96, 96);
 
     std::vector<std::vector<Tri>> trianglesPerLetter;
 
     double offset = 0;
     for(size_t i = 0; i < textString.size(); i++) {
         trianglesPerLetter.push_back({});
-        offset = addOneCharacter(mFace, textString[i], bezierSteps, offset, trianglesPerLetter.back());
+        offset = addOneCharacter(textString[i], bezierSteps, offset, trianglesPerLetter.back());
     }
 
     // postprocess by offsetting y-axis to positive numbers
@@ -70,7 +75,8 @@ void FontRasterizer::outlinePostprocess(std::vector<std::vector<Tri>>& triangles
     //}
 }
 
-std::vector<p2t::Point*> FontRasterizer::triangulateContour(Vectoriser* vectoriser, int c, float offset) {
+/// The following code originated from https://github.com/codetiger/Font23D and was modified by the Pepr team
+std::vector<p2t::Point*> FontRasterizer::triangulateContour(Vectoriser* vectoriser, const int c, const float offset) {
     std::vector<p2t::Point*> polyline;
     const Contour* contour = vectoriser->GetContour(c);
     for(size_t p = 0; p < contour->PointCount(); ++p) {
@@ -80,44 +86,45 @@ std::vector<p2t::Point*> FontRasterizer::triangulateContour(Vectoriser* vectoris
     return polyline;
 }
 
-double FontRasterizer::addOneCharacter(const FT_Face face, const char& ch, const size_t bezierSteps, double offset,
-                                       std::vector<Tri>& outTriangles) const {
-    // float extrude = 0;
-    static FT_UInt prevCharIndex = 0, curCharIndex = 0;
-    static FT_Pos prev_rsb_delta = 0;
-
+/// The following code originated from https://github.com/codetiger/Font23D and was modified by the Pepr team
+double FontRasterizer::addOneCharacter(const char ch, const size_t bezierSteps, const double offset,
+                                       std::vector<Tri>& outTriangles) {
     std::vector<Tri> trianglesLetter;
 
-    curCharIndex = FT_Get_Char_Index(face, ch);
-    if(FT_Load_Glyph(face, curCharIndex, FT_LOAD_DEFAULT))
-        printf("FT_Load_Glyph failed\n");
+    mCurCharIndex = FT_Get_Char_Index(mFace, ch);
+    if(FT_Load_Glyph(mFace, mCurCharIndex, FT_LOAD_DEFAULT)) {
+        throw std::runtime_error("FT_Load_Glyph failed");
+    }
 
     FT_Glyph glyph;
-    if(FT_Get_Glyph(face->glyph, &glyph))
-        printf("FT_Get_Glyph failed\n");
+    if(FT_Get_Glyph(mFace->glyph, &glyph)) {
+        throw std::runtime_error("FT_Get_Glyph failed");
+    }
 
     if(glyph->format != FT_GLYPH_FORMAT_OUTLINE) {
-        printf("Invalid Glyph Format\n");
-        exit(0);
+        throw std::runtime_error("Invalid Glyph Format");
     }
 
-    short nCountour = 0;
-    nCountour = face->glyph->outline.n_contours;
+    const short nCountour = mFace->glyph->outline.n_contours;
 
-    if(FT_HAS_KERNING(face) && prevCharIndex) {
+    double modifiedOffset = offset;
+
+    if(FT_HAS_KERNING(mFace) && mPrevCharIndex) {
         FT_Vector kerning;
-        FT_Get_Kerning(face, prevCharIndex, curCharIndex, FT_KERNING_DEFAULT, &kerning);
-        offset += kerning.x >> 6;
+        FT_Get_Kerning(mFace, mPrevCharIndex, mCurCharIndex, FT_KERNING_DEFAULT, &kerning);
+        modifiedOffset += kerning.x >> 6;
     }
 
-    if(prev_rsb_delta - face->glyph->lsb_delta >= 32)
-        offset -= 1.0f;
-    else if(prev_rsb_delta - face->glyph->lsb_delta < -32)
-        offset += 1.0f;
+    if(mPrev_rsb_delta - mFace->glyph->lsb_delta >= 32) {
+        modifiedOffset -= 1.0f;
+    } else if(mPrev_rsb_delta - mFace->glyph->lsb_delta < -32) {
+        modifiedOffset += 1.0f;
+    }
 
-    prev_rsb_delta = face->glyph->rsb_delta;
+    mPrev_rsb_delta = mFace->glyph->rsb_delta;
 
-    Vectoriser* vectoriser = new Vectoriser(face->glyph, static_cast<unsigned short>(bezierSteps));
+    std::unique_ptr<Vectoriser> vectoriser =
+        std::make_unique<Vectoriser>(mFace->glyph, static_cast<unsigned short>(bezierSteps));
     for(size_t c = 0; c < vectoriser->ContourCount(); ++c) {
         const Contour* contour = vectoriser->GetContour(c);
 
@@ -130,21 +137,25 @@ double FontRasterizer::addOneCharacter(const FT_Face face, const char& ch, const
         //// Add the circumference
         // for(size_t p = 0; p < contour->PointCount(); ++p) {
         //    const double* d1 = contour->GetPoint(p);
-        //    circumPart.push_back(glm::vec2((static_cast<float>(d1[0]) / 64.0f) + static_cast<float>(offset),
+        //    circumPart.push_back(glm::vec2((static_cast<float>(d1[0]) / 64.0f) + static_cast<float>(modifiedOffset),
         //                                    -1 * static_cast<float>(d1[1]) / 64.0f));
         //}
 
         // Calc the triangulation
         if(contour->GetDirection()) {
+            // CAREFUL, this vector is filled with pointers INTO the CDT structure, do NOT delete this as the CDT will
+            // crash.
             std::vector<p2t::Point*> polyline =
-                triangulateContour(vectoriser, static_cast<int>(c), static_cast<float>(offset));
-            p2t::CDT* cdt = new p2t::CDT(polyline);
+                triangulateContour(vectoriser.get(), static_cast<int>(c), static_cast<float>(modifiedOffset));
+            std::unique_ptr<p2t::CDT> cdt = std::make_unique<p2t::CDT>(polyline);
 
             for(size_t cm = 0; cm < vectoriser->ContourCount(); ++cm) {
                 const Contour* sm = vectoriser->GetContour(cm);
                 if(c != cm && !sm->GetDirection() && sm->IsInside(contour)) {
+                    // CAREFUL, this vector is filled with pointers INTO the CDT structure, do NOT delete this as the
+                    // CDT will crash.
                     std::vector<p2t::Point*> pl =
-                        triangulateContour(vectoriser, static_cast<int>(cm), static_cast<float>(offset));
+                        triangulateContour(vectoriser.get(), static_cast<int>(cm), static_cast<float>(modifiedOffset));
                     cdt->AddHole(pl);
                 }
             }
@@ -164,21 +175,14 @@ double FontRasterizer::addOneCharacter(const FT_Face face, const char& ch, const
                 t1.c.y = static_cast<float>(-ot->GetPoint(2)->y);
                 t1.c.z = static_cast<float>(0.0f);
                 trianglesLetter.push_back(t1);
-
-                // std::cout << " ,Created: (" << t1.a.x << ", " << t1.a.y << ") to (" << t1.b.x << ", " << t1.b.y  <<
-                // ") to (" << t1.c.x << ", " << t1.c.y << ")\n";
             }
-            delete cdt;
         }
     }
 
-    delete vectoriser;
-    vectoriser = NULL;
-
-    prevCharIndex = curCharIndex;
-    double chSize = static_cast<double>(face->glyph->advance.x >> 6);
+    mPrevCharIndex = mCurCharIndex;
+    const double chSize = static_cast<double>(mFace->glyph->advance.x >> 6);
     outTriangles = std::move(trianglesLetter);
-    return offset + chSize;
+    return modifiedOffset + chSize;
 }
 
 }  // namespace pepr3d
