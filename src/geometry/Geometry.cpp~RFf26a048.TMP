@@ -39,6 +39,7 @@ void Geometry::loadState(const GeometryState& state) {
     assert(mTree->size() == mTriangles.size());
 
     invalidateTemporaryDetailedData();
+    updateTemporaryDetailedData();
 }
 
 /* -------------------- Mesh loading -------------------- */
@@ -181,7 +182,6 @@ void Geometry::generateIndexBuffer() {
 void Geometry::generateColorBuffer() {
     mOgl.colorBuffer.clear();
     mOgl.colorBuffer.reserve(mOgl.vertexBuffer.size());
-    mTriangleDetailColorBufferStart.clear();
 
     for(size_t idx = 0; idx < mTriangles.size(); ++idx) {
         const auto& triangle = mTriangles[idx];
@@ -194,7 +194,6 @@ void Geometry::generateColorBuffer() {
     for(auto& it : mTriangleDetails) {
         const auto& detailTriangles = it.second.getTriangles();
 
-        mTriangleDetailColorBufferStart[it.first] = mOgl.colorBuffer.size();
         for(const auto& triangle : detailTriangles) {
             const ColorIndex triColorIndex = static_cast<ColorIndex>(triangle.getColor());
             mOgl.colorBuffer.push_back(triColorIndex);
@@ -320,14 +319,13 @@ std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray, glm::vec3& out
     return intersection;
 }
 
-std::optional<DetailedTriangleId> Geometry::intersectDetailedMesh(const ci::Ray& ray){
+std::optional<DetailedTriangleId> Geometry::intersectDetailedMesh(const ci::Ray& ray) const {
     if(mTree->empty()) {
         return {};
     }
 
-    if(!isTemporaryDetailedDataValid()) {
-        updateTemporaryDetailedData();
-        assert(mTreeDetailed);
+    if(!mTreeDetailed || mTreeDetailed->empty()) {
+        return {};
     }
 
     const glm::vec3 source = ray.getOrigin();
@@ -343,7 +341,7 @@ std::optional<DetailedTriangleId> Geometry::intersectDetailedMesh(const ci::Ray&
         const DetailedTriangleId triangleId = boost::get<DataTriangleAABBPrimitive::Id>(intersection->second).second;
 
         assert(triangleId.getBaseId() < mTriangles.size());
-        assert(!(triangleId.getDetailId() && isSimpleTriangle(triangleId.getBaseId())));
+        assert(!triangleId.getDetailId() || isSimpleTriangle(triangleId.getBaseId()));
 
         if(!isSimpleTriangle(triangleId.getBaseId())) {
             assert(triangleId.getDetailId());
@@ -525,14 +523,6 @@ void Geometry::setTriangleColor(const DetailedTriangleId triangleId, const size_
         TriangleDetail* detail = getTriangleDetail(baseId);
         detail->setColor(detailId, newColor);
 
-        const size_t vertexPosition =
-            mTriangleDetailColorBufferStart[triangleId.getBaseId()] + 3 * (*triangleId.getDetailId());
-        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
-        mOgl.colorBuffer[vertexPosition] = newColorIndex;
-        mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
-        mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
-        mOgl.info.didColorUpdate = true;
-
     } else {
         // No detail ID, do the baseID behavior
         setTriangleColor(triangleId.getBaseId(), newColor);
@@ -670,10 +660,27 @@ void Geometry::buildDetailedMesh() {
         }
     }
 
+
     // Add detailed faces
     for(const auto& triDetailIt : mTriangleDetails) {
         const size_t triangleId = triDetailIt.first;
         const auto& detailTriangles = triDetailIt.second.getTriangles();
+        const DataTriangle& triangle = getTriangle(triangleId);
+        auto faceHalfedge = mMeshDetailed->halfedge(mMeshDetailedFaceDescs[DetailedTriangleId(triangleId)]);
+
+        // Add original vertices of the triangle from rough mesh
+        for(int i = 0; i < 3; i++) {
+            auto vertexDesc0 = mMeshDetailed->vertex(mMeshDetailed->edge(faceHalfedge), 0);
+            auto vertexDesc1 = mMeshDetailed->vertex(mMeshDetailed->edge(faceHalfedge), 1);
+
+            glm::vec3 point0 = GeometryUtils::toGlm(mMeshDetailed->point(vertexDesc0));
+            glm::vec3 point1 = GeometryUtils::toGlm(mMeshDetailed->point(vertexDesc1));
+
+            ptToVertexDesc.insert(std::make_pair(point0, vertexDesc0));
+            ptToVertexDesc.insert(std::make_pair(point1, vertexDesc1));
+
+            faceHalfedge = mMeshDetailed->next(faceHalfedge);
+        }
 
         // Add detail triangles while combining common vertices
         for(size_t detailTriangleIdx = 0; detailTriangleIdx < detailTriangles.size(); detailTriangleIdx++) {
@@ -693,10 +700,19 @@ void Geometry::buildDetailedMesh() {
                 vertDescriptors[i] = it->second;
             }
 
-            auto faceDesc = mMeshDetailed->add_face(vertDescriptors);
-            assert(faceDesc != PolyhedronData::Mesh::null_face());
-            mMeshDetailedFaceDescs.insert(std::make_pair(DetailedTriangleId(triangleId, detailTriangleIdx), faceDesc));
-            mMeshDetailedIdMap[faceDesc] = DetailedTriangleId(triangleId, detailTriangleIdx);
+            try {
+                auto faceDesc = mMeshDetailed->add_face(vertDescriptors);
+                assert(faceDesc != PolyhedronData::Mesh::null_face());
+                mMeshDetailedFaceDescs.insert(
+                    std::make_pair(DetailedTriangleId(triangleId, detailTriangleIdx), faceDesc));
+                mMeshDetailedIdMap[faceDesc] = DetailedTriangleId(triangleId, detailTriangleIdx);
+
+            } catch(...)  // cgal
+            {
+                std::string errstr("Could not add face to mesh. Detail id: ");
+                errstr.append(std::to_string(detailTriangleIdx));
+                CI_LOG_E("Could not add face to mesh");
+            }
         }
     }
 }  // namespace pepr3d

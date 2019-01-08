@@ -101,6 +101,9 @@ class Geometry {
     /// Map of triangle details. (Detailed triangles that replace the original)
     std::map<size_t, TriangleDetail> mTriangleDetails;
 
+	/// Map of baseTriangleId -> Index of first detail triangle color in mOgl.colorBuffer
+	std::map<size_t, size_t> mTriangleDetailColorBufferStart;
+
     /// All open GL buffers
     OpenGlData mOgl;
 
@@ -240,6 +243,10 @@ class Geometry {
     /// This is a slow operation
     void updateTemporaryDetailedData();
 
+	bool isTemporaryDetailedDataValid() const {
+        return mMeshDetailed && mTreeDetailed;
+    }
+
     glm::vec3 getBoundingBoxMin() const {
         if(!mBoundingBox) {
             return glm::vec3(0);
@@ -331,7 +338,7 @@ class Geometry {
     std::optional<size_t> intersectMesh(const ci::Ray& ray, glm::vec3& outPos) const;
 
     /// Intersects the detailed mesh with the given ray and returns the ID of the triangle intersected, if it exists.
-    std::optional<DetailedTriangleId> intersectDetailedMesh(const ci::Ray& ray) const;
+    std::optional<DetailedTriangleId> intersectDetailedMesh(const ci::Ray& ray);
 
     /// Highlight an area around the intersection point. All points on a continuous surface closer than the size are
     /// highlighted.
@@ -563,9 +570,17 @@ std::vector<DetailedTriangleId> Geometry::bucketSpread(const StoppingCondition& 
 template <typename StoppingCondition>
 std::vector<DetailedTriangleId> Geometry::bucket(const DetailedTriangleId startTriangle,
                                                  const StoppingCondition& stopFunctor) {
-    if(mPolyhedronData.mMesh.is_empty()) {
+    if(mPolyhedronData.mMesh.is_empty())
+    {
         return {};
     }
+
+	if(!isTemporaryDetailedDataValid())
+	{
+        updateTemporaryDetailedData();
+        assert(mMeshDetailed);
+	}
+
 
     std::deque<DetailedTriangleId> toVisit;
     const DetailedTriangleId startingFace = startTriangle;
