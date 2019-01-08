@@ -23,10 +23,10 @@ out highp vec4 Color;
 void main() {
     Normal = ciNormalMatrix * ciNormal;
     ColorIndex = aColorIndex;
-	ModelCoordinates = ciPosition.xyz;
+	  ModelCoordinates = ciPosition.xyz;
     Color = ciColor;
     gl_Position = ciModelViewProjection * ciPosition;
-	AreaHighlightMask = aAreaHighlightMask;
+	  AreaHighlightMask = aAreaHighlightMask;
 
     int vertexMod3 = gl_VertexID % 3;
     BarycentricCoordinates = vec3(float(vertexMod3 == 0), float(vertexMod3 == 1), float(vertexMod3 == 2));
