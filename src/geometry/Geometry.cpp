@@ -706,12 +706,10 @@ void Geometry::updateTemporaryDetailedData() {
     ::ThreadPool& threadPool = MainApplication::getThreadPool();
 
     /// Async build the data
-    // auto buildDetailedMeshFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
-    // auto buildDetailedTreeFuture = threadPool.enqueue([this]() { buildDetailedTree(); });
-    buildDetailedMesh();
-    buildDetailedTree();
-    // buildDetailedMeshFuture.get();
-    // buildDetailedTreeFuture.get();
+    auto buildDetailedMeshFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
+    auto buildDetailedTreeFuture = threadPool.enqueue([this]() { buildDetailedTree(); });
+    buildDetailedMeshFuture.get();
+    buildDetailedTreeFuture.get();
 
     const auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> timeMs = end - start;
