@@ -1,5 +1,6 @@
 #include "tools/SemiautomaticSegmentation.h"
 #include "commands/CmdPaintSingleColor.h"
+#include "geometry/SdfValuesException.h"
 
 namespace pepr3d {
 
@@ -7,7 +8,7 @@ namespace pepr3d {
 
 void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!mGeometryCorrect) {
-        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        sidePane.drawText("Polyhedron not built, since the geometry was damaged. Tool disabled.");
         return;
     }
 
@@ -19,18 +20,41 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
     const bool isSdfComputed = currentGeometry->isSdfComputed();
     if(!isSdfComputed) {
-        sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
+        sidePane.drawText("Warning: This computation may take a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            currentGeometry->computeSdfValues();
+            try {
+                currentGeometry->computeSdfValues();
+            } catch(SdfValuesException& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "The SDF values returned by the computation were not valid. This can happen when you use the "
+                    "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
+                    "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
+                    "cannot be segmented.\n\nThe full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
+            } catch(std::exception& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "An internal error occured while computing the SDF values. If the problem persists, try re-loading "
+                    "the mesh.\n\n"
+                    "Please report this bug to the developers. The full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
+            }
         }
+        sidePane.drawTooltipOnHover("Compute the shape diameter function of the model to enable the segmentation.");
+        sidePane.drawSeparator();
     } else {
-        sidePane.drawColorPalette(currentGeometry->getColorManager());
+        sidePane.drawColorPalette();
         sidePane.drawSeparator();
 
         if(mStartingTriangles.empty()) {
-            sidePane.drawText("Draw with several colors to\nenable segmentation.");
+            sidePane.drawText("Draw with several colors to enable segmentation.");
         } else {
             sidePane.drawFloatDragger("Spread", mBucketSpread, .01f, 0.0f, 1.f, "%.02f", 70.f);
+            sidePane.drawTooltipOnHover(
+                "The amount of growth each region will do. If your regions are small, increase this number.");
 
             // Normal stopping can be enabled by uncommenting this region.
             // Disabled for the time because it is wonky.
@@ -43,8 +67,12 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
             if(mCriterionUsed == Criteria::SDF) {
                 sidePane.drawCheckbox("Hard edges", mHardEdges);
+                sidePane.drawTooltipOnHover(
+                    "The growth will stop once meeting another color and will neither go under the color nor overwrite "
+                    "the color.");
                 if(!mHardEdges) {
                     sidePane.drawCheckbox("Region overlap", mRegionOverlap);
+                    sidePane.drawTooltipOnHover("The colors will overwrite each other on the borders.");
                 }
             }
 
@@ -53,7 +81,19 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 mBucketSpreadLatest = mBucketSpread;
                 mHardEdgesLatest = mHardEdges;
                 mRegionOverlapLatest = mRegionOverlap;
-                spreadColors();  // Recompute the new color spread
+
+                try {
+                    spreadColors();  // Recompute the new color spread
+                } catch(std::exception& e) {
+                    const std::string errorCaption = "Error: Failed to spread the colors";
+                    const std::string errorDescription =
+                        "An internal error occured while spreading the colors. If the problem persists, try re-loading "
+                        "the mesh. The coloring will now be reset.\n\n"
+                        "Please report this bug to the developers. The full description of the problem is:\n";
+                    mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                    reset();
+                    return;
+                }
             }
 
             if(sidePane.drawButton("Apply")) {
@@ -68,10 +108,12 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 }
                 reset();
             }
+            sidePane.drawTooltipOnHover("Apply the results to the model.");
 
             if(sidePane.drawButton("Cancel")) {
                 reset();
             }
+            sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
         }
     }
 }
@@ -344,11 +386,17 @@ void SemiautomaticSegmentation::onToolDeselect(ModelView& modelView) {
 }
 
 void SemiautomaticSegmentation::onNewGeometryLoaded(ModelView& modelView) {
-    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
+    Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
+    if(currentGeometry == nullptr) {
+        return;
+    }
+    mGeometryCorrect = currentGeometry->polyhedronValid();
     if(!mGeometryCorrect) {
         return;
     }
     reset();
+    mSdfEnabled = currentGeometry->sdfValuesValid();
 }
 
 void SemiautomaticSegmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
@@ -410,7 +458,10 @@ void SemiautomaticSegmentation::onModelViewMouseMove(ModelView& modelView, ci::a
 }
 
 bool SemiautomaticSegmentation::isEnabled() const {
-    return mGeometryCorrect;
+    if(mSdfEnabled == nullptr) {
+        return mGeometryCorrect;
+    }
+    return mGeometryCorrect && *mSdfEnabled;
 }
 
 void SemiautomaticSegmentation::reset() {
@@ -425,6 +476,8 @@ void SemiautomaticSegmentation::reset() {
 
     mGeometryCorrect = true;
     mNormalStop = false;
+
+    mSdfEnabled = nullptr;
 
     mCriterionUsed = Criteria::SDF;
 

@@ -7,7 +7,6 @@
 #include <CGAL/mesh_segmentation.h>
 #include <cinder/Ray.h>
 #include <cinder/gl/gl.h>
-#include <cereal/archives/binary.hpp>
 #include <cereal/types/array.hpp>
 #include <cereal/types/vector.hpp>
 #include "cinder/Log.h"
@@ -18,12 +17,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include "geometry/GlmSerialization.h"
 #include "geometry/ColorManager.h"
 #include "geometry/GeometryProgress.h"
-#include "geometry/GlmSerialization.h"
-#include "geometry/ModelExporter.h"
 #include "geometry/ModelImporter.h"
-#include "geometry/PolyhedronBuilder.h"
 #include "geometry/Triangle.h"
 #include "geometry/TriangleDetail.h"
 #include "geometry/TrianglePrimitive.h"
@@ -121,6 +118,7 @@ class Geometry {
 
         bool isSdfComputed = false;
         bool valid = false;
+        bool sdfValuesValid = true;
 
         /// Map converting a face_descriptor into an ID, that corresponds to the mTriangles vector
         PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, size_t> mIdMap;
@@ -423,6 +421,10 @@ class Geometry {
         }
     }
 
+    const bool* sdfValuesValid() const {
+        return &mPolyhedronData.sdfValuesValid;
+    }
+
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
     /// We need to do this because each triangle has to be able to be colored differently, therefore no vertex
@@ -531,9 +533,9 @@ std::vector<size_t> Geometry::bucketSpread(const StoppingCondition& stopFunctor,
         try {
             // Manage neighbours and grow the queue
             addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
-        } catch(CGAL::Assertion_exception* excp) {
-            CI_LOG_E("Exception caught. Returning immediately. " + excp->expression() + " " + excp->message());
-            return {};
+        } catch(CGAL::Assertion_exception& excp) {
+            CI_LOG_E("Exception caught. Returning immediately. " + excp.expression() + " " + excp.message());
+            throw std::runtime_error("Bucket spread failed inside the CGAL library.");
         }
 
         // Add the triangle to the list

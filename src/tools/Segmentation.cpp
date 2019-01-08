@@ -2,27 +2,55 @@
 #include <random>
 #include <vector>
 #include "commands/CmdPaintSingleColor.h"
+#include "geometry/SdfValuesException.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
 
 void Segmentation::drawToSidePane(SidePane& sidePane) {
     if(!mGeometryCorrect) {
-        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        sidePane.drawText("Polyhedron not built, since the geometry was damaged. Tool disabled.");
         return;
     }
     const bool isSdfComputed = mApplication.getCurrentGeometry()->isSdfComputed();
     if(!isSdfComputed) {
-        sidePane.drawText("Warning: This computation may\ntake a long time to perform.");
+        sidePane.drawText("Warning: This computation may take a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            mApplication.getCurrentGeometry()->computeSdfValues();
+            try {
+                mApplication.getCurrentGeometry()->computeSdfValues();
+            } catch(SdfValuesException& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "The SDF values returned by the computation were not valid. This can happen when you use the "
+                    "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
+                    "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
+                    "cannot be segmented.\n\nThe full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
+            } catch(std::exception& e) {
+                const std::string errorCaption = "Error: Failed to compute SDF";
+                const std::string errorDescription =
+                    "An internal error occured while computing the SDF values. If the problem persists, try re-loading "
+                    "the mesh.\n\n"
+                    "Please report this bug to the developers. The full description of the problem is:\n";
+                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+                return;
+            }
         }
+        sidePane.drawTooltipOnHover("Compute the shape diameter function of the model to enable the segmentation.");
     } else {
         if(sidePane.drawButton("Segment!")) {
             computeSegmentation();
         }
+        sidePane.drawTooltipOnHover("Start segmentation on the model.");
         sidePane.drawIntDragger("Robustness [2,15]", mNumberOfClusters, 0.25f, 2, 15, "%.0f", 40.0f);
+        sidePane.drawTooltipOnHover(
+            "Higher values increase the computation time and might result in better region grouping. The default value "
+            "should be good for most use cases.");
         sidePane.drawFloatDragger("Edge tolerance [0,1]", mSmoothingLambda, .01f, 0.01f, 1.f, "%.02f", 70.f);
+        sidePane.drawTooltipOnHover(
+            "The higher the number, the more the segmentation will tolerate sharp edges and thus make less segments. "
+            "If you have more segments than you wanted, increase this value. If you have less, decrease.");
     }
 
     sidePane.drawSeparator();
@@ -30,9 +58,9 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
     ColorManager& colorManager = mApplication.getCurrentGeometry()->getColorManager();
     if(mPickState) {
         sidePane.drawText("Segmented into " + std::to_string(mNumberOfSegments) +
-                          " segments.\nAssign a color from the palette\nto each segment.");
+                          " segments. Assign a color from the palette to each segment.");
 
-        sidePane.drawColorPalette(colorManager);
+        sidePane.drawColorPalette();
 
         for(const auto& toPaint : mSegmentToTriangleIds) {
             std::string displayText = "Segment " + std::to_string(toPaint.first);
@@ -62,6 +90,8 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 const glm::vec4 newColor = colorManager.getColor(colorManager.getActiveColorIndex());
                 setSegmentColor(toPaint.first, newColor);
             }
+            sidePane.drawTooltipOnHover(
+                "Click to color this segment with the currently active color from the palette.");
         }
 
         if(sidePane.drawButton("Accept")) {
@@ -90,9 +120,11 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 CI_LOG_W("Please assign all segments to a color from the palette first.");
             }
         }
+        sidePane.drawTooltipOnHover("Apply the results to the model.");
         if(sidePane.drawButton("Cancel")) {
             cancel();
         }
+        sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
     }
 }
 
@@ -161,6 +193,7 @@ void Segmentation::reset() {
 
     mNumberOfSegments = 0;
     mPickState = false;
+    mSdfEnabled = nullptr;
 
     mNewColors.clear();
     mSegmentationColors.clear();
@@ -184,9 +217,18 @@ void Segmentation::computeSegmentation() {
     assert(2 <= mNumberOfClusters && mNumberOfClusters <= mApplication.getCurrentGeometry()->getTriangleCount() &&
            mNumberOfClusters <= 15);
 
-    mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(mNumberOfClusters, mSmoothingLambda,
-                                                                        mSegmentToTriangleIds, mTriangleToSegmentMap);
-
+    try {
+        mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(
+            mNumberOfClusters, mSmoothingLambda, mSegmentToTriangleIds, mTriangleToSegmentMap);
+    } catch(std::exception& e) {
+        const std::string errorCaption = "Error: Failed to compute the segmentation";
+        const std::string errorDescription =
+            "An internal error occured while computing the the segmentation. If the problem persists, try re-loading "
+            "the mesh.\n\n"
+            "Please report this bug to the developers. The full description of the problem is:\n";
+        mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+        return;
+    }
     if(mNumberOfSegments > 0) {
         mPickState = true;
 
@@ -239,12 +281,18 @@ void Segmentation::setSegmentColor(const size_t segmentId, const glm::vec4 newCo
 }
 
 void Segmentation::onNewGeometryLoaded(ModelView& modelView) {
-    mHoveredTriangleId = {};
-    mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
+    Geometry* const currentGeometry = mApplication.getCurrentGeometry();
+    assert(currentGeometry != nullptr);
+    if(currentGeometry == nullptr) {
+        return;
+    }
+
+    mGeometryCorrect = currentGeometry->polyhedronValid();
     if(!mGeometryCorrect) {
         return;
     }
     CI_LOG_I("Model changed, segmentation reset");
     reset();
+    mSdfEnabled = currentGeometry->sdfValuesValid();
 }
 }  // namespace pepr3d

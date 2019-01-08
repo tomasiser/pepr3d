@@ -12,6 +12,7 @@
 
 #include "ui/MainApplication.h"
 
+#include "FatalLogger.h"
 #include "IconsMaterialDesign.h"
 #include "LightTheme.h"
 
@@ -51,7 +52,9 @@ MainApplication::MainApplication()
       mModelView(*this) {}
 
 void MainApplication::setup() {
-    setWindowSize(950, 570);
+    setupLogging();
+
+    setWindowSize(1024, 614);
     getWindow()->setTitle("Untitled - Pepr3D");
     setupIcon();
     gl::enableVerticalSync(true);
@@ -76,7 +79,12 @@ void MainApplication::setup() {
     }
 
     mGeometry = std::make_shared<Geometry>();
-    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string());
+
+    try {
+        mGeometry->loadNewGeometry(getRequiredAssetPath("models/defaultcube.stl").string());
+    } catch(const AssetNotFoundException&) {
+        // do nothing, a Fatal Error dialog has already been created
+    }
 
     mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
 
@@ -87,18 +95,53 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<Segmentation>(*this));
     mTools.emplace_back(make_unique<SemiautomaticSegmentation>(*this));
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
-    mTools.emplace_back(make_unique<pepr3d::Settings>());
+    mTools.emplace_back(make_unique<pepr3d::Settings>(*this));
     mTools.emplace_back(make_unique<Information>());
+#if !defined(NDEBUG)
     mTools.emplace_back(make_unique<LiveDebug>(*this));
+#endif
     mCurrentToolIterator = mTools.begin();
 
-    setupFonts();
+    try {
+        setupFonts();
+        mModelView.setup();
+    } catch(const AssetNotFoundException&) {
+        // do nothing, a Fatal Error dialog has already been created
+    }
+}
 
-    mModelView.setup();
+void MainApplication::setupLogging() {
+    ci::fs::path crashDetectPath = ci::fs::current_path() / "pepr3d.crashed";
+    if(ci::fs::exists(crashDetectPath)) {
+        ci::fs::path logBackupPath = ci::fs::current_path() / "pepr3d.crash.0.log";
+        size_t logBackupId = 0;
+        while(ci::fs::exists(logBackupPath)) {
+            logBackupPath = ci::fs::current_path() /
+                            (std::string("pepr3d.crash.").append(std::to_string(logBackupId)).append(".log"));
+            ++logBackupId;
+        }
+        ci::fs::copy_file(ci::fs::current_path() / "pepr3d.log", logBackupPath);
+        ci::fs::remove(crashDetectPath);
+
+        std::string message;
+        message +=
+            "The last time you used Pepr3D, it terminated because of a fatal error. Detailed information about the "
+            "problem may be found in the appropriate log file that we saved for you.\n\n";
+        message += "The related log file is located in the following place:\n\n";
+        message += logBackupPath.string();
+        message +=
+            "\n\nIf you wish to report this problem to the developers, please attach the mentioned log file together "
+            "with your report.";
+        pushDialog(Dialog(DialogType::Information, "Pepr3D previously terminated with a fatal error", message));
+    }
+
+    ci::log::makeLogger<ci::log::LoggerFile>("pepr3d.log", false);
+    ci::log::makeLogger<FatalLogger>("pepr3d.crashed", false);
 }
 
 void MainApplication::resize() {
-    mModelView.resize();
+    mSidePane.resize();   // side pane has to be resized first (it modifies its width if necessary)
+    mModelView.resize();  // model view uses the width of the side pane, so it has to be second
 }
 
 void MainApplication::mouseDown(MouseEvent event) {
@@ -286,7 +329,14 @@ void MainApplication::openFile(const std::string& path) {
             mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
         }
         auto asyncCalculation = [onLoadingComplete, path, this]() {
-            mGeometryInProgress->recomputeFromData();
+
+            try {
+                mGeometryInProgress->recomputeFromData();
+            } catch(const std::exception& e) {
+                // ignore the exception as we will detect the loading failed in the onLoadingComplete
+                CI_LOG_E("exception occured while loading geometry: " << e.what());
+            }
+
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
             dispatchAsync(onLoadingComplete);
@@ -298,7 +348,14 @@ void MainApplication::openFile(const std::string& path) {
         // Queue the loading of the new geometry
         auto importNewModel = [onLoadingComplete, path, this]() {
             // Load the geometry
-            mGeometryInProgress->loadNewGeometry(path);
+
+            try {
+                mGeometryInProgress->loadNewGeometry(path);
+            } catch(const std::exception& e) {
+                // ignore the exception as we will detect the loading failed in the onLoadingComplete
+                CI_LOG_E("exception occured while loading geometry: " << e.what());
+            }
+
 
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
@@ -390,15 +447,19 @@ void MainApplication::draw() {
 void MainApplication::setupFonts() {
     ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
 
+    // if the following fonts are not found, exception is thrown, font atlas is not cleared and a default font is used:
+    ci::fs::path sourceSansProSemiBoldPath = getRequiredAssetPath("fonts/SourceSansPro-SemiBold.ttf");
+    ci::fs::path materialIconsRegularPath = getRequiredAssetPath("fonts/MaterialIcons-Regular.ttf");
+
     fontAtlas->Clear();
 
     std::vector<ImWchar> textRange = {0x0001, 0x00FF, 0};
     ImFontConfig fontConfig;
     fontConfig.GlyphExtraSpacing.x = -0.2f;
-    mFontStorage.mRegularFont = fontAtlas->AddFontFromFileTTF(
-        getAssetPath("fonts/SourceSansPro-SemiBold.ttf").string().c_str(), 18.0f, &fontConfig, textRange.data());
-    mFontStorage.mSmallFont = fontAtlas->AddFontFromFileTTF(
-        getAssetPath("fonts/SourceSansPro-SemiBold.ttf").string().c_str(), 16.0f, &fontConfig, textRange.data());
+    mFontStorage.mRegularFont =
+        fontAtlas->AddFontFromFileTTF(sourceSansProSemiBoldPath.string().c_str(), 18.0f, &fontConfig, textRange.data());
+    mFontStorage.mSmallFont =
+        fontAtlas->AddFontFromFileTTF(sourceSansProSemiBoldPath.string().c_str(), 16.0f, &fontConfig, textRange.data());
 
     ImVector<ImWchar> iconsRange;
     ImFontAtlas::GlyphRangesBuilder iconsRangeBuilder;
@@ -406,14 +467,16 @@ void MainApplication::setupFonts() {
         iconsRangeBuilder.AddText(tool->getIcon().c_str());
     }
     iconsRangeBuilder.AddText(ICON_MD_ARROW_DROP_DOWN);
+    iconsRangeBuilder.AddText(ICON_MD_KEYBOARD_ARROW_RIGHT);
+    iconsRangeBuilder.AddText(ICON_MD_KEYBOARD_ARROW_DOWN);
     iconsRangeBuilder.AddText(ICON_MD_FOLDER_OPEN);
     iconsRangeBuilder.AddText(ICON_MD_UNDO);
     iconsRangeBuilder.AddText(ICON_MD_REDO);
     iconsRangeBuilder.AddText(ICON_MD_CHILD_FRIENDLY);
     iconsRangeBuilder.BuildRanges(&iconsRange);
     fontConfig.GlyphExtraSpacing.x = 0.0f;
-    mFontStorage.mRegularIcons = fontAtlas->AddFontFromFileTTF(
-        getAssetPath("fonts/MaterialIcons-Regular.ttf").string().c_str(), 24.0f, &fontConfig, iconsRange.Data);
+    mFontStorage.mRegularIcons =
+        fontAtlas->AddFontFromFileTTF(materialIconsRegularPath.string().c_str(), 24.0f, &fontConfig, iconsRange.Data);
     mFontStorage.mRegularIcons->DisplayOffset.y = -1.0f;
 
     mImGui.refreshFontTexture();
@@ -460,7 +523,6 @@ void MainApplication::drawExportDialog() {
     }
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoScrollbar;
     window_flags |= ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoCollapse;
@@ -726,6 +788,13 @@ void MainApplication::saveProjectAs() {
         CI_LOG_I("Saving project into " + finalPath);
         {
             std::ofstream os(finalPath, std::ios::binary);
+            if(!os.is_open()) {
+                const std::string errorCaption = "Error: Failed to open the file";
+                const std::string errorDescription =
+                    "The file you selected to save into could not be opened. Your project was NOT saved.\n";
+                pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "OK"));
+                return;
+            }
             cereal::BinaryOutputArchive saveArchive(os);
             saveArchive(mGeometry);
         }
@@ -749,6 +818,13 @@ void MainApplication::saveProject() {
     CI_LOG_I("Saving project into " + finalPath);
     {
         std::ofstream os(finalPath, std::ios::binary);
+        if(!os.is_open()) {
+            const std::string errorCaption = "Error: Failed to open the file";
+            const std::string errorDescription =
+                "The file you selected to save into could not be opened. Your project was NOT saved.\n";
+            pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "OK"));
+            return;
+        }
         cereal::BinaryOutputArchive saveArchive(os);
         saveArchive(mGeometry);
     }

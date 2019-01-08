@@ -165,8 +165,6 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle)
     const auto base2 = mOriginalPlane.base2() / CGAL::sqrt(mOriginalPlane.base2().squared_length());
 
     assert(base1 * base2 == 0);
-    assert(base1.squared_length() == 1);
-    assert(base2.squared_length() == 1);
 
     const PeprPoint3 circleOrigin = toNormalK(circle.center());
     // Construct the polygon.

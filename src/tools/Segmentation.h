@@ -19,6 +19,11 @@ class Segmentation : public Tool {
         return "Automatic Segmentation";
     }
 
+    virtual std::string getDescription() const override {
+        return "Automatically separate the model into regions based on the thickness of the model and color each "
+               "region.";
+    }
+
     virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const override {
         return hotkeys.findHotkey(HotkeyAction::SelectSegmentation);
     }
@@ -28,7 +33,10 @@ class Segmentation : public Tool {
     }
 
     virtual bool isEnabled() const override {
-        return mGeometryCorrect;
+        if(mSdfEnabled == nullptr) {
+            return mGeometryCorrect;
+        }
+        return mGeometryCorrect && *mSdfEnabled;
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
@@ -48,6 +56,7 @@ class Segmentation : public Tool {
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
     bool mGeometryCorrect = true;
+    const bool* mSdfEnabled = nullptr;
 
     std::vector<size_t> mNewColors;
     std::vector<glm::vec4> mSegmentationColors;

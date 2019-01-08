@@ -1,5 +1,9 @@
 #pragma once
 
+//#if defined(NDEBUG)
+//#define CI_MIN_LOG_LEVEL 3 // warnings
+//#endif
+
 #include <algorithm>
 #include <queue>
 
@@ -12,6 +16,7 @@
 
 #include "ThreadPool.h"
 
+#include "AssetNotFoundException.h"
 #include "Dialog.h"
 #include "FontStorage.h"
 #include "Hotkeys.h"
@@ -45,7 +50,7 @@ class MainApplication : public cinder::app::App {
 
     static void prepareSettings(Settings* settings) {
         assert(settings != nullptr);
-#if defined(CINDER_MSW_DESKTOP)
+#if defined(CINDER_MSW_DESKTOP) && !defined(NDEBUG)
         settings->setConsoleWindowEnabled(true);
 #endif
     }
@@ -148,12 +153,41 @@ class MainApplication : public cinder::app::App {
 
     void pushDialog(const pepr3d::Dialog& dialog) {
         mDialogQueue.push(dialog);
+
+        // log dialog details via Cinder:
+        switch(dialog.getType()) {
+        case DialogType::Information: CI_LOG_I(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        case DialogType::Warning: CI_LOG_W(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        case DialogType::Error: CI_LOG_E(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        case DialogType::FatalError: CI_LOG_F(dialog.getCaption() << "\n" << dialog.getMessage()); break;
+        }
     }
 
     void saveProject();
     void saveProjectAs();
 
+    ci::fs::path getRequiredAssetPath(const ci::fs::path& relativePath) {
+        ci::fs::path path = getAssetPath(relativePath);
+        if(path.empty()) {
+            std::string message;
+            message += "Pepr3D could not find the following file:\n\n";
+            message += (ci::fs::path("assets") / relativePath).string();
+            message += "\n\nThis file is necessary and since it was not found, Pepr3D has to be terminated. ";
+            message += "Downloading Pepr3D again or reinstalling it should solve this problem.";
+            pushDialog(Dialog(DialogType::FatalError, "Could not find a required asset", message, "Exit Pepr3D"));
+            throw AssetNotFoundException(
+                std::string("Could not find required asset ").append(relativePath.string()).c_str());
+        }
+        return path;
+    }
+
+    ci::DataSourceRef loadRequiredAsset(const ci::fs::path& relativePath) {
+        getRequiredAssetPath(relativePath);
+        return loadAsset(relativePath);
+    }
+
    private:
+    void setupLogging();
     void setupFonts();
     void setupIcon();
     void drawExportDialog();

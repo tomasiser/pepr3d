@@ -19,6 +19,18 @@ class Dialog {
 
     bool draw() const;
 
+    DialogType getType() const {
+        return mType;
+    }
+
+    std::string getCaption() const {
+        return mCaption;
+    }
+
+    std::string getMessage() const {
+        return mMessage;
+    }
+
     bool operator<(const Dialog& dialog) const {
         return static_cast<std::size_t>(mType) < static_cast<std::size_t>(dialog.mType);
     }

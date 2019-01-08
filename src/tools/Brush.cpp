@@ -1,8 +1,8 @@
-#include "Brush.h"
 #include "commands/CmdPaintBrush.h"
 #include "geometry/Geometry.h"
 #include "ui/MainApplication.h"
 #include "ui/ModelView.h"
+
 
 namespace pepr3d {
 void Brush::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
@@ -73,7 +73,7 @@ void Brush::updateHighlight() const {
 }
 
 void Brush::drawToSidePane(SidePane& sidePane) {
-    sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
+    sidePane.drawColorPalette();
     sidePane.drawSeparator();
 
     sidePane.drawFloatDragger("Size", mBrushSettings.size, mMaxSize / SIZE_SLIDER_STEPS, 0.0001f, mMaxSize, "%.02f",

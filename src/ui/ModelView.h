@@ -71,6 +71,15 @@ class ModelView {
 
     void resetCamera();
 
+    void setFovZoomEnabled(bool enabled) {
+        resetCamera();
+        mCameraUi.setFovZoomEnabled(enabled);
+    }
+
+    bool isFovZoomEnabled() const {
+        return mCameraUi.isFovZoomEnabled();
+    }
+
     void setColorOverride(bool val) {
         mColorOverride.isOverriden = val;
     }

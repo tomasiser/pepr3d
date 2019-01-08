@@ -15,8 +15,14 @@ class Information : public Tool {
         return hotkeys.findHotkey(HotkeyAction::SelectInformation);
     }
 
+    virtual std::string getDescription() const override {
+        return "Get details about the application.";
+    }
+
     virtual std::string getIcon() const override {
         return ICON_MD_INFO_OUTLINE;
     }
+
+    virtual void drawToSidePane(SidePane& sidePane) override;
 };
 }  // namespace pepr3d

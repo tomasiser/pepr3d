@@ -6,21 +6,42 @@ namespace pepr3d {
 
 void PaintBucket::drawToSidePane(SidePane &sidePane) {
     if(!mGeometryCorrect) {
-        sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");
+        sidePane.drawText("Polyhedron not built, since the geometry was damaged. Tool disabled.");
         return;
     }
 
-    sidePane.drawColorPalette(mApplication.getCurrentGeometry()->getColorManager());
+    sidePane.drawColorPalette();
     sidePane.drawSeparator();
 
     sidePane.drawCheckbox("Paint while dragging", mShouldPaintWhileDrag);
     sidePane.drawTooltipOnHover("When enabled, you can drag your mouse over regions to continuously color them.");
-    sidePane.drawCheckbox("Color whole model", mDoNotStop);
+
+    if(ImGui::RadioButton("Color whole model", mDoNotStop)) {
+        mDoNotStop = true;
+        mStopOnColor = false;
+        mStopOnNormal = false;
+    }
     sidePane.drawTooltipOnHover("When enabled, the selected color will always be applied to the whole model.");
+
+    if(ImGui::RadioButton("Color based on criteria", !mDoNotStop)) {
+        mDoNotStop = false;
+        mStopOnColor = true;  // default
+        mStopOnNormal = false;
+    }
+    sidePane.drawTooltipOnHover("When enabled, coloring will stop on boundaries based on the selected criteria.");
+
     if(!mDoNotStop) {
-        sidePane.drawCheckbox("Stop on different color", mStopOnColor);
+        if(ImGui::Checkbox("Stop on different color", &mStopOnColor)) {
+            if(!mStopOnColor && !mStopOnNormal) {
+                mStopOnNormal = true;  // make sure at least 1 option is selected
+            }
+        }
         sidePane.drawTooltipOnHover("When enabled, coloring will stop on a boundary with a different color.");
-        sidePane.drawCheckbox("Stop on sharp edges", mStopOnNormal);
+        if(ImGui::Checkbox("Stop on sharp edges", &mStopOnNormal)) {
+            if(!mStopOnColor && !mStopOnNormal) {
+                mStopOnColor = true;  // make sure at least 1 option is selected
+            }
+        }
         sidePane.drawTooltipOnHover("When enabled, coloring will stop on a boundary with a sharp edge.");
         if(mStopOnNormal) {
             sidePane.drawIntDragger("Maximum angle", mStopOnNormalDegrees, 0.25f, 0, 180, "%.0f°", 40.0f);
@@ -30,9 +51,12 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
             if(ImGui::RadioButton("With starting triangle", mNormalCompare == NormalAngleCompare::ABSOLUTE)) {
                 mNormalCompare = NormalAngleCompare::ABSOLUTE;
             }
+            sidePane.drawTooltipOnHover("The angles are compared with respect to the initial triangle.");
             if(ImGui::RadioButton("Neighbouring triangles", mNormalCompare == NormalAngleCompare::NEIGHBOURS)) {
                 mNormalCompare = NormalAngleCompare::NEIGHBOURS;
             }
+            sidePane.drawTooltipOnHover(
+                "The angles are compared with respect to the actual neighbours of the individual triangles.");
         }
     }
     sidePane.drawSeparator();
@@ -81,6 +105,17 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     };
 
     std::vector<DetailedTriangleId> trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+
+    try {
+        trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+    } catch(std::exception &e) {
+        const std::string errorCaption = "Error: Failed to bucket paint";
+        const std::string errorDescription =
+            "An internal error occured while bucket painting. If the problem persists, try re-loading the mesh.\n\n"
+            "Please report this bug to the developers. The full description of the problem is:\n";
+        mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+        return;
+    }
 
     if(trianglesToPaint.empty()) {
         return;
