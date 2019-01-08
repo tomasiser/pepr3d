@@ -39,6 +39,7 @@ void Brush::onToolSelect(ModelView& modelView) {
 }
 
 void Brush::onToolDeselect(ModelView& modelView) {
+    mApplication.getCurrentGeometry()->hideHighlight();
     if(paintedAnything)
     {
         mApplication.getCurrentGeometry()->updateTemporaryDetailedData();

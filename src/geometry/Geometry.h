@@ -265,6 +265,11 @@ class Geometry {
         return mAreaHighlight;
     }
 
+	void hideHighlight()
+	{
+        mAreaHighlight.enabled = false;
+	}
+
     const DataTriangle& getTriangle(const size_t triangleIndex) const {
         assert(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex];
