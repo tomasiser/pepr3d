@@ -54,6 +54,9 @@ class Brush : public Tool {
     virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
 
+    virtual void onToolSelect(ModelView& modelView) override;
+    virtual void onToolDeselect(ModelView& modelView) override;
+
    private:
     /// Do painting tick on the model
     void paint();
@@ -72,6 +75,9 @@ class Brush : public Tool {
     static const int SIZE_SLIDER_STEPS = 100;
 
     bool mGroupCommands = false;
+
+    /// Did we paint anything since selecting this tool
+    bool paintedAnything = false;
 
     /// How many times can we run this tool without updating the screen
     int mPaintsSinceDraw = 0;

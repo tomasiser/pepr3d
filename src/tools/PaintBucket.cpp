@@ -65,7 +65,8 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
 
     const ColorStopping colorFtor(geometry);
 
-    auto combinedCriterion = [&normalFtor, &colorFtor, this](const size_t a, const size_t b) -> bool {
+    auto combinedCriterion = [&normalFtor, &colorFtor, this](const DetailedTriangleId a,
+                                                             const DetailedTriangleId b) -> bool {
         if(mDoNotStop) {
             return true;
         }
@@ -79,7 +80,7 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
         return result;
     };
 
-    std::vector<size_t> trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+    std::vector<DetailedTriangleId> trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
 
     if(trianglesToPaint.empty()) {
         return;
@@ -115,7 +116,7 @@ void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent
         mHoveredTriangleId = {};
         return;
     }
-    mHoveredTriangleId = safeIntersectMesh(mApplication, cameraRay);
+    mHoveredTriangleId = safeIntersectDetailedMesh(mApplication, cameraRay);
 }
 
 void PaintBucket::onNewGeometryLoaded(ModelView &modelView) {

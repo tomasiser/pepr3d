@@ -5,6 +5,7 @@
 #include "cinder/Ray.h"
 #include "cinder/app/MouseEvent.h"
 
+#include "geometry/TrianglePrimitive.h"
 #include "ui/Hotkeys.h"
 
 namespace pepr3d {
@@ -42,6 +43,8 @@ class Tool {
     virtual void onNewGeometryLoaded(ModelView& modelView){};
 
     virtual std::optional<std::size_t> safeIntersectMesh(MainApplication& mainApplication, const ci::Ray ray) final;
+    virtual std::optional<DetailedTriangleId> safeIntersectDetailedMesh(MainApplication& mainApplication,
+                                                                        const ci::Ray ray) final;
 };
 
 }  // namespace pepr3d

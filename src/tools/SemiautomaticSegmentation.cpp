@@ -3,6 +3,8 @@
 
 namespace pepr3d {
 
+    using std::vector;
+
 void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!mGeometryCorrect) {
         sidePane.drawText("Polyhedron not built, since\nthe geometry was damaged.\nTool disabled.");

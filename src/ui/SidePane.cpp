@@ -193,7 +193,7 @@ void SidePane::drawColorPalette(ColorManager& colorManager) {
     if(drawButton("Randomize Colors")) {
         std::random_device rd;   // Will be used to obtain a seed for the random number engine
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-        uniform_real_distribution<> dis(0.0, 1.0);
+        std::uniform_real_distribution<> dis(0.0, 1.0);
         std::vector<glm::vec4> newColors;
         for(int i = 0; i < colorManager.size(); ++i) {
             newColors.emplace_back(dis(gen), dis(gen), dis(gen), 1);

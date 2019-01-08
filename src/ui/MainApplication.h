@@ -21,18 +21,15 @@
 #include "Toolbar.h"
 #include "commands/CommandManager.h"
 
-using namespace ci;
-using namespace ci::app;
-using namespace std;
-
 namespace pepr3d {
-
 class Tool;
 class Geometry;
+using cinder::app::FileDropEvent;
+using cinder::app::KeyEvent;
+using cinder::app::MouseEvent;
 
-class MainApplication : public App {
-   public:
-    void setup() override;
+class MainApplication : public cinder::app::App {
+    public : void setup() override;
     void update() override;
     void draw() override;
     void resize() override;
@@ -109,6 +106,7 @@ class MainApplication : public App {
         assert((*tool)->isEnabled());
         (*mCurrentToolIterator)->onToolDeselect(mModelView);
         mCurrentToolIterator = tool;
+        (*mCurrentToolIterator)->onToolSelect(mModelView);
     }
 
     template <typename Tool>

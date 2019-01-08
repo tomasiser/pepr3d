@@ -34,6 +34,17 @@ void Brush::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event
     updateHighlight();
 }
 
+void Brush::onToolSelect(ModelView& modelView) {
+    paintedAnything = false;
+}
+
+void Brush::onToolDeselect(ModelView& modelView) {
+    if(paintedAnything)
+    {
+        mApplication.getCurrentGeometry()->updateTemporaryDetailedData();
+    }
+}
+
 void Brush::paint() {
     // Prevents blocking the rendering if painting takes too long
     if(mPaintsSinceDraw >= MAX_PAINTS_WITHOUT_DRAW) {
@@ -49,6 +60,7 @@ void Brush::paint() {
     }
 
     mGroupCommands = true;
+    paintedAnything = true;
 }
 
 void Brush::stopPaint() {

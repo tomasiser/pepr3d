@@ -21,6 +21,10 @@ struct DetailedTriangleId {
         return mDetailId;
     }
 
+    bool operator==(const DetailedTriangleId& other) const {
+        return mBaseId == other.mBaseId && mDetailId == other.mDetailId;
+    }
+
    private:
     size_t mBaseId;
     std::optional<size_t> mDetailId;
@@ -64,3 +68,12 @@ struct DataTriangleAABBPrimitive {
 };
 
 }  // namespace pepr3d
+
+namespace std {
+template <>
+struct hash<pepr3d::DetailedTriangleId> {
+    size_t operator()(const pepr3d::DetailedTriangleId& id) const{
+        return std::hash<size_t>{}(id.getBaseId()) ^ std::hash<std::optional<size_t>>{}(id.getDetailId());
+    };
+};
+}  // namespace std

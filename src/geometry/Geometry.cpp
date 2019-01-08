@@ -39,8 +39,7 @@ void Geometry::loadState(const GeometryState& state) {
     assert(mTree->size() == mTriangles.size());
 
     invalidateTemporaryDetailedData();
-
-    buildDetailedTree();
+    updateTemporaryDetailedData();
 }
 
 /* -------------------- Mesh loading -------------------- */
@@ -612,7 +611,25 @@ void Geometry::buildDetailedTree() {
 }
 
 void Geometry::buildDetailedMesh() {
+    // Copy base mesh
     mMeshDetailed = std::make_unique<PolyhedronData::Mesh>(mPolyhedronData.mMesh);
+    // Copy face descriptors
+    mMeshDetailedFaceDescs.clear();
+    for(size_t triangleIdx = 0; triangleIdx < mPolyhedronData.mFaceDescs.size(); triangleIdx++) {
+        mMeshDetailedFaceDescs[DetailedTriangleId(triangleIdx)] = mPolyhedronData.mFaceDescs[triangleIdx];
+    }
+
+    mMeshDetailedIdMap.reset();
+    bool created;
+    boost::tie(mMeshDetailedIdMap, created) =
+        mMeshDetailed->add_property_map<PolyhedronData::face_descriptor, DetailedTriangleId>("f:idOfEachTriangle",
+                                                                                             DetailedTriangleId());
+    assert(created);
+
+    // Copy face to id map
+    for(const auto faceIt : mPolyhedronData.mMesh.faces()) {
+        mMeshDetailedIdMap[faceIt] = DetailedTriangleId(mPolyhedronData.mIdMap[faceIt]);
+    }
 
     /**
      *  Yes, we are about to hash floating point values.
@@ -651,7 +668,8 @@ void Geometry::buildDetailedMesh() {
         CGAL::Euler::remove_face(faceHalfedge, *mMeshDetailed);
 
         // Add detail triangles while combining common vertices
-        for(const DataTriangle& detail : detailTriangles) {
+        for(size_t detailTriangleIdx = 0; detailTriangleIdx < detailTriangles.size(); detailTriangleIdx++) {
+            const DataTriangle& detail = detailTriangles[detailTriangleIdx];
             // Vertex descriptors of current detail triangle
             std::array<PolyhedronData::vertex_descriptor, 3> vertDescriptors;
 
@@ -660,26 +678,40 @@ void Geometry::buildDetailedMesh() {
                 auto it = ptToVertexDesc.find(detail.getVertex(i));
                 if(it == ptToVertexDesc.end()) {
                     auto vertexDesc = mMeshDetailed->add_vertex(detail.getTri().vertex(i));
+                    assert(vertexDesc != PolyhedronData::Mesh::null_vertex());
                     it = ptToVertexDesc.insert(std::make_pair(detail.getVertex(i), vertexDesc)).first;
                 }
 
                 vertDescriptors[i] = it->second;
             }
 
-            mMeshDetailed->add_face(vertDescriptors[0], vertDescriptors[1], vertDescriptors[2]);
+            std::array<PolyhedronData::vertex_descriptor,3> faceVerts{vertDescriptors[0], vertDescriptors[1],
+                                                                      vertDescriptors[2]};
+
+            auto faceDesc = mMeshDetailed->add_face(faceVerts);
+            //auto faceDesc = CGAL::Euler::add_face(faceVerts, *mMeshDetailed);
+            assert(faceDesc != PolyhedronData::Mesh::null_face());
+            mMeshDetailedFaceDescs.insert(std::make_pair(DetailedTriangleId(triangleId, detailTriangleIdx), faceDesc));
+            mMeshDetailedIdMap[faceDesc] = DetailedTriangleId(triangleId, detailTriangleIdx);
         }
     }
 }
 
 void Geometry::updateTemporaryDetailedData() {
+    const auto start = std::chrono::high_resolution_clock::now();
     ::ThreadPool& threadPool = MainApplication::getThreadPool();
 
     /// Async build the data
-    auto buildDetailedMeshFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
-    auto buildDetailedTreeFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
+    // auto buildDetailedMeshFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
+    // auto buildDetailedTreeFuture = threadPool.enqueue([this]() { buildDetailedTree(); });
+    buildDetailedMesh();
+    buildDetailedTree();
+    // buildDetailedMeshFuture.get();
+    // buildDetailedTreeFuture.get();
 
-    buildDetailedMeshFuture.get();
-    buildDetailedTreeFuture.get();
+    const auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> timeMs = end - start;
+    CI_LOG_I("Updating temporary detailed data took " + std::to_string(timeMs.count()) + " ms");
 }
 
 void Geometry::invalidateTemporaryDetailedData() {
@@ -703,6 +735,31 @@ std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
             const size_t neighbourFaceId = mPolyhedronData.mIdMap[neighbourFace];
             assert(neighbourFaceId < mTriangles.size());
             returnValue[i] = static_cast<int>(neighbourFaceId);
+        }
+
+        itEdge = mesh.next(itEdge);
+    }
+    assert(edge == itEdge);
+
+    return returnValue;
+}
+std::array<std::optional<DetailedTriangleId>, 3> Geometry::gatherNeighbours(const DetailedTriangleId triId) const {
+    assert(mMeshDetailed);
+
+    const auto& faceDescriptors = mMeshDetailedFaceDescs;
+    const auto& mesh = *mMeshDetailed;
+    assert(faceDescriptors.find(triId) != faceDescriptors.end());
+    std::array<std::optional<DetailedTriangleId>, 3> returnValue = {};
+    const PolyhedronData::face_descriptor face = faceDescriptors.find(triId)->second;
+    const auto edge = mesh.halfedge(face);
+    auto itEdge = edge;
+
+    for(int i = 0; i < 3; ++i) {
+        const auto oppositeEdge = mesh.opposite(itEdge);
+        if(oppositeEdge.is_valid() && !mesh.is_border(oppositeEdge)) {
+            const PolyhedronData::Mesh::Face_index neighbourFace = mesh.face(oppositeEdge);
+            const DetailedTriangleId neighbourFaceId = mMeshDetailedIdMap[neighbourFace];
+            returnValue[i] = neighbourFaceId;
         }
 
         itEdge = mesh.next(itEdge);

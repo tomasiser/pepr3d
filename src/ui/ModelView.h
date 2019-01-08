@@ -9,6 +9,7 @@
 #include "ui/CameraUi.h"
 
 #include <chrono>
+#include "geometry/TrianglePrimitive.h"
 
 namespace pepr3d {
 
@@ -29,7 +30,10 @@ class ModelView {
     void onMouseMove(ci::app::MouseEvent event);
 
     ci::Ray getRayFromWindowCoordinates(glm::ivec2 windowCoords) const;
-    void drawTriangleHighlight(const size_t triangleIndex);
+    void drawTriangleHighlight(const DetailedTriangleId triangleId);
+    void drawTriangleHighlight(const size_t triangleIdx) {
+        drawTriangleHighlight(DetailedTriangleId(triangleIdx));
+    }
 
     void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white());
 

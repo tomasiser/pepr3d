@@ -75,7 +75,7 @@ class TriangleDetail {
     void setColor(size_t detailIdx, size_t color)
     {
         assert(detailIdx < mTriangles.size());
-        if(mTriangles[detailIdx].getColor!=color)
+        if(mTriangles[detailIdx].getColor()!=color)
         {
             mTriangles[detailIdx].setColor(color);
             colorChanged = true;

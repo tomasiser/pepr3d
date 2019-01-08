@@ -140,8 +140,17 @@ class Geometry {
     /// triangleDetail topology.
     std::unique_ptr<Tree> mTreeDetailed;
 
+    // ----- Detailed Mesh Data ------
+
     /// Surface mesh with detail triangles included
     std::unique_ptr<PolyhedronData::Mesh> mMeshDetailed;
+
+    std::unordered_map<DetailedTriangleId, PolyhedronData::face_descriptor> mMeshDetailedFaceDescs;
+
+    /// Map converting a face_descriptor into an ID
+    PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, DetailedTriangleId> mMeshDetailedIdMap;
+
+    // ----- END of Detailed Mesh Data ------
 
     /// AABB of the whole mesh
     std::unique_ptr<BoundingBox> mBoundingBox;
@@ -272,6 +281,10 @@ class Geometry {
         return getTriangle(triangleIndex).getColor();
     }
 
+    size_t getTriangleColor(const DetailedTriangleId triangleId) const {
+        return getTriangle(triangleId).getColor();
+    }
+
     /// Return the number of triangles in the whole mesh
     size_t getTriangleCount() const {
         return mTriangles.size();
@@ -337,7 +350,11 @@ class Geometry {
     /// Stopping is handled by the StoppingCondition functor/lambda.
     /// A vector of reached triangle indices is returned;
     template <typename StoppingCondition>
-    std::vector<size_t> bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor);
+    std::vector<DetailedTriangleId> bucket(const DetailedTriangleId startTriangle,
+                                           const StoppingCondition& stopFunctor);
+
+    template <typename StoppingCondition>
+    std::vector<size_t> bucket(const size_t startTriangle, const StoppingCondition& stopFunctor);
 
     template <typename StoppingCondition>
     std::vector<size_t> bucket(const std::vector<size_t>& startTriangles, const StoppingCondition& stopFunctor);
@@ -378,6 +395,21 @@ class Geometry {
     }
 
     void recomputeFromData();
+
+    /// Get number of detailed triangles for this baseId
+    size_t getTriangleDetailCount(const DetailedTriangleId triangleIndex) const {
+        return getTriangleDetailCount(triangleIndex.getBaseId());
+    }
+
+    /// Get number of detailed triangles for this baseId
+    size_t getTriangleDetailCount(const size_t triangleIndex) const {
+        auto& it = mTriangleDetails.find(triangleIndex);
+        if(it == mTriangleDetails.end()) {
+            return 0;
+        } else {
+            return it->second.getTriangles().size();
+        }
+    }
 
    private:
     /// Generates the vertex buffer linearly - adding each vertex of each triangle as a new one.
@@ -426,23 +458,24 @@ class Geometry {
         }
     }
 
-    size_t getTriangleDetailCount(const size_t triangleIndex) const {
-        auto& it = mTriangleDetails.find(triangleIndex);
-        if(it == mTriangleDetails.end()) {
-            return 0;
-        } else {
-            return it->second.getTriangles().size();
-        }
-    }
-
     /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking
     /// into the CGAL Polyhedron construct.
     std::array<int, 3> gatherNeighbours(const size_t triIndex) const;
+
+    /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking
+    /// into the CGAL Polyhedron construct.
+    std::array<std::optional<DetailedTriangleId>, 3> gatherNeighbours(const DetailedTriangleId triIndex) const;
 
     /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
     template <typename StoppingCondition>
     void addNeighboursToQueue(const size_t currentVertex, std::unordered_set<size_t>& alreadyVisited,
                               std::deque<size_t>& toVisit, const StoppingCondition& stopFunctor) const;
+
+    /// Used by BFS in bucket painting. Manages the queue used to search through the graph.
+    template <typename StoppingCondition>
+    void addNeighboursToQueue(const DetailedTriangleId currentVertex,
+                              std::unordered_set<DetailedTriangleId>& alreadyVisited,
+                              std::deque<DetailedTriangleId>& toVisit, const StoppingCondition& stopFunctor) const;
 
     void computeSdf();
 
@@ -461,6 +494,11 @@ class Geometry {
     template <typename StoppingCondition>
     std::vector<size_t> bucketSpread(const StoppingCondition& stopFunctor, std::deque<size_t>& toVisit,
                                      std::unordered_set<size_t>& alreadyVisited);
+
+    template <typename StoppingCondition>
+    std::vector<DetailedTriangleId> bucketSpread(const StoppingCondition& stopFunctor,
+                                                 std::deque<DetailedTriangleId>& toVisit,
+                                                 std::unordered_set<DetailedTriangleId>& alreadyVisited);
 };
 
 template <typename StoppingCondition>
@@ -493,7 +531,54 @@ std::vector<size_t> Geometry::bucketSpread(const StoppingCondition& stopFunctor,
 }
 
 template <typename StoppingCondition>
-std::vector<size_t> Geometry::bucket(const std::size_t startTriangle, const StoppingCondition& stopFunctor) {
+std::vector<DetailedTriangleId> Geometry::bucketSpread(const StoppingCondition& stopFunctor,
+                                                       std::deque<DetailedTriangleId>& toVisit,
+                                                       std::unordered_set<DetailedTriangleId>& alreadyVisited) {
+    assert(mMeshDetailed);
+    std::vector<DetailedTriangleId> trianglesToColor;
+
+    while(!toVisit.empty()) {
+        // Remove yourself from queue and mark visited
+        const DetailedTriangleId currentVertex = toVisit.front();
+        toVisit.pop_front();
+        assert(alreadyVisited.find(currentVertex) != alreadyVisited.end());
+        assert(currentVertex.getBaseId() < mTriangles.size());
+        assert(currentVertex.getDetailId() < getTriangleDetailCount(currentVertex));
+
+        // Catching because of unpredictable CGAL errors
+        try {
+            // Manage neighbours and grow the queue
+            addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
+        } catch(CGAL::Assertion_exception* excp) {
+            CI_LOG_E("Exception caught. Returning immediately. " + excp->expression() + " " + excp->message());
+            return {};
+        }
+
+        // Add the triangle to the list
+        trianglesToColor.push_back(currentVertex);
+    }
+    return trianglesToColor;
+}
+
+template <typename StoppingCondition>
+std::vector<DetailedTriangleId> Geometry::bucket(const DetailedTriangleId startTriangle,
+                                                 const StoppingCondition& stopFunctor) {
+    if(mPolyhedronData.mMesh.is_empty()) {
+        return {};
+    }
+
+    std::deque<DetailedTriangleId> toVisit;
+    const DetailedTriangleId startingFace = startTriangle;
+    toVisit.push_back(startingFace);
+
+    std::unordered_set<DetailedTriangleId> alreadyVisited;
+    alreadyVisited.insert(startingFace);
+
+    return bucketSpread(stopFunctor, toVisit, alreadyVisited);
+}
+
+template <typename StoppingCondition>
+std::vector<size_t> Geometry::bucket(const size_t startTriangle, const StoppingCondition& stopFunctor) {
     if(mPolyhedronData.mMesh.is_empty()) {
         return {};
     }
@@ -539,6 +624,27 @@ void Geometry::addNeighboursToQueue(const size_t currentVertex, std::unordered_s
                 if(stopFunctor(neighbours[i], currentVertex)) {
                     toVisit.push_back(neighbours[i]);
                     alreadyVisited.insert(neighbours[i]);
+                }
+            }
+        }
+    }
+}
+
+template <typename StoppingCondition>
+void Geometry::addNeighboursToQueue(const DetailedTriangleId currentVertex,
+                                    std::unordered_set<DetailedTriangleId>& alreadyVisited,
+                                    std::deque<DetailedTriangleId>& toVisit,
+                                    const StoppingCondition& stopFunctor) const {
+    std::array<std::optional<DetailedTriangleId>, 3> neighbours = gatherNeighbours(currentVertex);
+    for(int i = 0; i < 3; ++i) {
+        if(!neighbours[i]) {
+            continue;
+        } else {
+            if(alreadyVisited.find(*neighbours[i]) == alreadyVisited.end()) {
+                // New vertex -> visit it.
+                if(stopFunctor(*neighbours[i], currentVertex)) {
+                    toVisit.push_back(*neighbours[i]);
+                    alreadyVisited.insert(*neighbours[i]);
                 }
             }
         }

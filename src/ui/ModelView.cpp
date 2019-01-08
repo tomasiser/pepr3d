@@ -4,6 +4,7 @@
 #include "tools/Tool.h"
 
 namespace pepr3d {
+using namespace ci;
 
 void ModelView::setup() {
     resetCamera();
@@ -226,17 +227,22 @@ void ModelView::drawGeometry() {
     mBatch->draw();
 }
 
-void ModelView::drawTriangleHighlight(const size_t triangleIndex) {
+void ModelView::drawTriangleHighlight(const DetailedTriangleId triangleId) {
     const Geometry* const geometry = mApplication.getCurrentGeometry();
-    if(geometry == nullptr || triangleIndex >= geometry->getTriangleCount()) {
+    if(geometry == nullptr || triangleId.getBaseId() >= geometry->getTriangleCount()) {
+        return;
+    }
+
+    if(triangleId.getDetailId() && triangleId.getDetailId() >= geometry->getTriangleDetailCount(triangleId.getBaseId()))
+    {
         return;
     }
 
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
 
-    const DataTriangle& triangle = geometry->getTriangle(triangleIndex);
-    const glm::vec4 color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleIndex));
+    const DataTriangle& triangle = geometry->getTriangle(triangleId);
+    const glm::vec4 color = geometry->getColorManager().getColor(geometry->getTriangleColor(triangleId));
     const float brightness = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
     const bool isDarkHighlight = mIsWireframeEnabled ? (brightness <= 0.75f) : (brightness > 0.75f);
     ci::gl::ScopedColor drawColor(isDarkHighlight ? ci::ColorA::hex(0x1C2A35) : ci::ColorA::hex(0xFCFCFC));

@@ -5,6 +5,8 @@
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
+using std::string;
+using std::to_string;
 
 template <typename Pt>
 double angleBetweenPoints(const Pt& a, const Pt& b, const Pt& c) {

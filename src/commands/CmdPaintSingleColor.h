@@ -14,14 +14,25 @@ class CmdPaintSingleColor : public CommandBase<Geometry> {
     }
 
     CmdPaintSingleColor(size_t triangleId, const size_t colorId)
+        : CmdPaintSingleColor(DetailedTriangleId(triangleId), colorId) {}
+
+    CmdPaintSingleColor(DetailedTriangleId triangleId, const size_t colorId)
         : CommandBase(false, true), mTriangleIds{triangleId}, mColorId(colorId) {}
 
-    CmdPaintSingleColor(std::vector<size_t>&& triangleIds, const size_t colorId)
+    CmdPaintSingleColor(std::vector<DetailedTriangleId>&& triangleIds, const size_t colorId)
         : CommandBase(false, true), mTriangleIds(triangleIds), mColorId(colorId) {}
+
+    CmdPaintSingleColor(std::vector<size_t>&& triangleIds, const size_t colorId)
+        : CommandBase(false, true), mColorId(colorId) {
+        mTriangleIds.reserve(triangleIds.size());
+        for(size_t triIdx : triangleIds) {
+            mTriangleIds.emplace_back(triIdx);
+        }
+    }
 
    protected:
     void run(Geometry& target) const override {
-        for(size_t triangleId : mTriangleIds) {
+        for(DetailedTriangleId triangleId : mTriangleIds) {
             target.setTriangleColor(triangleId, mColorId);
         }
     }
@@ -36,7 +47,7 @@ class CmdPaintSingleColor : public CommandBase<Geometry> {
         }
     }
 
-    std::vector<size_t> mTriangleIds;
+    std::vector<DetailedTriangleId> mTriangleIds;
     size_t mColorId;
 };
 }  // namespace pepr3d

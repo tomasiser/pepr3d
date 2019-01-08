@@ -34,6 +34,10 @@
 #include "windows.h"
 #endif
 
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+
 namespace pepr3d {
 
 ::ThreadPool MainApplication::sThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1);
@@ -72,7 +76,7 @@ void MainApplication::setup() {
     }
 
     mGeometry = std::make_shared<Geometry>();
-    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string(), sThreadPool);
+    mGeometry->loadNewGeometry(getAssetPath("models/defaultcube.stl").string());
 
     mCommandManager = std::make_unique<CommandManager<Geometry>>(*mGeometry);
 
@@ -282,7 +286,7 @@ void MainApplication::openFile(const std::string& path) {
             mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
         }
         auto asyncCalculation = [onLoadingComplete, path, this]() {
-            mGeometryInProgress->recomputeFromData(sThreadPool);
+            mGeometryInProgress->recomputeFromData();
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
             dispatchAsync(onLoadingComplete);
@@ -294,7 +298,7 @@ void MainApplication::openFile(const std::string& path) {
         // Queue the loading of the new geometry
         auto importNewModel = [onLoadingComplete, path, this]() {
             // Load the geometry
-            mGeometryInProgress->loadNewGeometry(path, sThreadPool);
+            mGeometryInProgress->loadNewGeometry(path);
 
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.
