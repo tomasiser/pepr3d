@@ -11,9 +11,9 @@
 #include <assert.h>
 #include <cinder/Log.h>
 #include <deque>
+#include <glm/gtc/constants.inl>
 #include <list>
 #include <optional>
-#include <glm/gtc/constants.inl>
 
 // Loss of precision between conversions may move verticies? Needs testing
 
@@ -91,10 +91,8 @@ void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
     dbg.addPoly(mBounds, "#00FF00");
     dbg.exportToFile();*/
 
-
-    if(colorChanged)
-    {
-       updatePolysFromTriangles();
+    if(colorChanged) {
+        //updatePolysFromTriangles();
     }
 
     bool joined = false;
@@ -137,8 +135,8 @@ void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
 
 TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
     const Point2 a = toExactK(mOriginalPlane.to_2d(tri.vertex(0)));
-    Point2 b = toExactK(mOriginalPlane.to_2d(tri.vertex(1)));
-    Point2 c = toExactK(mOriginalPlane.to_2d(tri.vertex(2)));
+    const Point2 b = toExactK(mOriginalPlane.to_2d(tri.vertex(1)));
+    const Point2 c = toExactK(mOriginalPlane.to_2d(tri.vertex(2)));
 
     Polygon pgn;
     pgn.push_back(a);
@@ -208,8 +206,11 @@ void TriangleDetail::updatePolysFromTriangles() {
 
     for(const DataTriangle& tri : mTriangles) {
         assert(tri.getTri().squared_area() > 0);
+        assert(!tri.getTri().is_degenerate());
         mColoredPolys[tri.getColor()].join(polygonFromTriangle(tri.getTri()));
     }
+
+    colorChanged = false;
 }
 
 void TriangleDetail::markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,

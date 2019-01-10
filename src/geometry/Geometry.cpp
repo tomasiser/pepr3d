@@ -465,7 +465,7 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
 
 TriangleDetail* Geometry::createTriangleDetail(size_t triangleIdx) {
     auto result =
-        mTriangleDetails.emplace(triangleIdx, TriangleDetail(getTriangle(triangleIdx), getTriangleColor(triangleIdx)));
+        mTriangleDetails.emplace(triangleIdx, TriangleDetail(getTriangle(triangleIdx)));
 
     return &(result.first->second);
 }

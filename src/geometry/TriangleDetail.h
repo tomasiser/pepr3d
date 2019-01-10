@@ -9,6 +9,7 @@
 #include <CGAL/Polygon_set_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <cereal/access.hpp>
 #include <deque>
 #include <map>
 #include <optional>
@@ -50,11 +51,21 @@ class TriangleDetail {
     using Tds = CGAL::Triangulation_data_structure_2<CGAL::Triangulation_vertex_base_2<K>, Fb>;
     using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds, CGAL::No_intersection_tag>;
 
-    explicit TriangleDetail(const DataTriangle& original, size_t colorIdx)
+    explicit TriangleDetail(const DataTriangle& original)
         : mOriginal(original), mOriginalPlane(original.getTri().supporting_plane()) {
         mBounds = polygonFromTriangle(mOriginal.getTri());
         mTriangles.push_back(mOriginal);
         mColoredPolys.emplace(mOriginal.getColor(), polygonFromTriangle(mOriginal.getTri()));
+    }
+
+    // Default constructor for cereal
+    TriangleDetail() = default;
+   
+
+    TriangleDetail(const DataTriangle& original, std::vector<DataTriangle>&& detailTriangles)
+        : TriangleDetail(original) {
+        mTriangles = detailTriangles;
+        updatePolysFromTriangles();
     }
 
     bool isSingleColor() const {
@@ -72,22 +83,34 @@ class TriangleDetail {
     }
 
     /// Set color of a detail triangle
-    void setColor(size_t detailIdx, size_t color)
-    {
+    void setColor(size_t detailIdx, size_t color) {
         assert(detailIdx < mTriangles.size());
-        if(mTriangles[detailIdx].getColor()!=color)
-        {
+        if(mTriangles[detailIdx].getColor() != color) {
             mTriangles[detailIdx].setColor(color);
             colorChanged = true;
         }
     }
+
+    template <class Archive>
+    void save(Archive& archive) const {
+        archive(mOriginal, mTriangles);
+    }
+
+    template <class Archive>
+    void load(Archive& archive) {
+        archive(mOriginal, mTriangles);
+        mOriginalPlane = mOriginal.getTri().supporting_plane();
+        mBounds = polygonFromTriangle(mOriginal.getTri());
+        updatePolysFromTriangles();
+    }
+
 
    private:
     std::vector<DataTriangle> mTriangles;
 
     std::map<size_t, PolygonSet> mColoredPolys;
 
-    const DataTriangle mOriginal;
+    DataTriangle mOriginal;
 
     static const int VERTICES_PER_UNIT_CIRCLE = 100;
     static const int MIN_VERTICES_IN_CIRCLE = 24;
@@ -95,7 +118,7 @@ class TriangleDetail {
     /// Bounds of the original triangle
     Polygon mBounds;
 
-    const PeprPlane mOriginalPlane;
+    PeprPlane mOriginalPlane;
 
     /// Did color of any detail triangle change since last triangulation?
     bool colorChanged = false;

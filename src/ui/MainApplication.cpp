@@ -40,16 +40,11 @@ using namespace ci::app;
 using namespace std;
 
 namespace pepr3d {
-
-::ThreadPool MainApplication::sThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1);
-
 // At least 2 threads in thread pool must be created, or importing will never finish!
 // std::thread::hardware_concurrency() may return 0
-MainApplication::MainApplication()
-    : mFontStorage{},
-      mToolbar(*this),
-      mSidePane(*this),
-      mModelView(*this) {}
+::ThreadPool MainApplication::sThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1);
+
+MainApplication::MainApplication() : mFontStorage{}, mToolbar(*this), mSidePane(*this), mModelView(*this) {}
 
 void MainApplication::setup() {
     setupLogging();
@@ -329,7 +324,6 @@ void MainApplication::openFile(const std::string& path) {
             mProgressIndicator.setGeometryInProgress(mGeometryInProgress);
         }
         auto asyncCalculation = [onLoadingComplete, path, this]() {
-
             try {
                 mGeometryInProgress->recomputeFromData();
             } catch(const std::exception& e) {
@@ -355,7 +349,6 @@ void MainApplication::openFile(const std::string& path) {
                 // ignore the exception as we will detect the loading failed in the onLoadingComplete
                 CI_LOG_E("exception occured while loading geometry: " << e.what());
             }
-
 
             // Call the lambda to swap the geometry and command manager pointers, etc.
             // onLoadingComplete Gets called at the beginning of the next draw() cycle.

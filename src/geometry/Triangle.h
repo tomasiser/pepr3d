@@ -3,6 +3,7 @@
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Spherical_kernel_3.h>
+#include <cereal/access.hpp>
 #include <cereal/cereal.hpp>
 #include <glm/glm.hpp>
 
@@ -63,7 +64,7 @@ class DataTriangle {
     }
 };
 
-}
+}  // namespace pepr3d
 
 namespace CGAL {
 template <typename Archive>

@@ -9,6 +9,7 @@
 #include <cinder/gl/gl.h>
 #include <cereal/types/array.hpp>
 #include <cereal/types/vector.hpp>
+#include <cereal/types/map.hpp>
 #include "cinder/Log.h"
 
 #include <cassert>
@@ -17,9 +18,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "geometry/GlmSerialization.h"
 #include "geometry/ColorManager.h"
 #include "geometry/GeometryProgress.h"
+#include "geometry/GlmSerialization.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/Triangle.h"
 #include "geometry/TriangleDetail.h"
@@ -98,8 +99,8 @@ class Geometry {
     /// Map of triangle details. (Detailed triangles that replace the original)
     std::map<size_t, TriangleDetail> mTriangleDetails;
 
-	/// Map of baseTriangleId -> Index of first detail triangle color in mOgl.colorBuffer
-	std::map<size_t, size_t> mTriangleDetailColorBufferStart;
+    /// Map of baseTriangleId -> Index of first detail triangle color in mOgl.colorBuffer
+    std::map<size_t, size_t> mTriangleDetailColorBufferStart;
 
     /// All open GL buffers
     OpenGlData mOgl;
@@ -241,7 +242,7 @@ class Geometry {
     /// This is a slow operation
     void updateTemporaryDetailedData();
 
-	bool isTemporaryDetailedDataValid() const {
+    bool isTemporaryDetailedDataValid() const {
         return mMeshDetailed && mTreeDetailed;
     }
 
@@ -263,10 +264,9 @@ class Geometry {
         return mAreaHighlight;
     }
 
-	void hideHighlight()
-	{
+    void hideHighlight() {
         mAreaHighlight.enabled = false;
-	}
+    }
 
     const DataTriangle& getTriangle(const size_t triangleIndex) const {
         assert(triangleIndex < mTriangles.size());
@@ -577,17 +577,14 @@ std::vector<DetailedTriangleId> Geometry::bucketSpread(const StoppingCondition& 
 template <typename StoppingCondition>
 std::vector<DetailedTriangleId> Geometry::bucket(const DetailedTriangleId startTriangle,
                                                  const StoppingCondition& stopFunctor) {
-    if(mPolyhedronData.mMesh.is_empty())
-    {
+    if(mPolyhedronData.mMesh.is_empty()) {
         return {};
     }
 
-	if(!isTemporaryDetailedDataValid())
-	{
+    if(!isTemporaryDetailedDataValid()) {
         updateTemporaryDetailedData();
         assert(mMeshDetailed);
-	}
-
+    }
 
     std::deque<DetailedTriangleId> toVisit;
     const DetailedTriangleId startingFace = startTriangle;
@@ -679,6 +676,7 @@ template <class Archive>
 void Geometry::save(Archive& saveArchive) const {
     saveArchive(mColorManager);
     saveArchive(mTriangles);
+    saveArchive(mTriangleDetails);
     saveArchive(mPolyhedronData.vertices);
     saveArchive(mPolyhedronData.indices);
 }
@@ -687,6 +685,7 @@ template <class Archive>
 void Geometry::load(Archive& loadArchive) {
     loadArchive(mColorManager);
     loadArchive(mTriangles);
+    loadArchive(mTriangleDetails);
     loadArchive(mPolyhedronData.vertices);
     loadArchive(mPolyhedronData.indices);
 
@@ -696,6 +695,8 @@ void Geometry::load(Archive& loadArchive) {
     // Geometry loaded via Cereal
     mProgress->importRenderPercentage = 1.0f;
     mProgress->importComputePercentage = 1.0f;
+
+    updateTemporaryDetailedData();
 
     assert(!mTriangles.empty());
     assert(!mColorManager.empty());
