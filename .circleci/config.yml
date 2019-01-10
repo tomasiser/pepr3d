@@ -54,6 +54,7 @@ jobs:
           root: /root/project
           paths:
             - build/*
+            - assets/*
   test:
     docker:
       - image: tomasiser/docker-cinder:pepr3d
