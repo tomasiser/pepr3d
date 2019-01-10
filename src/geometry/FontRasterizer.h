@@ -23,11 +23,11 @@ namespace pepr3d {
 
 class FontRasterizer {
    public:
-   private:
     struct Tri {
         glm::vec3 a, b, c;
     };
 
+   private:
     std::string mFontFile;
     bool mFontLoaded = false;
 

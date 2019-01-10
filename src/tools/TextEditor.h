@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
 
+#include "geometry/FontRasterizer.h"
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
 #include "ui/MainApplication.h"
@@ -35,10 +37,17 @@ class TextEditor : public Tool {
 
     std::string mFont;
     std::string mFontPath;
-    std::string mText;
-    int mFontSize = 30;
-    int mBezierSteps = 1;
+    std::string mText = "Pepr";
+    int mFontSize = 12;
+    int mBezierSteps = 3;
+    float mFontScale = 0.05f;
 
-    void triangulateText() const;
+    std::vector<std::vector<FontRasterizer::Tri>> mRenderedText;
+
+    std::vector<std::vector<FontRasterizer::Tri>> triangulateText() const;
+    void renderText(std::vector<std::vector<FontRasterizer::Tri>>& result, bool reset) const;
+    void processText();
+    void rotateText(std::vector<std::vector<FontRasterizer::Tri>>& result) const;
+    void rescaleText(std::vector<std::vector<FontRasterizer::Tri>>& result);
 };
 }  // namespace pepr3d

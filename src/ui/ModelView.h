@@ -84,6 +84,14 @@ class ModelView {
         return mColorOverride.overrideColorBuffer;
     }
 
+    glm::mat4 getModelMatrix() const {
+        return mModelMatrix;
+    }
+
+    const ci::CameraPersp& getCamera() const {
+        return mCamera;
+    }
+
    private:
     MainApplication& mApplication;
     std::pair<glm::ivec2, glm::ivec2> mViewport;
