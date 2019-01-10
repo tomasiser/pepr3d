@@ -84,7 +84,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<TrianglePainter>(*this));
     mTools.emplace_back(make_unique<PaintBucket>(*this));
     mTools.emplace_back(make_unique<Brush>());
-    mTools.emplace_back(make_unique<TextEditor>());
+    mTools.emplace_back(make_unique<TextEditor>(*this));
     mTools.emplace_back(make_unique<Segmentation>(*this));
     mTools.emplace_back(make_unique<SemiautomaticSegmentation>(*this));
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
