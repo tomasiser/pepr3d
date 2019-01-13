@@ -3,7 +3,7 @@
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_set_2.h>
-
+#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/partition_2.h>
 
 #include <cinder/Filesystem.h>
@@ -92,7 +92,7 @@ void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
     dbg.exportToFile();*/
 
     if(colorChanged) {
-        //updatePolysFromTriangles();
+        updatePolysFromTriangles();
     }
 
     bool joined = false;
@@ -201,13 +201,21 @@ bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
 
     return !verticesToRemove.empty();
 }
-void TriangleDetail::updatePolysFromTriangles() {
-    mColoredPolys.clear();
-
+void TriangleDetail::updatePolysFromTriangles() { 
+    // Create polygons from triangles
+    std::map<size_t, std::vector<Polygon>> polygonsByColor;
     for(const DataTriangle& tri : mTriangles) {
-        assert(tri.getTri().squared_area() > 0);
-        assert(!tri.getTri().is_degenerate());
-        mColoredPolys[tri.getColor()].join(polygonFromTriangle(tri.getTri()));
+        polygonsByColor[tri.getColor()].emplace_back(polygonFromTriangle(tri.getTri()));
+    }
+
+    // Create polygon set for each color
+    mColoredPolys.clear();
+    for(const auto& it : polygonsByColor) {
+        
+        const std::vector<Polygon>& polygons = it.second;
+        PolygonSet pSet;
+        pSet.join(polygons.begin(), polygons.end());
+        mColoredPolys.emplace(std::make_pair(it.first, std::move(pSet)));
     }
 
     colorChanged = false;
