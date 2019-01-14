@@ -72,7 +72,7 @@ struct DataTriangleAABBPrimitive {
 namespace std {
 template <>
 struct hash<pepr3d::DetailedTriangleId> {
-    size_t operator()(const pepr3d::DetailedTriangleId& id) const{
+    size_t operator()(const pepr3d::DetailedTriangleId& id) const {
         return std::hash<size_t>{}(id.getBaseId()) ^ std::hash<std::optional<size_t>>{}(id.getDetailId());
     };
 };

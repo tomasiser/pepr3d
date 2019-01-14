@@ -88,9 +88,8 @@ class PaintBucket : public Tool {
             : geo(g), threshold(thresh), startNormal(normal), angleCompare(angleCmp) {}
 
         bool operator()(const DetailedTriangleId a, const DetailedTriangleId b) const {
-            if(a.getBaseId() == b.getBaseId())
-            {
-                return true; // Details of the same base have the same normal
+            if(a.getBaseId() == b.getBaseId()) {
+                return true;  // Details of the same base have the same normal
             }
 
             double cosAngle = 0.0;

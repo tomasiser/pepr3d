@@ -24,9 +24,9 @@ std::optional<std::size_t> Tool::safeIntersectMesh(MainApplication& mainApplicat
     return hoveredTriangleId;
 }
 
-    std::optional<DetailedTriangleId> Tool::safeIntersectDetailedMesh(MainApplication& mainApplication, const ci::Ray ray) {
+std::optional<DetailedTriangleId> Tool::safeIntersectDetailedMesh(MainApplication& mainApplication, const ci::Ray ray) {
     auto* geometry = mainApplication.getCurrentGeometry();
-        std::optional<DetailedTriangleId> hoveredTriangleId;
+    std::optional<DetailedTriangleId> hoveredTriangleId;
 
     try {
         hoveredTriangleId = geometry->intersectDetailedMesh(ray);

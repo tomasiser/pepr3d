@@ -8,8 +8,8 @@
 #include <cinder/Ray.h>
 #include <cinder/gl/gl.h>
 #include <cereal/types/array.hpp>
-#include <cereal/types/vector.hpp>
 #include <cereal/types/map.hpp>
+#include <cereal/types/vector.hpp>
 #include "cinder/Log.h"
 
 #include <cassert>

@@ -51,8 +51,7 @@ class TriangleDetail {
     using Tds = CGAL::Triangulation_data_structure_2<CGAL::Triangulation_vertex_base_2<K>, Fb>;
     using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds, CGAL::No_intersection_tag>;
 
-    explicit TriangleDetail(const DataTriangle& original)
-        : mOriginal(original) {
+    explicit TriangleDetail(const DataTriangle& original) : mOriginal(original) {
         const PeprPlane peprOriginal = original.getTri().supporting_plane();
         mOriginalPlane = Plane(peprOriginal.a(), peprOriginal.b(), peprOriginal.c(), peprOriginal.d());
         mBounds = polygonFromTriangle(mOriginal.getTri());
@@ -62,7 +61,6 @@ class TriangleDetail {
 
     // Cereal requires default constructor
     TriangleDetail() = default;
-   
 
     TriangleDetail(const DataTriangle& original, std::vector<DataTriangle>&& detailTriangles)
         : TriangleDetail(original) {
@@ -103,7 +101,6 @@ class TriangleDetail {
         mBounds = polygonFromTriangle(mOriginal.getTri());
         updatePolysFromTriangles();
     }
-
 
    private:
     std::vector<DataTriangle> mTriangles;

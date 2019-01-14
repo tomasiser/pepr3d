@@ -3,7 +3,6 @@
 #include "ui/MainApplication.h"
 #include "ui/ModelView.h"
 
-
 namespace pepr3d {
 void Brush::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
     if(!event.isLeft()) {
@@ -40,8 +39,7 @@ void Brush::onToolSelect(ModelView& modelView) {
 
 void Brush::onToolDeselect(ModelView& modelView) {
     mApplication.getCurrentGeometry()->hideHighlight();
-    if(paintedAnything)
-    {
+    if(paintedAnything) {
         mApplication.getCurrentGeometry()->updateTemporaryDetailedData();
     }
 }

@@ -4,7 +4,7 @@
 
 namespace pepr3d {
 
-    using std::vector;
+using std::vector;
 
 void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!mGeometryCorrect) {

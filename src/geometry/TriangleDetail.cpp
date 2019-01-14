@@ -1,9 +1,9 @@
 #include "geometry/TriangleDetail.h"
 
+#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_set_2.h>
-#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/partition_2.h>
 
 #include <cinder/Filesystem.h>
@@ -86,7 +86,7 @@ void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
 }
 
 void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
-    //Vertices on the triangle boundaries must be the same across multiple triangle details!
+    // Vertices on the triangle boundaries must be the same across multiple triangle details!
 
     const Sphere sphere(toExactK(peprSphere.center()), peprSphere.squared_radius());
     auto intersection = CGAL::intersection(sphere, mOriginalPlane);
@@ -122,7 +122,7 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
     return pgn;
 }
 
-std::vector<TriangleDetail::Point3> TriangleDetail::getCircleSharedPoints(const Circle3& circle){
+std::vector<TriangleDetail::Point3> TriangleDetail::getCircleSharedPoints(const Circle3& circle) {
     // We need shared verticies on the boundary of triangle details
     // This vertex does not need to be exact, but needs to be the same from both triangles
 
@@ -133,8 +133,7 @@ std::vector<TriangleDetail::Point3> TriangleDetail::getCircleSharedPoints(const 
 TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle) {
     // We need a shared vertex on the boundary of triangle details
     // This vertex does not need to be exact, but needs to be the same from both triangles
-    //std::vector<Point3> sharedPoints = getCircleSharedPoints(circle);
-	
+    // std::vector<Point3> sharedPoints = getCircleSharedPoints(circle);
 
     // Scale the vertex count based on the size of the circle
     const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
@@ -217,7 +216,7 @@ bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
 
     return !verticesToRemove.empty();
 }
-void TriangleDetail::updatePolysFromTriangles() { 
+void TriangleDetail::updatePolysFromTriangles() {
     // Create polygons from triangles
     std::map<size_t, std::vector<Polygon>> polygonsByColor;
     for(const DataTriangle& tri : mTriangles) {
@@ -227,7 +226,6 @@ void TriangleDetail::updatePolysFromTriangles() {
     // Create polygon set for each color
     mColoredPolys.clear();
     for(const auto& it : polygonsByColor) {
-        
         const std::vector<Polygon>& polygons = it.second;
         PolygonSet pSet;
         pSet.join(polygons.begin(), polygons.end());

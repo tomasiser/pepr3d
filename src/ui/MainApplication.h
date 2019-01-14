@@ -34,7 +34,8 @@ using cinder::app::KeyEvent;
 using cinder::app::MouseEvent;
 
 class MainApplication : public cinder::app::App {
-    public : void setup() override;
+   public:
+    void setup() override;
     void update() override;
     void draw() override;
     void resize() override;
