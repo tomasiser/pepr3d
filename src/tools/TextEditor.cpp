@@ -88,7 +88,7 @@ void TextEditor::processText() {
 
     renderText(triPerLetter, false);
 
-    mRenderedText = triPerLetter;
+    mRenderedText = std::move(triPerLetter);
 }
 
 void TextEditor::rescaleText(std::vector<std::vector<FontRasterizer::Tri>>& result) {

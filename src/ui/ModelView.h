@@ -14,6 +14,11 @@ class MainApplication;
 
 class ModelView {
    public:
+    std::vector<glm::vec3> debugTriangles;
+    std::vector<uint32_t> debugIndices;
+    std::vector<glm::vec4> debugColors;
+    std::vector<glm::vec3> debugNormals;
+
     ModelView(MainApplication& app) : mApplication(app) {}
     void setup();
     void resize();
