@@ -23,7 +23,6 @@ namespace pepr3d {
 class TriangleDetail {
    public:
     using K = CGAL::Exact_predicates_exact_constructions_kernel;
-    // using K = DataTriangle::K;  // Lets try using our normal kernel if its possible. (Should be way faster)
     using Polygon = CGAL::Polygon_2<K>;
     using PolygonWithHoles = CGAL::Polygon_with_holes_2<K>;
     using GeneralPolygon = CGAL::General_polygon_2<K>;
@@ -43,6 +42,7 @@ class TriangleDetail {
     using PeprPlane = DataTriangle::K::Plane_3;
     using PeprSphere = DataTriangle::K::Sphere_3;
 
+    // Used in triangulation to distinguish filled faces from holes
     struct FaceInfo {
         int nestingLevel = -1;
     };
@@ -52,13 +52,15 @@ class TriangleDetail {
     using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds, CGAL::No_intersection_tag>;
 
     explicit TriangleDetail(const DataTriangle& original)
-        : mOriginal(original), mOriginalPlane(original.getTri().supporting_plane()) {
+        : mOriginal(original) {
+        const PeprPlane peprOriginal = original.getTri().supporting_plane();
+        mOriginalPlane = Plane(peprOriginal.a(), peprOriginal.b(), peprOriginal.c(), peprOriginal.d());
         mBounds = polygonFromTriangle(mOriginal.getTri());
         mTriangles.push_back(mOriginal);
         mColoredPolys.emplace(mOriginal.getColor(), polygonFromTriangle(mOriginal.getTri()));
     }
 
-    // Default constructor for cereal
+    // Cereal requires default constructor
     TriangleDetail() = default;
    
 
@@ -68,10 +70,7 @@ class TriangleDetail {
         updatePolysFromTriangles();
     }
 
-    bool isSingleColor() const {
-        return mTriangles.size() <= 1;
-    }
-
+    /// Paint sphere onto this detail
     void paintSphere(const PeprSphere& sphere, size_t color);
 
     const std::vector<DataTriangle>& getTriangles() const {
@@ -99,7 +98,8 @@ class TriangleDetail {
     template <class Archive>
     void load(Archive& archive) {
         archive(mOriginal, mTriangles);
-        mOriginalPlane = mOriginal.getTri().supporting_plane();
+        PeprPlane peprOriginal = mOriginal.getTri().supporting_plane();
+        mOriginalPlane = Plane(peprOriginal.a(), peprOriginal.b(), peprOriginal.c(), peprOriginal.d());
         mBounds = polygonFromTriangle(mOriginal.getTri());
         updatePolysFromTriangles();
     }
@@ -118,15 +118,21 @@ class TriangleDetail {
     /// Bounds of the original triangle
     Polygon mBounds;
 
-    PeprPlane mOriginalPlane;
+    Plane mOriginalPlane;
 
     /// Did color of any detail triangle change since last triangulation?
     bool colorChanged = false;
 
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
 
+    /// Get points of a circle that are shared with border triangles
+    std::vector<Point3> getCircleSharedPoints(const Circle3& circle);
+
     // Construct a polygon from a circle.
     Polygon polygonFromCircle(const Circle3& circle);
+
+    /// Add polygon to the detail
+    void paintPolygon(const Polygon& poly, size_t color);
 
     /// Paint a circle shape onto the plane of the triangle
     void addCircle(const Circle3& circle, size_t color);
@@ -158,6 +164,11 @@ class TriangleDetail {
     /// Convert Exact kernel Point_3 to vec3
     inline static glm::vec3 toGlmVec(const PeprPoint3& pt) {
         return glm::vec3(pt.x(), pt.y(), pt.z());
+    }
+
+    /// Convert Exact kernel Point_3 to vec3
+    inline static glm::vec3 toGlmVec(const K::Point_3& point) {
+        return toGlmVec(toNormalK(point));
     }
 
     static double exactToDbl(const CGAL::Gmpq& num) {

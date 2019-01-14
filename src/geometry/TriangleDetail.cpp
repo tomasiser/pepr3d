@@ -82,8 +82,86 @@ class GnuplotDebug {
 
 void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
     const Polygon circlePoly = polygonFromCircle(circle);
+    paintPolygon(circlePoly, color);
+}
 
-    PolygonSet addedShape(circlePoly);
+void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
+    //Vertices on the triangle boundaries must be the same across multiple triangle details!
+
+    const Sphere sphere(toExactK(peprSphere.center()), peprSphere.squared_radius());
+    auto intersection = CGAL::intersection(sphere, mOriginalPlane);
+
+    if(!intersection) {
+        return;
+    }
+
+    std::optional<Circle3> circleIntersection = boost::apply_visitor(SphereIntersectionVisitor{}, *intersection);
+
+    // Continue only if the intersection is a circle (not a point or miss)
+    if(circleIntersection) {
+        auto poly = polygonFromCircle(*circleIntersection);
+        paintPolygon(poly, color);
+    }
+}
+
+TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
+    const Point2 a = mOriginalPlane.to_2d(toExactK(tri.vertex(0)));
+    const Point2 b = mOriginalPlane.to_2d(toExactK(tri.vertex(1)));
+    const Point2 c = mOriginalPlane.to_2d(toExactK(tri.vertex(2)));
+
+    Polygon pgn;
+    pgn.push_back(a);
+    pgn.push_back(b);
+    pgn.push_back(c);
+
+    assert(!pgn.is_empty());
+
+    if(pgn.is_clockwise_oriented())
+        pgn.reverse_orientation();
+
+    return pgn;
+}
+
+std::vector<TriangleDetail::Point3> TriangleDetail::getCircleSharedPoints(const Circle3& circle){
+    // We need shared verticies on the boundary of triangle details
+    // This vertex does not need to be exact, but needs to be the same from both triangles
+
+    const Sphere sphere(circle.center(), circle.squared_radius());
+    return {};
+}
+
+TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle) {
+    // We need a shared vertex on the boundary of triangle details
+    // This vertex does not need to be exact, but needs to be the same from both triangles
+    //std::vector<Point3> sharedPoints = getCircleSharedPoints(circle);
+	
+
+    // Scale the vertex count based on the size of the circle
+    const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
+
+    size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
+    vertexCount = std::max(vertexCount, static_cast<size_t>(MIN_VERTICES_IN_CIRCLE));
+
+    // Bases cannot be exact, because Epeck does not support sqrt
+    const auto base1 = mOriginalPlane.base1() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base1().squared_length()));
+    const auto base2 = mOriginalPlane.base2() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base2().squared_length()));
+
+    assert(base1 * base2 == 0);
+
+    // Construct the polygon.
+    Polygon pgn;
+    for(size_t i = 0; i < vertexCount; i++) {
+        const double circleCoord = (static_cast<double>(i) / vertexCount) * 2 * glm::pi<double>();
+        const Point3 pt = circle.center() + base1 * cos(circleCoord) * radius + base2 * sin(circleCoord) * radius;
+
+        pgn.push_back(mOriginalPlane.to_2d(pt));
+    }
+
+    return pgn;
+}
+
+void TriangleDetail::paintPolygon(const Polygon& poly, size_t color) {
+    PolygonSet addedShape(poly);
     addedShape.intersection(mBounds);
 
     /*GnuplotDebug dbg;
@@ -113,68 +191,6 @@ void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
     }
 
     createNewTriangles(mColoredPolys);
-}
-
-void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
-    // Need to calculate everything using exact kernels
-
-    const Sphere sphere(toExactK(peprSphere.center()), peprSphere.squared_radius());
-
-    const Plane plane(mOriginalPlane.a(), mOriginalPlane.b(), mOriginalPlane.c(), mOriginalPlane.d());
-    auto intersection = CGAL::intersection(sphere, plane);
-
-    if(!intersection) {
-        return;
-    }
-
-    std::optional<Circle3> circleIntersection = boost::apply_visitor(SphereIntersectionVisitor{}, *intersection);
-    if(circleIntersection) {
-        addCircle(*circleIntersection, color);
-    }
-}
-
-TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
-    const Point2 a = toExactK(mOriginalPlane.to_2d(tri.vertex(0)));
-    const Point2 b = toExactK(mOriginalPlane.to_2d(tri.vertex(1)));
-    const Point2 c = toExactK(mOriginalPlane.to_2d(tri.vertex(2)));
-
-    Polygon pgn;
-    pgn.push_back(a);
-    pgn.push_back(b);
-    pgn.push_back(c);
-
-    assert(!pgn.is_empty());
-
-    if(pgn.is_clockwise_oriented())
-        pgn.reverse_orientation();
-
-    return pgn;
-}
-
-TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle) {
-    // We don't care about exactness here, so we do all the math using standard kernel
-
-    // Scale the vertex count based on the size of the circle
-    const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
-
-    size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
-    vertexCount = std::max(vertexCount, static_cast<size_t>(MIN_VERTICES_IN_CIRCLE));
-    const auto base1 = mOriginalPlane.base1() / CGAL::sqrt(mOriginalPlane.base1().squared_length());
-    const auto base2 = mOriginalPlane.base2() / CGAL::sqrt(mOriginalPlane.base2().squared_length());
-
-    assert(base1 * base2 == 0);
-
-    const PeprPoint3 circleOrigin = toNormalK(circle.center());
-    // Construct the polygon.
-    Polygon pgn;
-    for(size_t i = 0; i < vertexCount; i++) {
-        const double circleCoord = (static_cast<double>(i) / vertexCount) * 2 * glm::pi<double>();
-        const PeprPoint3 pt = circleOrigin + base1 * cos(circleCoord) * radius + base2 * sin(circleCoord) * radius;
-
-        pgn.push_back(toExactK(mOriginalPlane.to_2d(pt)));
-    }
-
-    return pgn;
 }
 
 bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
@@ -292,9 +308,9 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
         // Keep only faces with odd nesting level, those are inside the polygon and not in the hole
 
         if(faceIt->info().nestingLevel % 2 > 0) {
-            const glm::vec3 a = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(0)->point())));
-            const glm::vec3 b = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(1)->point())));
-            const glm::vec3 c = toGlmVec(mOriginalPlane.to_3d(toNormalK(faceIt->vertex(2)->point())));
+            const glm::vec3 a = toGlmVec(mOriginalPlane.to_3d(faceIt->vertex(0)->point()));
+            const glm::vec3 b = toGlmVec(mOriginalPlane.to_3d(faceIt->vertex(1)->point()));
+            const glm::vec3 c = toGlmVec(mOriginalPlane.to_3d(faceIt->vertex(2)->point()));
 
             DataTriangle tri(a, b, c, mOriginal.getNormal());
             if(tri.getTri().squared_area() > 0) {
