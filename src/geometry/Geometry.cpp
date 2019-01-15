@@ -439,6 +439,8 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
 
     const auto trisInBrush = getTrianglesUnderBrush(intersectionPoint, ray.getDirection(), *intersectedTri, settings);
 
+    std::vector<size_t> detailsToUpdate;
+
     for(const size_t triangleIdx : trisInBrush) {
         const auto& cgalTri = getTriangle(triangleIdx).getTri();
 
@@ -454,11 +456,31 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
             } else {
                 // Do not paint triangles that are already the same color
                 if(!isSimpleTriangle(triangleIdx) || getTriangle(triangleIdx).getColor() != settings.color) {
-                    updateTriangleDetail(triangleIdx, intersectionPoint, settings);
+                    detailsToUpdate.emplace_back(triangleIdx);
+                    getTriangleDetail(triangleIdx); //Create triangle detail so that we dont modify
                 }
             }
         }
     }
+
+    if(!detailsToUpdate.empty())
+    {
+        invalidateTemporaryDetailedData();
+    }
+
+    auto& threadPool = MainApplication::getThreadPool();
+    std::vector<std::future<void>> futures;
+
+    // Paint to details in multiple threads
+    for(size_t triIdx: detailsToUpdate)
+    {
+        futures.emplace_back(threadPool.enqueue(
+            [this](size_t triIdx, const glm::vec3& brushOrigin, const struct BrushSettings& settings) {
+                updateTriangleDetail(triIdx, brushOrigin, settings);
+            },
+            triIdx, intersectionPoint, settings));
+    }
+    std::for_each(futures.begin(), futures.end(), [](auto& f) { f.get(); });
 
     mOgl.isDirty = true;
 }
@@ -476,9 +498,6 @@ void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOr
 
     const Sphere brushShape(Point(brushOrigin.x, brushOrigin.y, brushOrigin.z), settings.size * settings.size);
     getTriangleDetail(triangleIdx)->paintSphere(brushShape, settings.color);
-
-    // Chaning triangle detail invalidates detailed tree and mesh
-    invalidateTemporaryDetailedData();
 }
 
 void Geometry::removeTriangleDetail(const size_t triangleIndex) {
@@ -680,6 +699,8 @@ void Geometry::buildDetailedMesh() {
         // Add detail triangles while combining common vertices
         for(size_t detailTriangleIdx = 0; detailTriangleIdx < detailTriangles.size(); detailTriangleIdx++) {
             const DataTriangle& detail = detailTriangles[detailTriangleIdx];
+            assert(!detail.getTri().is_degenerate());
+
             // Vertex descriptors of current detail triangle
             std::array<PolyhedronData::vertex_descriptor, 3> vertDescriptors;
 
@@ -697,11 +718,24 @@ void Geometry::buildDetailedMesh() {
 
             auto faceDesc = mMeshDetailed->add_face(vertDescriptors);
             assert(faceDesc != PolyhedronData::Mesh::null_face());
-            mMeshDetailedFaceDescs.insert(std::make_pair(DetailedTriangleId(triangleId, detailTriangleIdx), faceDesc));
-            mMeshDetailedIdMap[faceDesc] = DetailedTriangleId(triangleId, detailTriangleIdx);
+            if(faceDesc != PolyhedronData::Mesh::null_face())
+            {
+                mMeshDetailedFaceDescs.insert(
+                    std::make_pair(DetailedTriangleId(triangleId, detailTriangleIdx), faceDesc));
+                mMeshDetailedIdMap[faceDesc] = DetailedTriangleId(triangleId, detailTriangleIdx);
+            } else
+            {
+                const double sqrdArea = detail.getTri().squared_area();
+                CI_LOG_E("A null face was generated in the detailed mesh. This should not happen");
+                CI_LOG_E(std::to_string(sqrdArea));
+                mMeshDetailed.reset();
+                return;
+            }
+
+            
         }
     }
-}  // namespace pepr3d
+}
 
 void Geometry::updateTemporaryDetailedData() {
     const auto start = std::chrono::high_resolution_clock::now();

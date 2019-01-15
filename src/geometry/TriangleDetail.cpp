@@ -233,30 +233,18 @@ void TriangleDetail::paintPolygon(const Polygon& poly, size_t color) {
     PolygonSet addedShape(poly);
     addedShape.intersection(mBounds);
 
-    /*GnuplotDebug dbg;
-    dbg.addPoly(circlePoly, "#FF0000");
-    dbg.addPoly(mBounds, "#00FF00");
-    dbg.exportToFile();*/
-
     if(colorChanged) {
         updatePolysFromTriangles();
     }
 
-    bool joined = false;
+    // Add the shape to its color layer
+    mColoredPolys[color].join(addedShape);
+
+    // Remove the new shape from other colors
     for(auto& it : mColoredPolys) {
-        // Join the new shape with PolygonSet of the same color
-        // Remove the new shape from other colors
-        if(it.first == color) {
-            it.second.join(addedShape);
-            joined = true;
-        } else {
+        if(it.first != color) {
             it.second.difference(addedShape);
         }
-    }
-
-    // If there is no other polygon of the same color create a new one
-    if(!joined) {
-        mColoredPolys.emplace(color, std::move(addedShape));
     }
 
     createNewTriangles(mColoredPolys);

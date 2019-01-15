@@ -43,6 +43,7 @@ class TriangleDetail {
     using Vector3 = TriangleDetail::K::Vector_3;
     using Plane = TriangleDetail::K::Plane_3;
     using Line3 = TriangleDetail::K::Line_3;
+    using Line2 = TriangleDetail::K::Line_3;
 
     using PeprTriangle = DataTriangle::Triangle;
     using PeprPlane = DataTriangle::K::Plane_3;
