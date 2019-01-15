@@ -69,7 +69,7 @@ TEST(Geometry, setColor) {
     EXPECT_EQ(geo.getTriangleColor(0), 0);
     EXPECT_EQ(geo.getTriangleColor(1), 0);
 
-    auto& colorBuffer = geo.getOpenGlData().colorBuffer();
+    auto& colorBuffer = geo.getOpenGlData().colorBuffer;
     EXPECT_EQ(colorBuffer.size(), 36);
     const pepr3d::Geometry::ColorIndex colorIndex = colorBuffer.at(0);
 

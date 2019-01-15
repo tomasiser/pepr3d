@@ -491,18 +491,20 @@ void Geometry::removeTriangleDetail(const size_t triangleIndex) {
 
 void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColor) {
     if(isSimpleTriangle(triangleIndex)) {
-        // Change it in the buffer
-        // Color buffer has 1 ColorA for each vertex, each triangle has 3 vertices
-        const size_t vertexPosition = triangleIndex * 3;
+        if(!mOgl.isDirty) {
+            // Change it in the buffer
+            // Color buffer has 1 ColorA for each vertex, each triangle has 3 vertices
+            const size_t vertexPosition = triangleIndex * 3;
 
-        // Change all vertices of the triangle to the same new color
-        assert(vertexPosition + 2 < mOgl.colorBuffer.size());
+            // Change all vertices of the triangle to the same new color
+            assert(vertexPosition + 2 < mOgl.colorBuffer.size());
 
-        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
-        mOgl.colorBuffer[vertexPosition] = newColorIndex;
-        mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
-        mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
-        mOgl.info.didColorUpdate = true;
+            ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
+            mOgl.colorBuffer[vertexPosition] = newColorIndex;
+            mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
+            mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
+            mOgl.info.didColorUpdate = true;
+        }
     } else {
         removeTriangleDetail(triangleIndex);
     }
@@ -524,14 +526,15 @@ void Geometry::setTriangleColor(const DetailedTriangleId triangleId, const size_
         TriangleDetail* detail = getTriangleDetail(baseId);
         detail->setColor(detailId, newColor);
 
-        const size_t vertexPosition =
-            mTriangleDetailColorBufferStart[triangleId.getBaseId()] + 3 * (*triangleId.getDetailId());
-        ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
-        mOgl.colorBuffer[vertexPosition] = newColorIndex;
-        mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
-        mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
-        mOgl.info.didColorUpdate = true;
-
+        if(!mOgl.isDirty) {
+            const size_t vertexPosition =
+                mTriangleDetailColorBufferStart[triangleId.getBaseId()] + 3 * (*triangleId.getDetailId());
+            ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
+            mOgl.colorBuffer[vertexPosition] = newColorIndex;
+            mOgl.colorBuffer[vertexPosition + 1] = newColorIndex;
+            mOgl.colorBuffer[vertexPosition + 2] = newColorIndex;
+            mOgl.info.didColorUpdate = true;
+        }
     } else {
         // No detail ID, do the baseID behavior
         setTriangleColor(triangleId.getBaseId(), newColor);

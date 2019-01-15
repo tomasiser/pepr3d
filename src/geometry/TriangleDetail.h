@@ -2,7 +2,7 @@
 #include "geometry/Triangle.h"
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Polygon_2.h>
@@ -22,7 +22,7 @@ namespace pepr3d {
  */
 class TriangleDetail {
    public:
-    using K = CGAL::Exact_predicates_exact_constructions_kernel;
+    using K = CGAL::Exact_spherical_kernel_3;
     using Polygon = CGAL::Polygon_2<K>;
     using PolygonWithHoles = CGAL::Polygon_with_holes_2<K>;
     using GeneralPolygon = CGAL::General_polygon_2<K>;
@@ -36,7 +36,9 @@ class TriangleDetail {
     using Point2 = TriangleDetail::K::Point_2;
     using Point3 = TriangleDetail::K::Point_3;
     using Vector2 = TriangleDetail::K::Vector_2;
+    using Vector3 = TriangleDetail::K::Vector_3;
     using Plane = TriangleDetail::K::Plane_3;
+    using Line3 = TriangleDetail::K::Line_3;
 
     using PeprTriangle = DataTriangle::Triangle;
     using PeprPlane = DataTriangle::K::Plane_3;
@@ -52,8 +54,8 @@ class TriangleDetail {
     using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds, CGAL::No_intersection_tag>;
 
     explicit TriangleDetail(const DataTriangle& original) : mOriginal(original) {
-        const PeprPlane peprOriginal = original.getTri().supporting_plane();
-        mOriginalPlane = Plane(peprOriginal.a(), peprOriginal.b(), peprOriginal.c(), peprOriginal.d());
+        const PeprTriangle& tri = mOriginal.getTri();
+        mOriginalPlane = Plane(toExactK(tri.vertex(0)), toExactK(tri.vertex(1)), toExactK(tri.vertex(2)));
         mBounds = polygonFromTriangle(mOriginal.getTri());
         mTriangles.push_back(mOriginal);
         mColoredPolys.emplace(mOriginal.getColor(), polygonFromTriangle(mOriginal.getTri()));
@@ -96,8 +98,8 @@ class TriangleDetail {
     template <class Archive>
     void load(Archive& archive) {
         archive(mOriginal, mTriangles);
-        PeprPlane peprOriginal = mOriginal.getTri().supporting_plane();
-        mOriginalPlane = Plane(peprOriginal.a(), peprOriginal.b(), peprOriginal.c(), peprOriginal.d());
+        const PeprTriangle& tri = mOriginal.getTri();
+        mOriginalPlane = Plane(toExactK(tri.vertex(0)), toExactK(tri.vertex(1)), toExactK(tri.vertex(2)));
         mBounds = polygonFromTriangle(mOriginal.getTri());
         updatePolysFromTriangles();
     }
@@ -123,8 +125,8 @@ class TriangleDetail {
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
 
     /// Get points of a circle that are shared with border triangles
-    std::vector<Point3> getCircleSharedPoints(const Circle3& circle);
-
+    std::vector<std::pair<Point2, double>> getCircleSharedPoints(const Circle3& circle, const Vector3& base1,
+                                                                 const Vector3& base2);
     // Construct a polygon from a circle.
     Polygon polygonFromCircle(const Circle3& circle);
 
@@ -148,17 +150,22 @@ class TriangleDetail {
         return K::Point_3(point.x(), point.y(), point.z());
     }
 
+    /// Convert glm::vec3 to Exact kernel
+    inline static K::Point_3 toExactK(const glm::vec3& vec) {
+        return Point3(vec.x, vec.y, vec.z);
+    }
+
     /// Convert Exact kernel Point_2 to normal Pepr3d kernel
     inline static PeprPoint2 toNormalK(const K::Point_2& point) {
-        return PeprPoint2(exactToDbl(point.x().exact()), exactToDbl(point.y().exact()));
+        return PeprPoint2(exactToDbl(point.x()), exactToDbl(point.y()));
     }
 
     /// Convert Exact kernel Point_3 to normal Pepr3d kernel
     inline static PeprPoint3 toNormalK(const K::Point_3& point) {
-        return PeprPoint3(exactToDbl(point.x().exact()), exactToDbl(point.y().exact()), exactToDbl(point.z().exact()));
+        return PeprPoint3(exactToDbl(point.x()), exactToDbl(point.y()), exactToDbl(point.z()));
     }
 
-    /// Convert Exact kernel Point_3 to vec3
+    /// Convert Pepr Point_3 to vec3
     inline static glm::vec3 toGlmVec(const PeprPoint3& pt) {
         return glm::vec3(pt.x(), pt.y(), pt.z());
     }
@@ -169,7 +176,7 @@ class TriangleDetail {
     }
 
     static double exactToDbl(const CGAL::Gmpq& num) {
-        return exactToDbl(num.numerator()) / exactToDbl(num.denominator());
+        return num.to_double();
     }
 
     static double exactToDbl(const CGAL::Gmpz& num) {

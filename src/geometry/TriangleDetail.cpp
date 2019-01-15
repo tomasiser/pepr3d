@@ -4,6 +4,7 @@
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_set_2.h>
+#include <CGAL/Spherical_kernel_intersections.h>
 #include <CGAL/partition_2.h>
 
 #include <cinder/Filesystem.h>
@@ -14,6 +15,7 @@
 #include <glm/gtc/constants.inl>
 #include <list>
 #include <optional>
+#include <type_traits>
 
 // Loss of precision between conversions may move verticies? Needs testing
 
@@ -122,39 +124,95 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
     return pgn;
 }
 
-std::vector<TriangleDetail::Point3> TriangleDetail::getCircleSharedPoints(const Circle3& circle) {
+std::vector<std::pair<TriangleDetail::Point2, double>> TriangleDetail::getCircleSharedPoints(const Circle3& circle,
+                                                                                             const Vector3& xBase,
+                                                                                             const Vector3& yBase) {
     // We need shared verticies on the boundary of triangle details
-    // This vertex does not need to be exact, but needs to be the same from both triangles
+    // This vertex needs to be the same for both neighbouring triangles
+    // Thats why we calculate the intersection using original world-space data
 
-    const Sphere sphere(circle.center(), circle.squared_radius());
-    return {};
+    Sphere sphere(circle.center(), circle.squared_radius());
+    std::vector<std::pair<Point2, double>> result;
+
+    // Find all points that intersect triangle edge
+    for(size_t i = 0; i < 3; i++) {
+        Line3 triEdge(toExactK(mOriginal.getVertex(i)), toExactK(mOriginal.getVertex((i + 1) % 3)));
+
+        std::vector<CGAL::Object> intersections;
+        auto intersection = CGAL::intersection(sphere, triEdge, std::back_inserter(intersections));
+
+        // Add both intersection points of this edge
+        for(auto& obj : intersections) {
+            std::pair<K::Circular_arc_point_3, unsigned> ptPair;
+            if(CGAL::assign(ptPair, obj)) {
+                K::Circular_arc_point_3& pt = ptPair.first;
+                const Point3 worldPoint(CGAL::to_double(pt.x()), CGAL::to_double(pt.y()), CGAL::to_double(pt.z()));
+
+                // Project the vector onto the bases of the circle
+                const auto circleVector(worldPoint - circle.center());
+                auto xCoords = circleVector * xBase;
+                auto yCoords = circleVector * yBase;
+
+                // Find the circle angle that matches this point, so that we know where it belongs
+                // The angle is measured from the x-positive axis going counter clockwise. a \in (0, 2PI)
+                double circleAngle = std::atan2(CGAL::to_double(yCoords), CGAL::to_double(xCoords));
+                if(circleAngle < 0) {
+                    circleAngle += 2 * glm::pi<double>();
+                }
+
+                result.emplace_back(std::make_pair(mOriginalPlane.to_2d(worldPoint), circleAngle));
+            }
+        }
+    }
+
+    std::sort(result.begin(), result.end(), [](const auto& a, const auto& b) { return a.second < b.second; });
+
+    return result;
 }
 
 TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle) {
-    // We need a shared vertex on the boundary of triangle details
-    // This vertex does not need to be exact, but needs to be the same from both triangles
-    // std::vector<Point3> sharedPoints = getCircleSharedPoints(circle);
-
     // Scale the vertex count based on the size of the circle
     const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
-
     size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
     vertexCount = std::max(vertexCount, static_cast<size_t>(MIN_VERTICES_IN_CIRCLE));
 
-    // Bases cannot be exact, because Epeck does not support sqrt
-    const auto base1 = mOriginalPlane.base1() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base1().squared_length()));
-    const auto base2 = mOriginalPlane.base2() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base2().squared_length()));
+    // Bases for the points of the circle (cannot be exact, because Epeck does not support sqrt)
+    const auto xBase = mOriginalPlane.base1() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base1().squared_length()));
+    const auto yBase = mOriginalPlane.base2() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base2().squared_length()));
+    assert(xBase * yBase == 0);
 
-    assert(base1 * base2 == 0);
+    // We need a shared vertex on the boundary of triangle details
+    // This vertex does not need to be exact, but needs to be the same from both triangles
+    std::vector<std::pair<Point2, double>> sharedPoints = getCircleSharedPoints(circle, xBase, yBase);
+    auto sharedPointIt = sharedPoints.begin();
 
     // Construct the polygon.
     Polygon pgn;
     for(size_t i = 0; i < vertexCount; i++) {
         const double circleCoord = (static_cast<double>(i) / vertexCount) * 2 * glm::pi<double>();
-        const Point3 pt = circle.center() + base1 * cos(circleCoord) * radius + base2 * sin(circleCoord) * radius;
+        const Point3 pt = circle.center() + xBase * cos(circleCoord) * radius + yBase * sin(circleCoord) * radius;
+
+        // Add all shared points that are before this point
+        while(sharedPointIt != sharedPoints.end() && sharedPointIt->second <= circleCoord) {
+            if(sharedPointIt->second != circleCoord) {
+                pgn.push_back(sharedPointIt->first);
+            }
+
+            sharedPointIt++;
+        }
 
         pgn.push_back(mOriginalPlane.to_2d(pt));
     }
+
+    // Add the remaining shared points
+    while(sharedPointIt != sharedPoints.end()) {
+        pgn.push_back(sharedPointIt->first);
+        sharedPointIt++;
+    }
+
+    assert(pgn.is_simple());
+    assert(pgn.is_counterclockwise_oriented());
+    assert(pgn.is_convex());
 
     return pgn;
 }
