@@ -43,7 +43,6 @@ class PaintBucket : public Tool {
 
    private:
     MainApplication& mApplication;
-    std::optional<DetailedTriangleId> mHoveredTriangleId = {};
     bool mStopOnNormal = false;
     int mStopOnNormalDegrees = 30;
     bool mStopOnColor = true;
@@ -52,6 +51,7 @@ class PaintBucket : public Tool {
     bool mDragging = false;
     bool mGeometryCorrect = true;
     NormalAngleCompare mNormalCompare = NormalAngleCompare::NEIGHBOURS;
+    glm::ivec2 mLastMousePos;
 
     struct DoNotStop {
         const Geometry* geo;
