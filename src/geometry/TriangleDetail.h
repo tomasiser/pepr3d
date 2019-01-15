@@ -4,15 +4,18 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/General_polygon_2.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_set_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <cereal/access.hpp>
+#include <cereal/external/base64.hpp>
 #include <deque>
 #include <map>
 #include <optional>
+#include <sstream>
 #include <vector>
 
 namespace pepr3d {
@@ -29,6 +32,7 @@ class TriangleDetail {
     using Circle = TriangleDetail::K::Circle_2;
     using Circle3 = TriangleDetail::K::Circle_3;
     using Sphere = TriangleDetail::K::Sphere_3;
+    using Triangle2 = TriangleDetail::K::Triangle_2;
 
     using PolygonSet = CGAL::Polygon_set_2<K>;
     using PeprPoint2 = DataTriangle::K::Point_2;
@@ -92,12 +96,12 @@ class TriangleDetail {
 
     template <class Archive>
     void save(Archive& archive) const {
-        archive(mOriginal, mTriangles);
+        archive(mOriginal, mTriangles, mTrianglesExact);
     }
 
     template <class Archive>
     void load(Archive& archive) {
-        archive(mOriginal, mTriangles);
+        archive(mOriginal, mTriangles, mTrianglesExact);
         const PeprTriangle& tri = mOriginal.getTri();
         mOriginalPlane = Plane(toExactK(tri.vertex(0)), toExactK(tri.vertex(1)), toExactK(tri.vertex(2)));
         mBounds = polygonFromTriangle(mOriginal.getTri());
@@ -105,7 +109,12 @@ class TriangleDetail {
     }
 
    private:
+    /// Temporary storage for DataTriangles. This gets overwritten on every paint operation!
     std::vector<DataTriangle> mTriangles;
+
+    /// Temporary storage for exact triangles. This gets overwritten on every paint operation!
+    /// This is used for saving andpolygonset reconstruction
+    std::vector<Triangle2> mTrianglesExact;
 
     std::map<size_t, PolygonSet> mColoredPolys;
 
@@ -122,11 +131,15 @@ class TriangleDetail {
     /// Did color of any detail triangle change since last triangulation?
     bool colorChanged = false;
 
+    /// Create a polygon from a PeprTriangle
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
 
+    /// Create a polygon from 2D triangle in plane coordinates
+    Polygon polygonFromTriangle(const Triangle2& tri) const;
+
     /// Get points of a circle that are shared with border triangles
-    std::vector<std::pair<Point2, double>> getCircleSharedPoints(const Circle3& circle, const Vector3& base1,
-                                                                 const Vector3& base2);
+    std::vector<std::pair<Point2, double>> getCircleSharedPoints(const Circle3& circle, const Vector3& xBase,
+                                                                 const Vector3& yBase);
     // Construct a polygon from a circle.
     Polygon polygonFromCircle(const Circle3& circle);
 
@@ -215,3 +228,22 @@ class TriangleDetail {
 };
 
 }  // namespace pepr3d
+
+namespace CGAL {
+template <typename Archive>
+void save(Archive& archive, pepr3d::TriangleDetail::Triangle2 const& tri) {
+    std::stringstream stream;
+    stream << tri;
+    archive(stream.str());
+}
+
+template <typename Archive>
+void load(Archive& archive, pepr3d::TriangleDetail::Triangle2& tri) {
+    std::string str;
+    archive(str);
+    std::stringstream stream(str);
+    stream.seekg(stream.beg);
+    stream >> tri;
+}
+
+}  // namespace CGAL

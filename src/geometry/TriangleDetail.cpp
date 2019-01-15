@@ -17,8 +17,6 @@
 #include <optional>
 #include <type_traits>
 
-// Loss of precision between conversions may move verticies? Needs testing
-
 namespace pepr3d {
 
 #ifdef _DEBUG
@@ -115,6 +113,20 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
     pgn.push_back(a);
     pgn.push_back(b);
     pgn.push_back(c);
+
+    assert(!pgn.is_empty());
+
+    if(pgn.is_clockwise_oriented())
+        pgn.reverse_orientation();
+
+    return pgn;
+}
+
+TriangleDetail::Polygon TriangleDetail::polygonFromTriangle(const Triangle2& tri) const {
+    Polygon pgn;
+    pgn.push_back(tri.vertex(0));
+    pgn.push_back(tri.vertex(1));
+    pgn.push_back(tri.vertex(2));
 
     assert(!pgn.is_empty());
 
@@ -275,10 +287,13 @@ bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
     return !verticesToRemove.empty();
 }
 void TriangleDetail::updatePolysFromTriangles() {
+    assert(mTriangles.size() == mTrianglesExact.size());
+
     // Create polygons from triangles
     std::map<size_t, std::vector<Polygon>> polygonsByColor;
-    for(const DataTriangle& tri : mTriangles) {
-        polygonsByColor[tri.getColor()].emplace_back(polygonFromTriangle(tri.getTri()));
+    for(size_t i = 0; i < mTriangles.size(); i++) {
+        const DataTriangle& tri = mTriangles[i];
+        polygonsByColor[tri.getColor()].emplace_back(polygonFromTriangle(mTrianglesExact[i]));
     }
 
     // Create polygon set for each color
@@ -378,6 +393,8 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
                 }
 
                 mTriangles.emplace_back(std::move(tri));
+                mTrianglesExact.emplace_back(faceIt->vertex(0)->point(), faceIt->vertex(1)->point(),
+                                             faceIt->vertex(2)->point());
             }
         }
     }
@@ -385,26 +402,29 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
 
 void TriangleDetail::createNewTriangles(std::map<size_t, PolygonSet>& coloredPolys) {
     mTriangles.clear();
+    mTrianglesExact.clear();
 
-    for(auto& it : coloredPolys) {
-        if(it.second.is_empty())
+    for(auto& colorSetIt : coloredPolys) {
+        if(colorSetIt.second.is_empty())
             continue;
 
         bool simplified = false;
-        std::vector<PolygonWithHoles> polys(it.second.number_of_polygons_with_holes());
-        it.second.polygons_with_holes(polys.begin());
+        std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
+        colorSetIt.second.polygons_with_holes(polys.begin());
         for(PolygonWithHoles& poly : polys) {
             simplified |= simplifyPolygon(poly);
-            addTrianglesFromPolygon(poly, it.first);
+            addTrianglesFromPolygon(poly, colorSetIt.first);
         }
 
         // Update this polygon set with simplified representation
         if(simplified) {
-            it.second.clear();
+            colorSetIt.second.clear();
             for(PolygonWithHoles& poly : polys) {
-                it.second.join(poly);
+                colorSetIt.second.join(poly);
             }
         }
     }
+
+    assert(mTriangles.size() == mTrianglesExact.size());
 }
 }  // namespace pepr3d
