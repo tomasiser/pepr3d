@@ -38,7 +38,7 @@ class LiveDebug : public Tool {
     IntegerState mIntegerState;
     CommandManager<IntegerState> mIntegerManager;
     glm::ivec2 mMousePos;
-    std::optional<std::size_t> mTriangleUnderRay = 0;
+    std::optional<std::size_t> mTriangleUnderRay{};
 };
 
 }  // namespace pepr3d

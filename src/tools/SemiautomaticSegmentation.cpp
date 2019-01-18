@@ -4,8 +4,6 @@
 
 namespace pepr3d {
 
-using std::vector;
-
 void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!mGeometryCorrect) {
         sidePane.drawText("Polyhedron not built, since the geometry was damaged. Tool disabled.");
@@ -225,7 +223,7 @@ void SemiautomaticSegmentation::spreadColors() {
 
         sdfValuesPerColor.insert({currentColor, {}});
         assert(sdfValuesPerColor.find(currentColor) != sdfValuesPerColor.end());
-        vector<double>& initialValues = sdfValuesPerColor.find(currentColor)->second;
+        std::vector<double>& initialValues = sdfValuesPerColor.find(currentColor)->second;
 
         initialValues.reserve(startingTriangles.size());
         for(size_t startI : startingTriangles) {
@@ -255,7 +253,7 @@ void SemiautomaticSegmentation::spreadColors() {
         }
 
         assert(sdfValuesPerColor.find(currentColor) != sdfValuesPerColor.end());
-        vector<double>& initialValues = sdfValuesPerColor.find(currentColor)->second;
+        std::vector<double>& initialValues = sdfValuesPerColor.find(currentColor)->second;
         std::vector<size_t> ret;
         if(mCriterionUsed == Criteria::SDF) {
             SDFStopping SDFStopping(currentGeometry, initialValues, mBucketSpread, triangleToBestRegion, mHardEdges);

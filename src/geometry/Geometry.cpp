@@ -361,7 +361,7 @@ std::vector<size_t> Geometry::getTrianglesUnderBrush(const glm::vec3& originPoin
                                                      size_t startTriangle, const struct BrushSettings& settings) {
     const double sizeSquared = settings.size * settings.size;
 
-    /// Stop when the trinagle has no intersection with the area highlight
+    /// Stop when the triangle has no intersection with the area highlight
     auto stoppingCriterionSingleTri = [this, originPoint, sizeSquared, insideDirection, startTriangle,
                                        settings](const size_t triId) -> bool {
         // Always accept the first triangle

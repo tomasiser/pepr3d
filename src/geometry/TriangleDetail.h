@@ -66,9 +66,8 @@ class TriangleDetail {
         mBounds = polygonFromTriangle(mOriginal.getTri());
         mTriangles.push_back(mOriginal);
 
-        std::array<Point2,3> exactPoints;
-        for(int i = 0; i<3;i++)
-        {
+        std::array<Point2, 3> exactPoints;
+        for(int i = 0; i < 3; i++) {
             exactPoints[i] = mOriginalPlane.to_2d(toExactK(mOriginal.getTri().vertex(i)));
         }
         mTrianglesExact.emplace_back(exactPoints[0], exactPoints[1], exactPoints[2]);
@@ -110,7 +109,7 @@ class TriangleDetail {
         assert(detailIdx < mTriangles.size());
         if(mTriangles[detailIdx].getColor() != color) {
             mTriangles[detailIdx].setColor(color);
-            colorChanged = true;
+            mColorChanged = true;
         }
     }
 
@@ -149,7 +148,7 @@ class TriangleDetail {
     Plane mOriginalPlane;
 
     /// Did color of any detail triangle change since last triangulation?
-    bool colorChanged = false;
+    bool mColorChanged = false;
 
     /// Create a polygon from a PeprTriangle
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
@@ -181,7 +180,8 @@ class TriangleDetail {
 
     /// Add points that are missing to our polygons
     /// @return true if any points were added
-    bool addMissingPoints(const std::set<Point3>& myPoints, const std::set<Point3>& theirPoints, const Segment3& sharedEdge);
+    bool addMissingPoints(const std::set<Point3>& myPoints, const std::set<Point3>& theirPoints,
+                          const Segment3& sharedEdge);
 
     /// Simplify polygons, removing any unnecessary vertices
     void simplifyPolygons();

@@ -2,9 +2,6 @@
 
 uniform mat4 ciModelViewProjection;
 uniform mat3 ciNormalMatrix;
-uniform mat4 ciModelMatrix;
-uniform float uAreaHighlightSize;
-uniform bool uAreaHighlightEnabled;
 
 in vec4 ciPosition;
 in vec3 ciNormal;

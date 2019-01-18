@@ -34,12 +34,12 @@ void Brush::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event
 }
 
 void Brush::onToolSelect(ModelView& modelView) {
-    paintedAnything = false;
+    mPaintedAnything = false;
 }
 
 void Brush::onToolDeselect(ModelView& modelView) {
     mApplication.getCurrentGeometry()->hideHighlight();
-    if(paintedAnything) {
+    if(mPaintedAnything) {
         mApplication.getCurrentGeometry()->updateTemporaryDetailedData();
     }
 }
@@ -59,7 +59,7 @@ void Brush::paint() {
     }
 
     mGroupCommands = true;
-    paintedAnything = true;
+    mPaintedAnything = true;
 }
 
 void Brush::stopPaint() {

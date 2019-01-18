@@ -61,7 +61,7 @@ class Brush : public Tool {
     /// Do painting tick on the model
     void paint();
 
-    /// Stop paining
+    /// Stop painting
     void stopPaint();
 
     void updateHighlight() const;
@@ -77,7 +77,7 @@ class Brush : public Tool {
     bool mGroupCommands = false;
 
     /// Did we paint anything since selecting this tool
-    bool paintedAnything = false;
+    bool mPaintedAnything = false;
 
     /// How many times can we run this tool without updating the screen
     int mPaintsSinceDraw = 0;

@@ -569,8 +569,8 @@ std::vector<DetailedTriangleId> Geometry::bucketSpread(const StoppingCondition& 
             // Manage neighbours and grow the queue
             addNeighboursToQueue(currentVertex, alreadyVisited, toVisit, stopFunctor);
         } catch(CGAL::Assertion_exception* excp) {
-            CI_LOG_E("Exception caught. Returning immediately. " + excp->expression() + " " + excp->message());
-            return {};
+            throw std::runtime_error("Exception caught. Returning immediately. " + excp->expression() + " " +
+                                     excp->message());
         }
 
         // Add the triangle to the list

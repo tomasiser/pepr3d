@@ -8,56 +8,6 @@ namespace pepr3d {
 using std::string;
 using std::to_string;
 
-template <typename Pt>
-double angleBetweenPoints(const Pt& a, const Pt& b, const Pt& c) {
-    auto vec1 = a - b;
-    auto vec2 = c - b;
-
-    double cosAngle = (vec1 * vec2) / (CGAL::sqrt(vec1.squared_length()) * CGAL::sqrt(vec2.squared_length()));
-
-    return 180 * (acos(cosAngle)) / M_PI;
-}
-
-template <typename vec>
-string vecToString(const vec& v) {
-    return string("Vec\n\tx: ") + to_string(v.x()) + "\n\ty:" + to_string(v.y()) + "\n\tz:" + to_string(v.z());
-}
-
-template <typename Tri>
-string triAnglesToString(const Tri& tri) {
-    auto a = tri.vertex(0);
-    auto b = tri.vertex(1);
-    auto c = tri.vertex(2);
-
-    auto plane = tri.supporting_plane();
-    auto projA = plane.to_2d(a);
-    auto projB = plane.to_2d(b);
-    auto projC = plane.to_2d(c);
-
-    auto bkA = plane.to_3d(projA);
-    auto bkB = plane.to_3d(projB);
-    auto bkC = plane.to_3d(projC);
-
-    auto distA = (bkA - a).squared_length();
-    auto distB = (bkB - b).squared_length();
-    auto distC = (bkC - c).squared_length();
-
-    string angle3DStr = "Angles 3D\n\ta) " + to_string(angleBetweenPoints(a, b, c)) + "\n\tb) " +
-                        to_string(angleBetweenPoints(b, c, a)) + "\n\tc) " + to_string(angleBetweenPoints(c, a, b));
-
-    string angle2DStr = "\nAngles 2D\n\ta) " + to_string(angleBetweenPoints(projA, projB, projC)) + "\n\tb) " +
-                        to_string(angleBetweenPoints(projB, projC, projA)) + "\n\tc) " +
-                        to_string(angleBetweenPoints(projC, projA, projB));
-
-    string normalStr =
-        "\n3d Normal " + vecToString(plane.orthogonal_vector() / sqrt(plane.orthogonal_vector().squared_length()));
-
-    string projDist =
-        "\nProj Dist:\n\ta) " + to_string(distA) + "\n\tb) " + to_string(distB) + "\n\tc) " + to_string(distC);
-
-    return angle3DStr + angle2DStr + projDist;
-}
-
 void LiveDebug::drawToSidePane(SidePane& sidePane) {
     ImGui::BeginChild("##sidepane-livedebug");
 
@@ -77,12 +27,6 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     sidePane.drawText("Polyhedron valid 0/1: " + std::to_string(mApplication.getCurrentGeometry()->polyhedronValid()) +
                       "\n");
 
-    sidePane.drawSeparator();
-    if(mTriangleUnderRay && mApplication.getCurrentGeometry()->getTriangleCount() > mTriangleUnderRay) {
-        sidePane.drawText("Triangle debug");
-        auto tri = mApplication.getCurrentGeometry()->getTriangle(*mTriangleUnderRay);
-        sidePane.drawText(triAnglesToString(tri.getTri()));
-    }
     sidePane.drawSeparator();
 
     static int addedValue = 1;

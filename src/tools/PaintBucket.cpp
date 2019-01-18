@@ -112,7 +112,7 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
         return result;
     };
 
-    std::vector<DetailedTriangleId> trianglesToPaint = geometry->bucket(*hoveredTriangleId, combinedCriterion);
+    std::vector<DetailedTriangleId> trianglesToPaint;
 
     try {
         trianglesToPaint = geometry->bucket(*hoveredTriangleId, combinedCriterion);

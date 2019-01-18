@@ -3,6 +3,16 @@
 
 namespace pepr3d {
 
+void pushErrorDialogCorruptedFile(MainApplication& mainApplication) {
+    const std::string errorCaption = "Fatal Error: Pepr project file (.p3d) corrupted";
+    const std::string errorDescription =
+        "The project file you attempted to open is corrupted and was loaded incorrectly. "
+        "The geometry data inside does not correspond to a valid geometry object and cannot be displayed or "
+        "modified. "
+        "Pepr3D will now exit. Try loading an earlier backup version, which might not be corrupted yet.";
+    mainApplication.pushDialog(Dialog(DialogType::FatalError, errorCaption, errorDescription, "Exit Pepr3D"));
+}
+
 std::optional<std::size_t> Tool::safeIntersectMesh(MainApplication& mainApplication, const ci::Ray ray) {
     auto geometry = mainApplication.getCurrentGeometry();
     std::optional<std::size_t> hoveredTriangleId;
@@ -12,14 +22,7 @@ std::optional<std::size_t> Tool::safeIntersectMesh(MainApplication& mainApplicat
     } catch(...) {
         CI_LOG_E("Mesh intersection failed.");
         hoveredTriangleId = {};
-
-        const std::string errorCaption = "Fatal Error: Pepr project file (.p3d) corrupted";
-        const std::string errorDescription =
-            "The project file you attempted to open is corrupted and was loaded incorrectly. "
-            "The geometry data inside does not correspond to a valid geometry object and cannot be displayed or "
-            "modified. "
-            "Pepr3D will now exit. Try loading an earlier backup version, which might not be corrupted yet.";
-        mainApplication.pushDialog(Dialog(DialogType::FatalError, errorCaption, errorDescription, "Exit Pepr3D"));
+        pushErrorDialogCorruptedFile(mainApplication);
     }
     return hoveredTriangleId;
 }
@@ -31,16 +34,9 @@ std::optional<DetailedTriangleId> Tool::safeIntersectDetailedMesh(MainApplicatio
     try {
         hoveredTriangleId = geometry->intersectDetailedMesh(ray);
     } catch(...) {
-        CI_LOG_E("Mesh intersection failed.");
+        CI_LOG_E("Mesh detailed intersection failed.");
         hoveredTriangleId = {};
-
-        const std::string errorCaption = "Fatal Error: Pepr project file (.p3d) corrupted";
-        const std::string errorDescription =
-            "The project file you attempted to open is corrupted and was loaded incorrectly. "
-            "The geometry data inside does not correspond to a valid geometry object and cannot be displayed or "
-            "modified. "
-            "Pepr3D will now exit. Try loading an earlier backup version, which might not be corrupted yet.";
-        mainApplication.pushDialog(Dialog(DialogType::FatalError, errorCaption, errorDescription, "Exit Pepr3D"));
+        pushErrorDialogCorruptedFile(mainApplication);
     }
     return hoveredTriangleId;
 }

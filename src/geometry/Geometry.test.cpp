@@ -36,6 +36,8 @@ pepr3d::Geometry getGeometryWithCube() {
 
 TEST(Geometry, initialize) {
     pepr3d::Geometry geo(getGeometryWithCube());
+    geo.updateOpenGlBuffers();
+
     EXPECT_EQ(geo.getTriangleCount(), 12);
 
     const auto vertexBuffer = geo.getVertexBuffer();
@@ -50,6 +52,7 @@ TEST(Geometry, initialize) {
 
 TEST(Geometry, getColor) {
     pepr3d::Geometry geo(getGeometryWithCube());
+    geo.updateOpenGlBuffers();
 
     EXPECT_EQ(geo.getTriangleColor(0), 0);
     EXPECT_EQ(geo.getTriangleColor(1), 0);
@@ -65,6 +68,7 @@ TEST(Geometry, getColor) {
 
 TEST(Geometry, setColor) {
     pepr3d::Geometry geo(getGeometryWithCube());
+    geo.updateOpenGlBuffers();
 
     EXPECT_EQ(geo.getTriangleColor(0), 0);
     EXPECT_EQ(geo.getTriangleColor(1), 0);
