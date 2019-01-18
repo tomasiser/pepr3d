@@ -386,7 +386,7 @@ class Geometry {
             return false;
         } else {
             assert(mPolyhedronData.indices.size() ==
-                   (mPolyhedronData.sdf_property_map.end() - mPolyhedronData.sdf_property_map.begin()));
+                   static_cast<size_t>(mPolyhedronData.sdf_property_map.end() - mPolyhedronData.sdf_property_map.begin()));
             return mPolyhedronData.isSdfComputed;
         }
     }
@@ -414,7 +414,7 @@ class Geometry {
 
     /// Get number of detailed triangles for this baseId
     size_t getTriangleDetailCount(const size_t triangleIndex) const {
-        auto& it = mTriangleDetails.find(triangleIndex);
+        auto it = mTriangleDetails.find(triangleIndex);
         if(it == mTriangleDetails.end()) {
             return 0;
         } else {
@@ -469,7 +469,7 @@ class Geometry {
     TriangleDetail* createTriangleDetail(size_t triangleIdx);
 
     TriangleDetail* getTriangleDetail(const size_t triangleIndex) {
-        auto& it = mTriangleDetails.find(triangleIndex);
+        auto it = mTriangleDetails.find(triangleIndex);
         if(it == mTriangleDetails.end()) {
             return createTriangleDetail(triangleIndex);
         } else {
