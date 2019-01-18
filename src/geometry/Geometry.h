@@ -385,8 +385,8 @@ class Geometry {
         if(mPolyhedronData.sdf_property_map == nullptr) {
             return false;
         } else {
-            assert(mPolyhedronData.indices.size() ==
-                   static_cast<size_t>(mPolyhedronData.sdf_property_map.end() - mPolyhedronData.sdf_property_map.begin()));
+            assert(mPolyhedronData.indices.size() == static_cast<size_t>(mPolyhedronData.sdf_property_map.end() -
+                                                                         mPolyhedronData.sdf_property_map.begin()));
             return mPolyhedronData.isSdfComputed;
         }
     }
