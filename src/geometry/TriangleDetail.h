@@ -43,7 +43,9 @@ class TriangleDetail {
     using Vector3 = TriangleDetail::K::Vector_3;
     using Plane = TriangleDetail::K::Plane_3;
     using Line3 = TriangleDetail::K::Line_3;
-    using Line2 = TriangleDetail::K::Line_3;
+    using Line2 = TriangleDetail::K::Line_2;
+    using Segment3 = TriangleDetail::K::Segment_3;
+    using Segment2 = TriangleDetail::K::Segment_2;
 
     using PeprTriangle = DataTriangle::Triangle;
     using PeprPlane = DataTriangle::K::Plane_3;
@@ -63,6 +65,13 @@ class TriangleDetail {
         mOriginalPlane = Plane(toExactK(tri.vertex(0)), toExactK(tri.vertex(1)), toExactK(tri.vertex(2)));
         mBounds = polygonFromTriangle(mOriginal.getTri());
         mTriangles.push_back(mOriginal);
+
+        std::array<Point2,3> exactPoints;
+        for(int i = 0; i<3;i++)
+        {
+            exactPoints[i] = mOriginalPlane.to_2d(toExactK(mOriginal.getTri().vertex(i)));
+        }
+        mTrianglesExact.emplace_back(exactPoints[0], exactPoints[1], exactPoints[2]);
         mColoredPolys.emplace(mOriginal.getColor(), polygonFromTriangle(mOriginal.getTri()));
     }
 
@@ -78,6 +87,12 @@ class TriangleDetail {
     /// Paint sphere onto this detail
     void paintSphere(const PeprSphere& sphere, size_t color);
 
+    /// Makes sure all vertices on the common edge between these two triangles are matched
+    /// Creates new vertices for both triangles if there are missing
+    /// You will need to updateTrianglesFromPolygons() after calling this method!
+    /// @return <bool,bool> true if points were added to a triangle
+    std::pair<bool, bool> correctSharedVertices(TriangleDetail& other);
+
     const std::vector<DataTriangle>& getTriangles() const {
         return mTriangles;
     }
@@ -85,6 +100,10 @@ class TriangleDetail {
     const DataTriangle& getOriginal() const {
         return mOriginal;
     }
+
+    /// Create new triangles from a set of colored polygons
+    /// Tries to simplify the polygons in the process
+    void updateTrianglesFromPolygons();
 
     /// Set color of a detail triangle
     void setColor(size_t detailIdx, size_t color) {
@@ -145,7 +164,7 @@ class TriangleDetail {
     Polygon polygonFromCircle(const Circle3& circle);
 
     /// Add polygon to the detail
-    void paintPolygon(const Polygon& poly, size_t color);
+    void addPolygon(const Polygon& poly, size_t color);
 
     /// Paint a circle shape onto the plane of the triangle
     void addCircle(const Circle3& circle, size_t color);
@@ -153,6 +172,19 @@ class TriangleDetail {
     /// Simplify polygon, removing unnecessary vertices
     /// @return was simplified
     bool simplifyPolygon(PolygonWithHoles& poly);
+
+    /// Find shared edge between triangles
+    Segment3 findSharedEdge(const TriangleDetail& other);
+
+    /// Find all points of polygons that are on the edge
+    std::set<Point3> findPointsOnEdge(const Segment3& edge);
+
+    /// Add points that are missing to our polygons
+    /// @return true if any points were added
+    bool addMissingPoints(const std::set<Point3>& myPoints, const std::set<Point3>& theirPoints, const Segment3& sharedEdge);
+
+    /// Simplify polygons, removing any unnecessary vertices
+    void simplifyPolygons();
 
     /// Convert Point_2 from Pepr3d kernel to Exact kernel
     inline static K::Point_2 toExactK(const PeprPoint2& point) {
@@ -203,10 +235,6 @@ class TriangleDetail {
 
     /// Add triangles from this polygon to our triangles
     void addTrianglesFromPolygon(const PolygonWithHoles& poly, size_t color);
-
-    /// Create new triangles from a set of colored polygons
-    /// Tries to simplify the polygons in the process
-    void createNewTriangles(std::map<size_t, PolygonSet>& coloredPolys);
 
     /// ( From CGAL User Manual )
     /// ---------------------------

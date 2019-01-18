@@ -116,6 +116,7 @@ class Geometry {
         using Mesh = CGAL::Surface_mesh<DataTriangle::K::Point_3>;
         using vertex_descriptor = Mesh::Vertex_index;
         using face_descriptor = Mesh::Face_index;
+        using edge_descriptor = Mesh::Edge_index;
 
         bool isSdfComputed = false;
         bool valid = false;
@@ -454,6 +455,10 @@ class Geometry {
 
     /// Build a CGAL mesh over detailed triangles
     void buildDetailedMesh();
+
+    /// Fixes T-junctions and unmatched vertices on edges of TriangleDetails
+    /// by creating a matching vertex on the neighbouring triangle
+    void correctSharedVertices();
 
     /// Invalidate temporary detailed data like detailed AABB tree and mesh.
     void invalidateTemporaryDetailedData();

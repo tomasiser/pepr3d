@@ -82,7 +82,7 @@ class GnuplotDebug {
 
 void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
     const Polygon circlePoly = polygonFromCircle(circle);
-    paintPolygon(circlePoly, color);
+    addPolygon(circlePoly, color);
 }
 
 void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
@@ -100,8 +100,137 @@ void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
     // Continue only if the intersection is a circle (not a point or miss)
     if(circleIntersection) {
         auto poly = polygonFromCircle(*circleIntersection);
-        paintPolygon(poly, color);
+        addPolygon(poly, color);
     }
+}
+
+std::pair<bool, bool> TriangleDetail::correctSharedVertices(TriangleDetail& other) {
+    const Segment3 sharedEdge = findSharedEdge(other);
+
+    std::set<Point3> myPoints = findPointsOnEdge(sharedEdge);
+    assert(myPoints.size() >= 2);
+    std::set<Point3> theirPoints = other.findPointsOnEdge(sharedEdge);
+    assert(theirPoints.size() >= 2);
+
+    const bool myPointsAdded = addMissingPoints(myPoints, theirPoints, sharedEdge);
+    const bool otherPointsAdded = other.addMissingPoints(theirPoints, myPoints, sharedEdge);
+    return std::make_pair(myPointsAdded, otherPointsAdded);
+}
+
+bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints,
+                                      const std::set<Point3>& theirPoints, const Segment3& sharedEdge) {
+    // Find missing points
+    std::set<Point3> missingPoints;
+    std::set_difference(theirPoints.begin(), theirPoints.end(), myPoints.begin(), myPoints.end(),
+                        std::inserter(missingPoints, missingPoints.begin()));
+
+    if(missingPoints.empty()) {
+        return false;
+    }
+
+    // Bring the 3d points to our plane
+    std::vector<Point2> points2D;
+    std::transform(missingPoints.begin(), missingPoints.end(), std::back_inserter(points2D),
+                   [this](auto& e) { return mOriginalPlane.to_2d(e); });
+
+    const Segment2 sharedEdge2D(mOriginalPlane.to_2d(sharedEdge.vertex(0)), mOriginalPlane.to_2d(sharedEdge.vertex(1)));
+
+    // Find edges that contain any of the points
+    for(auto& colorSetIt : mColoredPolys) {
+        std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
+        colorSetIt.second.polygons_with_holes(polys.begin());
+
+        for(PolygonWithHoles& polyWithHoles : polys) {
+            Polygon& poly = polyWithHoles.outer_boundary();
+            for(auto vertIt = poly.vertices_begin(); vertIt != poly.vertices_end(); ) {
+                auto nextVertIt = std::next(vertIt) != poly.vertices_end() ? std::next(vertIt) : poly.vertices_begin();
+
+                if(points2D.empty())
+                {
+                    break;
+                }
+
+                const Segment2 edgeSegment(*vertIt, *nextVertIt);
+                // Is this an edge of the whole triangle?
+                if(sharedEdge2D.has_on(*vertIt) && sharedEdge2D.has_on(*nextVertIt))
+                {
+                    
+                    // Test this segment against all points to see if we split
+                    auto pointIt = std::find_if(points2D.begin(), points2D.end(), [edgeSegment](Point2& pt) { return edgeSegment.has_on(pt); });
+                    if(pointIt != points2D.end())
+                    {
+                        auto newIt = poly.insert(nextVertIt, *pointIt);
+                        vertIt = newIt==poly.vertices_begin()? std::prev(poly.vertices_end()) : std::prev(newIt);
+                        points2D.erase(pointIt);
+                        // Stay at this vertex
+                    }else
+                    {
+                        vertIt++;
+                    }
+                } else
+                {
+                    vertIt++;
+                }
+
+            }
+        }
+
+        // Insert the polygon back to color set
+        colorSetIt.second.clear();
+        for(auto& poly:polys)
+        {
+            colorSetIt.second.insert(poly);
+        }
+    }
+
+    assert(points2D.empty()); //All points should have found an edge to put them on
+    return true;
+}
+
+void TriangleDetail::simplifyPolygons() {
+    for(auto& colorSetIt : mColoredPolys) {
+        if(colorSetIt.second.is_empty())
+            continue;
+
+        bool simplified = false;
+        std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
+        colorSetIt.second.polygons_with_holes(polys.begin());
+        for(PolygonWithHoles& poly : polys) {
+            simplified |= simplifyPolygon(poly);
+        }
+
+        // Update this polygon set with simplified representation
+        if(simplified) {
+            colorSetIt.second.clear();
+            for(PolygonWithHoles& poly : polys) {
+                colorSetIt.second.insert(poly);
+            }
+        }
+    }
+}
+
+std::set<TriangleDetail::Point3> TriangleDetail::findPointsOnEdge(const TriangleDetail::Segment3& edge) {
+    Line2 edgeLine(mOriginalPlane.to_2d(edge.point(0)), mOriginalPlane.to_2d(edge.point(1)));
+    std::set<Point3> result;
+
+    for(auto& colorSetIt: mColoredPolys)
+    {
+        std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
+        colorSetIt.second.polygons_with_holes(polys.begin());
+        for(PolygonWithHoles& polyWithHoles: polys)
+        {
+            Polygon& poly = polyWithHoles.outer_boundary();
+            for(auto vertexIt = poly.vertices_begin(); vertexIt!=poly.vertices_end();vertexIt++)
+            {
+                if(edgeLine.has_on(*vertexIt))
+                {
+                    result.insert(mOriginalPlane.to_3d(*vertexIt));
+                }
+            }
+        }
+    }
+
+    return result;
 }
 
 TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTriangle& tri) const {
@@ -148,7 +277,13 @@ std::vector<std::pair<TriangleDetail::Point2, double>> TriangleDetail::getCircle
 
     // Find all points that intersect triangle edge
     for(size_t i = 0; i < 3; i++) {
-        Line3 triEdge(toExactK(mOriginal.getVertex(i)), toExactK(mOriginal.getVertex((i + 1) % 3)));
+        std::array<Point3, 2> vertices{toExactK(mOriginal.getVertex(i)), toExactK(mOriginal.getVertex((i + 1) % 3))};
+        if(vertices[0] >= vertices[1])
+        {
+            std::swap(vertices[0], vertices[1]); //Makes sure the result of method calculation is same for both triangles
+        }
+
+        Line3 triEdge(vertices[0], vertices[1]);
 
         std::vector<CGAL::Object> intersections;
         auto intersection = CGAL::intersection(sphere, triEdge, std::back_inserter(intersections));
@@ -158,7 +293,12 @@ std::vector<std::pair<TriangleDetail::Point2, double>> TriangleDetail::getCircle
             std::pair<K::Circular_arc_point_3, unsigned> ptPair;
             if(CGAL::assign(ptPair, obj)) {
                 K::Circular_arc_point_3& pt = ptPair.first;
-                const Point3 worldPoint(CGAL::to_double(pt.x()), CGAL::to_double(pt.y()), CGAL::to_double(pt.z()));
+                Point3 worldPoint(CGAL::to_double(pt.x()), CGAL::to_double(pt.y()), CGAL::to_double(pt.z())); //Cannot get exact
+
+				// Make sure the point is exactly on the line
+                Plane perpendicularPlane = triEdge.perpendicular_plane(worldPoint);
+                auto linePlaneIntersection = CGAL::intersection(triEdge, perpendicularPlane);
+                worldPoint = boost::get<Point3>(*linePlaneIntersection);
 
                 // Project the vector onto the bases of the circle
                 const auto circleVector(worldPoint - circle.center());
@@ -229,7 +369,7 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle)
     return pgn;
 }
 
-void TriangleDetail::paintPolygon(const Polygon& poly, size_t color) {
+void TriangleDetail::addPolygon(const Polygon& poly, size_t color) {
     PolygonSet addedShape(poly);
     addedShape.intersection(mBounds);
 
@@ -247,7 +387,8 @@ void TriangleDetail::paintPolygon(const Polygon& poly, size_t color) {
         }
     }
 
-    createNewTriangles(mColoredPolys);
+    simplifyPolygons();
+    updateTrianglesFromPolygons();
 }
 
 bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
@@ -274,6 +415,30 @@ bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
 
     return !verticesToRemove.empty();
 }
+
+TriangleDetail::Segment3 TriangleDetail::findSharedEdge(const TriangleDetail& other) {
+    
+    std::array<PeprPoint3, 2> commonPoints;
+    size_t pointsFound = 0;
+
+    // Find the two triangle vertices that are the same for both triangles
+    for(int i=0;i<3;i++)
+    {
+        const PeprPoint3 myPoint = mOriginal.getTri().vertex(i);
+        for(int j=0;j<3;j++)
+        {
+            const PeprPoint3 otherPoint = other.mOriginal.getTri().vertex(j);
+            if(myPoint==otherPoint)
+            {
+                commonPoints[pointsFound++] = myPoint;
+            }
+        }
+    }
+
+    assert(pointsFound == 2);
+    return Segment3(toExactK(commonPoints[0]), toExactK(commonPoints[1]));
+}
+
 void TriangleDetail::updatePolysFromTriangles() {
     assert(mTriangles.size() == mTrianglesExact.size());
 
@@ -388,28 +553,18 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
     }
 }
 
-void TriangleDetail::createNewTriangles(std::map<size_t, PolygonSet>& coloredPolys) {
+void TriangleDetail::updateTrianglesFromPolygons() {
     mTriangles.clear();
     mTrianglesExact.clear();
 
-    for(auto& colorSetIt : coloredPolys) {
+    for(auto& colorSetIt : mColoredPolys) {
         if(colorSetIt.second.is_empty())
             continue;
 
-        bool simplified = false;
         std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
         colorSetIt.second.polygons_with_holes(polys.begin());
         for(PolygonWithHoles& poly : polys) {
-            simplified |= simplifyPolygon(poly);
             addTrianglesFromPolygon(poly, colorSetIt.first);
-        }
-
-        // Update this polygon set with simplified representation
-        if(simplified) {
-            colorSetIt.second.clear();
-            for(PolygonWithHoles& poly : polys) {
-                colorSetIt.second.join(poly);
-            }
         }
     }
 

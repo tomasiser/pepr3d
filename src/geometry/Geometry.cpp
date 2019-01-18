@@ -457,14 +457,13 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
                 // Do not paint triangles that are already the same color
                 if(!isSimpleTriangle(triangleIdx) || getTriangle(triangleIdx).getColor() != settings.color) {
                     detailsToUpdate.emplace_back(triangleIdx);
-                    getTriangleDetail(triangleIdx); //Create triangle detail so that we dont modify
+                    getTriangleDetail(triangleIdx);  // Create triangle detail so that we dont modify
                 }
             }
         }
     }
 
-    if(!detailsToUpdate.empty())
-    {
+    if(!detailsToUpdate.empty()) {
         invalidateTemporaryDetailedData();
     }
 
@@ -472,8 +471,7 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
     std::vector<std::future<void>> futures;
 
     // Paint to details in multiple threads
-    for(size_t triIdx: detailsToUpdate)
-    {
+    for(size_t triIdx : detailsToUpdate) {
         futures.emplace_back(threadPool.enqueue(
             [this](size_t triIdx, const glm::vec3& brushOrigin, const struct BrushSettings& settings) {
                 updateTriangleDetail(triIdx, brushOrigin, settings);
@@ -642,6 +640,11 @@ void Geometry::buildDetailedTree() {
 }
 
 void Geometry::buildDetailedMesh() {
+    if(!mPolyhedronData.valid) {
+        CI_LOG_E("Attempted to build detailed mesh when basic mash is not available");
+        return;
+    }
+
     mMeshDetailed = std::make_unique<PolyhedronData::Mesh>();
     mMeshDetailedFaceDescs.clear();
     mMeshDetailedIdMap.reset();
@@ -718,28 +721,92 @@ void Geometry::buildDetailedMesh() {
 
             auto faceDesc = mMeshDetailed->add_face(vertDescriptors);
             assert(faceDesc != PolyhedronData::Mesh::null_face());
-            if(faceDesc != PolyhedronData::Mesh::null_face())
-            {
+            if(faceDesc != PolyhedronData::Mesh::null_face()) {
                 mMeshDetailedFaceDescs.insert(
                     std::make_pair(DetailedTriangleId(triangleId, detailTriangleIdx), faceDesc));
                 mMeshDetailedIdMap[faceDesc] = DetailedTriangleId(triangleId, detailTriangleIdx);
-            } else
-            {
+            } else {
                 const double sqrdArea = detail.getTri().squared_area();
                 CI_LOG_E("A null face was generated in the detailed mesh. This should not happen");
                 CI_LOG_E(std::to_string(sqrdArea));
                 mMeshDetailed.reset();
                 return;
             }
-
-            
         }
     }
+}
+
+void Geometry::correctSharedVertices() {
+    if(!mPolyhedronData.valid) {
+        CI_LOG_E("Cannot correct shared vertices when original polyhedron is unavailable");
+        return;
+    }
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    // We must fix every edge that connects from a TriangleDetail to other triangle
+
+    // Array of details that will need to be converted back to triangles
+    // This can be done in parallel
+    std::set<size_t> detailsToTriangulate;
+
+    const auto& mesh = mPolyhedronData.mMesh;
+
+    for(const PolyhedronData::edge_descriptor edge : mesh.edges()) {
+        const auto firstHalfEdge = mesh.halfedge(edge, 0);
+        const auto secondHalfEdge = mesh.halfedge(edge, 1);
+
+        if(firstHalfEdge == PolyhedronData::Mesh::null_halfedge() ||
+           secondHalfEdge == PolyhedronData::Mesh::null_halfedge()) {
+            continue;
+        }
+
+        const auto firstFace = mesh.face(firstHalfEdge);
+        const auto secondFace = mesh.face(secondHalfEdge);
+        if(firstFace == PolyhedronData::Mesh::null_face() || secondFace == PolyhedronData::Mesh::null_face()) {
+            continue;
+        }
+
+        const size_t firstTriIdx = mPolyhedronData.mIdMap[firstFace];
+        const size_t secondTriIdx = mPolyhedronData.mIdMap[secondFace];
+
+        if(!isSimpleTriangle(firstTriIdx) || !isSimpleTriangle(secondTriIdx)) {
+            std::pair<bool, bool> didAdd =
+                getTriangleDetail(firstTriIdx)->correctSharedVertices(*getTriangleDetail(secondTriIdx));
+
+            // Mark to triangulate later if any points added
+            if(didAdd.first) {
+                detailsToTriangulate.insert(firstTriIdx);
+            }
+
+            if(didAdd.second) {
+                detailsToTriangulate.insert(secondTriIdx);
+            }
+        }
+    }
+
+    // Triangulate details in parallel
+    std::vector<std::future<void>> tasks;
+    ThreadPool& threadPool = MainApplication::getThreadPool();
+    for(size_t triIdx : detailsToTriangulate) {
+        tasks.emplace_back(threadPool.enqueue([](TriangleDetail* detail) { detail->updateTrianglesFromPolygons(); },
+                                              getTriangleDetail(triIdx)));
+    }
+
+    std::for_each(tasks.begin(), tasks.end(), [](auto& t) { t.get(); });
+
+    const auto endTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> timeMs = endTime - startTime;
+
+    mOgl.isDirty = true;
+    CI_LOG_I("Correcting shared vertices took " + std::to_string(timeMs.count()) + " ms");
 }
 
 void Geometry::updateTemporaryDetailedData() {
     const auto start = std::chrono::high_resolution_clock::now();
     ::ThreadPool& threadPool = MainApplication::getThreadPool();
+
+    correctSharedVertices();
 
     /// Async build the data
     auto buildDetailedMeshFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
