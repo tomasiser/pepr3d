@@ -39,19 +39,19 @@ vec3 getWireframeColor(vec3 fill) {
     return (brightness > 0.75) ? vec3(0.11, 0.165, 0.208) : vec3(0.988, 0.988, 0.988);
 }
 
-float getAreaHighlightAlpha()
-{
-	if(uAreaHighlightEnabled && AreaHighlightMask!=0)
-	{
-		vec3 lineToOrigin = ModelCoordinates - uAreaHighlightOrigin;
-		float distToOriginSquared = dot(lineToOrigin, lineToOrigin);
-		float distLimitSquared = uAreaHighlightSize*uAreaHighlightSize;
-		
-		if(distToOriginSquared < distLimitSquared)
-			return 1;
-	}
-
-	return 0;
+float getAreaHighlightAlpha() {
+    if(uAreaHighlightEnabled && AreaHighlightMask!=0)
+    {
+        vec3 lineToOrigin = ModelCoordinates - uAreaHighlightOrigin;
+        float distToOriginSquared = dot(lineToOrigin, lineToOrigin);
+        float distLimitSquared = uAreaHighlightSize*uAreaHighlightSize;
+    
+        if(distToOriginSquared < distLimitSquared) {
+        return 1;
+        }
+    }
+    
+    return 0;
 }
 
 void main() {
@@ -61,9 +61,9 @@ void main() {
     float ambient = 0.2;
     float lightIntensity = lambert + ambient;
 
-	  float areaHighlightAlpha = getAreaHighlightAlpha();
+    float areaHighlightAlpha = getAreaHighlightAlpha();
     vec3 materialColor = uOverridePalette ? Color.rgb : uColorPalette[ColorIndex].rgb;
-	  materialColor = mix(materialColor, uAreaHighlightColor, areaHighlightAlpha);
+    materialColor = mix(materialColor, uAreaHighlightColor, areaHighlightAlpha);
     vec3 wireframeColor = uShowWireframe ? getWireframeColor(materialColor) : materialColor;
     vec3 triangleColor = wireframe(materialColor, wireframeColor, 1.0);
 
