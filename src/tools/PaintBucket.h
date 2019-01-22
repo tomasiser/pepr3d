@@ -10,7 +10,7 @@ namespace pepr3d {
 
 class PaintBucket : public Tool {
    public:
-    PaintBucket(MainApplication& app) : mApplication(app) {}
+    explicit PaintBucket(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Paint Bucket";
@@ -43,7 +43,6 @@ class PaintBucket : public Tool {
 
    private:
     MainApplication& mApplication;
-    std::optional<std::size_t> mHoveredTriangleId = {};
     bool mStopOnNormal = false;
     int mStopOnNormalDegrees = 30;
     bool mStopOnColor = true;
@@ -52,13 +51,14 @@ class PaintBucket : public Tool {
     bool mDragging = false;
     bool mGeometryCorrect = true;
     NormalAngleCompare mNormalCompare = NormalAngleCompare::NEIGHBOURS;
+    glm::ivec2 mLastMousePos;
 
     struct DoNotStop {
         const Geometry* geo;
 
         DoNotStop(const Geometry* g) : geo(g) {}
 
-        bool operator()(const size_t a, const size_t b) const {
+        bool operator()(const DetailedTriangleId a, const DetailedTriangleId b) const {
             return true;
         }
     };
@@ -68,7 +68,7 @@ class PaintBucket : public Tool {
 
         ColorStopping(const Geometry* g) : geo(g) {}
 
-        bool operator()(const size_t a, const size_t b) const {
+        bool operator()(const DetailedTriangleId a, const DetailedTriangleId b) const {
             if(geo->getTriangle(a).getColor() == geo->getTriangle(b).getColor()) {
                 return true;
             } else {
@@ -87,7 +87,11 @@ class PaintBucket : public Tool {
                        const NormalAngleCompare angleCmp)
             : geo(g), threshold(thresh), startNormal(normal), angleCompare(angleCmp) {}
 
-        bool operator()(const size_t a, const size_t b) const {
+        bool operator()(const DetailedTriangleId a, const DetailedTriangleId b) const {
+            if(a.getBaseId() == b.getBaseId()) {
+                return true;  // Details of the same base have the same normal
+            }
+
             double cosAngle = 0.0;
             if(angleCompare == NormalAngleCompare::ABSOLUTE) {
                 const auto& newNormal = geo->getTriangle(a).getNormal();

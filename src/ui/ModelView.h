@@ -8,13 +8,16 @@
 
 #include "ui/CameraUi.h"
 
+#include <chrono>
+#include "geometry/TrianglePrimitive.h"
+
 namespace pepr3d {
 
 class MainApplication;
 
 class ModelView {
    public:
-    ModelView(MainApplication& app) : mApplication(app) {}
+    explicit ModelView(MainApplication& app) : mApplication(app) {}
     void setup();
     void resize();
     void draw();
@@ -27,7 +30,12 @@ class ModelView {
     void onMouseMove(ci::app::MouseEvent event);
 
     ci::Ray getRayFromWindowCoordinates(glm::ivec2 windowCoords) const;
-    void drawTriangleHighlight(const size_t triangleIndex);
+    void drawTriangleHighlight(const DetailedTriangleId triangleId);
+    void drawTriangleHighlight(const size_t triangleIdx) {
+        drawTriangleHighlight(DetailedTriangleId(triangleIdx));
+    }
+
+    void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white());
 
     bool isWireframeEnabled() const {
         return mIsWireframeEnabled;
@@ -84,8 +92,15 @@ class ModelView {
         return mColorOverride.overrideColorBuffer;
     }
 
+    float getMaxSize() const {
+        return mMaxSize;
+    }
+
    private:
     MainApplication& mApplication;
+    ci::gl::VboMeshRef mVboMesh;
+    ci::gl::BatchRef mBatch;
+
     std::pair<glm::ivec2, glm::ivec2> mViewport;
     ci::CameraPersp mCamera;
     pepr3d::CameraUi mCameraUi;
@@ -96,6 +111,7 @@ class ModelView {
     glm::mat4 mModelMatrix;
     float mModelRoll = 0.0f;
     glm::vec3 mModelTranslate = glm::vec3(0);
+    float mMaxSize = 1.f;
 
     struct ColorOverrideData {
         bool isOverriden = false;
@@ -103,6 +119,12 @@ class ModelView {
     } mColorOverride;
 
     void updateModelMatrix();
+    void updateVboAndBatch();
+
+    struct Attributes {
+        static const cinder::geom::Attrib COLOR_IDX = cinder::geom::Attrib::CUSTOM_0;
+        static const cinder::geom::Attrib HIGHLIGHT_MASK = cinder::geom::Attrib::CUSTOM_1;
+    };
 };
 
 }  // namespace pepr3d

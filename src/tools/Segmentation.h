@@ -13,7 +13,7 @@ namespace pepr3d {
 
 class Segmentation : public Tool {
    public:
-    Segmentation(MainApplication& app) : mApplication(app) {}
+    explicit Segmentation(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Automatic Segmentation";

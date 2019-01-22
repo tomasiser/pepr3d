@@ -4,6 +4,7 @@
 #include "ui/IconsMaterialDesign.h"
 #include "ui/SidePane.h"
 
+#include <optional>
 #include "commands/CommandManager.h"
 #include "commands/ExampleCommand.h"
 
@@ -13,7 +14,7 @@ class MainApplication;
 
 class LiveDebug : public Tool {
    public:
-    LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}
+    explicit LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}
 
     virtual std::string getName() const override {
         return "Live Debug";
@@ -28,6 +29,7 @@ class LiveDebug : public Tool {
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
+    virtual void drawToModelView(ModelView& modelView) override;
 
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
 
@@ -36,6 +38,7 @@ class LiveDebug : public Tool {
     IntegerState mIntegerState;
     CommandManager<IntegerState> mIntegerManager;
     glm::ivec2 mMousePos;
+    std::optional<std::size_t> mTriangleUnderRay{};
 };
 
 }  // namespace pepr3d

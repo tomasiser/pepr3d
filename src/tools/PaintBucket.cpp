@@ -63,8 +63,12 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
 }
 
 void PaintBucket::drawToModelView(ModelView &modelView) {
-    if(mHoveredTriangleId && mGeometryCorrect) {
-        modelView.drawTriangleHighlight(*mHoveredTriangleId);
+    const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(mLastMousePos);
+    const auto geometry = mApplication.getCurrentGeometry();
+    std::optional<DetailedTriangleId> hoveredTriangleId = safeIntersectDetailedMesh(mApplication, cameraRay);
+
+    if(hoveredTriangleId && mGeometryCorrect) {
+        modelView.drawTriangleHighlight(*hoveredTriangleId);
     }
 }
 
@@ -72,9 +76,7 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     if(!event.isLeftDown()) {
         return;
     }
-    if(!mHoveredTriangleId) {
-        return;
-    }
+    const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(event.getPos());
     const auto geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         return;
@@ -83,13 +85,20 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
         return;
     }
 
+    // Get a fresh triangle intersection so we can be sure the ID is valid if it's set
+    std::optional<DetailedTriangleId> hoveredTriangleId = safeIntersectDetailedMesh(mApplication, cameraRay);
+    if(!hoveredTriangleId) {
+        return;
+    }
+
     const double angleRads = mStopOnNormalDegrees * glm::pi<double>() / 180.0;
     const NormalStopping normalFtor(geometry, glm::cos(angleRads),
-                                    geometry->getTriangle(*mHoveredTriangleId).getNormal(), mNormalCompare);
+                                    geometry->getTriangle(*hoveredTriangleId).getNormal(), mNormalCompare);
 
     const ColorStopping colorFtor(geometry);
 
-    auto combinedCriterion = [&normalFtor, &colorFtor, this](const size_t a, const size_t b) -> bool {
+    auto combinedCriterion = [&normalFtor, &colorFtor, this](const DetailedTriangleId a,
+                                                             const DetailedTriangleId b) -> bool {
         if(mDoNotStop) {
             return true;
         }
@@ -103,9 +112,10 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
         return result;
     };
 
-    std::vector<size_t> trianglesToPaint;
+    std::vector<DetailedTriangleId> trianglesToPaint;
+
     try {
-        trianglesToPaint = geometry->bucket(*mHoveredTriangleId, combinedCriterion);
+        trianglesToPaint = geometry->bucket(*hoveredTriangleId, combinedCriterion);
     } catch(std::exception &e) {
         const std::string errorCaption = "Error: Failed to bucket paint";
         const std::string errorDescription =
@@ -120,7 +130,7 @@ void PaintBucket::onModelViewMouseDown(ModelView &modelView, ci::app::MouseEvent
     }
 
     const size_t currentColorIndex = geometry->getColorManager().getActiveColorIndex();
-    const bool hoverOverSameTriangle = geometry->getTriangleColor(*mHoveredTriangleId) == currentColorIndex;
+    const bool hoverOverSameTriangle = geometry->getTriangleColor(*hoveredTriangleId) == currentColorIndex;
 
     // We only want to re-draw if we are not dragging, or if you are dragging and reached a new region
     if(!mDragging || (mDragging && !hoverOverSameTriangle)) {
@@ -143,18 +153,12 @@ void PaintBucket::onModelViewMouseMove(ModelView &modelView, ci::app::MouseEvent
     if(!mGeometryCorrect) {
         return;
     }
-    const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    const auto geometry = mApplication.getCurrentGeometry();
-    if(geometry == nullptr) {
-        mHoveredTriangleId = {};
-        return;
-    }
-    mHoveredTriangleId = safeIntersectMesh(mApplication, cameraRay);
+
+    mLastMousePos = event.getPos();
 }
 
 void PaintBucket::onNewGeometryLoaded(ModelView &modelView) {
     mGeometryCorrect = mApplication.getCurrentGeometry()->polyhedronValid();
-    mHoveredTriangleId = {};
 }
 
 }  // namespace pepr3d

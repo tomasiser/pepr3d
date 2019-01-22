@@ -33,7 +33,8 @@ void TrianglePainter::onModelViewMouseDown(ModelView& modelView, ci::app::MouseE
 
     // Avoid painting if the triangle is the same color
     const auto activeColor = geometry->getColorManager().getActiveColorIndex();
-    if(geometry->getTriangleColor(*mHoveredTriangleId) != activeColor) {
+    if(geometry->getTriangleColor(*mHoveredTriangleId) != activeColor ||
+       !geometry->isSimpleTriangle(*mHoveredTriangleId)) {
         CommandManager<Geometry>* const commandManager = mApplication.getCommandManager();
         commandManager->execute(std::make_unique<CmdPaintSingleColor>(*mHoveredTriangleId, activeColor),
                                 mGroupCommands);
@@ -52,7 +53,7 @@ void TrianglePainter::onModelViewMouseDrag(ModelView& modelView, ci::app::MouseE
 
 void TrianglePainter::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    auto geometry = mApplication.getCurrentGeometry();
+    const Geometry* geometry = mApplication.getCurrentGeometry();
     if(geometry == nullptr) {
         mHoveredTriangleId = {};
         return;

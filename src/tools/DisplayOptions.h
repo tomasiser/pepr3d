@@ -9,7 +9,7 @@ class MainApplication;
 
 class DisplayOptions : public Tool {
    public:
-    DisplayOptions(MainApplication& app) : mApplication(app) {}
+    explicit DisplayOptions(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Display Options";

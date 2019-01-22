@@ -12,7 +12,7 @@ class MainApplication;
 
 class TrianglePainter : public Tool {
    public:
-    TrianglePainter(MainApplication& app) : mApplication(app) {}
+    explicit TrianglePainter(MainApplication& app) : mApplication(app) {}
 
     virtual std::string getName() const override {
         return "Triangle Painter";

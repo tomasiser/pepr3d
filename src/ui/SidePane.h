@@ -11,7 +11,7 @@ class MainApplication;
 
 class SidePane {
    public:
-    SidePane(MainApplication& app) : mApplication(app) {}
+    explicit SidePane(MainApplication& app) : mApplication(app) {}
 
     float getWidth() const {
         return mWidth;

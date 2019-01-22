@@ -1,8 +1,12 @@
 #include "tools/LiveDebug.h"
 #include "geometry/Geometry.h"
+#include "geometry/Triangle.h"
+#include "imgui.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
+using std::string;
+using std::to_string;
 
 void LiveDebug::drawToSidePane(SidePane& sidePane) {
     ImGui::BeginChild("##sidepane-livedebug");
@@ -46,7 +50,24 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     ImGui::EndChild();
 }
 
+void LiveDebug::drawToModelView(ModelView& modelView) {
+    if(mTriangleUnderRay && mApplication.getCurrentGeometry()->getTriangleCount() > mTriangleUnderRay) {
+        modelView.drawTriangleHighlight(*mTriangleUnderRay);
+
+        const auto& triangle = mApplication.getCurrentGeometry()->getTriangle(*mTriangleUnderRay);
+        const glm::vec3 center = (triangle.getVertex(0) + triangle.getVertex(1) + triangle.getVertex(2)) / 3.f;
+
+        const auto base1 = triangle.getTri().supporting_plane().base1();
+        const auto base2 = triangle.getTri().supporting_plane().base2();
+
+        modelView.drawLine(center, center + glm::vec3(base1.x(), base1.y(), base1.z()), ci::Color(1.f, 0.f, 0.f));
+        modelView.drawLine(center, center + glm::vec3(base2.x(), base2.y(), base2.z()), ci::Color(0.f, 1.f, 0.f));
+    }
+}
+
 void LiveDebug::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     mMousePos = event.getPos();
+    auto ray = modelView.getRayFromWindowCoordinates(event.getPos());
+    mTriangleUnderRay = mApplication.getCurrentGeometry()->intersectMesh(ray);
 }
 }  // namespace pepr3d

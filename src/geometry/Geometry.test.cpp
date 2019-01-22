@@ -36,25 +36,28 @@ pepr3d::Geometry getGeometryWithCube() {
 
 TEST(Geometry, initialize) {
     pepr3d::Geometry geo(getGeometryWithCube());
+    geo.updateOpenGlBuffers();
+
     EXPECT_EQ(geo.getTriangleCount(), 12);
 
     const auto vertexBuffer = geo.getVertexBuffer();
     EXPECT_EQ(vertexBuffer.size(), 36);
-    const auto indexBuffer = geo.getIndexBuffer();
+    const auto indexBuffer = geo.getOpenGlData().indexBuffer;
     EXPECT_EQ(indexBuffer.size(), 36);
-    const auto normalBuffer = geo.getNormalBuffer();
+    const auto normalBuffer = geo.getOpenGlData().normalBuffer;
     EXPECT_EQ(normalBuffer.size(), 36);
-    const auto colorBuffer = geo.getColorBuffer();
+    const auto colorBuffer = geo.getOpenGlData().colorBuffer;
     EXPECT_EQ(colorBuffer.size(), 36);
 }
 
 TEST(Geometry, getColor) {
     pepr3d::Geometry geo(getGeometryWithCube());
+    geo.updateOpenGlBuffers();
 
     EXPECT_EQ(geo.getTriangleColor(0), 0);
     EXPECT_EQ(geo.getTriangleColor(1), 0);
 
-    const auto colorBuffer = geo.getColorBuffer();
+    const auto colorBuffer = geo.getOpenGlData().colorBuffer;
     EXPECT_EQ(colorBuffer.size(), 36);
     pepr3d::Geometry::ColorIndex colorIndex = colorBuffer.at(0);
 
@@ -65,11 +68,12 @@ TEST(Geometry, getColor) {
 
 TEST(Geometry, setColor) {
     pepr3d::Geometry geo(getGeometryWithCube());
+    geo.updateOpenGlBuffers();
 
     EXPECT_EQ(geo.getTriangleColor(0), 0);
     EXPECT_EQ(geo.getTriangleColor(1), 0);
 
-    auto& colorBuffer = geo.getColorBuffer();
+    auto& colorBuffer = geo.getOpenGlData().colorBuffer;
     EXPECT_EQ(colorBuffer.size(), 36);
     const pepr3d::Geometry::ColorIndex colorIndex = colorBuffer.at(0);
 

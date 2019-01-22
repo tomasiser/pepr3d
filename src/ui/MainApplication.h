@@ -26,16 +26,14 @@
 #include "Toolbar.h"
 #include "commands/CommandManager.h"
 
-using namespace ci;
-using namespace ci::app;
-using namespace std;
-
 namespace pepr3d {
-
 class Tool;
 class Geometry;
+using cinder::app::FileDropEvent;
+using cinder::app::KeyEvent;
+using cinder::app::MouseEvent;
 
-class MainApplication : public App {
+class MainApplication : public cinder::app::App {
    public:
     void setup() override;
     void update() override;
@@ -56,6 +54,10 @@ class MainApplication : public App {
 #if defined(CINDER_MSW_DESKTOP) && !defined(NDEBUG)
         settings->setConsoleWindowEnabled(true);
 #endif
+    }
+
+    static ::ThreadPool& getThreadPool() {
+        return sThreadPool;
     }
 
     Toolbar& getToolbar() {
@@ -110,6 +112,7 @@ class MainApplication : public App {
         assert((*tool)->isEnabled());
         (*mCurrentToolIterator)->onToolDeselect(mModelView);
         mCurrentToolIterator = tool;
+        (*mCurrentToolIterator)->onToolSelect(mModelView);
     }
 
     template <typename Tool>
@@ -229,7 +232,7 @@ class MainApplication : public App {
     std::size_t mLastVersionSaved = std::numeric_limits<std::size_t>::max();
     bool mIsGeometryDirty = false;
 
-    ::ThreadPool mThreadPool;
+    static ::ThreadPool sThreadPool;
 };
 
 }  // namespace pepr3d

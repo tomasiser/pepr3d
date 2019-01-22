@@ -142,7 +142,7 @@ class CmdColorManagerAddColor : public CommandBase<Geometry> {
         assert(colorManager.size() > 0);
         std::random_device rd;   // Will be used to obtain a seed for the random number engine
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-        uniform_real_distribution<> dis(0.0, 1.0);
+        std::uniform_real_distribution<> dis(0.0, 1.0);
         colorManager.addColor(glm::vec4(dis(gen), dis(gen), dis(gen), 1.0f));
     }
 };
