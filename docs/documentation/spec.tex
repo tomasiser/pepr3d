@@ -76,30 +76,58 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 
-% TODO: Stepan
+% I. INTRO
 \part{Introduction}
+
+% Done for the most part
 \include{texts/intro}
+
+% TODO: Needs more description for each program
 \include{texts/related-work}
 
+% II. DEVELOPER DOCU
 \part{Developer Documentation}
+
+% Should be similar to the Spec's corresponding chapter
 \include{texts/architecture}
-% In the following, elaborate on classes, what they do, how they are connected, what is ours/what is a library thing
+
+% In the following, elaborate on classes, what they do, how they are connected, what is ours/what is a library thing.
 \include{texts/geometry}
 \include{texts/commands}
 \include{texts/tools}
 \include{texts/ui}
 
-% TODO: Jindra
+% III. PROGRESS OF IMPLEMENTATION
 \part{Progress of implementation}
+
+% chronologický popis průběhu prací na projektu
 \include{texts/progress}
+
+% Compare our result with the minimal implementation we specified. And with the advanced implementation.
+% We should have almost ALL advanced topics covered!
 \include{texts/min-req}
+
+% Present the whole pipeline, from start to finish on bulbasaur - since we have him printed already.
+% This should show how in pepr: you import, color the guy, export the guy.
+% Then import to slicer, assign the correct materials, and then a few pictures of printing/printed.
 \include{texts/results}
+
+% kritické zhodnocení přijatých řešení a možnosti dalšího vývoje
 \include{texts/conclusion}
 
+% IV. USER DOCU
 \part{User Documentation}
+
+% Podrobný popis instalace díla včetně přesné specifikace požadavků na použitý hardware a software
 \include{texts/requirements}
+
+% ? @Tom what did you mean by this
 \include{texts/first-run}
+
+% Demonstrate and explain each tool to the USER (not a software guy)
 \include{texts/tools}
+
+% Demonstrate export and import, maybe even with SLICER support
 \include{texts/import-export}
 
 \end{document}
