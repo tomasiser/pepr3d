@@ -1,0 +1,126 @@
+\chapter{Progress of implementation}
+
+In this chapter we first cover the tasks and reponsibilities of each of the team members. Then we outline the progress of the implementation of this project.
+
+\section{Responsibilites}
+
+Here we list the members of the team alphabetically and summarize all the work each of them has done over the course of the project.
+
+\subsection{Bc. Štěpán Hojdar}
+\begin{itemize}
+\item Implementation of the Geometry class as a data structure, which entails both computational geometry (coloring the triangles, etc.) and rendering capabilites (creating buffers for OpenGL). Testing and integrating the CGAL library into the project and using this library to perform the computational geometry.
+\item Implementing the following tools both on the backend and the frontend: bucket painter, manual segmentation and automatic segmentation.
+\item Researching a way to convert a font file (.ttf) into a 2D triangle meshe, implementing the FontRasterizer class and implementing the basics of the text tool, using this knowledge.
+\item Serializing and deserializing our data using the Cinder library, which allows us to save work in progress as a .p3d file.
+\item Writing a major part of both the specification and the documentation.
+\end{itemize}
+
+\subsection{Bc. Tomáš Iser}
+\begin{itemize}
+\item The majority of the user interface of the application, including the design of the GUI, the architectural design of the backend of the UI.
+\item Small widgets -- wrappers around Dear ImGui calls to make it easier to use for the rest of the team while developing the UI.
+\item The color palette editor, shortcuts, correctly scaling and rotating the model, all of the display options (wireframe, two zoom options), tooltips, dialogs (like export or error dialogs), error handling and logging and application settings.
+\item Prototyping, testing and integrating the Cinder and Dear ImGui libraries which we based the project on.
+\item The triangle painter tool -- both frontend and backend.
+\item Writing a major part of both the specification and the documentation.
+\item Connecting our GitHub repository to Circle CI, which is a continuous integration service based on linux. We used the CI throughout the whole process, which made sure every single merge into the master branch was buildable and passed all unit tests.
+\end{itemize}
+
+\subsection{Bc. Jindřich Pikora}
+\begin{itemize}
+\item Communication with Průša Research s.r.o., including several meetings with our contact in Průša Research.
+\item Testing and familiarizing himself with the FDM priting in practice, printing a lot of test subjects to measure the printer's capabilities and downsides, to note during our export developement.
+\item Testing and integrating the Assimp library into the project.
+\item Implementing the whole import process, with mesh pre-processing, simplification and repairs providided by the Assimp library.
+\item Implementing the whole export process, researching and developing a useable heuristic to make the process smoother and less error prone. Testing the export by physically printing the results on our printer.
+\end{itemize}
+
+\subsection{Bc. Luis Sanchez}
+\begin{itemize}
+\item Setting up the project environment using CMake, making sure all our libraries compile and link correctly.
+\item Designing and implementing the whole command architecture, with functioning undo and redo operations on the geometry data.
+\item Implementing the Brush and Text tool backend and frontend, requiring long and extensive research and developing a brand new way to solve this problem, which we did not find in any available literature or research papers.
+\item Modifying and extending the Geometry data structure to allow for custom triangle subdivisions.
+\item Performing complex operations using the CGAL library on the modified Geometry in order to make the brush work correctly.
+\item Modifying the rest of the tools to be able to work on the new customly modified geometry, as well as to allow it to correctly export and serialize as a .p3d project.
+\end{itemize}
+
+\section{Timeline of the implementation}
+
+In this section, we describe the process of implementing this project from start to finish. We start by explaining the project setup, rules and other measures we employed to get more productive, then we describe the process itself.
+
+\subsection{Rules and project setup}
+
+\subsubsection{Team management}
+To manage the work in the team, we set several goals. We met regularly each week with our supervisor, and had a strucutred meeting. The first part of the meeting had each of us tell the rest of the team what we worked on the last week, describe what went well and if/where we got stuck. This had two effects -- firstly, it allowed us to help the stuck member and not waste too much time, and secondly, this made sure that all the team members are up to date with the progress of the whole project, which motivated further progress. The second part of the meeting had us setting goals for the next week, assigning clear and doable tasks to each team member, which would get reviewed on the next meeting. Each meeting took around an hour, including a general discussion after these two structured points.
+
+\subsubsection{Git repository}
+The second major part of the teamwork was our git repository, which we setup on GitHub \footnote{https://github.com}. We employed several measures to ensure the quality of the code and to avoid issues like a master branch that cannot be compiled.
+
+Firstly, we disabled any way to push directly into the master branch. This had the effect that every contribution has to go throught GitHub's \textbf{pull request} mechanism. We also set the pull request merge to require one approving review. This means that for each merge (and therefore commit), two people were required to read the code - the one who wrote and tested it, and the reviewer, whose only job was to go over it, try to compile it and point out any weak programming in the code.
+
+Secondly, as we already mentioned in the previous section, one of our team member set up a continous integration service, called Circle CI \footnote{https://circleci.com/}. We required the CI to be run on every pull request that was sent towards the master branch. The CI would notify us if the pull request either did not compile, or did not pass all of the unit tests. Because Circle CI utilizes a linux server to build the program, it also meant that we would be sure it compiles on both Windows and Linux all the time.
+
+Last but not least, we also made sure to set the CI to check the code formatting. We have discussed and configured the clang-format tool \footnote{https://clang.llvm.org/docs/ClangFormat.html} to format our code in the same way, to avoid mixed coding standards. If the code was not formatted correctly, the pull request wouldn't go through.
+
+These two measures helped us immensly and made the code more reliable in the long run.
+
+\subsection{The process of the implementation}
+
+Here, we will go over the process of the implementation, week by week, as can be seen in the git log, starting on 01.10.2018, when we sent the specification to the committee.
+
+\subsubsection{01.10. - 08.10.}
+
+By now, we have had a functioning repository, since we used it to create the specification as well. We also had the continuous integration working. This week we started to implement the basic functionality, so far in separate projects, because the CMake of the whole project was not finished yet, so the project didn't include all the necessary libraries (e.g. CGAL or Assimp). The application was running, but there were no responses to the buttons and nothing to render. The basics of the command manager also got implemented, even though they would wait for another month before being applied to the Geometry class.
+
+\subsubsection{09.10. - 16.10.}
+
+This week we added the basic Geometry class and ray-shooting capabilities using CGAL, because the CMake finally accepted the CGAL library. We started rendering the geometry in the ModelView (for now a triangle) and could shoot rays.
+
+\subsubsection{17.10. - 24.10.}
+
+This week the Assimp library got added into CMake, and the ModelImporter was merged, which meant we could import models into the geometry, and render them in the ModelView window. We had begun to try to debug normals of the mesh Assimp gave us, which will take a bit more time, since the library is not clear on what it does in the documentation.
+
+\subsubsection{25.10. - 1.11.}
+
+We added ray-casting from the model view, which happens on a mouse click, which allowed us to finally get the Triangle Painter functionality to be complete -- we could click on a triangle and change its color. We also started adding unit testing, for now only for the Geometry class. Drag and drop was now also a supported way to load a model. We redid the color palette as a integer based data structure, instead of RGB color notation.
+
+\subsubsection{2.11. - 9.11.}
+
+This week we struggled with the CGAL library and managed to get the bucket painter to do a breath-first-search over the model. We also modified the shader to accept the the colors as integers and then a color palette array, which allows for real-time color swapping done in the color palette.
+
+\subsubsection{10.11. - 16.11.}
+
+Assimp finally stopped loading degenerate triangles, which was due to the wrong setup and what we believe is a bug in the library, which we solved by double checking the output. We also extended the bucket painter tool to allow for stopping on different criteria (like edge sharpness or color), and modified the Command Manager to be more memory friendly and customizable. The UI received a highlight for the hovered triangle, and an editable color palette. We also added some basic error handling, bucket painter UI, and made the Undo and Redo work on bucket painter.
+
+\subsubsection{17.11. - 23.11.}
+
+Geometry got a big refactoring, which removed a lot of lower quality code that got detected in a code review and fixed a few warnings that were showing up on g++ and not on MSVC. The camera handling got improved and now always fit the model, instead of always pointing in the same direction. Bucket painter got a prettier UI and better stopping criteria. A working export is finished, and the team notices a few cases, which break the export. Research and testing will continue in the following weeks to try to find a way to make the export more robust.
+
+\subsubsection{24.11. - 1.12.}
+
+Loading a new geometry is now done in parallel, using a threadpool. Brush developement is starting and the backend for automatic segmentation is done. The frontend for automatic segmentation is developed, and a new way of rendering custom colors is added. Work also starts on implementing the manual segmentation. Tools that are disabled (because the user loaded a non-valid model) are now greyed out and cannot be selected. Dialogs get implemented to show the user progress while loading a new model.
+
+\subsubsection{2.12. - 9.12.}
+
+Manual segmentation is done, but the team is not happy with the handling. We discuss the behavior during a meeting and the behavior is changed to a different one, which we are happy with. UI Tooltips get implemented, both for Tools and for the tool configuration. Work is also starting on serializing and deserializing the geometry. The brush starts to work, but is really slow and needs optimization.
+
+\subsubsection{10.12. - 17.12.}
+
+Brush is still getting improved, now is able to undo and redo the operations. Serializing and deSerializing is done, the unsaved asterisk mark gets added, as well as \textit{Save} and \textit{Save as} options. The OpenGL buffers get redone, so they do not recalculate every frame. A few crashes are fixed and a lot of refactoring is done on the existing code.
+
+\subsubsection{18.12. - 01.01.2019}
+
+Hotkeys are updated, more tooltips get added. The brush is getting UI settings (like size of the brush) and gets a highlight around the cursor. It's Christmas, so work gets slowed down. Work on export is done, using the CGAL library to determine the thickness is accepted by the team as a viable way to prevent the majority of bugs.
+
+\subsubsection{01.01. - 08.01.}
+
+Font conversion from a .ttf into triangle meshes gets researched and added. The UI is getting final polishing, spellchecking and gets a scrollbar. The new geometry from Brush is getting fixed in other already existing Tools, and a lot of error dialogs and crash prevention is done. Logging is improved and exception handling for multithreaded load and import is fixed.
+
+\subsubsection{09.01. - 16.01.}
+
+Export is getting reviewed, brush is getting reviewed and bug fixed. The functions that convert the Brush tool into the Text tool get added. The team decides to start writing this document, since the program is almost feature complete.
+
+\subsubsection{17.01. - 24.01.}
+
+This document gets started. The brush is still getting polished and the export is getting merged into master. The attention of half of the team is shifted towards this document, while the remaining two members finish the few remaining features of the program.
