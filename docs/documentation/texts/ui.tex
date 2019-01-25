@@ -45,7 +45,7 @@ We decided to use \emph{Cinder}, which is also cross-platform and supports async
 
 As Pepr3D is based on real-time rendering, we decided to use \emph{immediate UI}, i.e., a procedural UI redrawn every frame that is mostly stateless.
 This means that we do not have to program any explicit synchronization between the UI and the backend.
-Whenever we rerender the UI, it will be rendered with the newest data.
+Whenever we re-render the UI, it will be rendered with the newest data.
 Retained state is only where necessary, e.g., for complex calculations not needed in every frame.
 Our immediate UI is a part of the 3D renderer based on Cinder and OpenGL, where the widgets are rendered on top of the scene.
 
@@ -80,7 +80,7 @@ It creates and configures debug and error loggers, sets the main window properti
 The \texttt{draw} method draws the major UI components and also renders existing modal dialogs and a progress indicator when necessary.
 The \texttt{update} method checks invariants such as that the selected tool is not disabled, application is not rendered if minimized, and unsaved changes in a project are marked with an asterisk * in the title.
 
-\subsection{Multithreading and background tasks}
+\subsection{Multi-threading and background tasks}
 
 Some operations such as importing or exporting a large model may take a long time.
 If everything was done in the main thread, rendering of the UI would be paused and the window would become unresponsive.
@@ -225,10 +225,10 @@ This is a design decision that makes the \texttt{SidePane} independent on the sp
 
 \paragraph{Standard widgets}
 Side pane can contain standard widgets.
-These are for example texts drawn by \texttt{drawText}, buttons and colored buttons by \texttt{drawButton} and \texttt{drawColoredButton}, separators by \texttt{drawSeparator}, checkboxes by \texttt{drawCheckbox}, and more.
+These are for example texts drawn by \texttt{drawText}, buttons and coloured buttons by \texttt{drawButton} and \texttt{drawColoredButton}, separators by \texttt{drawSeparator}, checkboxes by \texttt{drawCheckbox}, and more.
 The tools can, however, also use ImGui directly, because all ImGui calls from inside their \texttt{drawToSidePane} method get automatically associated with the side pane.
 
-\paragraph{Color palette}
+\paragraph{Colour palette}
 The most complex widget available in the side pane is the color palette.
 This is an advanced and completely custom widget built using basic ImGui components.
 
@@ -321,4 +321,4 @@ We modified the original \texttt{CameraUi} so that it supports two types of zoom
 
 Now, \emph{zoom} in our case means changing the field of view of the camera.
 \emph{Dolly}, on the other hand, means moving the camera position towards or further away from the pivot point (the model).
-We also fixed a bug in which dollying too close would move the pivot point and cause unexpected behavior.
+We also fixed a bug in which dollying too close would move the pivot point and cause unexpected behaviour.

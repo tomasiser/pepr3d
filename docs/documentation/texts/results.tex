@@ -1,18 +1,18 @@
 \chapter{Results}
 
-In this chapter, we showcase the pipeline we have managed to create on a simple, low polygon-count model. We also attach all the necessary files to recreate the steps taken here. We use a model downloaded from the internet, which is the expected usecase of our application.
+In this chapter, we showcase the pipeline we have managed to create on a simple, low polygon-count model. We also attach all the necessary files to recreate the steps taken here. We use a model downloaded from the internet, which is the expected use case of our application.
 
 \section{Acquiring and preprocessing the model}
 
 As a beginner, the user will not create his own model, but download the free ones from the internet. Here we hope to demonstrate the pipeline from the user's perspective, so we will do the same. We will be using this model \footnote{https://www.thingiverse.com/thing:327753} from Thingiverse \footnote{https://www.thingiverse.com}.
 
-Before we can get to Pepr3D, we unfortunately have to preprocess the model somewhat, as the artist forgot to specify the model's normals. This is a very easy correction in Blender, but already showcases the fact, that the models found on the internet suffer from a plethora of problems, some of which are detectable and correctable within the program and some of which are not. We attach the already corrected .STL file as well.
+Before we can get to Pepr3D, we unfortunately have to pre-process the model somewhat, as the artist forgot to specify the model's normals. This is a very easy correction in Blender, but already showcases the fact, that the models found on the internet suffer from a plethora of problems, some of which are detectable and correctable within the program and some of which are not. We attach the already corrected .STL file as well.
 
 \section{Loading the model into Pepr3D}
 
 Once we have our model cleaned up -- removing all duplicate vertices, reducing the model to a manifold object and making sure the normals are pointing out, we can load the model into Pepr3D. This is done by selecting \textbf{File} -- \textbf{Import} or simply dragging and dropping the .STL file into Pepr3D.
 
-In our case, the model gets loaded successfully in under a second. Larger models (like the bunny.obj, which we have attached), load slower and an asynchronous dialog informing the user about the loading progress is displayed. Other models can be corrupted, the files do not correspond to a single object or be otherwise unloadable. In this case, a dialog is displayed, notifying the user that the file is damaged and explaining what can be done to prevent this. In some scenarios, Pepr3D remains useable with a limited functionality, in others, the model does not load. You can refer to the following figures \ref{fig:invalidfile} and \ref{fig:polyhedronfailed} for illustration.
+In our case, the model gets loaded successfully in under a second. Larger models (like the bunny.obj, which we have attached), load slower and an asynchronous dialog informing the user about the loading progress is displayed. Other models can be corrupted, the files do not correspond to a single object or be otherwise unloadable. In this case, a dialog is displayed, notifying the user that the file is damaged and explaining what can be done to prevent this. In some scenarios, Pepr3D remains usable with a limited functionality, in others, the model does not load. You can refer to the following figures \ref{fig:invalidfile} and \ref{fig:polyhedronfailed} for illustration.
 
 \begin{figure}
 	\centering
@@ -28,20 +28,20 @@ In our case, the model gets loaded successfully in under a second. Larger models
 	\label{fig:polyhedronfailed}
 \end{figure}
 
-\section{Coloring the model}
+\section{Colouring the model}
 
-Once the model gets loaded, the user is free to select any available tools and color the model as he wishes. We have opted for a quick coloring of triangles, with all four colors. Our result is showcased in Figure \ref{fig:painted}.
+Once the model gets loaded, the user is free to select any available tools and color the model as he wishes. We have opted for a quick colouring of triangles, with all four colors. Our result is showcased in Figure \ref{fig:painted}.
 
 \begin{figure}
 	\centering
 	\includegraphics[scale=1]{images/result.png}
-	\caption{Our demonstration coloring, achieved by using the Triangle and Bucket painters.}
+	\caption{Our demonstration colouring, achieved by using the Triangle and Bucket painters.}
 	\label{fig:painted}
 \end{figure}
 
 \section{Exporting the model}
 
-After we are happy with our coloring, we go to \textbf{File} -- \textbf{Export} and are presented with the user interface seen in Figure \ref{fig:exportui}. Here we select \textbf{TODO PARAMETERS}. We also select the checkbox to create a new folder for the exported files. After that, we select the volumetric export as multiple .STL files. A new folder is created, containing four different .STL files. We can now also save the project as the Pepr3D project file -- \textbf{.p3d}, in case we want to alter our coloring later.
+After we are happy with our colouring, we go to \textbf{File} -- \textbf{Export} and are presented with the user interface seen in Figure \ref{fig:exportui}. Here we select \textbf{TODO PARAMETERS}. We also select the checkbox to create a new folder for the exported files. After that, we select the volumetric export as multiple .STL files. A new folder is created, containing four different .STL files. We can now also save the project as the Pepr3D project file -- \textbf{.p3d}, in case we want to alter our colouring later.
 
 \begin{figure}
 	\centering

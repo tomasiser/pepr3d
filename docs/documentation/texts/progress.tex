@@ -1,17 +1,17 @@
 \chapter{Progress of implementation}
 
-In this chapter we first cover the tasks and reponsibilities of each of the team members. Then we outline the progress of the implementation of this project.
+In this chapter we first cover the tasks and responsibilities of each of the team members. Then we outline the progress of the implementation of this project.
 
-\section{Responsibilites}
-\label{sec:responsibilites}
+\section{Responsibilities}
+\label{sec:responsibilities}
 
 Here we list the members of the team alphabetically and summarize all the work each of them has done over the course of the project.
 
 \subsection{Bc. Štěpán Hojdar}
 \begin{itemize}
-\item Implementation of the Geometry class as a data structure, which entails both computational geometry (coloring the triangles, etc.) and rendering capabilites (creating buffers for OpenGL). Testing and integrating the CGAL library into the project and using this library to perform the computational geometry.
+\item Implementation of the Geometry class as a data structure, which entails both computational geometry (colouring the triangles, etc.) and rendering capabilities (creating buffers for OpenGL). Testing and integrating the CGAL library into the project and using this library to perform the computational geometry.
 \item Implementing the following tools both on the backend and the frontend: bucket painter, manual segmentation and automatic segmentation.
-\item Researching a way to convert a font file (.ttf) into a 2D triangle meshe, implementing the FontRasterizer class and implementing the basics of the text tool, using this knowledge.
+\item Researching a way to convert a font file (.ttf) into a 2D triangle mesh, implementing the FontRasterizer class and implementing the basics of the text tool, using this knowledge.
 \item Serializing and deserializing our data using the Cinder library, which allows us to save work in progress as a .p3d file.
 \item Writing a major part of both the specification and the documentation.
 \end{itemize}
@@ -29,11 +29,11 @@ Here we list the members of the team alphabetically and summarize all the work e
 
 \subsection{Bc. Jindřich Pikora}
 \begin{itemize}
-\item Communication with Průša Research s.r.o., including several meetings with our contact in Průša Research.
-\item Testing and familiarizing himself with the FDM priting in practice, printing a lot of test subjects to measure the printer's capabilities and downsides, to note during our export developement.
+\item Communication with Prusa Research s.r.o., including several meetings with our contact in Prusa Research.
+\item Testing and familiarizing himself with the FDM printing in practice, printing a lot of test subjects to measure the printer's capabilities and downsides, to note during our export development.
 \item Testing and integrating the Assimp library into the project.
-\item Implementing the whole import process, with mesh pre-processing, simplification and repairs providided by the Assimp library.
-\item Implementing the whole export process, researching and developing a useable heuristic to make the process smoother and less error prone. Testing the export by physically printing the results on our printer.
+\item Implementing the whole import process, with mesh pre-processing, simplification and repairs provided by the Assimp library.
+\item Implementing the whole export process, researching and developing a usable heuristic to make the process smoother and less error prone. Testing the export by physically printing the results on our printer.
 \end{itemize}
 
 \subsection{Bc. Luis Sanchez}
@@ -43,7 +43,7 @@ Here we list the members of the team alphabetically and summarize all the work e
 \item Implementing the Brush and Text tool backend and frontend, requiring long and extensive research and developing a brand new way to solve this problem, which we did not find in any available literature or research papers.
 \item Modifying and extending the Geometry data structure to allow for custom triangle subdivisions.
 \item Performing complex operations using the CGAL library on the modified Geometry in order to make the brush work correctly.
-\item Modifying the rest of the tools to be able to work on the new customly modified geometry, as well as to allow it to correctly export and serialize as a .p3d project.
+\item Modifying the rest of the tools to be able to work on the new custom modified geometry, as well as to allow it to correctly export and serialize as a .p3d project.
 \end{itemize}
 
 \section{Timeline of the implementation}
@@ -53,18 +53,18 @@ In this section, we describe the process of implementing this project from start
 \subsection{Rules and project setup}
 
 \subsubsection{Team management}
-To manage the work in the team, we set several goals. We met regularly each week with our supervisor, and had a strucutred meeting. The first part of the meeting had each of us tell the rest of the team what we worked on the last week, describe what went well and if/where we got stuck. This had two effects -- firstly, it allowed us to help the stuck member and not waste too much time, and secondly, this made sure that all the team members are up to date with the progress of the whole project, which motivated further progress. The second part of the meeting had us setting goals for the next week, assigning clear and doable tasks to each team member, which would get reviewed on the next meeting. Each meeting took around an hour, including a general discussion after these two structured points.
+To manage the work in the team, we set several goals. We met regularly each week with our supervisor, and had a structured meeting. The first part of the meeting had each of us tell the rest of the team what we worked on the last week, describe what went well and if/where we got stuck. This had two effects -- firstly, it allowed us to help the stuck member and not waste too much time, and secondly, this made sure that all the team members are up to date with the progress of the whole project, which motivated further progress. The second part of the meeting had us setting goals for the next week, assigning clear and doable tasks to each team member, which would get reviewed on the next meeting. Each meeting took around an hour, including a general discussion after these two structured points.
 
 \subsubsection{Git repository}
 The second major part of the teamwork was our git repository, which we setup on GitHub \footnote{https://github.com}. We employed several measures to ensure the quality of the code and to avoid issues like a master branch that cannot be compiled.
 
-Firstly, we disabled any way to push directly into the master branch. This had the effect that every contribution has to go throught GitHub's \textbf{pull request} mechanism. We also set the pull request merge to require one approving review. This means that for each merge (and therefore commit), two people were required to read the code - the one who wrote and tested it, and the reviewer, whose only job was to go over it, try to compile it and point out any weak programming in the code.
+Firstly, we disabled any way to push directly into the master branch. This had the effect that every contribution has to go through GitHub's \textbf{pull request} mechanism. We also set the pull request merge to require one approving review. This means that for each merge (and therefore commit), two people were required to read the code - the one who wrote and tested it, and the reviewer, whose only job was to go over it, try to compile it and point out any weak programming in the code.
 
-Secondly, as we already mentioned in the previous section, one of our team member set up a continous integration service, called Circle CI \footnote{https://circleci.com/}. We required the CI to be run on every pull request that was sent towards the master branch. The CI would notify us if the pull request either did not compile, or did not pass all of the unit tests. Because Circle CI utilizes a linux server to build the program, it also meant that we would be sure it compiles on both Windows and Linux all the time.
+Secondly, as we already mentioned in the previous section, one of our team member set up a continuous integration service, called Circle CI \footnote{https://circleci.com/}. We required the CI to be run on every pull request that was sent towards the master branch. The CI would notify us if the pull request either did not compile, or did not pass all of the unit tests. Because Circle CI utilizes a linux server to build the program, it also meant that we would be sure it compiles on both Windows and Linux all the time.
 
 Last but not least, we also made sure to set the CI to check the code formatting. We have discussed and configured the clang-format tool \footnote{https://clang.llvm.org/docs/ClangFormat.html} to format our code in the same way, to avoid mixed coding standards. If the code was not formatted correctly, the pull request wouldn't go through.
 
-These two measures helped us immensly and made the code more reliable in the long run.
+These two measures helped us immensely and made the code more reliable in the long run.
 
 \subsection{The process of the implementation}
 
@@ -100,15 +100,15 @@ Geometry got a big refactoring, which removed a lot of lower quality code that g
 
 \subsubsection{24.11. - 1.12.}
 
-Loading a new geometry is now done in parallel, using a threadpool. Brush developement is starting and the backend for automatic segmentation is done. The frontend for automatic segmentation is developed, and a new way of rendering custom colors is added. Work also starts on implementing the manual segmentation. Tools that are disabled (because the user loaded a non-valid model) are now greyed out and cannot be selected. Dialogs get implemented to show the user progress while loading a new model.
+Loading a new geometry is now done in parallel, using a threadpool. Brush development is starting and the backend for automatic segmentation is done. The frontend for automatic segmentation is developed, and a new way of rendering custom colors is added. Work also starts on implementing the manual segmentation. Tools that are disabled (because the user loaded a non-valid model) are now greyed out and cannot be selected. Dialogs get implemented to show the user progress while loading a new model.
 
 \subsubsection{2.12. - 9.12.}
 
-Manual segmentation is done, but the team is not happy with the handling. We discuss the behavior during a meeting and the behavior is changed to a different one, which we are happy with. UI Tooltips get implemented, both for Tools and for the tool configuration. Work is also starting on serializing and deserializing the geometry. The brush starts to work, but is really slow and needs optimization.
+Manual segmentation is done, but the team is not happy with the handling. We discuss the behaviour during a meeting and the behaviour is changed to a different one, which we are happy with. UI Tooltips get implemented, both for Tools and for the tool configuration. Work is also starting on serializing and deserializing the geometry. The brush starts to work, but is really slow and needs optimization.
 
 \subsubsection{10.12. - 17.12.}
 
-Brush is still getting improved, now is able to undo and redo the operations. Serializing and deSerializing is done, the unsaved asterisk mark gets added, as well as \textit{Save} and \textit{Save as} options. The OpenGL buffers get redone, so they do not recalculate every frame. A few crashes are fixed and a lot of refactoring is done on the existing code.
+Brush is still getting improved, now is able to undo and redo the operations. Serializing and deserializing is done, the unsaved asterisk mark gets added, as well as \textit{Save} and \textit{Save as} options. The OpenGL buffers get redone, so they do not recalculate every frame. A few crashes are fixed and a lot of refactoring is done on the existing code.
 
 \subsubsection{18.12. - 01.01.2019}
 
@@ -116,7 +116,7 @@ Hotkeys are updated, more tooltips get added. The brush is getting UI settings (
 
 \subsubsection{01.01. - 08.01.}
 
-Font conversion from a .ttf into triangle meshes gets researched and added. The UI is getting final polishing, spellchecking and gets a scrollbar. The new geometry from Brush is getting fixed in other already existing Tools, and a lot of error dialogs and crash prevention is done. Logging is improved and exception handling for multithreaded load and import is fixed.
+Font conversion from a .ttf into triangle meshes gets researched and added. The UI is getting final polishing, spell-checking and gets a scrollbar. The new geometry from Brush is getting fixed in other already existing Tools, and a lot of error dialogs and crash prevention is done. Logging is improved and exception handling for multi-threaded load and import is fixed.
 
 \subsubsection{09.01. - 16.01.}
 

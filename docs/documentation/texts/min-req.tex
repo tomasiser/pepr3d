@@ -9,7 +9,7 @@ We go through the minimal features one by one and elaborate on if and how well w
 \begin{itemize}
 \item \textit{Loading a model from a basic 3D format} -- our application supports .STL, .OBJ and .PLY, which are the three most used formats on the 3D printing market today.
 
-\item \textit{Export a multi-colored .STL file, which can be entered into the slicer} -- Upon discovering the slicer more, and having time to physically print something, we realised, that the slicer does not actually support a single multicolored .STL file. We changed this goal to exporting a single .STL file for each color, which only contains the triangle of the chosen color. Our application supports this export, even though it is simpler and more error prone than the other (fully 3D) supported export.
+\item \textit{Export a multi-coloured .STL file, which can be entered into the slicer} -- Upon discovering the slicer more, and having time to physically print something, we realised, that the slicer does not actually support a single multicoloured .STL file. We changed this goal to exporting a single .STL file for each color, which only contains the triangle of the chosen color. Our application supports this export, even though it is simpler and more error prone than the other (fully 3D) supported export.
 
 \item \textit{Bucket painter with a simple criterion} -- Our bucket painter currently supports edge sharpness, whose threshold the user can alter, a different color stopping, or the combination of both.
 
@@ -27,7 +27,7 @@ We will now discuss the advanced features we disclosed in the specification, and
 
 \subsection{Automatic and semi-automatic segmentation}
 
-While writing the specification, we thought that the semi-automatic segmentation (called \textit{Manual segmentation} in the application) would be the most used feature of the program. Upon implementing both segmentations, we actually think the automatic segmentation achieves the goal of quickly coloring the model much better. Meanwhile the manual segmentation is better for fine tuning some parts of the model, because it allows for coloring one part consistently, while leaving the rest intact (which the automatic one cannot do).
+While writing the specification, we thought that the semi-automatic segmentation (called \textit{Manual segmentation} in the application) would be the most used feature of the program. Upon implementing both segmentations, we actually think the automatic segmentation achieves the goal of quickly colouring the model much better. Meanwhile the manual segmentation is better for fine tuning some parts of the model, because it allows for colouring one part consistently, while leaving the rest intact (which the automatic one cannot do).
 
 In conclusion, we placed the automatic segmentation as second to last on our feature list, but we strongly disagree with the placement in hindsight and think the tool is one of the most usable tools in the application.
 
@@ -79,7 +79,7 @@ We understand that this is not the most user-friendly way to change the hotkeys,
 
 In the specification we mentioned the possibility of adding a radial menu around the cursor. In the end, we did not implement this feature. This decision was made, because we saw many more areas of the application that could be improved and focused on instead. We thought that the users would benefit more from these improvements than the radial menu feature.
 
-\subsection{Triangle subdivison and decimation}
+\subsection{Triangle subdivision and decimation}
 
 While writing the specification we put this feature as the lowest priority feature, because we thought only the most advanced users would be able to utilize it. While developing the application, we downloaded and tested many models that are on the internet for anyone to download and print. The websites we used include Thingiverse \footnote{www.thingiverse.com} and yeggi \footnote{www.yeggi.com}. We noticed on many of these models, that many are unoptimized, include holes, unreasonably small or wastefully many triangles. From this observation we concluded that the users do not generally optimize and micromanage their models since a few operations done in software like Blender can reduce this waste by a big percentage. All of this made us decide to not include the feature, as we generally do not believe the users would use it or be able to use it to greatly improve the model.
 
@@ -87,7 +87,7 @@ While writing the specification we put this feature as the lowest priority featu
 
 For completeness' sake, we discuss the model exporting feature here. We did a lot of research and tried many different approaches, and the one implemented in the application looked to the team as the best solution. You can read more about the chosen method in the implementation part of the developer documentation.
 
-Here we state that this feature was a priority for us, as we have shown in Section \ref{sec:responsibilites}, one of our team members spent a big amount of time trying to optimize this feature. We believe we came up with a way that should at least help, if not solve clipping and other unwanted occurances in the majority of the scenarios, though we do have examples of wrong behavior. We also add manual control over the feature, to allow the user to fix the issue manually, should any issue arise.
+Here we state that this feature was a priority for us, as we have shown in Section \ref{sec:responsibilities}, one of our team members spent a big amount of time trying to optimize this feature. We believe we came up with a way that should at least help, if not solve clipping and other unwanted occurrences in the majority of the scenarios, though we do have examples of wrong behaviour. We also add manual control over the feature, to allow the user to fix the issue manually, should any issue arise.
 
 
 
