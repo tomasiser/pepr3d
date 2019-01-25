@@ -73,6 +73,8 @@ It instantiates them, listens for events from the operating system, and passes t
 
 This also includes delegating hotkeys, open, save, import, and export commands to their dedicated classes, handling minimized application, etc.
 We can say that every user interaction gets first through the \texttt{MainApplication} which then delegates it to other components.
+The \texttt{MainApplication} also works as a single source of truth that contains the current geometry and current tools.
+Other components use \texttt{MainApplication} as a getter for the current valid state.
 
 Because of the Cinder API, setup is not done directly in the constructor, which only instantiates other components, but in the \texttt{setup} method which Cinder calls once it is ready.
 It creates and configures debug and error loggers, sets the main window properties such as its resolution and icon, initializes ImGui, hotkeys, the default geometry (cube), and constructs all tools.
@@ -117,12 +119,19 @@ This significantly lowers the CPU and GPU usage when Pepr3D is not used.
 In Pepr3D, there are 3 types of dialogs: general modal dialogs, a special export dialog, and a progress indicator.
 All these dialogs are drawn from the \texttt{MainApplication} on top of everything else and all mouse and keyboard input for the rest of the components is paused.
 
+\begin{figure}[h]
+	\centering
+	\centerline{\includegraphics[scale=1.0]{images/fatal_error.png}}
+	\caption{Example of a fatal error dialog.}
+	\label{fig:fatalerror}
+\end{figure}
+
 \paragraph{General modal dialogs and fatal errors}
 General modal dialogs are represented by the \texttt{Dialog} class and they can be of various importance, e.g., information dialogs, fatal error dialogs, etc.
 The dialogs are stored in a priority queue with the most important dialog on top.
 They can be pushed to the queue by calling \texttt{pushDialog} on the \texttt{MainApplication} instance.
 
-When we detect an invalid state of the application, e.g., by catching a fatal exception, a \emph{fatal error dialog} is pushed to the queue.
+When we detect an invalid state of the application, e.g., by catching a fatal exception, a \emph{fatal error dialog} (see Figure~\ref{fig:fatalerror}) is pushed to the queue.
 When a fatal error dialog is on the top of the queue, rendering of all components is stopped and only the dialog is shown, because it cannot be guaranteed that other components are in a valid state.
 Pressing a button on the fatal error dialog terminates the application.
 
@@ -135,19 +144,33 @@ An export dialog is a complex dialog shown when a user attempts to export a mode
 Because it contains a lot of buttons and options, it is handled separately directly by the \texttt{MainApplication}.
 
 \paragraph{Progress indicator}
-A progress indicator is an animated dialog which shows the elapsed and remaining progress required to process the current command.
+A progress indicator is an animated dialog (see Figure~\ref{fig:progressindicator}) which shows the elapsed and remaining progress required to process the current command.
 It is used mostly when opening, saving, importing, and exporting geometry files, because this is a slow process.
 Its logic is handled in the \texttt{ProgressIndicator} class which has a pointer to the \texttt{Geometry} which is being loaded.
 The current status is checked directly from the geometry data every frame.
 
+\begin{figure}[h]
+	\centering
+	\centerline{\includegraphics[scale=1.0]{images/progress_indicator.png}}
+	\caption{Example of a progress indicator during import.}
+	\label{fig:progressindicator}
+\end{figure}
+
 \subsection{Tooltips}
 
 As the user interface has to be as clean as possible to allow fast and easy navigation even for beginners, long and detailed explanations of buttons and input boxes are ``hidden'' in tooltips.
-Tooltips are black rectangles with information that display when user hovers over an interactive widget, e.g., a button.
+Tooltips (Figure~\ref{fig:tooltip}) are dark informative rectangles that display when user hovers over an interactive widget, e.g., a button.
 
 Tooltips in Pepr3D can show a name of an action, its hotkey (if available), long description of an action (if provided), and an explanation why an action is disabled (if it is disabled).
 Tooltips are created by calling \texttt{drawTooltipOnHover} on the \texttt{MainApplication} instance.
 They are only drawn when the item is actually hovered.
+
+\begin{figure}[h]
+	\centering
+	\centerline{\includegraphics[scale=1.0]{images/tooltip.eps}}
+	\caption{Example of a tooltip.}
+	\label{fig:tooltip}
+\end{figure}
 
 \subsection{Hotkeys}
 
