@@ -358,14 +358,15 @@ void MainApplication::openFile(const std::string& path) {
     }
 }
 
-void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {
+void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType,
+                               ModelExporter::ExportTypes exportType) {
     if(mGeometry == nullptr) {
         return;
     }
 
     mProgressIndicator.setGeometryInProgress(mGeometry);
-    sThreadPool.enqueue([filePath, fileName, fileType, this]() {
-        mGeometry->exportGeometry(filePath, fileName, fileType);
+    sThreadPool.enqueue([filePath, fileName, fileType, exportType, this]() {
+        mGeometry->exportGeometry(filePath, fileName, fileType, exportType);
         dispatchAsync([this]() { mProgressIndicator.setGeometryInProgress(nullptr); });
     });
 }
@@ -630,7 +631,7 @@ void MainApplication::drawExportDialog() {
                         fs::create_directory(filePath);
                     }
 
-                    saveFile(filePath, fileName, fileType);
+                    saveFile(filePath, fileName, fileType, ModelExporter::ExportTypes::PolyWithSDF);
                 }
             });
         }

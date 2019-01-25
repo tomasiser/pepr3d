@@ -81,7 +81,8 @@ class MainApplication : public cinder::app::App {
     }
 
     void openFile(const std::string& path);
-    void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType);
+    void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType,
+                  ModelExporter::ExportTypes exportType);
 
     using ToolsVector = std::vector<std::unique_ptr<Tool>>;
 
