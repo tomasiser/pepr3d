@@ -52,7 +52,7 @@ class ModelExporter {
             mProgress->createScenePercentage = 0.0f;
         }
 
-        std::vector<aiScene *> scenes = createScenes(exportType);
+        std::vector<std::unique_ptr<aiScene>> scenes = createScenes(exportType);
 
         if(mProgress != nullptr) {
             mProgress->createScenePercentage = 1.0f;
@@ -62,7 +62,7 @@ class ModelExporter {
         for(size_t i = 0; i < scenes.size(); i++) {
             std::stringstream ss;
             ss << filePath << "/" << fileName << "_" << i << "." << fileType;
-            exporter.Export(scenes[i], std::string(fileType) + std::string("b"), ss.str());
+            exporter.Export(scenes[i].get(), std::string(fileType) + std::string("b"), ss.str());
         }
 
         if(mProgress != nullptr) {
@@ -72,7 +72,7 @@ class ModelExporter {
         return true;
     }
 
-    std::vector<aiScene *> createScenes(ExportTypes exportType) {
+    std::vector<std::unique_ptr<aiScene>> createScenes(ExportTypes exportType) {
         switch(exportType) {
         case Surface: return createSurfaceScenes(); break;
         case NonPoly: return createNonPolyScenes(); break;
@@ -82,8 +82,9 @@ class ModelExporter {
         }
     }
 
-    std::vector<aiScene *> createSurfaceScenes() {  // call it in any export type when only one color is used
-        std::vector<aiScene *> scenes;
+    std::vector<std::unique_ptr<aiScene>> createSurfaceScenes() {
+        
+        std::vector<std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
 
@@ -97,14 +98,15 @@ class ModelExporter {
             }
         }
         for(auto &indexOfColor : colorsWithIndices) {
-            scenes.emplace_back(createNewSurfaceScene(indexOfColor.second));
+            // scenes.emplace_back(createNewSurfaceScene(indexOfColor.second));
+            scenes.push_back(std::move(createNewSurfaceScene(indexOfColor.second)));
         }
 
         return scenes;
     }
 
-    std::vector<aiScene *> createNonPolyScenes() {
-        std::vector<aiScene *> scenes;
+    std::vector<std::unique_ptr<aiScene>> createNonPolyScenes() {
+        std::vector<std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
 
@@ -158,7 +160,8 @@ class ModelExporter {
         }
 
         if(colorsWithIndices.size() == 1) {
-            scenes.emplace_back(createNewSurfaceScene(colorsWithIndices.begin()->second));
+            //scenes.emplace_back(createNewSurfaceScene(colorsWithIndices.begin()->second));
+            scenes.push_back(std::move(createNewSurfaceScene(colorsWithIndices.begin()->second)));
         }
 
         // minimal axis model size
@@ -172,8 +175,10 @@ class ModelExporter {
 
         for(auto &indexOfColor : colorsWithIndices) {
             auto &soloBoundary = selectBoundaryEdgesByColor(edgeLookup, indexOfColor.first);
-            scenes.emplace_back(
-                createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter));
+            //scenes.emplace_back(
+              //  createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter));
+            scenes.push_back(std::move(
+                createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter)));
         }
 
         return scenes;
@@ -209,8 +214,8 @@ class ModelExporter {
         return soloBoundary;
     }
 
-    std::vector<aiScene *> createPolyScenes(bool withSDF) {
-        std::vector<aiScene *> scenes;
+    std::vector<std::unique_ptr<aiScene>> createPolyScenes(bool withSDF) {
+        std::vector<std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
 
@@ -228,7 +233,8 @@ class ModelExporter {
         }
 
         if(colorsWithIndices.size() == 1) {
-            scenes.emplace_back(createNewSurfaceScene(colorsWithIndices.begin()->second));
+            //scenes.emplace_back(createNewSurfaceScene(colorsWithIndices.begin()->second));
+            scenes.push_back(std::move(createNewSurfaceScene(colorsWithIndices.begin()->second)));
             return scenes;
         }
 
@@ -304,15 +310,18 @@ class ModelExporter {
                      (maxVertexValues.x - minVertexValues.x));
 
         for(auto &indexOfColor : colorsWithIndices) {
-            scenes.emplace_back(createNewPolyScene(indexOfColor.second, summedVertexNormals,
-                                                   borderEdges[indexOfColor.first], vertexSDF, modelDiameter));
+            //scenes.emplace_back(createNewPolyScene(indexOfColor.second, summedVertexNormals,
+                                                   //borderEdges[indexOfColor.first], vertexSDF, modelDiameter));
+            scenes.push_back(std::move(createNewPolyScene(indexOfColor.second, summedVertexNormals,
+                                                          borderEdges[indexOfColor.first], vertexSDF, modelDiameter)));
         }
 
         return scenes;
     }
 
-    aiScene *createNewSurfaceScene(std::vector<unsigned int> &triangleIndices) {
-        aiScene *scene = new aiScene();
+    std::unique_ptr<aiScene> createNewSurfaceScene(std::vector<unsigned int> &triangleIndices) {
+        std::unique_ptr<aiScene> scene = std::make_unique<aiScene>();
+
         scene->mRootNode = new aiNode();
 
         scene->mMaterials = new aiMaterial *[1];
@@ -364,14 +373,14 @@ class ModelExporter {
         return scene;
     }
 
-    aiScene *createNewNonPolyScene(std::vector<unsigned int> &triangleIndices,
+    std::unique_ptr<aiScene> createNewNonPolyScene(std::vector<unsigned int> &triangleIndices,
                                    std::map<std::array<float, 3>, glm::vec3> &vertexNormalLookup,
                                    std::vector<IndexedEdge> &borderEdges, float modelDiameter) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
         float extrusionCoef = modelDiameter / 10;
 
-        aiScene *scene = new aiScene();
+        std::unique_ptr<aiScene> scene = std::make_unique<aiScene>();
         scene->mRootNode = new aiNode();
 
         scene->mMaterials = new aiMaterial *[1];
@@ -488,7 +497,7 @@ class ModelExporter {
         return scene;
     }
 
-    aiScene *createNewPolyScene(std::vector<unsigned int> &triangleIndices,
+    std::unique_ptr<aiScene> createNewPolyScene(std::vector<unsigned int> &triangleIndices,
                                 std::map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
                                 std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
                                 std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF, float modelDiameter) {
@@ -496,7 +505,7 @@ class ModelExporter {
 
         float extrusionCoef = modelDiameter / 4.0f;
 
-        aiScene *scene = new aiScene();
+        std::unique_ptr<aiScene> scene = std::make_unique<aiScene>();
         scene->mRootNode = new aiNode();
 
         scene->mMaterials = new aiMaterial *[1];
