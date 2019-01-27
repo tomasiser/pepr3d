@@ -52,17 +52,19 @@ class ModelExporter {
             mProgress->createScenePercentage = 0.0f;
         }
 
-        std::vector<std::unique_ptr<aiScene>> scenes = createScenes(exportType);
+        std::map<colorIndex, std::unique_ptr<aiScene>> scenes = createScenes(exportType);
 
         if(mProgress != nullptr) {
             mProgress->createScenePercentage = 1.0f;
             mProgress->exportFilePercentage = 0.0f;
         }
 
-        for(size_t i = 0; i < scenes.size(); i++) {
+        int sceneCounter = 0;
+        for(auto &scene : scenes) {
             std::stringstream ss;
-            ss << filePath << "/" << fileName << "_" << i << "." << fileType;
-            exporter.Export(scenes[i].get(), std::string(fileType) + std::string("b"), ss.str());
+            ss << filePath << "/" << fileName << "_" << sceneCounter << "." << fileType;
+            exporter.Export(scene.second.get(), std::string(fileType) + std::string("b"), ss.str());
+            sceneCounter++;
         }
 
         if(mProgress != nullptr) {
@@ -72,7 +74,7 @@ class ModelExporter {
         return true;
     }
 
-    std::vector<std::unique_ptr<aiScene>> createScenes(ExportTypes exportType) {
+    std::map<colorIndex, std::unique_ptr<aiScene>> createScenes(ExportTypes exportType) {
         switch(exportType) {
         case Surface: return createSurfaceScenes(); break;
         case NonPoly: return createNonPolyScenes(); break;
@@ -82,9 +84,8 @@ class ModelExporter {
         }
     }
 
-    std::vector<std::unique_ptr<aiScene>> createSurfaceScenes() {
-        
-        std::vector<std::unique_ptr<aiScene>> scenes;
+    std::map<colorIndex, std::unique_ptr<aiScene>> createSurfaceScenes() {
+        std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
 
@@ -98,14 +99,14 @@ class ModelExporter {
             }
         }
         for(auto &indexOfColor : colorsWithIndices) {
-            scenes.push_back(std::move(createNewSurfaceScene(indexOfColor.second)));
+            scenes[indexOfColor.first] = std::move(createNewSurfaceScene(indexOfColor.second));
         }
 
         return scenes;
     }
 
-    std::vector<std::unique_ptr<aiScene>> createNonPolyScenes() {
-        std::vector<std::unique_ptr<aiScene>> scenes;
+    std::map<colorIndex, std::unique_ptr<aiScene>> createNonPolyScenes() {
+        std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
 
@@ -159,7 +160,9 @@ class ModelExporter {
         }
 
         if(colorsWithIndices.size() == 1) {
-            scenes.push_back(std::move(createNewSurfaceScene(colorsWithIndices.begin()->second)));
+            scenes[colorsWithIndices.begin()->first] =
+                std::move(createNewSurfaceScene(colorsWithIndices.begin()->second));
+            return scenes;
         }
 
         // minimal axis model size
@@ -173,8 +176,9 @@ class ModelExporter {
 
         for(auto &indexOfColor : colorsWithIndices) {
             auto &soloBoundary = selectBoundaryEdgesByColor(edgeLookup, indexOfColor.first);
-            scenes.push_back(std::move(
-                createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter)));
+
+            scenes[indexOfColor.first] =
+                std::move(createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter));
         }
 
         return scenes;
@@ -210,8 +214,8 @@ class ModelExporter {
         return soloBoundary;
     }
 
-    std::vector<std::unique_ptr<aiScene>> createPolyScenes(bool withSDF) {
-        std::vector<std::unique_ptr<aiScene>> scenes;
+    std::map<colorIndex, std::unique_ptr<aiScene>> createPolyScenes(bool withSDF) {
+        std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
 
@@ -229,7 +233,8 @@ class ModelExporter {
         }
 
         if(colorsWithIndices.size() == 1) {
-            scenes.push_back(std::move(createNewSurfaceScene(colorsWithIndices.begin()->second)));
+            scenes[colorsWithIndices.begin()->first] =
+                std::move(createNewSurfaceScene(colorsWithIndices.begin()->second));
             return scenes;
         }
 
@@ -305,8 +310,8 @@ class ModelExporter {
                      (maxVertexValues.x - minVertexValues.x));
 
         for(auto &indexOfColor : colorsWithIndices) {
-            scenes.push_back(std::move(createNewPolyScene(indexOfColor.second, summedVertexNormals,
-                                                          borderEdges[indexOfColor.first], vertexSDF, modelDiameter)));
+            scenes[indexOfColor.first] = std::move(createNewPolyScene(
+                indexOfColor.second, summedVertexNormals, borderEdges[indexOfColor.first], vertexSDF, modelDiameter));
         }
 
         return scenes;
@@ -367,8 +372,8 @@ class ModelExporter {
     }
 
     std::unique_ptr<aiScene> createNewNonPolyScene(std::vector<unsigned int> &triangleIndices,
-                                   std::map<std::array<float, 3>, glm::vec3> &vertexNormalLookup,
-                                   std::vector<IndexedEdge> &borderEdges, float modelDiameter) {
+                                                   std::map<std::array<float, 3>, glm::vec3> &vertexNormalLookup,
+                                                   std::vector<IndexedEdge> &borderEdges, float modelDiameter) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
         float extrusionCoef = modelDiameter / 10;
@@ -491,9 +496,10 @@ class ModelExporter {
     }
 
     std::unique_ptr<aiScene> createNewPolyScene(std::vector<unsigned int> &triangleIndices,
-                                std::map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
-                                std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
-                                std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF, float modelDiameter) {
+                                                std::map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
+                                                std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
+                                                std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF,
+                                                float modelDiameter) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
         float extrusionCoef = modelDiameter / 4.0f;
