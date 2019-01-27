@@ -98,7 +98,6 @@ class ModelExporter {
             }
         }
         for(auto &indexOfColor : colorsWithIndices) {
-            // scenes.emplace_back(createNewSurfaceScene(indexOfColor.second));
             scenes.push_back(std::move(createNewSurfaceScene(indexOfColor.second)));
         }
 
@@ -160,7 +159,6 @@ class ModelExporter {
         }
 
         if(colorsWithIndices.size() == 1) {
-            //scenes.emplace_back(createNewSurfaceScene(colorsWithIndices.begin()->second));
             scenes.push_back(std::move(createNewSurfaceScene(colorsWithIndices.begin()->second)));
         }
 
@@ -175,8 +173,6 @@ class ModelExporter {
 
         for(auto &indexOfColor : colorsWithIndices) {
             auto &soloBoundary = selectBoundaryEdgesByColor(edgeLookup, indexOfColor.first);
-            //scenes.emplace_back(
-              //  createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter));
             scenes.push_back(std::move(
                 createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter)));
         }
@@ -233,7 +229,6 @@ class ModelExporter {
         }
 
         if(colorsWithIndices.size() == 1) {
-            //scenes.emplace_back(createNewSurfaceScene(colorsWithIndices.begin()->second));
             scenes.push_back(std::move(createNewSurfaceScene(colorsWithIndices.begin()->second)));
             return scenes;
         }
@@ -310,8 +305,6 @@ class ModelExporter {
                      (maxVertexValues.x - minVertexValues.x));
 
         for(auto &indexOfColor : colorsWithIndices) {
-            //scenes.emplace_back(createNewPolyScene(indexOfColor.second, summedVertexNormals,
-                                                   //borderEdges[indexOfColor.first], vertexSDF, modelDiameter));
             scenes.push_back(std::move(createNewPolyScene(indexOfColor.second, summedVertexNormals,
                                                           borderEdges[indexOfColor.first], vertexSDF, modelDiameter)));
         }
