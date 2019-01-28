@@ -48,8 +48,20 @@ class ExportAssistant : public Tool {
    private:
     MainApplication& mApplication;
     glm::vec2 mPreviewMinMaxHeight = glm::vec2(0.0f, 1.0f);
+    bool mIsFirstFrame = true;
+
+    /// Map of colors (color index) and Assimp scenes representing them
+    std::map<size_t, std::unique_ptr<aiScene>> mScenes;
+
+    struct SettingsPerColor {
+        bool isShown = true;
+    };
+    
+    /// Settings per color, indexed by the color index
+    std::vector<SettingsPerColor> mSettingsPerColor;
 
     void resetOverride();
     void setOverride();
+    void updateSettings();
 };
 }  // namespace pepr3d

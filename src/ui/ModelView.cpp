@@ -121,8 +121,13 @@ void ModelView::updateVboAndBatch() {
         GL_STATIC_DRAW);
 
     // Create the VBO mesh
-    mVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(glData.vertexBuffer.size()), GL_TRIANGLES, {layout},
-                                       static_cast<uint32_t>(glData.vertexBuffer.size()), GL_UNSIGNED_INT, ibo);
+    mVboMesh =
+        ci::gl::VboMesh::create(static_cast<uint32_t>(isVertexNormalIndexOverride() ? getOverrideVertexBuffer().size()
+                                                                                    : glData.vertexBuffer.size()),
+                                GL_TRIANGLES, {layout},
+                                static_cast<uint32_t>(isVertexNormalIndexOverride() ? getOverrideVertexBuffer().size()
+                                                                                    : glData.vertexBuffer.size()),
+                                GL_UNSIGNED_INT, ibo);
 
     // Assign the buffers to the attributes
     mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION,
@@ -216,7 +221,7 @@ void ModelView::drawGeometry() {
         glData.info.unsetColorFlag();
     }
 
-    assert(!mColorOverride.isOverriden || mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
+    // assert(!mColorOverride.isOverriden || mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
 
     // Pass overriden colors if required
     if(mColorOverride.isOverriden) {

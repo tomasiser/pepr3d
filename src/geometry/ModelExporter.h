@@ -31,11 +31,9 @@ class ModelExporter {
                   const std::string filePath, const std::string fileName, const std::string fileType,
                   ExportTypes exportType, GeometryProgress *progress)
         : mTriangles(triangles), mPolyhedronData(polyhedronData), mProgress(progress) {
-        this->mModelSaved = saveModel(filePath, fileName, fileType, exportType);
+        // this->mModelSaved = saveModel(filePath, fileName, fileType, exportType);
     }
 
-   private:
-   private:
     struct IndexedEdge {
         unsigned int tri;
         unsigned int id1;

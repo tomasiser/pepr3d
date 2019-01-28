@@ -300,6 +300,7 @@ class Geometry {
     /// Exports the modified geometry to the file specified by a path, file name and file type.
     void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType,
                         ModelExporter::ExportTypes exportType);
+    ModelExporter exportGeometry(ModelExporter::ExportTypes exportType);
 
     /// Set new triangle color.
     void setTriangleColor(const size_t triangleIndex, const size_t newColor);

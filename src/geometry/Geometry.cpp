@@ -142,6 +142,18 @@ void Geometry::exportGeometry(const std::string filePath, const std::string file
     }
 
     ModelExporter modelExporter(mTriangles, mPolyhedronData, filePath, fileName, fileType, exportType, mProgress.get());
+    // modelExporter.saveModel(filePath, fileName, fileType, exportType);
+}
+
+ModelExporter Geometry::exportGeometry(ModelExporter::ExportTypes exportType) {
+    // Reset progress
+    mProgress->resetSave();
+
+    if(exportType == ModelExporter::ExportTypes::PolyWithSDF && !mPolyhedronData.isSdfComputed) {
+        computeSdf();
+    }
+
+    return ModelExporter(mTriangles, mPolyhedronData, "", "", "", exportType, mProgress.get());
 }
 
 void Geometry::generateVertexBuffer() {
