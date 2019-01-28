@@ -17,6 +17,7 @@ void ModelView::setup() {
                                      .fragment(ci::loadString(mApplication.loadRequiredAsset("shaders/ModelView.frag")))
                                      .attrib(Attributes::COLOR_IDX, "aColorIndex")
                                      .attrib(Attributes::HIGHLIGHT_MASK, "aAreaHighlightMask"));
+    mModelShader->uniform("uPreviewMinMaxHeight", mPreviewMinMaxHeight);
 }
 
 void ModelView::resize() {
@@ -115,15 +116,19 @@ void ModelView::updateVboAndBatch() {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(Attributes::HIGHLIGHT_MASK, 1)};
 
     // Create elementary buffer of indices
-    const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, glData.indexBuffer, GL_STATIC_DRAW);
+    const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(
+        GL_ELEMENT_ARRAY_BUFFER, isVertexNormalIndexOverride() ? getOverrideIndexBuffer() : glData.indexBuffer,
+        GL_STATIC_DRAW);
 
     // Create the VBO mesh
     mVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(glData.vertexBuffer.size()), GL_TRIANGLES, {layout},
                                        static_cast<uint32_t>(glData.vertexBuffer.size()), GL_UNSIGNED_INT, ibo);
 
     // Assign the buffers to the attributes
-    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, glData.vertexBuffer);
-    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, glData.normalBuffer);
+    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION,
+                                      isVertexNormalIndexOverride() ? getOverrideVertexBuffer() : glData.vertexBuffer);
+    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL,
+                                      isVertexNormalIndexOverride() ? getOverrideNormalBuffer() : glData.normalBuffer);
     mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
     mVboMesh->bufferAttrib<Geometry::ColorIndex>(Attributes::COLOR_IDX, glData.colorBuffer);
     mVboMesh->bufferAttrib<GLint>(Attributes::HIGHLIGHT_MASK, glData.highlightMask);
@@ -154,16 +159,23 @@ void ModelView::updateModelMatrix() {
     mModelMatrix *= glm::translate(-aabbSize / 2.0f);
     mModelMatrix *= glm::translate(-aabbMin);
 
-    const glm::vec4 aabbMinFit = mModelMatrix * glm::vec4(aabbMin, 1.0f);
-    const glm::vec4 aabbMaxFit = mModelMatrix * glm::vec4(aabbMax, 1.0f);
-    const glm::vec4 aabbSizeFit = aabbMaxFit - aabbMinFit;
+    glm::vec4 aabbMinFit = mModelMatrix * glm::vec4(aabbMin, 1.0f);
+    glm::vec4 aabbMaxFit = mModelMatrix * glm::vec4(aabbMax, 1.0f);
+    glm::vec4 aabbSizeFit = aabbMaxFit - aabbMinFit;
 
     mModelMatrix =
         glm::translate(glm::vec3(-aabbSizeFit.x / 2.0f, aabbSizeFit.z / 2.0f, -aabbSizeFit.y / 2.0f)) * mModelMatrix;
     mModelMatrix = glm::rotate(glm::radians(mModelRoll), glm::vec3(1, 0, 0)) * mModelMatrix;
     mModelMatrix = glm::translate(mModelTranslate) * mModelMatrix;
 
-    mGridOffset = -(aabbMaxFit.z - aabbSizeFit.z / 2.0f);
+    aabbMinFit = mModelMatrix * glm::vec4(aabbMin, 1.0f);
+    aabbMaxFit = mModelMatrix * glm::vec4(aabbMax, 1.0f);
+    aabbSizeFit = aabbMaxFit - aabbMinFit;
+    const glm::vec4 aabbDiagonal1Fit = mModelMatrix * glm::vec4(aabbMin.x, aabbMin.y + aabbSize.y, aabbMin.z, 1.0f);
+    const glm::vec4 aabbDiagonal2Fit = mModelMatrix * glm::vec4(aabbMin.x, aabbMin.y, aabbMin.z + aabbSize.z, 1.0f);
+
+    mGridOffset = std::min(aabbDiagonal2Fit.y, std::min(aabbDiagonal1Fit.y, std::min(aabbMinFit.y, aabbMaxFit.y)));
+    mModelShader->uniform("uGridOffset", mGridOffset);
 }
 
 ci::Ray ModelView::getRayFromWindowCoordinates(glm::ivec2 windowCoords) const {
@@ -183,8 +195,10 @@ void ModelView::drawGeometry() {
     }
 
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
-    if(glData.isDirty || !mBatch) {
-        mApplication.getCurrentGeometry()->updateOpenGlBuffers();
+    if(glData.isDirty || !mBatch || isVertexNormalIndexOverride()) {
+        if(glData.isDirty) {
+            mApplication.getCurrentGeometry()->updateOpenGlBuffers();
+        }
         updateVboAndBatch();
 
         CI_LOG_I("Vbo updated");

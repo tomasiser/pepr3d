@@ -83,7 +83,6 @@ class ModelExporter {
     }
 
     std::vector<std::unique_ptr<aiScene>> createSurfaceScenes() {
-        
         std::vector<std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
@@ -367,8 +366,8 @@ class ModelExporter {
     }
 
     std::unique_ptr<aiScene> createNewNonPolyScene(std::vector<unsigned int> &triangleIndices,
-                                   std::map<std::array<float, 3>, glm::vec3> &vertexNormalLookup,
-                                   std::vector<IndexedEdge> &borderEdges, float modelDiameter) {
+                                                   std::map<std::array<float, 3>, glm::vec3> &vertexNormalLookup,
+                                                   std::vector<IndexedEdge> &borderEdges, float modelDiameter) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
         float extrusionCoef = modelDiameter / 10;
@@ -491,9 +490,10 @@ class ModelExporter {
     }
 
     std::unique_ptr<aiScene> createNewPolyScene(std::vector<unsigned int> &triangleIndices,
-                                std::map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
-                                std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
-                                std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF, float modelDiameter) {
+                                                std::map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
+                                                std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
+                                                std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF,
+                                                float modelDiameter) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
         float extrusionCoef = modelDiameter / 4.0f;

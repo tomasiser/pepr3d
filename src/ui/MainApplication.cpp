@@ -21,6 +21,7 @@
 
 #include "tools/Brush.h"
 #include "tools/DisplayOptions.h"
+#include "tools/ExportAssistant.h"
 #include "tools/Information.h"
 #include "tools/LiveDebug.h"
 #include "tools/PaintBucket.h"
@@ -92,6 +93,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>(*this));
     mTools.emplace_back(make_unique<Information>());
+    mTools.emplace_back(make_unique<ExportAssistant>(*this));
 #if !defined(NDEBUG)
     mTools.emplace_back(make_unique<LiveDebug>(*this));
 #endif
@@ -176,7 +178,7 @@ void MainApplication::keyDown(KeyEvent event) {
     case HotkeyAction::Open: showImportDialog(supportedOpenExtensions); break;
     case HotkeyAction::Save: saveProject(); break;
     case HotkeyAction::Import: showImportDialog(supportedImportExtensions); break;
-    case HotkeyAction::Export: showExportDialog(); break;
+    case HotkeyAction::Export: setCurrentTool<ExportAssistant>(); break;
     case HotkeyAction::Undo: mCommandManager->undo(); break;
     case HotkeyAction::Redo: mCommandManager->redo(); break;
     case HotkeyAction::SelectTrianglePainter: setCurrentTool<TrianglePainter>(); break;
@@ -467,6 +469,7 @@ void MainApplication::setupFonts() {
     iconsRangeBuilder.AddText(ICON_MD_UNDO);
     iconsRangeBuilder.AddText(ICON_MD_REDO);
     iconsRangeBuilder.AddText(ICON_MD_CHILD_FRIENDLY);
+    iconsRangeBuilder.AddText(ICON_MD_ARCHIVE);
     iconsRangeBuilder.BuildRanges(&iconsRange);
     fontConfig.GlyphExtraSpacing.x = 0.0f;
     mFontStorage.mRegularIcons =

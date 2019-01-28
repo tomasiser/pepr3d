@@ -92,6 +92,36 @@ class ModelView {
         return mColorOverride.overrideColorBuffer;
     }
 
+    void setVertexNormalIndexOverride(bool val) {
+        mVertexNormalIndexOverride.isOverriden = val;
+        mBatch = nullptr;  // reset batch to force update
+    }
+
+    bool isVertexNormalIndexOverride() const {
+        return mVertexNormalIndexOverride.isOverriden;
+    }
+
+    std::vector<glm::vec3>& getOverrideVertexBuffer() {
+        return mVertexNormalIndexOverride.overrideVertexBuffer;
+    }
+
+    std::vector<glm::vec3>& getOverrideNormalBuffer() {
+        return mVertexNormalIndexOverride.overrideNormalBuffer;
+    }
+
+    std::vector<uint32_t>& getOverrideIndexBuffer() {
+        return mVertexNormalIndexOverride.overrideIndexBuffer;
+    }
+
+    glm::vec2 getPreviewMinMaxHeight() const {
+        return mPreviewMinMaxHeight;
+    }
+
+    void setPreviewMinMaxHeight(glm::vec2 minMax) {
+        mPreviewMinMaxHeight = minMax;
+        mModelShader->uniform("uPreviewMinMaxHeight", mPreviewMinMaxHeight);
+    }
+
     float getMaxSize() const {
         return mMaxSize;
     }
@@ -112,11 +142,19 @@ class ModelView {
     float mModelRoll = 0.0f;
     glm::vec3 mModelTranslate = glm::vec3(0);
     float mMaxSize = 1.f;
+    glm::vec2 mPreviewMinMaxHeight = glm::vec2(0.0f, 1.0f);
 
     struct ColorOverrideData {
         bool isOverriden = false;
         std::vector<glm::vec4> overrideColorBuffer;
     } mColorOverride;
+
+    struct VertexNormalIndexOverrideData {
+        bool isOverriden = false;
+        std::vector<glm::vec3> overrideVertexBuffer;
+        std::vector<glm::vec3> overrideNormalBuffer;
+        std::vector<uint32_t> overrideIndexBuffer;
+    } mVertexNormalIndexOverride;
 
     void updateModelMatrix();
     void updateVboAndBatch();
