@@ -42,7 +42,7 @@ In conclusion, while this library is the best on the market right now, it still 
 
 Cereal \footnote{https://uscilab.github.io/cereal/} is a header-only library for (de)-serialization. The library has a minimalistic API and a solid documentation which explains all the major concepts behind it.
 
-In our experience, it was very easy to pick up and add to our project and worked really well. So far we have not encountered any issues or found any downsides of this library.
+In our experience, it was very easy to pick up and add to our project and worked really well. So far we have not encountered any issues or found any bugs within the library. We have, however, discovered one limitation which the library imposes on the code it is used on. Any object which is to be loaded from serialized data either has to have a default constructor, or be stored by a pointer. If you have an object stored by value and it is not default constructible, the library will not know how to load it.
 
 \subsection{Threadpool}
 
