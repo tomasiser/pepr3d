@@ -43,6 +43,8 @@ We decided to use \emph{Cinder}, which is also cross-platform and supports async
 
 \subsection{Widgets}
 
+\label{subsec:imgui}
+
 As Pepr3D is based on real-time rendering, we decided to use \emph{immediate UI}, i.e., a procedural UI redrawn every frame that is mostly stateless.
 This means that we do not have to program any explicit synchronization between the UI and the backend.
 Whenever we re-render the UI, it will be rendered with the newest data.
@@ -58,6 +60,8 @@ It provided us with basic handling of mouse clicks, keyboard inputs, etc., and a
 But the design of Pepr3D is completely ours and is based on heavily customized widgets based on ImGui primitives.
 
 \section{Application}
+
+\label{sec:app}
 
 The whole application and its main window are executed via the Cinder library.
 The main file \texttt{main.cpp} contains a Cinder macro which corresponds to cross-platform \texttt{main} functions.

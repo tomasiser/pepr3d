@@ -7,12 +7,60 @@ In this chapter, we outline our experiences with used 3rd party libraries, elabo
 Now we provide a quick summary of our experiences with the 3rd party libraries we decided to use.
 
 \subsection{Cinder}
+
+Cinder \footnote{https://libcinder.org/} is a C++ library which serves as a wrapper around OpenGL. It provides a multi-platform solution to creating an OpenGL window, handling keyboard and mouse input, simplifies the OpenGL buffer handling and much more. It is written with a modern C++11 standard and seemed like a good fit for our project.
+
+Our experiences were mixed. On one hand, the library performed all the tasks we required and allowed us to spend little time worrying about Linux compatibility. On the other hand, the library itself forced a few very non-practical decisions on us, like the already mentioned C macro in the \texttt{main.cpp} file, which we discussed in Section \ref{sec:app}.
+
+We also suspect, that the Cinder library is the main culprit behind our rather long compile times, since the problem existed basically from the beginning of the development, when the project did not include so much code.
+
 \subsection{Dear ImGui}
+
+Dear ImGui \footnote{https://github.com/ocornut/imgui} is a graphical user interface library for C++. We already discussed our reasons for choosing this library in the Section \ref{subsec:imgui}.
+
+Our experience with this library has been very positive, as we have expected. The library is simple to use and simple to pick up. One of our team members was able to quickly start working with the library within a few days, without any prior knowledge. The limitation of this graphical user interface is the limited support for skinning, though this feature is not important at this time. It is difficult to use for an entirely custom user interface though, as some things are not yet exposed in the API, such as more advanced column layouts.
+
 \subsection{CGAL}
+
+The Computational Geometry Algorithms Library (CGAL) \footnote{https://www.cgal.org/} is the main library we chose to solve the geometry computations for this project, since it included several useful features, which we described in more detail in Chapter \ref{chap:geom}.
+
+The team's experience with this library is conflicting. On one hand, the library performed everything we hoped for very well, did not raise many issues and we did not find any bugs, weird or wrong behaviour. On the other hand, the library is so heavily templated, that sometimes it is very hard to navigate. This problem is furthermore highlighted by its documentation, which is lacking in several places (with phrases like \texttt{Advanced feature.} as the only explanation to a public method). Since it looks to be generated from the code, the code does not provide any more information.
+
+The members who have worked with the library were not satisfied with the library mainly for the user-friendliness, however, it is important to state that once you figure out the API and the general ideas behind the library, it performs well.
+
 \subsection{Assimp}
+
+Assimp \footnote{http://www.assimp.org/} is a library that handles importing and exporting of the models. This library holds a unique space in the C++ libraries for geometry loading and saving, because it is basically the only one which supports so many different formats for both importing and exporting. This makes it almost a must-include in a C++ geometry project and we hoped for an easy and fast integration.
+
+In reality, we have had the most issues with Assimp out of all the libraries used. While the documentation is not plainly generated from code and explains a lot of concepts and ideas, it is not complete and the only thing left is reading the internal source code (not just the header files providing the API, the actual implementation as well). This happened several times during our development (while implementing post-processing during the import, while trying to use Assimp's progress reporters). Exporting a custom built scene (that did not get loaded by Assimp earlier), is only explained in the \textit{Issues} tab on Assimp's GitHub page, which also further highlights the lacking documentation.
+
+We also encountered weird behaviour in the post-processing during the import phase -- we set Assimp to completely remove all degenerate triangles (triangles with an area equal to zero), which is described at length in Assimp's documentation. We found out that this pre-process, while configured exactly as the documentation stated, did not, in fact, remove all degenerate triangles, and we had to implement one additional check, after Assimp finishes.
+
+In conclusion, while this library is the best on the market right now, it still has long ways to go, at least in our experience.
+
 \subsection{Cereal}
+
+Cereal \footnote{https://uscilab.github.io/cereal/} is a header-only library for (de)-serialization. The library has a minimalistic API and a solid documentation which explains all the major concepts behind it.
+
+In our experience, it was very easy to pick up and add to our project and worked really well. So far we have not encountered any issues or found any downsides of this library.
+
 \subsection{Threadpool}
-\subsection{FreeType, FTGL and Poly2Tri}
+
+Threadpool library \footnote{https://github.com/progschj/ThreadPool} is a \emph{very simple} C++ library providing a simple threadpool. We used this library since we required a basic threadpool without too many features or overhead. This free code is simple, easy to check and functional.
+
+\subsection{FreeType, FTGL and Poly2Tri and Font23D}
+
+While doing research for the \textit{Text} tool on how to take a font file and a text string, and transform the bezier curves into triangle meshes, we found the \textbf{Font23D} library/project.
+
+Font23D is a library/project on GitHub \footnote{https://github.com/codetiger/Font23D} without too much activity, but solving exactly the issue we faced as well. It incorporates the \textbf{Freetype}, \textbf{FTGL} and \textbf{Poly2Tri} libraries to solve the issue and we used it parts of this project in our own. You can read the exact development discussion about this library in Section \ref{sec:fonts}.
+
+We made severe improvements and adjustments to the code from the repository, as the code is mainly written in \textbf{C}, instead of C++.
+
+\subsection{Boost}
+
+Last but not least is the Boost library which came as a pre-requisite for Cereal. Since we already had this library in the project, we decided we might as well use it. In the end, we did not use it for any major features but it was still handy to have around.
+
+We will not discuss the quality of the documentation or the performance of this library, since it is a staple in the C++ environment.
 
 \section{Future work}
 
