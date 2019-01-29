@@ -7,11 +7,25 @@ Based on our own research and the analysis of the experts from Prusa Research s.
 
 The closest existing software is Autodesk Meshmixer \footnote{http://www.meshmixer.com/}, which is very complicated and is not targeted for FDM printing specifically. As such, it includes a lot of features that are not important for the FDM users and end up being confusing.
 
+It is, probably, meant for more advanced users than Pepr3D. It is (at least in our opinion) unintuitive and can be slow at times. The colouring and segmentation of the model can only be done one color at a time -- the user colors one region, separates it and then continues with the next colour, tearing the model into pieces piece by piece.
+
+The export has its problems and we have found issues with the exported objects. The objects were sometimes not printable at all.
+
+It can do a model segmentation, which is analogous to our \textit{Automatic segmentation} tool. It also can select an area based on given parameters and a region border, which is a variation on our \textit{Bucket painter} tool.
+
+On the other hand it is not capable of doing custom strokes like our \textit{Brush} tool or custom text like our \textit{Text} tool.
+
 \section{Microsoft 3D Builder}
 
 Microsoft 3D Builder \footnote{https://www.microsoft.com/en-us/p/3d-builder/9wzdncrfj3t6?activetab=pivot\%3Aoverviewtab} is another application that handles 3D models but we have not found a way to make it create anything remotely applicable to FDM printing.
 
+It is a really fast 3D model previewer, but it does not support any functionality related to 3D printing, such as separation of objects, colouring of triangles and so on.
+
+The user can create a very simple 3D models inside this application.
+
 \section{Complex 3D editors}
 
-Any 3D computer graphics program designed to handle 3D models which allows for the model to be created or split by colors manually. This section would include software as 3ds Max, Maya or Cinema4D. Using these applications, however, would be very time-consuming for the user and practically unusable on a larger scale.
+Any 3D computer graphics program designed to handle 3D models which allows for the model to be created or split by colors manually. This section would include software as 3ds Max, Maya or Cinema4D. Using these applications, however, would be very time-consuming for the user and practically unusable on a larger scale. We discuss \textbf{Blender} briefly.
+
+Blender is a fully fledged 3D editor, and therefore is capable of creating any model imaginable. To replicate the desired outcome of Pepr3D, the user has to load the model into Blender, divide the model into several triangle meshes, which only results in the parts of the hull of the object, not a closed polyhedron. The user has to then manually close each part of the hull, fill the holes and ensure the Slic3r can solve the intersections correctly. It does not support any kind of automated separation of one model into several pieces using the triangle colors.
 
