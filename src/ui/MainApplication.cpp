@@ -359,7 +359,7 @@ void MainApplication::openFile(const std::string& path) {
 }
 
 void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType,
-                               ModelExporter::ExportTypes exportType) {
+                               ExportTypes exportType) {
     if(mGeometry == nullptr) {
         return;
     }
@@ -631,7 +631,7 @@ void MainApplication::drawExportDialog() {
                         fs::create_directory(filePath);
                     }
 
-                    saveFile(filePath, fileName, fileType, ModelExporter::ExportTypes::PolyWithSDF);
+                    saveFile(filePath, fileName, fileType, ExportTypes::PolyWithSDF);
                 }
             });
         }

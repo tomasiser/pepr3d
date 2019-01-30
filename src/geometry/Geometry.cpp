@@ -133,15 +133,19 @@ void Geometry::loadNewGeometry(const std::string& fileName) {
 }
 
 void Geometry::exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType,
-                              ModelExporter::ExportTypes exportType) {
+                              ExportTypes exportType) {
     // Reset progress
     mProgress->resetSave();
 
-    if(exportType == ModelExporter::ExportTypes::PolyWithSDF && !mPolyhedronData.isSdfComputed) {
+    if(exportType == ExportTypes::PolyWithSDF && !mPolyhedronData.isSdfComputed) {
         computeSdf();
     }
 
-    ModelExporter modelExporter(mTriangles, mPolyhedronData, filePath, fileName, fileType, exportType, mProgress.get());
+    if(polyhedronValid()) {
+        updateTemporaryDetailedData();
+    }
+
+    ModelExporter modelExporter(this, filePath, fileName, fileType, exportType, mProgress.get());
 }
 
 void Geometry::generateVertexBuffer() {
