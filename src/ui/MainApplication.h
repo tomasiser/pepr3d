@@ -25,7 +25,7 @@
 #include "SidePane.h"
 #include "Toolbar.h"
 #include "commands/CommandManager.h"
-#include "geometry/ExportTypes.h"
+#include "geometry/ExportType.h"
 
 namespace pepr3d {
 class Tool;
@@ -83,7 +83,7 @@ class MainApplication : public cinder::app::App {
 
     void openFile(const std::string& path);
     void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType,
-                  ExportTypes exportType);
+                  ExportType exportType);
 
     using ToolsVector = std::vector<std::unique_ptr<Tool>>;
 

@@ -21,8 +21,7 @@
 #include "geometry/ColorManager.h"
 #include "geometry/GeometryProgress.h"
 #include "geometry/GlmSerialization.h"
-//#include "geometry/ModelExporter.h"
-#include "geometry/ExportTypes.h"
+#include "geometry/ExportType.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronData.h"
 #include "geometry/Triangle.h"
@@ -312,7 +311,7 @@ class Geometry {
 
     /// Exports the modified geometry to the file specified by a path, file name and file type.
     void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType,
-                        ExportTypes exportType);
+                        ExportType exportType);
 
     /// Set new triangle color.
     void setTriangleColor(const size_t triangleIndex, const size_t newColor);

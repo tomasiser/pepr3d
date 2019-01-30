@@ -133,11 +133,11 @@ void Geometry::loadNewGeometry(const std::string& fileName) {
 }
 
 void Geometry::exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType,
-                              ExportTypes exportType) {
+                              ExportType exportType) {
     // Reset progress
     mProgress->resetSave();
 
-    if(exportType == ExportTypes::PolyWithSDF && !mPolyhedronData.isSdfComputed) {
+    if(exportType == ExportType::PolyExtrusionWithSDF && !mPolyhedronData.isSdfComputed) {
         computeSdf();
     }
 
@@ -145,7 +145,12 @@ void Geometry::exportGeometry(const std::string filePath, const std::string file
         updateTemporaryDetailedData();
     }
 
-    ModelExporter modelExporter(this, filePath, fileName, fileType, exportType, mProgress.get());
+    ModelExporter modelExporter(this, mProgress.get());
+
+    std::vector<float> coefs{0.1f, 0.25f, 0.5f, 0.75};
+    modelExporter.setExtrusionCoef(coefs);
+    
+    modelExporter.saveModel(filePath, fileName, fileType, exportType);
 }
 
 void Geometry::generateVertexBuffer() {
