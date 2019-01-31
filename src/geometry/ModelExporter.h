@@ -208,7 +208,7 @@ class ModelExporter {
 
         std::map<colorIndex, std::vector<DetailedTriangleId>> colorsWithIndices;
 
-        std::map<PolyhedronData::vertex_descriptor, glm::vec3> summedVertexNormals;
+        std::unordered_map<PolyhedronData::vertex_descriptor, glm::vec3> summedVertexNormals;
         std::map<PolyhedronData::vertex_descriptor, float> vertexSDF;  // should be min or average?
 
         std::map<colorIndex, std::set<PolyhedronData::halfedge_descriptor>> borderEdges;
@@ -514,7 +514,7 @@ class ModelExporter {
     }
 
     std::unique_ptr<aiScene> createNewPolyScene(std::vector<DetailedTriangleId> &triangleIndices,
-                                                std::map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
+                                                std::unordered_map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
                                                 std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
                                                 std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF,
                                                 float userCoef) {
@@ -583,12 +583,14 @@ class ModelExporter {
             }
         }
 
+        auto &detailedFaceDescs = mGeometry->getMeshDetailedFaceDescs();
+
         for(unsigned int i = 0; i < trianglesCount; i++) {
             aiFace &face = pMesh->mFaces[i + trianglesCount];
             face.mIndices = new unsigned int[3];
             face.mNumIndices = 3;
 
-            const PolyhedronData::face_descriptor polyFace = mGeometry->getMeshDetailedFaceDescs()[triangleIndices[i]];
+            const PolyhedronData::face_descriptor polyFace = detailedFaceDescs[triangleIndices[i]];
 
             const auto halfedge = mGeometry->getMeshDetailed()->halfedge(polyFace);
             auto itHalfedge = halfedge;

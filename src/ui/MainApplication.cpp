@@ -631,7 +631,7 @@ void MainApplication::drawExportDialog() {
                         fs::create_directory(filePath);
                     }
 
-                    saveFile(filePath, fileName, fileType, ExportType::PolyExtrusionWithSDF);
+                    saveFile(filePath, fileName, fileType, ExportType::PolyExtrusion);
                 }
             });
         }
