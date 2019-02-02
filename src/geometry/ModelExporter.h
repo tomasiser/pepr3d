@@ -3,6 +3,8 @@
 #include <assimp/scene.h>       // Output data structure
 #include <assimp/Exporter.hpp>  // C++ exporter interface
 
+#include <glm/gtc/epsilon.hpp>
+
 #include <array>
 #include <cassert>
 #include <sstream>
@@ -226,6 +228,7 @@ class ModelExporter {
 
         for(PolyhedronData::vertex_descriptor vd : mGeometry->getMeshDetailed()->vertices()) {
             int degree = mGeometry->getMeshDetailed()->degree(vd);
+            std::vector<glm::vec3> vertexNormals;
 
             auto &halfedge = mGeometry->getMeshDetailed()->halfedge(vd);
 
@@ -239,7 +242,7 @@ class ModelExporter {
                         vertexSDF[vd] += (float)mGeometry->getSdfValue(triIndex.getBaseId());
                     }
 
-                    summedVertexNormals[vd] += mGeometry->getTriangle(triIndex).getNormal();
+                    vertexNormals.push_back(mGeometry->getTriangle(triIndex).getNormal());
 
                     colorIndex faceColor = mGeometry->getTriangle(triIndex).getColor();
 
@@ -261,13 +264,25 @@ class ModelExporter {
                 halfedge = mGeometry->getMeshDetailed()->next_around_target(halfedge);
             }
 
-            auto &polyVertex = mGeometry->getMeshDetailed()->point(vd);
+            float ep = glm::epsilon<float>();
 
-            // vertex normals norzmalization
+            bool isEpsSameNormal = false;
+            size_t usedNormalsCount = 0;
+            for(size_t i = 0; i < vertexNormals.size(); i++) {
+                for(size_t j = 0; j < i; j++) {
+                    isEpsSameNormal |= glm::all(glm::epsilonEqual(vertexNormals[i], vertexNormals[j], ep));
+                }
+                if(!isEpsSameNormal) {
+                    summedVertexNormals[vd] += vertexNormals[i];
+                    usedNormalsCount++;
+                }
+                isEpsSameNormal = false;
+            }
+
             summedVertexNormals[vd] = glm::normalize(summedVertexNormals[vd]);
 
             if(withSDF) {
-                vertexSDF[vd] = vertexSDF[vd] / degree;  // average
+                vertexSDF[vd] = vertexSDF[vd] / usedNormalsCount;  // average
             }
         }
 
@@ -513,11 +528,11 @@ class ModelExporter {
         return scene;
     }
 
-    std::unique_ptr<aiScene> createNewPolyScene(std::vector<DetailedTriangleId> &triangleIndices,
-                                                std::unordered_map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
-                                                std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
-                                                std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF,
-                                                float userCoef) {
+    std::unique_ptr<aiScene> createNewPolyScene(
+        std::vector<DetailedTriangleId> &triangleIndices,
+        std::unordered_map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
+        std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
+        std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF, float userCoef) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
         float extrusionCoef = glm::length(mGeometry->getBoundingBoxMax() - mGeometry->getBoundingBoxMin()) * userCoef;
