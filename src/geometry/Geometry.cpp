@@ -149,7 +149,7 @@ void Geometry::exportGeometry(const std::string filePath, const std::string file
 
     std::vector<float> coefs{0.1f, 0.25f, 0.5f, 0.75};
     modelExporter.setExtrusionCoef(coefs);
-    
+
     modelExporter.saveModel(filePath, fileName, fileType, exportType);
 }
 

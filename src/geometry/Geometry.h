@@ -19,9 +19,9 @@
 #include <vector>
 
 #include "geometry/ColorManager.h"
+#include "geometry/ExportType.h"
 #include "geometry/GeometryProgress.h"
 #include "geometry/GlmSerialization.h"
-#include "geometry/ExportType.h"
 #include "geometry/ModelImporter.h"
 #include "geometry/PolyhedronData.h"
 #include "geometry/Triangle.h"
@@ -294,15 +294,16 @@ class Geometry {
         return *mProgress;
     }
 
-    PolyhedronData::Mesh* getMeshDetailed() const{
+    PolyhedronData::Mesh* getMeshDetailed() const {
         return mMeshDetailed.get();
     }
 
-    std::unordered_map<DetailedTriangleId, PolyhedronData::face_descriptor> getMeshDetailedFaceDescs() const{
+    std::unordered_map<DetailedTriangleId, PolyhedronData::face_descriptor> getMeshDetailedFaceDescs() const {
         return mMeshDetailedFaceDescs;
     }
 
-    PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, DetailedTriangleId> getMeshDetailedIdMap() const{
+    PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, DetailedTriangleId> getMeshDetailedIdMap()
+        const {
         return mMeshDetailedIdMap;
     }
 

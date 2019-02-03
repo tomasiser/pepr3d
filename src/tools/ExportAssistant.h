@@ -56,7 +56,7 @@ class ExportAssistant : public Tool {
     struct SettingsPerColor {
         bool isShown = true;
     };
-    
+
     /// Settings per color, indexed by the color index
     std::vector<SettingsPerColor> mSettingsPerColor;
 
