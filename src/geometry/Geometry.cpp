@@ -133,27 +133,24 @@ void Geometry::loadNewGeometry(const std::string& fileName) {
 }
 
 void Geometry::exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType,
-                              ModelExporter::ExportTypes exportType) {
+                              ExportType exportType) {
     // Reset progress
     mProgress->resetSave();
 
-    if(exportType == ModelExporter::ExportTypes::PolyWithSDF && !mPolyhedronData.isSdfComputed) {
+    if(exportType == ExportType::PolyExtrusionWithSDF && !mPolyhedronData.isSdfComputed) {
         computeSdf();
     }
 
-    ModelExporter modelExporter(mTriangles, mPolyhedronData, filePath, fileName, fileType, exportType, mProgress.get());
-    // modelExporter.saveModel(filePath, fileName, fileType, exportType);
-}
-
-ModelExporter Geometry::exportGeometry(ModelExporter::ExportTypes exportType) {
-    // Reset progress
-    mProgress->resetSave();
-
-    if(exportType == ModelExporter::ExportTypes::PolyWithSDF && !mPolyhedronData.isSdfComputed) {
-        computeSdf();
+    if(polyhedronValid()) {
+        updateTemporaryDetailedData();
     }
 
-    return ModelExporter(mTriangles, mPolyhedronData, "", "", "", exportType, mProgress.get());
+    ModelExporter modelExporter(this, mProgress.get());
+
+    std::vector<float> coefs{0.1f, 0.25f, 0.5f, 0.75};
+    modelExporter.setExtrusionCoef(coefs);
+    
+    modelExporter.saveModel(filePath, fileName, fileType, exportType);
 }
 
 void Geometry::generateVertexBuffer() {

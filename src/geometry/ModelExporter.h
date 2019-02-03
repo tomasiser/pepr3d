@@ -3,47 +3,50 @@
 #include <assimp/scene.h>       // Output data structure
 #include <assimp/Exporter.hpp>  // C++ exporter interface
 
+#include <glm/gtc/epsilon.hpp>
+
 #include <array>
 #include <cassert>
 #include <sstream>
 #include <vector>
 
 #include "geometry/AssimpProgress.h"
+#include "geometry/ExportType.h"
 #include "geometry/Geometry.h"
 #include "geometry/GeometryProgress.h"
 #include "geometry/PolyhedronData.h"
 #include "geometry/Triangle.h"
+#include "geometry/TrianglePrimitive.h"
 
 typedef size_t colorIndex;
 
 namespace pepr3d {
 
 class ModelExporter {
-    const std::vector<DataTriangle> &mTriangles;
-    const PolyhedronData &mPolyhedronData;
+    const Geometry *mGeometry;
+
     bool mModelSaved = false;
     GeometryProgress *mProgress;
+    std::vector<float> mExtrusioCoef;
 
    public:
-    enum ExportTypes { Surface, NonPoly, Poly, PolyWithSDF };
-
-    ModelExporter(const std::vector<DataTriangle> &triangles, const PolyhedronData &polyhedronData,
-                  const std::string filePath, const std::string fileName, const std::string fileType,
-                  ExportTypes exportType, GeometryProgress *progress)
-        : mTriangles(triangles), mPolyhedronData(polyhedronData), mProgress(progress) {
+    ModelExporter(const Geometry *geometry, GeometryProgress *progress) : mGeometry(geometry), mProgress(progress) {
         // this->mModelSaved = saveModel(filePath, fileName, fileType, exportType);
     }
 
-    struct IndexedEdge {
-        unsigned int tri;
-        unsigned int id1;
-        unsigned int id2;
-        colorIndex color;
-        bool isBoundary = false;
-    };
+    std::map<colorIndex, std::unique_ptr<aiScene>> createScenes(ExportType exportType) {
+        switch(exportType) {
+        case Surface: return createPolySurfaceScenes(); break;
+        case NonPolySurface: return createNonPolySurfaceScenes(); break;
+        case NonPolyExtrusion: return createNonPolyScenes(); break;
+        case PolyExtrusion: return createPolyScenes(false); break;
+        case PolyExtrusionWithSDF: return createPolyScenes(true); break;
+        default: assert(false); return createNonPolySurfaceScenes();
+        }
+    }
 
     bool saveModel(const std::string filePath, const std::string fileName, const std::string fileType,
-                   ModelExporter::ExportTypes exportType) {
+                   ExportType exportType) {
         Assimp::Exporter exporter;
 
         if(mProgress != nullptr) {
@@ -72,32 +75,48 @@ class ModelExporter {
         return true;
     }
 
-    std::map<colorIndex, std::unique_ptr<aiScene>> createScenes(ExportTypes exportType) {
-        switch(exportType) {
-        case Surface: return createSurfaceScenes(); break;
-        case NonPoly: return createNonPolyScenes(); break;
-        case Poly: return createPolyScenes(false); break;
-        case PolyWithSDF: return createPolyScenes(true); break;
-        default: assert(false); return createSurfaceScenes();
-        }
+    void setExtrusionCoef(std::vector<float> extrusioCoef) {
+        mExtrusioCoef = extrusioCoef;
     }
 
-    std::map<colorIndex, std::unique_ptr<aiScene>> createSurfaceScenes() {
+   private:
+    struct IndexedEdge {
+        unsigned int tri;
+        unsigned int id1;
+        unsigned int id2;
+        colorIndex color;
+        bool isBoundary = false;
+    };
+
+    std::map<colorIndex, std::unique_ptr<aiScene>> createNonPolySurfaceScenes() {
         std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
         std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
 
-        for(unsigned int i = 0; i < mTriangles.size(); i++) {
-            size_t color = mTriangles[i].getColor();
+        for(unsigned int i = 0; i < mGeometry->getTriangleCount(); i++) {
+            colorIndex color = mGeometry->getTriangle(i).getColor();
             colorsWithIndices[color].emplace_back(static_cast<unsigned int>(i));
-
-            for(unsigned int j = 0; j < 3; j++) {
-                std::array<float, 3> vertex = {mTriangles[i].getVertex(j).x, mTriangles[i].getVertex(j).y,
-                                               mTriangles[i].getVertex(j).z};
-            }
         }
+
         for(auto &indexOfColor : colorsWithIndices) {
-            scenes[indexOfColor.first] = std::move(createNewSurfaceScene(indexOfColor.second));
+            scenes[indexOfColor.first] = std::move(createNewNonPolySurfaceScene(indexOfColor.second));
+        }
+
+        return scenes;
+    }
+
+    std::map<colorIndex, std::unique_ptr<aiScene>> createPolySurfaceScenes() {
+        std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
+
+        std::map<colorIndex, std::vector<DetailedTriangleId>> colorsWithIndices;
+
+        for(PolyhedronData::face_descriptor fd : mGeometry->getMeshDetailed()->faces()) {
+            colorIndex color = mGeometry->getTriangle(mGeometry->getMeshDetailedIdMap()[fd]).getColor();
+            colorsWithIndices[color].emplace_back(mGeometry->getMeshDetailedIdMap()[fd]);
+        }
+
+        for(auto &indexOfColor : colorsWithIndices) {
+            scenes[indexOfColor.first] = std::move(createNewPolySurfaceScene(indexOfColor.second));
         }
 
         return scenes;
@@ -113,60 +132,34 @@ class ModelExporter {
         // key=edge, value=(tri_idx, vert_idx, vert_idx)
         std::map<std::array<std::array<float, 3>, 2>, IndexedEdge> edgeLookup;
 
-        glm::vec3 maxVertexValues(std::numeric_limits<float>::min());
-        glm::vec3 minVertexValues(std::numeric_limits<float>::max());
-
-        for(unsigned int i = 0; i < mTriangles.size(); i++) {
-            size_t color = mTriangles[i].getColor();
+        for(unsigned int i = 0; i < mGeometry->getTriangleCount(); i++) {
+            colorIndex color = mGeometry->getTriangle(i).getColor();
             colorsWithIndices[color].emplace_back(static_cast<unsigned int>(i));
 
             for(unsigned int j = 0; j < 3; j++) {
-                std::array<float, 3> vertex = {mTriangles[i].getVertex(j).x, mTriangles[i].getVertex(j).y,
-                                               mTriangles[i].getVertex(j).z};
+                std::array<float, 3> vertex = {mGeometry->getTriangle(i).getVertex(j).x,
+                                               mGeometry->getTriangle(i).getVertex(j).y,
+                                               mGeometry->getTriangle(i).getVertex(j).z};
 
-                summedVertexNormals[vertex] += mTriangles[i].getNormal();
+                summedVertexNormals[vertex] += mGeometry->getTriangle(i).getNormal();
 
-                std::array<float, 3> nextVertex = {mTriangles[i].getVertex((j + 1) % 3).x,
-                                                   mTriangles[i].getVertex((j + 1) % 3).y,
-                                                   mTriangles[i].getVertex((j + 1) % 3).z};
+                std::array<float, 3> nextVertex = {mGeometry->getTriangle(i).getVertex((j + 1) % 3).x,
+                                                   mGeometry->getTriangle(i).getVertex((j + 1) % 3).y,
+                                                   mGeometry->getTriangle(i).getVertex((j + 1) % 3).z};
 
                 IndexedEdge &edge = edgeLookup[{vertex, nextVertex}];
-                edge.color = mTriangles[i].getColor();
+                edge.color = mGeometry->getTriangle(i).getColor();
                 edge.tri = i;
                 edge.id1 = j;
                 edge.id2 = (j + 1) % 3;
-
-                if(maxVertexValues.x < vertex[0]) {
-                    maxVertexValues.x = vertex[0];
-                }
-                if(minVertexValues.x > vertex[0]) {
-                    minVertexValues.x = vertex[0];
-                }
-                if(maxVertexValues.y < vertex[1]) {
-                    maxVertexValues.y = vertex[1];
-                }
-                if(minVertexValues.y > vertex[1]) {
-                    minVertexValues.y = vertex[1];
-                }
-                if(maxVertexValues.z < vertex[2]) {
-                    maxVertexValues.z = vertex[2];
-                }
-                if(minVertexValues.z > vertex[2]) {
-                    minVertexValues.z = vertex[2];
-                }
             }
         }
 
         if(colorsWithIndices.size() == 1) {
             scenes[colorsWithIndices.begin()->first] =
-                std::move(createNewSurfaceScene(colorsWithIndices.begin()->second));
+                std::move(createNewNonPolySurfaceScene(colorsWithIndices.begin()->second));
             return scenes;
         }
-
-        // minimal axis model size
-        float modelDiameter =
-            std::min(std::min((maxVertexValues.x - minVertexValues.x), (maxVertexValues.x - minVertexValues.x)),
-                     (maxVertexValues.x - minVertexValues.x));
 
         normalizeSummedNormals(summedVertexNormals);
 
@@ -175,8 +168,8 @@ class ModelExporter {
         for(auto &indexOfColor : colorsWithIndices) {
             auto &soloBoundary = selectBoundaryEdgesByColor(edgeLookup, indexOfColor.first);
 
-            scenes[indexOfColor.first] =
-                std::move(createNewNonPolyScene(indexOfColor.second, summedVertexNormals, soloBoundary, modelDiameter));
+            scenes[indexOfColor.first] = std::move(createNewNonPolyScene(
+                indexOfColor.second, summedVertexNormals, soloBoundary, mExtrusioCoef[indexOfColor.first]));
         }
 
         return scenes;
@@ -215,107 +208,94 @@ class ModelExporter {
     std::map<colorIndex, std::unique_ptr<aiScene>> createPolyScenes(bool withSDF) {
         std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
-        std::map<colorIndex, std::vector<unsigned int>> colorsWithIndices;
+        std::map<colorIndex, std::vector<DetailedTriangleId>> colorsWithIndices;
 
-        std::map<PolyhedronData::vertex_descriptor, glm::vec3> summedVertexNormals;
+        std::unordered_map<PolyhedronData::vertex_descriptor, glm::vec3> summedVertexNormals;
         std::map<PolyhedronData::vertex_descriptor, float> vertexSDF;  // should be min or average?
 
         std::map<colorIndex, std::set<PolyhedronData::halfedge_descriptor>> borderEdges;
 
-        glm::vec3 maxVertexValues(std::numeric_limits<float>::min());
-        glm::vec3 minVertexValues(std::numeric_limits<float>::max());
-
-        for(unsigned int i = 0; i < mTriangles.size(); i++) {
-            size_t color = mTriangles[i].getColor();
-            colorsWithIndices[color].emplace_back(static_cast<unsigned int>(i));
+        for(PolyhedronData::face_descriptor fd : mGeometry->getMeshDetailed()->faces()) {
+            colorIndex color = mGeometry->getTriangle(mGeometry->getMeshDetailedIdMap()[fd]).getColor();
+            colorsWithIndices[color].emplace_back(mGeometry->getMeshDetailedIdMap()[fd]);
         }
 
         if(colorsWithIndices.size() == 1) {
             scenes[colorsWithIndices.begin()->first] =
-                std::move(createNewSurfaceScene(colorsWithIndices.begin()->second));
+                std::move(createNewPolySurfaceScene(colorsWithIndices.begin()->second));
             return scenes;
         }
 
-        for(PolyhedronData::vertex_descriptor vd : mPolyhedronData.mMesh.vertices()) {
-            int degree = mPolyhedronData.mMesh.degree(vd);
+        for(PolyhedronData::vertex_descriptor vd : mGeometry->getMeshDetailed()->vertices()) {
+            int degree = mGeometry->getMeshDetailed()->degree(vd);
+            std::vector<glm::vec3> vertexNormals;
 
-            auto &halfedge = mPolyhedronData.mMesh.halfedge(vd);
+            auto &halfedge = mGeometry->getMeshDetailed()->halfedge(vd);
 
             for(size_t i = 0; i < degree; i++) {
-                auto &face = mPolyhedronData.mMesh.face(halfedge);
+                auto &face = mGeometry->getMeshDetailed()->face(halfedge);
 
                 if(face.is_valid()) {
+                    DetailedTriangleId triIndex = mGeometry->getMeshDetailedIdMap()[face];
+
                     if(withSDF) {
-                        vertexSDF[vd] += (float)mPolyhedronData.sdf_property_map[face];
+                        vertexSDF[vd] += (float)mGeometry->getSdfValue(triIndex.getBaseId());
                     }
 
-                    size_t triIndex = mPolyhedronData.mIdMap[face];
-                    summedVertexNormals[vd] += mTriangles[triIndex].getNormal();
+                    vertexNormals.push_back(mGeometry->getTriangle(triIndex).getNormal());
 
-                    size_t faceIdx = mPolyhedronData.mIdMap[face];
-                    colorIndex faceColor = mTriangles[faceIdx].getColor();
+                    colorIndex faceColor = mGeometry->getTriangle(triIndex).getColor();
 
-                    auto &oppositeHalfedge = mPolyhedronData.mMesh.opposite(halfedge);
-                    auto &oppositeFace = mPolyhedronData.mMesh.face(oppositeHalfedge);
+                    auto &oppositeHalfedge = mGeometry->getMeshDetailed()->opposite(halfedge);
+                    auto &oppositeFace = mGeometry->getMeshDetailed()->face(oppositeHalfedge);
 
                     if(oppositeFace.is_valid()) {
-                        size_t oppositeFaceIdx = mPolyhedronData.mIdMap[oppositeFace];
-                        colorIndex oppositeFaceColor = mTriangles[oppositeFaceIdx].getColor();
+                        DetailedTriangleId oppositeFaceIdx = mGeometry->getMeshDetailedIdMap()[oppositeFace];
+                        colorIndex oppositeFaceColor = mGeometry->getTriangle(oppositeFaceIdx).getColor();
                         if(faceColor != oppositeFaceColor) {
                             borderEdges[faceColor].insert(halfedge);
                         }
                     } else {
-                        // halfedge is border edge (hole in the  model), so it is alsou boundary edge
+                        // halfedge is border edge (hole in the model), so it is alsou boundary edge
                         borderEdges[faceColor].insert(halfedge);
                     }
                 }
 
-                halfedge = mPolyhedronData.mMesh.next_around_target(halfedge);
+                halfedge = mGeometry->getMeshDetailed()->next_around_target(halfedge);
             }
 
-            auto &polyVertex = mPolyhedronData.mMesh.point(vd);
+            float ep = glm::epsilon<float>();
 
-            if(maxVertexValues.x < polyVertex.x()) {
-                maxVertexValues.x = (float)polyVertex.x();
-            }
-            if(minVertexValues.x > polyVertex.x()) {
-                minVertexValues.x = (float)polyVertex.x();
-            }
-            if(maxVertexValues.y < polyVertex.y()) {
-                maxVertexValues.y = (float)polyVertex.y();
-            }
-            if(minVertexValues.y > polyVertex.y()) {
-                minVertexValues.y = (float)polyVertex.y();
-            }
-            if(maxVertexValues.z < polyVertex.z()) {
-                maxVertexValues.z = (float)polyVertex.z();
-            }
-            if(minVertexValues.z > polyVertex.z()) {
-                minVertexValues.z = (float)polyVertex.z();
+            bool isEpsSameNormal = false;
+            size_t usedNormalsCount = 0;
+            for(size_t i = 0; i < vertexNormals.size(); i++) {
+                for(size_t j = 0; j < i; j++) {
+                    isEpsSameNormal |= glm::all(glm::epsilonEqual(vertexNormals[i], vertexNormals[j], ep));
+                }
+                if(!isEpsSameNormal) {
+                    summedVertexNormals[vd] += vertexNormals[i];
+                    usedNormalsCount++;
+                }
+                isEpsSameNormal = false;
             }
 
-            // vertex normals norzmalization
             summedVertexNormals[vd] = glm::normalize(summedVertexNormals[vd]);
 
             if(withSDF) {
-                vertexSDF[vd] = vertexSDF[vd] / degree;  // average
+                vertexSDF[vd] = vertexSDF[vd] / usedNormalsCount;  // average
             }
         }
 
-        // minimal axis model size
-        float modelDiameter =
-            std::min(std::min((maxVertexValues.x - minVertexValues.x), (maxVertexValues.x - minVertexValues.x)),
-                     (maxVertexValues.x - minVertexValues.x));
-
         for(auto &indexOfColor : colorsWithIndices) {
-            scenes[indexOfColor.first] = std::move(createNewPolyScene(
-                indexOfColor.second, summedVertexNormals, borderEdges[indexOfColor.first], vertexSDF, modelDiameter));
+            scenes[indexOfColor.first] =
+                std::move(createNewPolyScene(indexOfColor.second, summedVertexNormals, borderEdges[indexOfColor.first],
+                                             vertexSDF, mExtrusioCoef[indexOfColor.first]));
         }
 
         return scenes;
     }
 
-    std::unique_ptr<aiScene> createNewSurfaceScene(std::vector<unsigned int> &triangleIndices) {
+    std::unique_ptr<aiScene> createNewNonPolySurfaceScene(std::vector<unsigned int> &triangleIndices) {
         std::unique_ptr<aiScene> scene = std::make_unique<aiScene>();
 
         scene->mRootNode = new aiNode();
@@ -355,13 +335,67 @@ class ModelExporter {
             face.mNumIndices = 3;
 
             for(unsigned int j = 0; j < face.mNumIndices; j++) {
-                pMesh->mVertices[3 * i + j] = aiVector3D(mTriangles[triangleIndices[i]].getVertex(j).x,
-                                                         mTriangles[triangleIndices[i]].getVertex(j).y,
-                                                         mTriangles[triangleIndices[i]].getVertex(j).z);
+                pMesh->mVertices[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getVertex(j).x,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).y,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).z);
 
-                pMesh->mNormals[3 * i + j] = aiVector3D(mTriangles[triangleIndices[i]].getNormal().x,
-                                                        mTriangles[triangleIndices[i]].getNormal().y,
-                                                        mTriangles[triangleIndices[i]].getNormal().z);
+                pMesh->mNormals[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getNormal().x,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().y,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().z);
+
+                face.mIndices[j] = 3 * i + j;
+            }
+        }
+        return scene;
+    }
+
+    std::unique_ptr<aiScene> createNewPolySurfaceScene(std::vector<DetailedTriangleId> &triangleIndices) {
+        std::unique_ptr<aiScene> scene = std::make_unique<aiScene>();
+
+        scene->mRootNode = new aiNode();
+
+        scene->mMaterials = new aiMaterial *[1];
+        scene->mMaterials[0] = nullptr;
+        scene->mNumMaterials = 1;
+
+        scene->mMaterials[0] = new aiMaterial();
+
+        scene->mMeshes = new aiMesh *[1];
+        scene->mMeshes[0] = nullptr;
+        scene->mNumMeshes = 1;
+
+        scene->mMeshes[0] = new aiMesh();
+        scene->mMeshes[0]->mMaterialIndex = 0;
+
+        scene->mRootNode->mMeshes = new unsigned int[1];
+        scene->mRootNode->mMeshes[0] = 0;
+        scene->mRootNode->mNumMeshes = 1;
+
+        auto pMesh = scene->mMeshes[0];
+
+        size_t trianglesCount = triangleIndices.size();
+
+        pMesh->mVertices = new aiVector3D[3 * trianglesCount];
+        pMesh->mNormals = new aiVector3D[3 * trianglesCount];
+
+        pMesh->mNumVertices = (unsigned int)(3 * trianglesCount);
+
+        pMesh->mFaces = new aiFace[trianglesCount];
+        pMesh->mNumFaces = (unsigned int)(trianglesCount);
+
+        for(unsigned int i = 0; i < trianglesCount; i++) {
+            aiFace &face = pMesh->mFaces[i];
+            face.mIndices = new unsigned int[3];
+            face.mNumIndices = 3;
+
+            for(unsigned int j = 0; j < face.mNumIndices; j++) {
+                pMesh->mVertices[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getVertex(j).x,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).y,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).z);
+
+                pMesh->mNormals[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getNormal().x,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().y,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().z);
 
                 face.mIndices[j] = 3 * i + j;
             }
@@ -371,10 +405,10 @@ class ModelExporter {
 
     std::unique_ptr<aiScene> createNewNonPolyScene(std::vector<unsigned int> &triangleIndices,
                                                    std::map<std::array<float, 3>, glm::vec3> &vertexNormalLookup,
-                                                   std::vector<IndexedEdge> &borderEdges, float modelDiameter) {
+                                                   std::vector<IndexedEdge> &borderEdges, float userCoef) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
-        float extrusionCoef = modelDiameter / 10;
+        float extrusionCoef = glm::length(mGeometry->getBoundingBoxMax() - mGeometry->getBoundingBoxMin()) * userCoef;
 
         std::unique_ptr<aiScene> scene = std::make_unique<aiScene>();
         scene->mRootNode = new aiNode();
@@ -414,13 +448,13 @@ class ModelExporter {
             face.mNumIndices = 3;
 
             for(unsigned int j = 0; j < face.mNumIndices; j++) {
-                pMesh->mVertices[3 * i + j] = aiVector3D(mTriangles[triangleIndices[i]].getVertex(j).x,
-                                                         mTriangles[triangleIndices[i]].getVertex(j).y,
-                                                         mTriangles[triangleIndices[i]].getVertex(j).z);
+                pMesh->mVertices[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getVertex(j).x,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).y,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).z);
 
-                pMesh->mNormals[3 * i + j] = aiVector3D(mTriangles[triangleIndices[i]].getNormal().x,
-                                                        mTriangles[triangleIndices[i]].getNormal().y,
-                                                        mTriangles[triangleIndices[i]].getNormal().z);
+                pMesh->mNormals[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getNormal().x,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().y,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().z);
 
                 face.mIndices[j] = 3 * i + j;
             }
@@ -434,16 +468,17 @@ class ModelExporter {
             for(unsigned int j = 0; j < face.mNumIndices; j++) {
                 unsigned int jRevert = 2 - j;
 
-                glm::vec3 &vertex = mTriangles[triangleIndices[i]].getVertex(j);
+                glm::vec3 &vertex = mGeometry->getTriangle(triangleIndices[i]).getVertex(j);
 
                 glm::vec3 vertexNormal = extrusionCoef * vertexNormalLookup[{vertex.x, vertex.y, vertex.z}];
 
                 pMesh->mVertices[3 * (i + trianglesCount) + j] =
                     aiVector3D(vertex.x - vertexNormal.x, vertex.y - vertexNormal.y, vertex.z - vertexNormal.z);
 
-                pMesh->mNormals[3 * (i + trianglesCount) + j] = aiVector3D(
-                    -mTriangles[triangleIndices[i]].getNormal().x, -mTriangles[triangleIndices[i]].getNormal().y,
-                    -mTriangles[triangleIndices[i]].getNormal().z);
+                pMesh->mNormals[3 * (i + trianglesCount) + j] =
+                    aiVector3D(-mGeometry->getTriangle(triangleIndices[i]).getNormal().x,
+                               -mGeometry->getTriangle(triangleIndices[i]).getNormal().y,
+                               -mGeometry->getTriangle(triangleIndices[i]).getNormal().z);
 
                 face.mIndices[jRevert] = (unsigned int)(3 * (i + trianglesCount) + j);
             }
@@ -458,8 +493,8 @@ class ModelExporter {
             face2.mIndices = new unsigned int[3];
             face2.mNumIndices = 3;
 
-            glm::vec3 vertex1 = mTriangles[borderEdges[i].tri].getVertex(borderEdges[i].id1);
-            glm::vec3 vertex2 = mTriangles[borderEdges[i].tri].getVertex(borderEdges[i].id2);
+            glm::vec3 vertex1 = mGeometry->getTriangle(borderEdges[i].tri).getVertex(borderEdges[i].id1);
+            glm::vec3 vertex2 = mGeometry->getTriangle(borderEdges[i].tri).getVertex(borderEdges[i].id2);
 
             glm::vec3 vertexNormal1 = extrusionCoef * vertexNormalLookup[{vertex1.x, vertex1.y, vertex1.z}];
             glm::vec3 vertexNormal2 = extrusionCoef * vertexNormalLookup[{vertex2.x, vertex2.y, vertex2.z}];
@@ -493,14 +528,25 @@ class ModelExporter {
         return scene;
     }
 
-    std::unique_ptr<aiScene> createNewPolyScene(std::vector<unsigned int> &triangleIndices,
-                                                std::map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
-                                                std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
-                                                std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF,
-                                                float modelDiameter) {
+    std::unique_ptr<aiScene> createNewPolyScene(
+        std::vector<DetailedTriangleId> &triangleIndices,
+        std::unordered_map<PolyhedronData::vertex_descriptor, glm::vec3> &vertexNormals,
+        std::set<PolyhedronData::halfedge_descriptor> &borderEdges,
+        std::map<PolyhedronData::vertex_descriptor, float> &vertexSDF, float userCoef) {
         size_t borderTriangleCount = 2 * borderEdges.size();
 
-        float extrusionCoef = modelDiameter / 4.0f;
+        float extrusionCoef = glm::length(mGeometry->getBoundingBoxMax() - mGeometry->getBoundingBoxMin()) * userCoef;
+
+        bool withSDF = !vertexSDF.empty();
+
+        float maxSdfValue = 0.0f;
+        if(withSDF) {
+            for(auto &v : vertexSDF) {
+                if(v.second > maxSdfValue) {
+                    maxSdfValue = v.second;
+                }
+            }
+        }
 
         std::unique_ptr<aiScene> scene = std::make_unique<aiScene>();
         scene->mRootNode = new aiNode();
@@ -540,51 +586,54 @@ class ModelExporter {
             face.mNumIndices = 3;
 
             for(unsigned int j = 0; j < face.mNumIndices; j++) {
-                pMesh->mVertices[3 * i + j] = aiVector3D(mTriangles[triangleIndices[i]].getVertex(j).x,
-                                                         mTriangles[triangleIndices[i]].getVertex(j).y,
-                                                         mTriangles[triangleIndices[i]].getVertex(j).z);
+                pMesh->mVertices[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getVertex(j).x,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).y,
+                                                         mGeometry->getTriangle(triangleIndices[i]).getVertex(j).z);
 
-                pMesh->mNormals[3 * i + j] = aiVector3D(mTriangles[triangleIndices[i]].getNormal().x,
-                                                        mTriangles[triangleIndices[i]].getNormal().y,
-                                                        mTriangles[triangleIndices[i]].getNormal().z);
+                pMesh->mNormals[3 * i + j] = aiVector3D(mGeometry->getTriangle(triangleIndices[i]).getNormal().x,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().y,
+                                                        mGeometry->getTriangle(triangleIndices[i]).getNormal().z);
 
                 face.mIndices[j] = 3 * i + j;
             }
         }
+
+        auto &detailedFaceDescs = mGeometry->getMeshDetailedFaceDescs();
 
         for(unsigned int i = 0; i < trianglesCount; i++) {
             aiFace &face = pMesh->mFaces[i + trianglesCount];
             face.mIndices = new unsigned int[3];
             face.mNumIndices = 3;
 
-            const PolyhedronData::face_descriptor polyFace = mPolyhedronData.mFaceDescs[triangleIndices[i]];
+            const PolyhedronData::face_descriptor polyFace = detailedFaceDescs[triangleIndices[i]];
 
-            const auto halfedge = mPolyhedronData.mMesh.halfedge(polyFace);
+            const auto halfedge = mGeometry->getMeshDetailed()->halfedge(polyFace);
             auto itHalfedge = halfedge;
 
             for(unsigned int j = 0; j < face.mNumIndices; j++) {
                 unsigned int jRevert = 2 - j;
 
-                auto &polyVertex = mPolyhedronData.mMesh.target(itHalfedge);
+                auto &polyVertex = mGeometry->getMeshDetailed()->target(itHalfedge);
 
-                auto &p = mPolyhedronData.mMesh.point(polyVertex);
+                auto &p = mGeometry->getMeshDetailed()->point(polyVertex);
                 glm::vec3 vertex(p.x(), p.y(), p.z());
                 glm::vec3 vertexNormal = extrusionCoef * vertexNormals[polyVertex];
 
-                if(!vertexSDF.empty()) {
-                    vertexNormal *= vertexSDF[polyVertex];
+                if(withSDF) {
+                    vertexNormal *= vertexSDF[polyVertex] / maxSdfValue;
                 }
 
                 pMesh->mVertices[3 * (i + trianglesCount) + j] =
                     aiVector3D(vertex.x - vertexNormal.x, vertex.y - vertexNormal.y, vertex.z - vertexNormal.z);
 
-                pMesh->mNormals[3 * (i + trianglesCount) + j] = aiVector3D(
-                    -mTriangles[triangleIndices[i]].getNormal().x, -mTriangles[triangleIndices[i]].getNormal().y,
-                    -mTriangles[triangleIndices[i]].getNormal().z);
+                pMesh->mNormals[3 * (i + trianglesCount) + j] =
+                    aiVector3D(-mGeometry->getTriangle(triangleIndices[i]).getNormal().x,
+                               -mGeometry->getTriangle(triangleIndices[i]).getNormal().y,
+                               -mGeometry->getTriangle(triangleIndices[i]).getNormal().z);
 
                 face.mIndices[jRevert] = (unsigned int)(3 * (i + trianglesCount) + j);
 
-                itHalfedge = mPolyhedronData.mMesh.next(itHalfedge);
+                itHalfedge = mGeometry->getMeshDetailed()->next(itHalfedge);
             }
             assert(halfedge == itHalfedge);
         }
@@ -599,11 +648,11 @@ class ModelExporter {
             face2.mIndices = new unsigned int[3];
             face2.mNumIndices = 3;
 
-            auto &polyVertex1 = mPolyhedronData.mMesh.source(edge);
-            auto &polyVertex2 = mPolyhedronData.mMesh.target(edge);
+            auto &polyVertex1 = mGeometry->getMeshDetailed()->source(edge);
+            auto &polyVertex2 = mGeometry->getMeshDetailed()->target(edge);
 
-            auto &p1 = mPolyhedronData.mMesh.point(polyVertex1);
-            auto &p2 = mPolyhedronData.mMesh.point(polyVertex2);
+            auto &p1 = mGeometry->getMeshDetailed()->point(polyVertex1);
+            auto &p2 = mGeometry->getMeshDetailed()->point(polyVertex2);
 
             glm::vec3 vertex1(p1.x(), p1.y(), p1.z());
             glm::vec3 vertex2(p2.x(), p2.y(), p2.z());
