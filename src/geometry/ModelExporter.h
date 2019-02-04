@@ -211,7 +211,7 @@ class ModelExporter {
         std::map<colorIndex, std::vector<DetailedTriangleId>> colorsWithIndices;
 
         std::unordered_map<PolyhedronData::vertex_descriptor, glm::vec3> summedVertexNormals;
-        std::map<PolyhedronData::vertex_descriptor, float> vertexSDF;  // should be min or average?
+        std::map<PolyhedronData::vertex_descriptor, float> vertexSDF;
 
         std::map<colorIndex, std::set<PolyhedronData::halfedge_descriptor>> borderEdges;
 
@@ -659,8 +659,8 @@ class ModelExporter {
             glm::vec3 vertexNormal2 = extrusionCoef * vertexNormals[polyVertex2];
 
             if(!vertexSDF.empty()) {
-                vertexNormal1 *= vertexSDF[polyVertex1];
-                vertexNormal2 *= vertexSDF[polyVertex2];
+                vertexNormal1 *= vertexSDF[polyVertex1] / maxSdfValue;
+                vertexNormal2 *= vertexSDF[polyVertex2] / maxSdfValue;
             }
 
             pMesh->mVertices[3 * 2 * (trianglesCount + i) + 0] = aiVector3D(vertex1.x, vertex1.y, vertex1.z);
