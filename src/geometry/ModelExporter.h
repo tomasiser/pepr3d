@@ -267,14 +267,12 @@ class ModelExporter {
             float ep = glm::epsilon<float>();
 
             bool isEpsSameNormal = false;
-            size_t usedNormalsCount = 0;
             for(size_t i = 0; i < vertexNormals.size(); i++) {
                 for(size_t j = 0; j < i; j++) {
                     isEpsSameNormal |= glm::all(glm::epsilonEqual(vertexNormals[i], vertexNormals[j], ep));
                 }
                 if(!isEpsSameNormal) {
                     summedVertexNormals[vd] += vertexNormals[i];
-                    usedNormalsCount++;
                 }
                 isEpsSameNormal = false;
             }
@@ -282,7 +280,7 @@ class ModelExporter {
             summedVertexNormals[vd] = glm::normalize(summedVertexNormals[vd]);
 
             if(withSDF) {
-                vertexSDF[vd] = vertexSDF[vd] / usedNormalsCount;  // average
+                vertexSDF[vd] = vertexSDF[vd] / degree;  // average
             }
         }
 
