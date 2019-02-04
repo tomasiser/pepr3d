@@ -155,12 +155,6 @@ class ModelExporter {
             }
         }
 
-        if(colorsWithIndices.size() == 1) {
-            scenes[colorsWithIndices.begin()->first] =
-                std::move(createNewNonPolySurfaceScene(colorsWithIndices.begin()->second));
-            return scenes;
-        }
-
         normalizeSummedNormals(summedVertexNormals);
 
         computeBoundaryEdges(edgeLookup);
@@ -218,12 +212,6 @@ class ModelExporter {
         for(PolyhedronData::face_descriptor fd : mGeometry->getMeshDetailed()->faces()) {
             colorIndex color = mGeometry->getTriangle(mGeometry->getMeshDetailedIdMap()[fd]).getColor();
             colorsWithIndices[color].emplace_back(mGeometry->getMeshDetailedIdMap()[fd]);
-        }
-
-        if(colorsWithIndices.size() == 1) {
-            scenes[colorsWithIndices.begin()->first] =
-                std::move(createNewPolySurfaceScene(colorsWithIndices.begin()->second));
-            return scenes;
         }
 
         for(PolyhedronData::vertex_descriptor vd : mGeometry->getMeshDetailed()->vertices()) {
