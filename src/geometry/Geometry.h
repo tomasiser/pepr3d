@@ -294,6 +294,11 @@ class Geometry {
         return *mProgress;
     }
 
+    GeometryProgress& getProgress() {
+        assert(mProgress != nullptr);
+        return *mProgress;
+    }
+
     PolyhedronData::Mesh* getMeshDetailed() const {
         return mMeshDetailed.get();
     }

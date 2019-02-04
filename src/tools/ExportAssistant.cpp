@@ -10,90 +10,124 @@ namespace pepr3d {
 
 void ExportAssistant::drawToSidePane(SidePane& sidePane) {
     auto& modelView = mApplication.getModelView();
+    auto* geometry = mApplication.getCurrentGeometry();
+    assert(geometry != nullptr);
 
-    if(sidePane.drawColoredButton("Update preview!", ci::ColorA::hex(0xEB5757), 3.0f)) {
-        resetOverride();
-
-        auto* geometry = mApplication.getCurrentGeometry();
-        assert(geometry != nullptr);
-        auto exporter = geometry->exportGeometry(ModelExporter::ExportTypes::PolyWithSDF);
-        mScenes = exporter.createScenes(ModelExporter::ExportTypes::PolyWithSDF);
-
-        setOverride();
+    sidePane.drawText("Export Type:");
+    if(ImGui::RadioButton("Surfaces only", isSurfaceExport())) {
+        mExportType = ExportType::Surface;
+        validateExportType();
+    }
+    if(ImGui::RadioButton("Depth extrusion", !isSurfaceExport())) {
+        if(geometry->polyhedronValid() && geometry->isSdfComputed()) {
+            mExportType = ExportType::PolyExtrusionWithSDF;
+        } else {
+            mExportType = ExportType::PolyExtrusion;
+        }
+        validateExportType();
     }
 
     sidePane.drawSeparator();
 
-    float minHeightPercent = mPreviewMinMaxHeight.x * 100.0f;
-    float maxHeightPercent = mPreviewMinMaxHeight.y * 100.0f;
-    sidePane.drawText("Preview Height");
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-    if(ImGui::DragFloatRange2("##range", &minHeightPercent, &maxHeightPercent, 0.25f, 0.0f, 100.0f, "Lowest: %.1f %%",
-                              "Highest: %.1f %%")) {
-        minHeightPercent = std::min(minHeightPercent, 99.9f);
-        maxHeightPercent = std::max(0.1f, maxHeightPercent);
-        mPreviewMinMaxHeight.x = minHeightPercent / 100.0f;
-        mPreviewMinMaxHeight.y = maxHeightPercent / 100.0f;
-        modelView.setPreviewMinMaxHeight(mPreviewMinMaxHeight);
-    }
-    ImGui::PopItemWidth();
+    if(!isSurfaceExport()) {
+        if(sidePane.drawColoredButton("Update extrusion preview!", ci::ColorA::hex(0xEB5757), 3.0f)) {
+            resetOverride();
 
-    sidePane.drawSeparator();
-    // sidePane.drawText("Per-color Settings");
+            if(!geometry->isSdfComputed()) {
+                geometry->computeSdfValues();
+            }
+
+            if(geometry->polyhedronValid()) {
+                geometry->updateTemporaryDetailedData();
+            }
+
+            std::vector<float> extrusionCoefs;
+            for(auto& colorSetting : mSettingsPerColor) {
+                extrusionCoefs.push_back(colorSetting.depth / 100.0f);  // from [0, 100]% to [0, 1]
+            }
+
+            ModelExporter exporter(geometry, &geometry->getProgress());
+            exporter.setExtrusionCoef(extrusionCoefs);
+            mScenes = exporter.createScenes(mExportType);
+
+            setOverride();
+        }
+
+        sidePane.drawSeparator();
+
+        float minHeightPercent = mPreviewMinMaxHeight.x * 100.0f;
+        float maxHeightPercent = mPreviewMinMaxHeight.y * 100.0f;
+        sidePane.drawText("Preview Height");
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+        if(ImGui::DragFloatRange2("##range", &minHeightPercent, &maxHeightPercent, 0.25f, 0.0f, 100.0f,
+                                  "Min: %.1f %%", "Max: %.1f %%")) {
+            minHeightPercent = std::min(minHeightPercent, 99.9f);
+            maxHeightPercent = std::max(0.1f, maxHeightPercent);
+            mPreviewMinMaxHeight.x = minHeightPercent / 100.0f;
+            mPreviewMinMaxHeight.y = maxHeightPercent / 100.0f;
+            modelView.setPreviewMinMaxHeight(mPreviewMinMaxHeight);
+        }
+        ImGui::PopItemWidth();
+
+        sidePane.drawSeparator();
+        // sidePane.drawText("Per-color Settings");
+
+        {
+            auto* geometry = mApplication.getCurrentGeometry();
+            assert(geometry != nullptr);
+            const auto& colorManager = geometry->getColorManager();
+
+            ImGui::Columns(3, "##percolorsettings");
+            const float boxSize = ImGui::CalcTextSize("").y + 2.0f * ImGui::GetStyle().FramePadding.y;
+            if(mIsFirstFrame) {
+                ImGui::SetColumnWidth(0, 2.0f * boxSize);
+            }
+            ImGui::Separator();
+            ImGui::Text("Color");
+            ImGui::NextColumn();
+            ImGui::Text("Preview");
+            ImGui::NextColumn();
+            ImGui::Text("Depth");
+            ImGui::NextColumn();
+            ImGui::Separator();
+            ImDrawList* const drawList = ImGui::GetWindowDrawList();
+            for(size_t i = 0; i < colorManager.size(); ++i) {
+                ImGui::PushID(static_cast<int>(i));
+                glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
+                glm::vec4 color = colorManager.getColor(i);
+                const glm::vec4 boxColor(color.r, color.g, color.b, 1.0);
+                drawList->AddRectFilled(cursorPos + glm::ivec2(0, 0), cursorPos + glm::ivec2(boxSize, boxSize),
+                                        (ImColor)boxColor);
+                ImGui::NextColumn();
+                if(ImGui::Checkbox("##show", &mSettingsPerColor[i].isShown)) {
+                    resetOverride();
+                    setOverride();
+                }
+                ImGui::NextColumn();
+                ImGui::DragFloat("##depth", &mSettingsPerColor[i].depth, 0.25f, 0.0f, 100.0f, "%.2f %%");
+                ImGui::NextColumn();
+                ImGui::PopID();
+            }
+            ImGui::Columns(1);
+            ImGui::Separator();
+
+            if(geometry->polyhedronValid()) {
+                sidePane.drawText("Depth values are:");
+                if(ImGui::RadioButton("absolute", mExportType == ExportType::PolyExtrusion)) {
+                    mExportType = ExportType::PolyExtrusion;
+                }
+                ImGui::SameLine();
+                if(ImGui::RadioButton("relative to SDF", mExportType == ExportType::PolyExtrusionWithSDF)) {
+                    mExportType = ExportType::PolyExtrusionWithSDF;
+                }
+            }
+        }
+
+        sidePane.drawSeparator();
+    }
 
     {
-        auto* geometry = mApplication.getCurrentGeometry();
-        assert(geometry != nullptr);
-        const auto& colorManager = geometry->getColorManager();
-
-        ImGui::Columns(3, "##percolorsettings");
-        const float boxSize = ImGui::CalcTextSize("").y + 2.0f * ImGui::GetStyle().FramePadding.y;
-        if(mIsFirstFrame) {
-            ImGui::SetColumnWidth(0, 2.0f * boxSize);
-        }
-        ImGui::Separator();
-        ImGui::Text("Color");
-        ImGui::NextColumn();
-        ImGui::Text("Preview");
-        ImGui::NextColumn();
-        ImGui::Text("Depth");
-        ImGui::NextColumn();
-        ImGui::Separator();
-        ImDrawList* const drawList = ImGui::GetWindowDrawList();
-        for(size_t i = 0; i < colorManager.size(); ++i) {
-            ImGui::PushID(static_cast<int>(i));
-            glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
-            glm::vec4 color = colorManager.getColor(i);
-            const glm::vec4 boxColor(color.r, color.g, color.b, 1.0);
-            drawList->AddRectFilled(cursorPos + glm::ivec2(0, 0), cursorPos + glm::ivec2(boxSize, boxSize),
-                                    (ImColor)boxColor);
-            ImGui::NextColumn();
-            if(ImGui::Checkbox("##show", &mSettingsPerColor[i].isShown)) {
-                resetOverride();
-                setOverride();
-            }
-            ImGui::NextColumn();
-            if(ImGui::Checkbox("##extrude", &mSettingsPerColor[i].isShown)) {
-            }
-            ImGui::SameLine();
-            float depth = 0.0f;
-            ImGui::DragFloat("##depth", &depth, 0.25f, 0.0f, std::numeric_limits<float>::max(), "%.1f %%");
-            ImGui::NextColumn();
-            ImGui::PopID();
-        }
-        ImGui::Columns(1);
-        ImGui::Separator();
-        sidePane.drawText("Depth values are:");
-        ImGui::RadioButton("absolute", false);
-        ImGui::SameLine();
-        ImGui::RadioButton("relative to SDF", true);
-    }
-
-    sidePane.drawSeparator();
-    sidePane.drawText("Export to Files");
-
-    {
-        sidePane.drawText("File type:");
+        sidePane.drawText("Export As:");
         bool yes = true;
         bool no = false;
         ImGui::RadioButton(".stl", yes);
@@ -104,7 +138,7 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
 
         ImGui::Checkbox("Create a new folder", &no);
 
-        sidePane.drawButton("Export");
+        sidePane.drawButton("Export files");
     }
 
     mIsFirstFrame = false;
@@ -175,6 +209,27 @@ void ExportAssistant::updateSettings() {
 
     if(mSettingsPerColor.size() != geometry->getColorManager().size()) {
         mSettingsPerColor.resize(geometry->getColorManager().size());
+    }
+
+    validateExportType();
+}
+
+void ExportAssistant::validateExportType() {
+    auto* geometry = mApplication.getCurrentGeometry();
+    assert(geometry != nullptr);
+
+    if(geometry->polyhedronValid()) {
+        if(mExportType == ExportType::NonPolySurface) {
+            mExportType = ExportType::Surface;
+        } else if(mExportType == ExportType::NonPolyExtrusion) {
+            mExportType = ExportType::PolyExtrusion;
+        }
+    } else {
+        if(mExportType == ExportType::Surface) {
+            mExportType = ExportType::NonPolySurface;
+        } else if(mExportType == ExportType::PolyExtrusion || mExportType == ExportType::PolyExtrusionWithSDF) {
+            mExportType = ExportType::NonPolyExtrusion;
+        }
     }
 }
 

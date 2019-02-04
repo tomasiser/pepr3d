@@ -55,6 +55,7 @@ class ExportAssistant : public Tool {
 
     struct SettingsPerColor {
         bool isShown = true;
+        float depth = 2.5f;
     };
 
     /// Settings per color, indexed by the color index
@@ -63,5 +64,12 @@ class ExportAssistant : public Tool {
     void resetOverride();
     void setOverride();
     void updateSettings();
+    void validateExportType();
+
+    ExportType mExportType = ExportType::PolyExtrusion;
+
+    bool isSurfaceExport() {
+        return mExportType == ExportType::Surface || mExportType == ExportType::NonPolySurface;
+    }
 };
 }  // namespace pepr3d

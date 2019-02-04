@@ -36,11 +36,11 @@ class ModelExporter {
 
     std::map<colorIndex, std::unique_ptr<aiScene>> createScenes(ExportType exportType) {
         switch(exportType) {
-        case Surface: return createPolySurfaceScenes(); break;
-        case NonPolySurface: return createNonPolySurfaceScenes(); break;
-        case NonPolyExtrusion: return createNonPolyScenes(); break;
-        case PolyExtrusion: return createPolyScenes(false); break;
-        case PolyExtrusionWithSDF: return createPolyScenes(true); break;
+        case ExportType::Surface: return createPolySurfaceScenes(); break;
+        case ExportType::NonPolySurface: return createNonPolySurfaceScenes(); break;
+        case ExportType::NonPolyExtrusion: return createNonPolyScenes(); break;
+        case ExportType::PolyExtrusion: return createPolyScenes(false); break;
+        case ExportType::PolyExtrusionWithSDF: return createPolyScenes(true); break;
         default: assert(false); return createNonPolySurfaceScenes();
         }
     }
