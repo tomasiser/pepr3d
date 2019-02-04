@@ -51,8 +51,8 @@ class Segmentation : public Tool {
    private:
     MainApplication& mApplication;
 
-    int mNumberOfClusters = 5;
-    float mSmoothingLambda = 0.3f;
+    float mNumberOfClusters = 20.0f;  // [0, 100]%, real range {2, .., 15}
+    float mSmoothingLambda = 30.0f;   // [0, 100]%, real range [0.01, 1]
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
     bool mGeometryCorrect = true;

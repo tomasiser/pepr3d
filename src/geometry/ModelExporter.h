@@ -50,6 +50,7 @@ class ModelExporter {
         Assimp::Exporter exporter;
 
         if(mProgress != nullptr) {
+            mProgress->resetSave();
             mProgress->createScenePercentage = 0.0f;
         }
 
@@ -60,11 +61,16 @@ class ModelExporter {
             mProgress->exportFilePercentage = 0.0f;
         }
 
+        std::string assimpFileType = fileType;
+        if(fileType == "stl" || fileType == "ply") {
+            assimpFileType += "b";  // binary
+        }
+
         int sceneCounter = 0;
         for(auto &scene : scenes) {
             std::stringstream ss;
             ss << filePath << "/" << fileName << "_" << sceneCounter << "." << fileType;
-            exporter.Export(scene.second.get(), std::string(fileType) + std::string("b"), ss.str());
+            exporter.Export(scene.second.get(), assimpFileType, ss.str());
             sceneCounter++;
         }
 

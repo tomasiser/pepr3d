@@ -41,8 +41,10 @@ using namespace ci::app;
 using namespace std;
 
 namespace pepr3d {
-// At least 2 threads in thread pool must be created, or importing will never finish!
-// std::thread::hardware_concurrency() may return 0
+// At least 2 threads in thread pool must be created!
+// There are several occasions in which we enqueue a new task from inside a thread pool.
+// If there was only 1 thread in the pool, the tasks would never finish causing a deadlock.
+// Note: std::thread::hardware_concurrency() may return 0
 ::ThreadPool MainApplication::sThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1);
 
 MainApplication::MainApplication() : mFontStorage{}, mToolbar(*this), mSidePane(*this), mModelView(*this) {}

@@ -1,9 +1,11 @@
 #pragma once
 #include <map>
+#include <memory>
 #include <optional>
 #include <unordered_map>
 #include "commands/CommandManager.h"
 #include "geometry/Geometry.h"
+#include "geometry/ModelExporter.h"
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
 #include "ui/ModelView.h"
@@ -43,7 +45,7 @@ class ExportAssistant : public Tool {
     // virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onToolSelect(ModelView& modelView) override;
     virtual void onToolDeselect(ModelView& modelView) override;
-    // virtual void onNewGeometryLoaded(ModelView& modelView) override;
+    virtual void onNewGeometryLoaded(ModelView& modelView) override;
 
    private:
     MainApplication& mApplication;
@@ -65,11 +67,22 @@ class ExportAssistant : public Tool {
     void setOverride();
     void updateSettings();
     void validateExportType();
+    void exportFiles();
+    void updateExtrusionPreview();
+    void prepareExport();
+    void pushErrorDialog(const std::string& errorDetails);
 
     ExportType mExportType = ExportType::PolyExtrusion;
 
     bool isSurfaceExport() {
         return mExportType == ExportType::Surface || mExportType == ExportType::NonPolySurface;
     }
+
+    std::unique_ptr<ModelExporter> mExporter;
+
+    size_t mLastVersionPreviewed = std::numeric_limits<size_t>::max();
+    bool mIsPreviewUpToDate = false;
+    bool mShouldExportInNewFolder = false;
+    std::string mExportFileType = "stl";
 };
 }  // namespace pepr3d

@@ -105,7 +105,7 @@ void ModelView::resetCamera() {
 
 void ModelView::updateVboAndBatch() {
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
-    assert(!glData.isDirty);
+    assert(isVertexNormalIndexOverride() || !glData.isDirty);
 
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
@@ -201,7 +201,10 @@ void ModelView::drawGeometry() {
 
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
     if(glData.isDirty || !mBatch || isVertexNormalIndexOverride()) {
-        if(glData.isDirty) {
+        if(glData.isDirty && !isVertexNormalIndexOverride()) {
+            // attention! do not update geometry buffers if isVertexNormalIndexOverride() is true,
+            // because ExportAssistant could be modifying the geometry in a background thread
+            // and the operations are not thread-safe!
             mApplication.getCurrentGeometry()->updateOpenGlBuffers();
         }
         updateVboAndBatch();

@@ -30,27 +30,15 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
     sidePane.drawSeparator();
 
     if(!isSurfaceExport()) {
-        if(sidePane.drawColoredButton("Update extrusion preview!", ci::ColorA::hex(0xEB5757), 3.0f)) {
-            resetOverride();
-
-            if(!geometry->isSdfComputed()) {
-                geometry->computeSdfValues();
-            }
-
-            if(geometry->polyhedronValid()) {
-                geometry->updateTemporaryDetailedData();
-            }
-
-            std::vector<float> extrusionCoefs;
-            for(auto& colorSetting : mSettingsPerColor) {
-                extrusionCoefs.push_back(colorSetting.depth / 100.0f);  // from [0, 100]% to [0, 1]
-            }
-
-            ModelExporter exporter(geometry, &geometry->getProgress());
-            exporter.setExtrusionCoef(extrusionCoefs);
-            mScenes = exporter.createScenes(mExportType);
-
-            setOverride();
+        bool updateButtonClicked = false;
+        if(mIsPreviewUpToDate) {
+            updateButtonClicked = sidePane.drawButton("Update extrusion preview!");
+        } else {
+            updateButtonClicked =
+                sidePane.drawColoredButton("Update extrusion preview!", ci::ColorA::hex(0xEB5757), 3.0f);
+        }
+        if(updateButtonClicked) {
+            updateExtrusionPreview();
         }
 
         sidePane.drawSeparator();
@@ -59,8 +47,8 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
         float maxHeightPercent = mPreviewMinMaxHeight.y * 100.0f;
         sidePane.drawText("Preview Height");
         ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-        if(ImGui::DragFloatRange2("##range", &minHeightPercent, &maxHeightPercent, 0.25f, 0.0f, 100.0f,
-                                  "Min: %.1f %%", "Max: %.1f %%")) {
+        if(ImGui::DragFloatRange2("##range", &minHeightPercent, &maxHeightPercent, 0.25f, 0.0f, 100.0f, "Min: %.1f %%",
+                                  "Max: %.1f %%")) {
             minHeightPercent = std::min(minHeightPercent, 99.9f);
             maxHeightPercent = std::max(0.1f, maxHeightPercent);
             mPreviewMinMaxHeight.x = minHeightPercent / 100.0f;
@@ -104,14 +92,17 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
                     setOverride();
                 }
                 ImGui::NextColumn();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
                 ImGui::DragFloat("##depth", &mSettingsPerColor[i].depth, 0.25f, 0.0f, 100.0f, "%.2f %%");
+                ImGui::PopItemWidth();
                 ImGui::NextColumn();
                 ImGui::PopID();
             }
             ImGui::Columns(1);
             ImGui::Separator();
 
-            if(geometry->polyhedronValid()) {
+            if(geometry->polyhedronValid() &&
+               (geometry->sdfValuesValid() == nullptr || *(geometry->sdfValuesValid()))) {
                 sidePane.drawText("Depth values are:");
                 if(ImGui::RadioButton("absolute", mExportType == ExportType::PolyExtrusion)) {
                     mExportType = ExportType::PolyExtrusion;
@@ -130,28 +121,53 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
         sidePane.drawText("Export As:");
         bool yes = true;
         bool no = false;
-        ImGui::RadioButton(".stl", yes);
+        if(ImGui::RadioButton(".stl", mExportFileType == "stl")) {
+            mExportFileType = "stl";
+        }
         ImGui::SameLine();
-        ImGui::RadioButton(".ply", no);
+        if(ImGui::RadioButton(".ply", mExportFileType == "ply")) {
+            mExportFileType = "ply";
+        }
         ImGui::SameLine();
-        ImGui::RadioButton(".obj", no);
+        if(ImGui::RadioButton(".obj", mExportFileType == "obj")) {
+            mExportFileType = "obj";
+        }
 
-        ImGui::Checkbox("Create a new folder", &no);
+        ImGui::Checkbox("Create a new folder", &mShouldExportInNewFolder);
 
-        sidePane.drawButton("Export files");
+        if(sidePane.drawButton("Export files")) {
+            exportFiles();
+        }
     }
 
     mIsFirstFrame = false;
 }
 
 void ExportAssistant::onToolSelect(ModelView& modelView) {
+    if(mExporter == nullptr) {
+        onNewGeometryLoaded(modelView);
+    }
     modelView.setPreviewMinMaxHeight(mPreviewMinMaxHeight);
     updateSettings();
     setOverride();
+
+    auto* commandManager = mApplication.getCommandManager();
+    assert(commandManager != nullptr);
+    if(mLastVersionPreviewed != commandManager->getVersionNumber()) {
+        mIsPreviewUpToDate = false;
+    }
 }
 
 void ExportAssistant::onToolDeselect(ModelView& modelView) {
     resetOverride();
+}
+
+void ExportAssistant::onNewGeometryLoaded(ModelView& modelView) {
+    auto* geometry = mApplication.getCurrentGeometry();
+    assert(geometry != nullptr);
+    mExporter = std::make_unique<ModelExporter>(geometry, &geometry->getProgress());
+    mScenes.clear();
+    mIsPreviewUpToDate = false;
 }
 
 void ExportAssistant::resetOverride() {
@@ -223,6 +239,9 @@ void ExportAssistant::validateExportType() {
             mExportType = ExportType::Surface;
         } else if(mExportType == ExportType::NonPolyExtrusion) {
             mExportType = ExportType::PolyExtrusion;
+        } else if(mExportType == ExportType::PolyExtrusionWithSDF && geometry->sdfValuesValid() != nullptr &&
+                  !*(geometry->sdfValuesValid())) {
+            mExportType = ExportType::PolyExtrusion;
         }
     } else {
         if(mExportType == ExportType::Surface) {
@@ -231,6 +250,107 @@ void ExportAssistant::validateExportType() {
             mExportType = ExportType::NonPolyExtrusion;
         }
     }
+}
+
+void ExportAssistant::exportFiles() {
+    mApplication.dispatchAsync([this]() {
+        cinder::fs::path initialPath(mApplication.getGeometryFileName());
+        std::string name = initialPath.filename().replace_extension().string();
+        initialPath.remove_filename();
+        if(initialPath.empty()) {
+            initialPath = ci::getDocumentsDirectory();
+            name = "untitled";
+        } else {
+            name += "_exported";
+        }
+
+        std::string fileType;
+        std::vector<std::string> extensions;
+        extensions.emplace_back(mExportFileType);
+        name += "." + mExportFileType;
+        fileType = mExportFileType;
+
+        auto path = mApplication.getSaveFilePath(initialPath.append(name), extensions);
+
+        if(!path.empty()) {
+            std::string fileName = path.filename().string().substr(0, path.filename().string().find_last_of("."));
+            std::string filePath = path.parent_path().string();
+            if(mShouldExportInNewFolder) {
+                filePath += std::string("/") + std::string(fileName);
+            }
+
+            if(!cinder::fs::is_directory(filePath) || !cinder::fs::exists(filePath)) {  // check if folder exists
+                cinder::fs::create_directory(filePath);
+            }
+
+            mApplication.enqueueSlowOperation(
+                [filePath, fileName, fileType, this]() {
+                    try {
+                        prepareExport();
+                        mExporter->saveModel(filePath, fileName, fileType, mExportType);
+                    } catch(std::exception& e) {
+                        pushErrorDialog(e.what());
+                        updateSettings();
+                    }
+                },
+                [this]() {}, true);
+        }
+    });
+}
+
+void ExportAssistant::updateExtrusionPreview() {
+    mApplication.enqueueSlowOperation(
+        [this]() {
+            try {
+                prepareExport();
+                mScenes = mExporter->createScenes(mExportType);
+            } catch(std::exception& e) {
+                pushErrorDialog(e.what());
+                updateSettings();
+            }
+        },
+        [this]() {
+            auto* commandManager = mApplication.getCommandManager();
+            assert(commandManager != nullptr);
+            mLastVersionPreviewed = commandManager->getVersionNumber();
+            mIsPreviewUpToDate = true;
+            resetOverride();  // do not call this before enqueueSlowOperation(), otherwise ModelView would render the
+                              // geometry, but that is not thread-safe as we modify it during prepareExport()
+            setOverride();
+        },
+        true);
+}
+
+void ExportAssistant::prepareExport() {
+    auto* geometry = mApplication.getCurrentGeometry();
+    assert(geometry != nullptr);
+
+    if(!isSurfaceExport()) {
+        if(mExportType == ExportType::PolyExtrusionWithSDF && !geometry->isSdfComputed()) {
+            if(!safeComputeSdf(mApplication)) {
+                throw std::runtime_error("Could not compute SDF. Please export using absolute depth values.");
+            }
+        }
+
+        std::vector<float> extrusionCoefs;
+        for(auto& colorSetting : mSettingsPerColor) {
+            extrusionCoefs.push_back(colorSetting.depth / 100.0f);  // from [0, 100]% to [0, 1]
+        }
+
+        assert(mExporter != nullptr);
+        mExporter->setExtrusionCoef(extrusionCoefs);
+    }
+
+    if(geometry->polyhedronValid()) {
+        geometry->updateTemporaryDetailedData();
+    }
+}
+
+void ExportAssistant::pushErrorDialog(const std::string& errorDetails) {
+    const std::string errorCaption = "Error: Failed to export";
+    const std::string errorDescription =
+        "An error has occured while exporting the model or showing the export preview.\n\n";
+    mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + errorDetails));
 }
 
 }  // namespace pepr3d

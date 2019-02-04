@@ -189,6 +189,28 @@ class MainApplication : public cinder::app::App {
         return loadAsset(relativePath);
     }
 
+    // Schedules `operation` to be executed in a separate thread in a thread pool.
+    // If `showIndicator` is true, displays a progress indicator, which disables user interaction with the application.
+    // After the `operation` is finished, `postOperation` is executed in the main thread of the application.
+    // Finally, the progress indicator is hidden.
+    template <typename OperationFunc, typename PostOperationFunc>
+    void enqueueSlowOperation(OperationFunc operation, PostOperationFunc postOperation, bool showIndicator = true) {
+        if(showIndicator) {
+            mProgressIndicator.setGeometryInProgress(mGeometry);
+        }
+        sThreadPool.enqueue([operation, postOperation, this]() {
+            operation();
+            dispatchAsync([postOperation, this]() {
+                postOperation();
+                mProgressIndicator.setGeometryInProgress(nullptr);
+            });
+        });
+    }
+
+    std::string getGeometryFileName() const {
+        return mGeometryFileName;
+    }
+
    private:
     void setupLogging();
     void setupFonts();
