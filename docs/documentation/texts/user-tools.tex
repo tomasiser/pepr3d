@@ -1,0 +1,40 @@
+\chapter{Tools}
+
+This chapter covers all the tools the user has at his disposal. We explain each tool's purpose and all the parameters the user can set.
+
+\section{Triangle Painter}
+
+Triangle Painter is the simplest tool of Pepr3D. It allows the user to color a single triangle with a selected color. This can be performed either by a single click on the model's triangle or by dragging the mouse over several triangles with the left mouse button pressed down.
+
+The triangle that is currently hovered (has the mouse cursor over it) will be highlighted on the model's surface with a different border color.
+
+The only property the user is able to select in this tool is the current color from the color palette.
+
+Pressing the \textit{Undo} will undo the last stroke of the triangle painter. This means it will undo \textbf{the whole} stroke, if the user dragged the mouse over several triangles.
+
+\section{Bucket Painter}
+
+Bucket Painter is a simple tool that can be used to achieve sophisticated results easily. This tool works as one is used to from image editing software like GIMP \footnote{https://www.gimp.org/} or Adobe Photoshop \footnote{https://www.adobe.com/products/photoshop.html} -- it starts colouring every triangle it can reach, starting with the triangle the user clicked on.
+
+\subsection{Properties}
+
+The properties of this tool revolve around the spread of the bucket. This is something we call \textit{stopping criteria}. We now list all properties of the tool and explain each one in detail.
+
+\begin{itemize}
+\item \textbf{Color Palette} -- This widget allows the user to select the current active color. The selected color will be spread by the bucket. Customizing the palette can be performed in the \textit{Settings} panel.
+
+\item \textbf{Paint while dragging} -- \textit{On / Off} -- This checkbox specifies whether the bucket painter will only function by clicking on single triangles (\textit{Off}) or will bucket spread continuously if the user drags the mouse in a stroke (\textit{On}). We recommend leaving this \textit{On} unless it disrupts you or the model you are working on is very big.
+
+\item \textbf{Color whole model} -- \textit{On / Off} -- We have mentioned \textit{stopping criteria} in the beginning. This is the  first choice the user can make that affects the stop of the bucket spread. If the user selects this option, the Bucket Painter will simply color the whole region of the model. If the model is a single mesh, it will color the whole model. Turning this \textit{On} will hide the other options. Turning this \textit{Off} allows the user to specify the \textit{stopping criteria}.
+
+\item \textbf{Stop on different color} -- \textit{On / Off} -- The simplest \textit{stopping criterion}. The spread will only re-paint triangles which have the same color as the triangle the user clicked on. Additionally, the spread will stop if a new color is met. If this is the only criterion that is enabled, the Bucket Painter will work exactly as we are used to from image editors. This is the default setting of the tool.
+
+\item \textbf{Stop on sharp edges} -- \textit{On / Off} -- A second \textit{stopping criterion} which can be enabled or disabled. Enabling it expands the user interface to allow the user to modify the criterion. This criterion will not care about the color the user clicked on, and only stops from spreading to the neighbouring triangle, if the neighbouring triangle is at a greater angle than specified. The exact behaviour is specified by the following properties.
+
+\item \textbf{Maximum angle} -- \textit{$0\degree$ -- $180\degree$} -- Specifies the angle which the two neighbouring triangles have to be angled at for the bucket painter to stop spreading. If the angle between the two triangles is greater than this value, the spread will not color the triangle and will stop.
+
+\item \textbf{Angles to compare} -- \textit{With starting triangle / Neighbouring triangles} -- the last choice in the sharp edges \textit{stopping criterion}. If the user selects \textit{With starting triangle}, the angle will be measured between the triangle the user clicked on and the triangle currently being coloured. For example, if this option is chosen, the angle is set to $95\degree$ and a single face of the cube is clicked, all faces of the cube except the opposite one are coloured. This is because the opposite face is at an $180\degree$ angle. If the user selects \textit{Neighbouring triangles} and uses the $95\degree$ setting again, the whole cube will get coloured, because there are no faces on the cube that are at an angle greater than $95\degree$.
+
+\end{itemize}
+
+Both of the \textit{stopping criteria} can be selected together. The spread stops when one of the criteria is not fulfilled -- both of the criteria must be fulfilled for the spread to continue.
