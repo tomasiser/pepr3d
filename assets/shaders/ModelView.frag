@@ -80,7 +80,7 @@ void main() {
 
     const vec3 L = vec3(0, 0, 1);
     vec3 N = normalize(Normal);
-    float lambert = abs(dot(N, L));//max(0.0, dot(N, L));
+    float lambert = abs(dot(N, L)); // shade back faces as well
     float ambient = 0.2;
     float lightIntensity = lambert + ambient;
 

@@ -10,7 +10,7 @@ namespace pepr3d {
 
 void ExportAssistant::drawToSidePane(SidePane& sidePane) {
     auto& modelView = mApplication.getModelView();
-    auto* geometry = mApplication.getCurrentGeometry();
+    auto* const geometry = mApplication.getCurrentGeometry();
     assert(geometry != nullptr);
 
     sidePane.drawText("Export Type:");
@@ -74,7 +74,7 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
         sidePane.drawSeparator();
 
         {
-            auto* geometry = mApplication.getCurrentGeometry();
+            auto* const geometry = mApplication.getCurrentGeometry();
             assert(geometry != nullptr);
             const auto& colorManager = geometry->getColorManager();
 
@@ -94,11 +94,11 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
             ImDrawList* const drawList = ImGui::GetWindowDrawList();
             for(size_t i = 0; i < colorManager.size(); ++i) {
                 ImGui::PushID(static_cast<int>(i));
-                glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
+                const glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
                 ImGui::InvisibleButton("color",
                                        glm::vec2(boxSize, boxSize));  // we need the invisible button for the tooltip
                 sidePane.drawTooltipOnHover("Color " + std::to_string(i + 1));
-                glm::vec4 color = colorManager.getColor(i);
+                const glm::vec4 color = colorManager.getColor(i);
                 const glm::vec4 boxColor(color.r, color.g, color.b, 1.0);
                 drawList->AddRectFilled(cursorPos + glm::ivec2(0, 0), cursorPos + glm::ivec2(boxSize, boxSize),
                                         (ImColor)boxColor);
@@ -155,8 +155,6 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
 
     {
         sidePane.drawText("Export As:");
-        bool yes = true;
-        bool no = false;
         if(ImGui::RadioButton(".stl", mExportFileType == "stl")) {
             mExportFileType = "stl";
         }
@@ -206,7 +204,7 @@ void ExportAssistant::onToolSelect(ModelView& modelView) {
     updateSettings();
     setOverride();
 
-    auto* commandManager = mApplication.getCommandManager();
+    auto* const commandManager = mApplication.getCommandManager();
     assert(commandManager != nullptr);
     if(mLastVersionPreviewed != commandManager->getVersionNumber()) {
         mIsPreviewUpToDate = false;
@@ -218,7 +216,7 @@ void ExportAssistant::onToolDeselect(ModelView& modelView) {
 }
 
 void ExportAssistant::onNewGeometryLoaded(ModelView& modelView) {
-    auto* geometry = mApplication.getCurrentGeometry();
+    auto* const geometry = mApplication.getCurrentGeometry();
     assert(geometry != nullptr);
     mExporter = std::make_unique<ModelExporter>(geometry, &geometry->getProgress());
     mScenes.clear();
@@ -238,20 +236,20 @@ void ExportAssistant::resetOverride() {
 
 void ExportAssistant::setOverride() {
     auto& modelView = mApplication.getModelView();
-    auto* geometry = mApplication.getCurrentGeometry();
+    auto* const geometry = mApplication.getCurrentGeometry();
     assert(geometry != nullptr);
 
     uint32_t bufferOffset = 0;
     for(auto& scene : mScenes) {
-        size_t colorIndex = scene.first;
+        const size_t colorIndex = scene.first;
         assert(mSettingsPerColor.size() > colorIndex);
         if(!mSettingsPerColor[colorIndex].isShown) {
             continue;
         }
-        glm::vec4 color = geometry->getColorManager().getColor(colorIndex);
-        aiScene* sceneData = scene.second.get();
+        const glm::vec4 color = geometry->getColorManager().getColor(colorIndex);
+        aiScene* const sceneData = scene.second.get();
         assert(sceneData->mNumMeshes == 1);
-        aiMesh* mesh = sceneData->mMeshes[0];
+        aiMesh* const mesh = sceneData->mMeshes[0];
         for(size_t i = 0; i < mesh->mNumVertices; ++i) {
             modelView.getOverrideColorBuffer().push_back(color);
             modelView.getOverrideNormalBuffer().emplace_back(mesh->mNormals[i].x, mesh->mNormals[i].y,
@@ -260,7 +258,7 @@ void ExportAssistant::setOverride() {
                                                              mesh->mVertices[i].z);
         }
         for(size_t i = 0; i < mesh->mNumFaces; ++i) {
-            aiFace face = mesh->mFaces[i];
+            const aiFace face = mesh->mFaces[i];
             assert(face.mNumIndices == 3);
             modelView.getOverrideIndexBuffer().push_back(bufferOffset + face.mIndices[0]);
             modelView.getOverrideIndexBuffer().push_back(bufferOffset + face.mIndices[1]);
@@ -275,7 +273,7 @@ void ExportAssistant::setOverride() {
 }
 
 void ExportAssistant::updateSettings() {
-    auto* geometry = mApplication.getCurrentGeometry();
+    auto* const geometry = mApplication.getCurrentGeometry();
     assert(geometry != nullptr);
 
     if(mSettingsPerColor.size() != geometry->getColorManager().size()) {
@@ -286,7 +284,7 @@ void ExportAssistant::updateSettings() {
 }
 
 void ExportAssistant::validateExportType() {
-    auto* geometry = mApplication.getCurrentGeometry();
+    auto* const geometry = mApplication.getCurrentGeometry();
     assert(geometry != nullptr);
 
     if(geometry->polyhedronValid()) {
@@ -325,10 +323,10 @@ void ExportAssistant::exportFiles() {
         name += "." + mExportFileType;
         fileType = mExportFileType;
 
-        auto path = mApplication.getSaveFilePath(initialPath.append(name), extensions);
+        const auto path = mApplication.getSaveFilePath(initialPath.append(name), extensions);
 
         if(!path.empty()) {
-            std::string fileName = path.filename().string().substr(0, path.filename().string().find_last_of("."));
+            const std::string fileName = path.filename().string().substr(0, path.filename().string().find_last_of("."));
             std::string filePath = path.parent_path().string();
             if(mShouldExportInNewFolder) {
                 filePath += std::string("/") + std::string(fileName);
@@ -365,7 +363,7 @@ void ExportAssistant::updateExtrusionPreview() {
             }
         },
         [this]() {
-            auto* commandManager = mApplication.getCommandManager();
+            auto* const commandManager = mApplication.getCommandManager();
             assert(commandManager != nullptr);
             mLastVersionPreviewed = commandManager->getVersionNumber();
             mIsPreviewUpToDate = true;
@@ -377,7 +375,7 @@ void ExportAssistant::updateExtrusionPreview() {
 }
 
 void ExportAssistant::prepareExport() {
-    auto* geometry = mApplication.getCurrentGeometry();
+    auto* const geometry = mApplication.getCurrentGeometry();
     assert(geometry != nullptr);
 
     if(!isSurfaceExport()) {

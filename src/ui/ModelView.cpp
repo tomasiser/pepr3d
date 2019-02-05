@@ -243,12 +243,19 @@ void ModelView::drawGeometry() {
         glData.info.unsetColorFlag();
     }
 
-    // assert(!mColorOverride.isOverriden || mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
-
     // Pass overriden colors if required
     if(mColorOverride.isOverriden) {
         mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
     }
+
+    // verify that override buffers are correct:
+    assert(!mVertexNormalIndexOverride.isOverriden || mColorOverride.isOverriden);
+    assert(!mVertexNormalIndexOverride.isOverriden || mVertexNormalIndexOverride.overrideVertexBuffer.size() ==
+                                                          mVertexNormalIndexOverride.overrideNormalBuffer.size());
+    assert(!mVertexNormalIndexOverride.isOverriden ||
+           mVertexNormalIndexOverride.overrideVertexBuffer.size() == mColorOverride.overrideColorBuffer.size());
+    assert(mVertexNormalIndexOverride.isOverriden || !mColorOverride.isOverriden ||
+           mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
 
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
