@@ -2,6 +2,7 @@
 #include "MainApplication.h"
 #include "geometry/Geometry.h"
 #include "imgui_internal.h"
+#include "tools/ExportAssistant.h"
 
 namespace pepr3d {
 
@@ -118,7 +119,7 @@ void Toolbar::drawFileDropDown() {
             }
             if(ImGui::Button("Export", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.showExportDialog();
+                mApplication.setCurrentTool<ExportAssistant>();
             }
             if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
                 mApplication.quit();

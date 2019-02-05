@@ -82,8 +82,6 @@ class MainApplication : public cinder::app::App {
     }
 
     void openFile(const std::string& path);
-    void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType,
-                  ExportType exportType);
 
     using ToolsVector = std::vector<std::unique_ptr<Tool>>;
 
@@ -137,10 +135,6 @@ class MainApplication : public cinder::app::App {
     const std::vector<std::string> supportedImportExtensions = {"stl", "obj", "ply"};
     const std::vector<std::string> supportedOpenExtensions = {"p3d"};
     void showImportDialog(const std::vector<std::string>& extensions);
-
-    void showExportDialog() {
-        mShowExportDialog = true;
-    }
 
     void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
                             const std::string& description = "", const std::string& disabled = "",
@@ -215,7 +209,6 @@ class MainApplication : public cinder::app::App {
     void setupLogging();
     void setupFonts();
     void setupIcon();
-    void drawExportDialog();
     void willResignActive();
     void didBecomeActive();
     bool isWindowObscured();
@@ -238,8 +231,6 @@ class MainApplication : public cinder::app::App {
     ModelView mModelView;
     ProgressIndicator mProgressIndicator;
     bool mShowDemoWindow = false;
-    bool mShowExportDialog = false;
-    bool mShouldExportInNewFolder = false;
 
     std::priority_queue<pepr3d::Dialog> mDialogQueue;
 

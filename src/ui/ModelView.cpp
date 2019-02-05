@@ -307,7 +307,7 @@ void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::C
 void ModelView::drawCaption(const std::string& caption, const std::string& errorCaption) {
     const float width = ImGui::GetContentRegionAvailWidth();
     const float padding = ImGui::GetStyle().WindowPadding.x;
-    glm::vec2 cursorPos(10.0f, 10.0f + mApplication.getToolbar().getHeight());
+    glm::vec2 cursorPos(10.0f, 8.0f + mApplication.getToolbar().getHeight());
     auto* drawList = ImGui::GetWindowDrawList();
     drawList->PushClipRectFullScreen();
     drawList->AddText(cursorPos, static_cast<ImColor>(ci::ColorA::hex(0x1C2A35)), caption.c_str());

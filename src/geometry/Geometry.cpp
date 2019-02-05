@@ -8,7 +8,6 @@
 #include <functional>
 #include <set>
 #include <unordered_map>
-#include "geometry/ModelExporter.h"
 #include "geometry/SdfValuesException.h"
 
 namespace pepr3d {
@@ -130,27 +129,6 @@ void Geometry::loadNewGeometry(const std::string& fileName) {
         throw std::runtime_error("Model loading failed.");
         CI_LOG_E("Model not loaded --> write out message for user");
     }
-}
-
-void Geometry::exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType,
-                              ExportType exportType) {
-    // Reset progress
-    mProgress->resetSave();
-
-    if(exportType == ExportType::PolyExtrusionWithSDF && !mPolyhedronData.isSdfComputed) {
-        computeSdf();
-    }
-
-    if(polyhedronValid()) {
-        updateTemporaryDetailedData();
-    }
-
-    ModelExporter modelExporter(this, mProgress.get());
-
-    std::vector<float> coefs{0.1f, 0.25f, 0.5f, 0.75};
-    modelExporter.setExtrusionCoef(coefs);
-
-    modelExporter.saveModel(filePath, fileName, fileType, exportType);
 }
 
 void Geometry::generateVertexBuffer() {

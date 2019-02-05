@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "geometry/ColorManager.h"
-#include "geometry/ExportType.h"
 #include "geometry/GeometryProgress.h"
 #include "geometry/GlmSerialization.h"
 #include "geometry/ModelImporter.h"
@@ -314,10 +313,6 @@ class Geometry {
 
     /// Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.
     void loadNewGeometry(const std::string& fileName);
-
-    /// Exports the modified geometry to the file specified by a path, file name and file type.
-    void exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType,
-                        ExportType exportType);
 
     /// Set new triangle color.
     void setTriangleColor(const size_t triangleIndex, const size_t newColor);
