@@ -51,8 +51,28 @@ void ModelView::draw() {
     }
 
     {
+        // draw dummy window:
+        // (necessary for drawing texts into the model view)
+        ImGuiWindowFlags window_flags = 0;
+        window_flags |= ImGuiWindowFlags_NoTitleBar;
+        window_flags |= ImGuiWindowFlags_NoScrollbar;
+        window_flags |= ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoResize;
+        window_flags |= ImGuiWindowFlags_NoCollapse;
+        window_flags |= ImGuiWindowFlags_NoNav;
+        window_flags |= ImGuiWindowFlags_NoSavedSettings;
+        window_flags |= ImGuiWindowFlags_NoInputs;
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, glm::vec4(0.0f));
+        ImGui::PushStyleColor(ImGuiCol_Border, glm::vec4(0.0f));
+        ImGui::Begin("##modelview-dummy", nullptr, window_flags);
+
+        // let the active tool draw to the model view:
         auto& currentTool = **mApplication.getCurrentToolIterator();
         currentTool.drawToModelView(*this);
+
+        // end the dummy window:
+        ImGui::End();
+        ImGui::PopStyleColor(2);
     }
 }
 
@@ -206,10 +226,9 @@ void ModelView::drawGeometry() {
             // because ExportAssistant could be modifying the geometry in a background thread
             // and the operations are not thread-safe!
             mApplication.getCurrentGeometry()->updateOpenGlBuffers();
+            CI_LOG_I("Geometry buffers updated");
         }
         updateVboAndBatch();
-
-        CI_LOG_I("Vbo updated");
     }
 
     // Pass new highlight data if required
@@ -283,6 +302,18 @@ void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::C
     ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
     gl::ScopedDepth depth(false);
     ci::gl::drawLine(from, to);
+}
+
+void ModelView::drawCaption(const std::string& caption, const std::string& errorCaption) {
+    const float width = ImGui::GetContentRegionAvailWidth();
+    const float padding = ImGui::GetStyle().WindowPadding.x;
+    glm::vec2 cursorPos(10.0f, 10.0f + mApplication.getToolbar().getHeight());
+    auto* drawList = ImGui::GetWindowDrawList();
+    drawList->PushClipRectFullScreen();
+    drawList->AddText(cursorPos, static_cast<ImColor>(ci::ColorA::hex(0x1C2A35)), caption.c_str());
+    drawList->AddText(cursorPos + glm::vec2(0.0f, 16.0f), static_cast<ImColor>(ci::ColorA::hex(0xEB5757)),
+                      errorCaption.c_str());
+    drawList->PopClipRect();
 }
 
 }  // namespace pepr3d

@@ -38,11 +38,7 @@ class ExportAssistant : public Tool {
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
-    // virtual void drawToModelView(ModelView& modelView) override;
-    // virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
-    // virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
-    // virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
-    // virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void drawToModelView(ModelView& modelView) override;
     virtual void onToolSelect(ModelView& modelView) override;
     virtual void onToolDeselect(ModelView& modelView) override;
     virtual void onNewGeometryLoaded(ModelView& modelView) override;

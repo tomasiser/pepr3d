@@ -67,7 +67,11 @@ void SidePane::draw() {
 }
 
 void SidePane::resize() {
-    mWidth = std::max<float>(200.0f, std::min<float>(mApplication.getWindowSize().x - 250.0f, mWidth));
+    float windowWidth = static_cast<float>(mApplication.getWindowSize().x);
+    if(windowWidth <= 0.0f) {
+        return;  // this happens when the application is minimized
+    }
+    mWidth = std::max<float>(200.0f, std::min<float>(windowWidth - 250.0f, mWidth));
 }
 
 void SidePane::drawText(std::string text) {
