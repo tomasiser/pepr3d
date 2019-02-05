@@ -197,12 +197,15 @@ void ExportAssistant::drawToModelView(ModelView& modelView) {
 }
 
 void ExportAssistant::onToolSelect(ModelView& modelView) {
+    mIsSelected = true;
     if(mExporter == nullptr) {
         onNewGeometryLoaded(modelView);
+    } else {
+        resetOverride();
+        updateSettings();
+        setOverride();
     }
     modelView.setPreviewMinMaxHeight(mPreviewMinMaxHeight);
-    updateSettings();
-    setOverride();
 
     auto* const commandManager = mApplication.getCommandManager();
     assert(commandManager != nullptr);
@@ -213,6 +216,7 @@ void ExportAssistant::onToolSelect(ModelView& modelView) {
 
 void ExportAssistant::onToolDeselect(ModelView& modelView) {
     resetOverride();
+    mIsSelected = false;
 }
 
 void ExportAssistant::onNewGeometryLoaded(ModelView& modelView) {
@@ -220,6 +224,11 @@ void ExportAssistant::onNewGeometryLoaded(ModelView& modelView) {
     assert(geometry != nullptr);
     mExporter = std::make_unique<ModelExporter>(geometry, &geometry->getProgress());
     mScenes.clear();
+    if(mIsSelected) {
+        resetOverride();
+        updateSettings();
+        setOverride();
+    }
     mIsPreviewUpToDate = false;
 }
 

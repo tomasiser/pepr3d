@@ -302,12 +302,12 @@ class Geometry {
         return mMeshDetailed.get();
     }
 
-    std::unordered_map<DetailedTriangleId, PolyhedronData::face_descriptor> getMeshDetailedFaceDescs() const {
+    const std::unordered_map<DetailedTriangleId, PolyhedronData::face_descriptor>& getMeshDetailedFaceDescs() const {
         return mMeshDetailedFaceDescs;
     }
 
-    PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, DetailedTriangleId> getMeshDetailedIdMap()
-        const {
+    const PolyhedronData::Mesh::Property_map<PolyhedronData::face_descriptor, DetailedTriangleId>&
+    getMeshDetailedIdMap() const {
         return mMeshDetailedIdMap;
     }
 

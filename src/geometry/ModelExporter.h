@@ -166,7 +166,7 @@ class ModelExporter {
         computeBoundaryEdges(edgeLookup);
 
         for(auto &indexOfColor : colorsWithIndices) {
-            auto &soloBoundary = selectBoundaryEdgesByColor(edgeLookup, indexOfColor.first);
+            auto soloBoundary = selectBoundaryEdgesByColor(edgeLookup, indexOfColor.first);
 
             scenes[indexOfColor.first] = std::move(createNewNonPolyScene(
                 indexOfColor.second, summedVertexNormals, soloBoundary, mExtrusioCoef[indexOfColor.first]));
@@ -224,10 +224,10 @@ class ModelExporter {
             int degree = mGeometry->getMeshDetailed()->degree(vd);
             std::vector<glm::vec3> vertexNormals;
 
-            auto &halfedge = mGeometry->getMeshDetailed()->halfedge(vd);
+            auto halfedge = mGeometry->getMeshDetailed()->halfedge(vd);
 
             for(size_t i = 0; i < degree; i++) {
-                auto &face = mGeometry->getMeshDetailed()->face(halfedge);
+                auto face = mGeometry->getMeshDetailed()->face(halfedge);
 
                 if(face.is_valid()) {
                     DetailedTriangleId triIndex = mGeometry->getMeshDetailedIdMap()[face];
@@ -240,8 +240,8 @@ class ModelExporter {
 
                     colorIndex faceColor = mGeometry->getTriangle(triIndex).getColor();
 
-                    auto &oppositeHalfedge = mGeometry->getMeshDetailed()->opposite(halfedge);
-                    auto &oppositeFace = mGeometry->getMeshDetailed()->face(oppositeHalfedge);
+                    auto oppositeHalfedge = mGeometry->getMeshDetailed()->opposite(halfedge);
+                    auto oppositeFace = mGeometry->getMeshDetailed()->face(oppositeHalfedge);
 
                     if(oppositeFace.is_valid()) {
                         DetailedTriangleId oppositeFaceIdx = mGeometry->getMeshDetailedIdMap()[oppositeFace];
@@ -460,7 +460,7 @@ class ModelExporter {
             for(unsigned int j = 0; j < face.mNumIndices; j++) {
                 unsigned int jRevert = 2 - j;
 
-                glm::vec3 &vertex = mGeometry->getTriangle(triangleIndices[i]).getVertex(j);
+                glm::vec3 vertex = mGeometry->getTriangle(triangleIndices[i]).getVertex(j);
 
                 glm::vec3 vertexNormal = extrusionCoef * vertexNormalLookup[{vertex.x, vertex.y, vertex.z}];
 
@@ -597,7 +597,9 @@ class ModelExporter {
             face.mIndices = new unsigned int[3];
             face.mNumIndices = 3;
 
-            const PolyhedronData::face_descriptor polyFace = detailedFaceDescs[triangleIndices[i]];
+            const auto polyFaceIterator = detailedFaceDescs.find(triangleIndices[i]);
+            assert(polyFaceIterator != detailedFaceDescs.cend());
+            const PolyhedronData::face_descriptor polyFace = polyFaceIterator->second;
 
             const auto halfedge = mGeometry->getMeshDetailed()->halfedge(polyFace);
             auto itHalfedge = halfedge;
@@ -605,7 +607,7 @@ class ModelExporter {
             for(unsigned int j = 0; j < face.mNumIndices; j++) {
                 unsigned int jRevert = 2 - j;
 
-                auto &polyVertex = mGeometry->getMeshDetailed()->target(itHalfedge);
+                auto polyVertex = mGeometry->getMeshDetailed()->target(itHalfedge);
 
                 auto &p = mGeometry->getMeshDetailed()->point(polyVertex);
                 glm::vec3 vertex(p.x(), p.y(), p.z());
@@ -640,8 +642,8 @@ class ModelExporter {
             face2.mIndices = new unsigned int[3];
             face2.mNumIndices = 3;
 
-            auto &polyVertex1 = mGeometry->getMeshDetailed()->source(edge);
-            auto &polyVertex2 = mGeometry->getMeshDetailed()->target(edge);
+            auto polyVertex1 = mGeometry->getMeshDetailed()->source(edge);
+            auto polyVertex2 = mGeometry->getMeshDetailed()->target(edge);
 
             auto &p1 = mGeometry->getMeshDetailed()->point(polyVertex1);
             auto &p2 = mGeometry->getMeshDetailed()->point(polyVertex2);
