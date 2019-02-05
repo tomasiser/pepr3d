@@ -112,7 +112,7 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
                     "Use this to see inside the model to verify that the extrusion is not too shallow or too deep.");
                 ImGui::NextColumn();
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-                if(ImGui::DragFloat("##depth", &mSettingsPerColor[i].depth, 0.25f, 0.0f, 100.0f, "%.2f %%")) {
+                if(ImGui::DragFloat("##depth", &mSettingsPerColor[i].depth, 0.10f, 0.0f, 100.0f, "%.2f %%")) {
                     mIsPreviewUpToDate = false;
                 }
                 sidePane.drawTooltipOnHover("How deep should this color be extruded inside the model.", "",
@@ -171,7 +171,7 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
         if(ImGui::RadioButton(".obj", mExportFileType == "obj")) {
             mExportFileType = "obj";
         }
-        sidePane.drawTooltipOnHover("Export as separate .obj and .mat files.", "",
+        sidePane.drawTooltipOnHover("Export as separate .obj and .mtl files.", "",
                                     "This is a simple non-binary format supported by standard 3D editors.");
 
         ImGui::Checkbox("Create a new folder", &mShouldExportInNewFolder);
