@@ -38,3 +38,32 @@ The properties of this tool revolve around the spread of the bucket. This is som
 \end{itemize}
 
 Both of the \textit{stopping criteria} can be selected together. The spread stops when one of the criteria is not fulfilled -- both of the criteria must be fulfilled for the spread to continue.
+
+\section{Automatic Segmentation}
+
+Automatic segmentation is a powerful tool which allows the user to quickly achieve the baseline colouring of the model, which then can be detailed to the user's liking. This is achieved by separating the model into several segments based on the thickness. These segments then can be quickly coloured individually. The user can select the sensitivity of this segmentation, which allows him to control the level of detail (for example, low sensitivity might only segment the body and limbs of a character, whilst high sensitivity will also segment the fingers, ears and horns).
+
+\subsection{Properties}
+
+\begin{itemize}
+
+\item \textbf{Compute SDF values} -- \textit{button} -- before anything can be done in this tool, the user is asked to compute the SDF values. This is the data that is required to perform a successful segmentation. This computation might take a long time to perform, depending on your model size. For low-poly models (e.g. 1000 triangles), this computation is instantaneous. If you already performed the computation in a different tool (like export or the other segmentation), this option will not be visible.
+
+\item \textbf{Segment!} -- \textit{button} -- this button starts the segmentation process. The default values are set so the segmentation returns viable results in most cases. If you did not set any of the following properties and the segmentation returned an undesirable number of segments (like only one or too many), modify the following properties.
+
+\item \textbf{Robustness} -- $0\%$ -- $100\%$ -- a magic parameter. The meaning of this parameter is somewhat obscured but the best way to imagine this setting is the quality or robustness of the segmentation. Higher values take longer to compute but might give better results -- a higher value might merge two segments that are somewhat related, which the lower values will not recognize. The default setting is the team's best effort to balance the performance and quality.
+
+\item \textbf{Edge tolerance} -- $0\%$ -- $100\%$ -- This parameter specifies how the algorithm should understand "thickness". If you set this value very high, the algorithm will tend to merge more segments together, resulting in a lower amount of segments. If you set this very low, every nook and crease will signal the algorithm to create a new segment, thus resulting in a higher amount of segments. This is the \textbf{primary means} to control this tool and we recommend adjusting this slider over the previous one to change the main behaviour.
+
+\item \textbf{Color Palette} -- same as in the previous tools, this widget allows the user to select a color to assign to each segment.
+
+
+\end{itemize}
+
+\subsection{Segmenting}
+
+To adjust the segmentation, we recommend first trying to adjust the \textit{Edge tolerance} slider, and only after experimenting with this slider to change the \textit{Robustness}.
+
+After these settings are adjusted and the user clicks on the \textit{Segmentation} button, a list of segments will appear, along with the number of segments created. The user is then instructed to assign a color from the color palette to each segment. This can be done in two ways -- either by clicking directly on the model or by clicking on the "Segment \#" button. After clicking on one of these two regions, the color selected in to color palette will get assigned to the segment.
+
+After \textbf{all segments} have been assigned a color from the color palette, the user is able to click \textit{Accept} to color the model this way. Should the user be dissatisfied with the colouring, he can either click \textit{Cancel} or \textit{Segment!} again, to completely undo the whole segmentation and start from scratch.
