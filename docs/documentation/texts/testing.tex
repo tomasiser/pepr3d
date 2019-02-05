@@ -1,7 +1,50 @@
 \chapter{Testing}
 
-In this chapter we describe our testing pipeline.
+In this chapter we describe our testing pipeline. We have several ways how to test if the program behaves correctly. Namely:
+
+\begin{itemize}
+\item \textbf{Unit tests} -- the basic testing of several components of Pepr3D. The unit tests are small use-cases crafted to test each functionality of the object individually. The tests are great for catching quick and stateless errors but do not provide any information about more complex operations.
+
+\item \textbf{Manual tests} -- because of the simplicity of unit tests, we have several written manual tests for each tool in Pepr3D. These are executed manually by the person doing the predefined operations, and checking the result against the expected result.
+
+\item \textbf{Continuous integration} -- our Git repository is equipped with Continuous Integration software. This ensures that every pull request and merge is compilable, which ensures every commit in the \textit{master} branch is compilable and runs the unit tests automatically. The merge will not be executed if either of these conditions fail.
+\end{itemize}
+
+In the following sections, we explain these types of tests in detail, as well as provide the descriptions of the manual tests.
 
 \section{Unit tests}
+
+Unit testing is probably the most common way to automatically test software. As such, we will not explain in detail the benefits of this procedure. We use Google Test library \footnote{https://github.com/google/googletest} as it is one of the best C++ testing frameworks we have found. Several of our team members also already had experience with Google Test.
+
+For better navigation in the code base, we decided to follow the common naming convention: for class \texttt{CommandManager}, we have \texttt{CommandManager.h} and \texttt{CommandManager.cpp} as the implementation files. Now to test this class, we add \texttt{CommandManager.test.cpp} file and program all \texttt{CommandManager} into this file. This makes searching for tests very easy.
+
+\subsection{Library test}
+
+The test \texttt{libraries.test.cpp} is a special case among our unit tests. As the name suggests, this test checks whether our 3rd party libraries are setup correctly. This test should always succeed if it is compiled. If it does not get compiled or linked, the libraries were set up incorrectly.
+
+\subsection{Class tests}
+
+All of the other tests are the "standard" type of tests -- testing the public methods of the class. We will not describe each of the tests individually, since each test has a documentation comment inside describing what the test does, as well as a fitting name. 
+
+The general structure of the unit tests is cumulative -- this means that if the first test fails, there is a high chance all of the the following tests will fail too. The advantage of this approach is clear once you imagine a different sorting of the tests. If the first test was a complicated behaviour of the class, the test will fail not only if the behaviour is incorrect, but also if the initialization of the class is wrong. This is bad, because the programmer fixing the test will not immediately know which part of the class is incorrect.
+
 \section{Manual tests}
+
+In this section we describe the reasoning behind manual testing. We also list all of the manual tests the team has accumulated during the development.
+
 \section{Continuous integration}
+
+Continuous integration is a software engineering term used to describe the work flow of a team based project, which is based on merging the work of many individuals into a main stream often \footnote{https://en.wikipedia.org/wiki/Continuous\_integration}. In particular, \textit{Circle CI} is a free service which can be integrated into GitHub's interface, which allows the users of the repository to perform all kinds of checks and tests before the code is merged into a branch (most commonly the \textit{master branch}.
+
+We performed three checks before allowing the merge into a different branch, namely:
+
+\begin{itemize}
+\item \textbf{clang-format check} -- by running clang-format on the whole codebase and comparing it to the one before the run, the software determined if all of the code is properly aligned and follows our coding standards. This benefits us in two ways. Firstly, we minimize the number of git conflicts, because the code is properly formatted. Secondly, this makes the code uniform and such it removes any personal preference in coding styles. The second property is important because it makes reading the code much more programmer friendly -- once formatted, you cannot distinguish between your and the others' code, which makes reading it much easier, as you are not bothered by different standards of formatting.
+
+\item \textbf{ability to compile} -- code that does not compile is very dangerous in a repository, especially in the \textit{master} branch. If we need to step back in the \textit{master} branch history to trace the origins of a bug, we want to be building the program and testing it for the bug to find the commit that introduced the bug. If we run into code that does not compile, this methodology is much harder to execute. Our check was performed on a Linux machine, so it had another positive outcome for the team. The team developed on MSVC as our main target was the Windows OS. However, g++ has different and sometime better checking for errors than MSVC, which allowed us to catch some mistakes during compile time on Linux, which we did not see on MSVC.
+
+\item \textbf{unit testing} -- the last check the code needed to pass was the unit tests, which we already discussed. This point is rather simple, if the tests fail, the added code would break Pepr3D, and as such should not be committed.
+
+\end{itemize}
+
+We used Circle CI \footnote{https://circleci.com/} and integrated the service into GitHub.
