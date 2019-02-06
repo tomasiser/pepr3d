@@ -75,7 +75,7 @@ Cinder also handles all necessary events from an operating system and calls the 
 The \texttt{MainApplication} class is a router which interacts with other components, mainly the three major UI components: a \textbf{toolbar}, a \textbf{side pane}, and a \textbf{model view}.
 It instantiates them, listens for events from the operating system, and passes them to the components so that they can handle them themselves.
 
-This also includes delegating hotkeys, open, save, import, and export commands to their dedicated classes, handling minimized application, etc.
+This also includes delegating hotkeys, open, save, and import commands to their dedicated classes, handling minimized application, etc.
 We can say that every user interaction gets first through the \texttt{MainApplication} which then delegates it to other components.
 The \texttt{MainApplication} also works as a single source of truth that contains the current geometry and current tools.
 Other components use \texttt{MainApplication} as a getter for the current valid state.
@@ -107,6 +107,10 @@ In summary, the pipeline works like this: the UI enqueues a slow function $F$ (t
 Right before $F$ finishes, the $F$ itself calls \texttt{dispatchAsync} with another function $A$, which will be run on the UI thread at a new frame.
 $A$ is used to update the UI to the new state, e.g., after loading a new model.
 
+We made a simplified API for exactly this purpose that Tools can use when enqueuing a slow operation such as SDF computation.
+The \texttt{MainApplication} has a templated method \texttt{enqueueSlowOperation} to which we can pass the $F$ and $A$ functions.
+Thread pool and dispatching will be used automatically and a progress indicator will be shown.
+
 \subsection{Resources of a minimized or obscured window}
 
 Because Pepr3D runs at a vertically synchronized framerate (typically 60 frames per second), it uses CPU and GPU resources even when minimized or obscured.
@@ -120,8 +124,9 @@ This significantly lowers the CPU and GPU usage when Pepr3D is not used.
 
 \subsection{Dialogs and fatal error handling}
 
-In Pepr3D, there are 3 types of dialogs: general modal dialogs, a special export dialog, and a progress indicator.
-All these dialogs are drawn from the \texttt{MainApplication} on top of everything else and all mouse and keyboard input for the rest of the components is paused.
+In Pepr3D, there are 2 types of dialogs: general modal dialogs and a progress indicator.
+These dialogs are drawn from the \texttt{MainApplication} on top of everything else.
+While they are shown, all mouse and keyboard input for the rest of the components is interrupted, meaning users cannot interact with any tools.
 
 \begin{figure}[h]
 	\centering
@@ -143,13 +148,9 @@ Sometimes an error is so fatal that even the fatal error dialog cannot be render
 Nevertheless, all warnings, errors, and fatal errors are logged in \texttt{pepr3d.log} files which are backed up in case of a fatal error.
 When Pepr3D is executed again, an information dialog is shown explaining the user where they can find a related log file with error details.
 
-\paragraph{Export dialog}
-An export dialog is a complex dialog shown when a user attempts to export a model.
-Because it contains a lot of buttons and options, it is handled separately directly by the \texttt{MainApplication}.
-
 \paragraph{Progress indicator}
 A progress indicator is an animated dialog (see Figure~\ref{fig:progressindicator}) which shows the elapsed and remaining progress required to process the current command.
-It is used mostly when opening, saving, importing, and exporting geometry files, because this is a slow process.
+It is used mostly when opening, saving, importing, and exporting geometry files, or computing SDF, because these are slow operations.
 Its logic is handled in the \texttt{ProgressIndicator} class which has a pointer to the \texttt{Geometry} which is being loaded.
 The current status is checked directly from the geometry data every frame.
 
@@ -315,6 +316,16 @@ The color palette itself is uploaded to the GPU as a uniform array and then it i
 After drawing the geometry, we also draw the grid that simulates the printing bed of the printer.
 One cell of the grid measures $0.1\times{}0.1$, the whole grid is $1.8\times{}1.8$, so that it is always slightly bigger than the model itself.
 
+\subsection{Overriding buffers}
+
+Sometimes it is necessary to draw custom colors that are not in the color palette or to draw objects that are not the current geometry.
+For example the Segmentation tool needs to provide custom colors so that users can see the different regions.
+The Export Assistant needs to provide completely custom buffers including vertices, indices, normals, and colors to preview the extruded geometry objects.
+
+For these purposes, \texttt{ModelView} provides buffer overrides.
+There are two of them: \texttt{ColorOverrideData} and \texttt{VertexNormalIndexOverrideData}.
+Public setters and getters are provided for overriding them.
+
 \subsection{Shaders}
 
 In order to display the geometry, we need to provide the GPU with two OpenGL shaders written in GLSL.
@@ -331,8 +342,11 @@ There are several steps that contribute to the color.
 Primarily, we use Lambert shading to display the model, where we assume the light source always points from the camera.
 The main color of the model is found in the color palette with regards to the ID attribute of the vertex.
 
-In case the brush tool is active, we also calculate whether the current fragment is inside the highlighted region of the brush.
+In case the Brush tool is active, we also calculate whether the current fragment is inside the highlighted region of the brush.
 And finally if the wireframe rendering is enabled, we use the interpolated barycentric coordinates from the vertex shader to find out whether we are on an edge of a triangle, and if so, we highlight it in a contrast color.
+
+In case of the Export Assistant, we additionally provide a way of discarding pixels that are not in the specified height range.
+This is done using the \texttt{discard;} statement of OpenGL shaders.
 
 \subsection{Camera}
 

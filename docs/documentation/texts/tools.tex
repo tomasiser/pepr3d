@@ -61,7 +61,7 @@ We will not discuss each and every tool we have implemented, we will, however, m
 
 \section{Specific tool details}
 
-Most, if not all of the tools we implemented have to access the \texttt{Geometry} and \texttt{CommandManager} classes. Since the \texttt{MainApplication} object holds both of these, the tool has to get a reference to the parent \texttt{MainApplication} object. This is why most of our tools have this piece of code in common:
+Most, if not all of the tools we implemented, need access to the \texttt{Geometry} and \texttt{CommandManager} classes. Since the \texttt{MainApplication} object holds both of these, the tool has to get a reference to the parent \texttt{MainApplication} object. This is why most of our tools have this piece of code in common:
 
 \begin{lstlisting}
 public:
@@ -71,3 +71,7 @@ private:
 \end{lstlisting}
 
 The tool then accesses the \texttt{CommandManager} through \texttt{mApplication}'s method \texttt{getCommandManager()} and the current geometry data through the \texttt{getCurrentGeometry()} method.
+
+This way of communication is required as the \texttt{MainApplication} is the source of truth of what geometry is currently loaded and what command manager corresponds to it.
+
+Certain tools, such as the Segmentation and Export Assistant, also override Model View OpenGL buffers to display colors that are not in the palette or modified geometry such as the extrusion preview.
