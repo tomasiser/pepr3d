@@ -1,3 +1,73 @@
 \chapter{Tools}
 
 In this chapter, we explain the concepts behind each tool and the Geometry API the tools need.
+
+A tool is the main programmable component which connects the low-level command structure we outlined above and the high-level UI components (such as color-pickers, the user performing brush strokes and file operations like exporting the file). Our design should allow for later advancements of the software -- adding a tool to the software should be a matter of writing the new tool's \texttt{Tool} class, unless the tool is advanced and needs some complicated custom geometry processing functions.
+
+\medskip
+
+Here we take a look at the \texttt{Tool} class overview:
+
+\begin{lstlisting}
+class Tool {
+   public:
+    Tool() = default;
+    virtual ~Tool() = default;
+
+    // UI properties
+    virtual std::string getName() const = 0;
+    virtual std::string getDescription() const;
+    virtual std::optional<Hotkey> getHotkey(const Hotkeys& hotkeys) const;
+    virtual std::string getIcon() const = 0;
+    virtual bool isEnabled();
+
+    // Action methods
+    virtual void drawToSidePane(SidePane& sidePane){};
+    virtual void drawToModelView(ModelView& modelView){};
+
+	// Event methods (listed in the Table below)
+	...
+
+    virtual std::optional<std::size_t> safeIntersectMesh(MainApplication& mainApplication, const ci::Ray ray) final;
+
+    virtual std::optional<DetailedTriangleId> safeIntersectDetailedMesh(MainApplication& mainApplication, const ci::Ray ray) final;
+};
+\end{lstlisting}
+
+As we can see, it is a simple abstract interface class. There are some \textit{UI properties} like \texttt{getName} and \texttt{getDescription}, as well as some rendering methods like \texttt{drawToSidePane}. It contains a few \texttt{final} methods, which are just a exception-safe methods to call on the \texttt{Geometry} class, implemented in the interface, because every tool needs them. The also are multiple \textit{Event methods}, which we have omitted from the code here and will examine further in the following table.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\textbf{Name}         & \textbf{Invoked if ...}                       \\
+\texttt{onModelViewMouseDown}  & mouse gets pressed down in the model view     \\
+\texttt{onModelViewMouseDrag}  & mouse gets dragged in the model view          \\
+\texttt{onModelViewMouseUp}    & mouse button gets let go of in the model view \\
+\texttt{onModelViewMouseWheel} & mouse wheel is scrolled in the model view     \\
+\texttt{onModelViewMouseMove}  & mouse is moved in the model view              \\
+\texttt{onToolSelect}          & this tool is selected                         \\
+\texttt{onToolDeselect}        & this tool is deselected                       \\
+\texttt{onNewGeometryLoaded}   & new model is loaded (imported or opened)
+\end{tabular}
+\label{tab:events}
+\caption{The overview of different events available to any \texttt{Tool} class.}
+\end{table}
+
+When implementing a new tool, not all of these events have to be specified. The tool only listening and can act accordingly if it needs to.
+
+The tool's \textbf{user interface} is implemented in the \texttt{drawToSidePane} method. During the rendering, if the tool is active, this method gets called to fill the SidePane with ImGui widgets, which allow the user to alter the tool's properties.
+
+We will not discuss each and every tool we have implemented, we will, however, mention a few things that most of the tools have in common.
+
+\section{Specific tool details}
+
+Most, if not all of the tools we implemented have to access the \texttt{Geometry} and \texttt{CommandManager} classes. Since the \texttt{MainApplication} object holds both of these, the tool has to get a reference to the parent \texttt{MainApplication} object. This is why most of our tools have this piece of code in common:
+
+\begin{lstlisting}
+public:
+	explicit PaintBucket(MainApplication& app) : mApplication(app) {}
+private:
+	MainApplication& mApplication;
+\end{lstlisting}
+
+The tool then accesses the \texttt{CommandManager} through \texttt{mApplication}'s method \texttt{getCommandManager()} and the current geometry data through the \texttt{getCurrentGeometry()} method.
