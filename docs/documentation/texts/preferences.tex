@@ -1,0 +1,80 @@
+\chapter{Additional options and settings}
+
+In this chapter, we showcase and explain all the preferences and settings Pepr3D contains. There are two main categories of the settings the user can alter in Pepr3D: \textbf{Display options} and \textbf{Settings}. \textbf{Display options} contains all settings regarding the displaying of the model and handling the camera. The \textbf{Settings} tab contains the important \textit{Color Palette} manager and some extra UI settings. We now discuss each category in more detail.
+
+\section{Display options}
+
+This tab of the interface contains all properties related to the user's view and interaction with the model. These preferences are divided into three segments and we will explain every one in detail.
+
+\subsection{Camera zoom behavior}
+
+This option provides the choice between two most common camera zoom behaviors, namely the \textbf{dolly} and \textbf{field of view}. Both of these are widely used in computer graphics and there is no clear consent on which of these two is better.
+
+\begin{itemize}
+\item \textbf{Dolly} -- as the short text next to the option explains, this setting physically moves the camera within the space of the program, while the field of view stays the same. This option is the default setting, since the zooming in and out is more intuitive because it replicates moving the observer's eye closer to the object. The disadvantage of this method lies in editing fine details on the surface. This is because the \textbf{dolly} allows the camera to enter the inside of the object, which means the user is not able to zoom as close as he might like.
+
+\item \textbf{Change field of view} -- the second widely used option amongst the graphics editors. This option does not move the camera but only changes the field of view (FOV for short). This means the camera will never fly inside the object and is able to provide as close of a look as the user desires. The main disadvantage of this approach is slightly worse handling when zoomed in really close.
+
+\item \textbf{Reset camera} -- a simple button to reset the camera to the default position. This is the position the object appeared in after the model import was done.
+
+\end{itemize}
+
+Feel free to change this camera zoom behavior to the one you like, it does not affect the performance or model quality in any way.
+
+\subsection{Model transformation}
+
+While Pepr3D tries to orient your model correctly from the start, it only succeeds if your model follows the Blender axis alignment. This is the \textbf{X left-right, Y forward-backward, Z down-up} axis alignment. This is the most common spread axis system and is the one Pepr3D supports without any adjustments. This is the axis system that Prusa Slic3r uses, so if your model works in Slic3r, it should natively work in Pepr3D. Should you need to use a different system, this segment of the settings provides you with means to correct for this change manually.
+
+\begin{itemize}
+
+\item \textbf{Model roll} -- $0\degree$ -- $180\degree$ -- If the model is incorrectly oriented, you can rotate the model with this slider. You can control the camera with the right click drag, which rotates the camera in two axes around the model. This option rotates the model along the third axis, which allows you to fully customize the object's orientation. If your model is incorrectly oriented, this slider should always be able to fix the issue.
+
+\item \textbf{Model position} -- $-1.00$ -- $1.00$ in X/Y/Z axes -- Pepr3D tries to center your model onto the guiding grid. Should Pepr3D not succeed, these options allow you to position the model correctly.
+
+\item \textbf{Reset model transformation} -- \textit{button} -- a simple button to reset the model to the default position. This is the position the object appeared in after the model import was done.
+
+\end{itemize}
+
+\subsection{Guidance graphics}
+
+The last section contains a couple of guiding tools that the user might want to use to help his orientation in the space or understand the model's geometry better.
+
+\begin{itemize}
+
+\item \textbf{Show grid} -- \textit{On / Off} -- determines whether the model should be positioned on a guiding grid or not. This is done to simulate the printing bed of the 3D printer itself. It also should help the user with orientation, if the model is symmetrical.
+
+\item \textbf{Show wireframe} -- \textit{On / Off} -- if enabled, every triangle on the model will have its borders displayed in a high contrast color. This option is turned off by default since it is distracting on complex models but might be a really useful tool to see how the model geometry looks like and how it got changed by the Brush or Text tool.
+
+\end{itemize}
+
+\section{Settings}
+
+For now, there are only a couple options in the Settings menu. They are, however, very important to understand.
+
+\subsection{Editing the color palette}
+
+This is probably the most important setting in Pepr3D, because it affects every tool and the outcome of the export. Here you can \textbf{add or remove} additional colors into the palette, \textbf{change} the already existing colors, as well as \textbf{reorder} them or \textbf{reset} them into the default stage. Let's talk about these options in more detail.
+
+\begin{itemize}
+
+\item \textbf{Add color} -- \textit{button} -- adds a new color into the palette. The hue of the color is randomized. See \textit{changing the color} to learn how to change the hue. The maximum number of colors for now is \textbf{16}, since the most advanced FDM printers cannot print more than that many colors.
+
+\item \textbf{Delete color} -- \textit{drag and drop field} -- deleting a color is as simple as grabbing it and dragging it onto the red zone with the \textit{Drag color here to delete} description. Be careful, since this \textbf{will permanently delete} all information associated with the color. Any triangles painted by this color will get a new color (the previous one in the palette). This operation \textbf{is undoable}.
+
+\item \textbf{Reordering the colors} -- \textit{drag and drop within palette} -- you can rearrange the colors by dragging and dropping them accordingly. Note that this \textbf{does not change} the colouring of the model and is \textbf{only cosmetic}. This operation \textbf{is undoable}.
+
+\item \textbf{Changing one color} -- \textit{right click on the color} -- if the user wishes to change the the color, it is done by left-clicking the color patch. Once clicked, a color picker gets displayed and the user can change the color there. Note that this \textbf{does change} the color on the model in real time, which allows the user to preview the change. This operation \textbf{is undoable}.
+
+\item \textbf{Resetting colors to the default values } -- \textit{button} -- once clicked, the colors will be reset into the default values and the model will be re-coloured according to the positions of the first four colors. This operation \textbf{is undoable}.
+
+\end{itemize}
+
+\subsection{User interface preferences}
+
+This section allows the user to modify the appearance of the Pepr3D software.
+
+\begin{itemize}
+
+\item \textbf{Side pane width} -- \textit{in pixels, relative to Pepr3D's width} -- this modifies the width of the side pane area. This is especially useful if the user is working with more than four colors or on a high resolution display.
+
+\end{itemize}

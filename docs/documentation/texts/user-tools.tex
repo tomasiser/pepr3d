@@ -60,10 +60,44 @@ Automatic segmentation is a powerful tool which allows the user to quickly achie
 
 \end{itemize}
 
-\subsection{Segmenting}
+\subsection{Segmentation}
 
 To adjust the segmentation, we recommend first trying to adjust the \textit{Edge tolerance} slider, and only after experimenting with this slider to change the \textit{Robustness}.
 
 After these settings are adjusted and the user clicks on the \textit{Segmentation} button, a list of segments will appear, along with the number of segments created. The user is then instructed to assign a color from the color palette to each segment. This can be done in two ways -- either by clicking directly on the model or by clicking on the "Segment \#" button. After clicking on one of these two regions, the color selected in to color palette will get assigned to the segment.
 
 After \textbf{all segments} have been assigned a color from the color palette, the user is able to click \textit{Accept} to color the model this way. Should the user be dissatisfied with the colouring, he can either click \textit{Cancel} or \textit{Segment!} again, to completely undo the whole segmentation and start from scratch.
+
+
+\section{Manual Segmentation}
+
+Manual segmentation is a similar tool to the Automatic segmentation we discussed in the last section. The difference in these two tools is that while Automatic segmentation is a very global tool (since it segments the whole model at once), Manual segmentation is designed to be local. The user can color a handful of triangles with a single color and then manually adjust the spread of this color over the segment the triangles define. This description is rather abstract, but hopefully it will get clearer once we discuss the properties.
+
+
+\subsection{Properties}
+
+\begin{itemize}
+
+\item \textbf{Compute SDF values} -- \textit{button} -- before anything can be done in this tool, the user is asked to compute the SDF values. This is the data that is required to perform a successful segmentation. This computation might take a long time to perform, depending on your model size. For low-poly models (e.g. 1000 triangles), this computation is instantaneous. If you already performed the computation in a different tool (like export or the other segmentation), this option will not be visible.
+
+\item \textbf{Color palette} -- once SDF values of the object have been computed, the user is presented with a sidepane very similar to the Triangle painter tool. This widget allows the user to select the current color. The color will be used while initializing the segments on the model.
+
+\item \textbf{Spread} -- $0\%$ -- $100\%$ -- once a single triangle is coloured on the model, additional options appear. One of them is the \textit{Spread} slider. This slider is analogous to the \textit{Edge tolerance} slider in Automatic segmentation, since it controls how much each coloured triangle will spread its color among its local neighbourhood. If the spread is $0\%$, only the triangle is coloured. Increasing it to $100\%$ will color all triangles of the model (unless a second segment is competing).
+
+\item \textbf{Hard edges} -- \textit{On / Off} -- if this option is turned on, the spread of one color will stop upon meeting a second one's border and will not attempt to color any other triangles. Use this option if the segments you are colouring are well defined and differ in thickness a lot.
+
+\item \textbf{Region overlap} -- \textit{On / Off} --once the user turns this option on, the spreading regions will overlap freely and the last color (rightmost) will always win if \textit{Spread} is turned to $100\%$. Use this option if the borders of the segments converged a little soon or late and you would like one color to expand a little more. This option is not good if the spread is turned to high percentages, since a lot of the segments will overlap and information will be lost.
+
+\end{itemize}
+
+\subsection{Segmentation behaviour}
+
+If no checkboxes are turned on, the color spreads to the global optimum segmentation. This means that if you set the \textit{Spread} to a high percentage, there might be several discontinuous segments coloured by the same color, because that is globally optimal to the input. This setting is a good starting point, since it does not restrict the spread too much, but does not allow it to roam unlimited as well. Use the other options to tweak the spread after you understand how this model will get segmented.
+
+The spreading algorithm uses the SDF function (thickness of the model) to calculate segments. This means that this tool is not able to grow segments on a model which does not vary in thickness. It is also very important to be aware of the fact that several non-neighbouring parts of the model might have the same thickness (like ears, hand fingers and feet fingers) and thus the global optimum colors all of these with the same color (use \textit{Hard edges} to counter this behaviour).
+
+After the user is satisfied with the spread, clicking \textit{Apply} will confirm this re-colouring. Clicking cancel will return the model into the state before Manual segmentation started.
+
+As a last tip, we recommend using a single-triangle strokes to initialize the segments at the beginning. This is using many triangles accelerates the spread a lot, which ultimately gives the user less fidelity and time to see what is happening.
+
+We want to stress that this tool is an advanced tool, which should be used to fine-tune an already coloured model's details, not as a means to primarily color the model upon importing it (Automatic segmentation is a lot better tool in that case).
