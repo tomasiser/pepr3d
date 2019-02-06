@@ -1,0 +1,60 @@
+\chapter{Import, Export and Saved projects}
+
+In this chapter we explain in-depth how the users should import their models, all the different methods of exporting their work and the ability to save their work as a \textit{Pepr3D project} to continue at a later date.
+
+\section{Importing a model}
+
+Importing the model is the first step in the Pepr3D workflow. There are several ways how to import a model and all of them are equally easy and the choice is entirely up to you.
+
+\begin{enumerate}
+\item \textbf{File} $\rightarrow$ \textbf{Import} will open a typical \textit{Open} dialog of you respective operating system. Navigate to the model you want to import and click the button \textit{Open}.
+
+\item \textbf{Drag and drop} is a very fast way to import the model if you already have it located in any file explorer. The model can be dropped into any part of Pepr3D.
+
+\item \textbf{Control + I} is the keyboard shortcut for importing a model. Upon pressing this shortcut, the \textit{Open} dialog of you respective operating system will open. Navigate to the model you want to import and click the button \textit{Open}.
+
+\end{enumerate}
+
+After you perform either of the two previous steps, the model will start loading. There is a detailed dialog which explains what is currently happening and Pepr3D is trying to give you accurate information about the progress of the process. However not every computation has a well known length, so several loading bars will just cycle through until the loading is complete. Please be patient, loading a large model can take a long time. See Table \ref{tab:loadperf} for a rough idea about the loading times.
+
+\begin{table}[]
+\centering 
+\begin{tabular}{|c|c|}
+\hline
+\textbf{File size {[}MB{]}} & \textbf{Estimated loading time {[}s{]}} \\ \hline
+80                          & 3                                   \\ \hline
+15                          & 2                                   \\ \hline
+5                           & 1                                   \\ \hline
+1.2                         & 0.5                                 \\ \hline
+\textless{}1                & \textless{}0.5                      \\ \hline
+\end{tabular}
+\caption{Loading times during the import into Pepr3D.}
+\label{tab:loadperf}
+\end{table}
+
+\section{Exporting a coloured model}
+% TODO by Tom
+
+\section{Saving and opening a project}
+
+\subsection{Saving a project}
+
+Saving a project to work on it later is very simple in Pepr3D. There are two save options in Pepr3D:
+
+\begin{enumerate}
+\item \textbf{File} $\rightarrow$ \textbf{Save} will overwrite your last save file with the current state of the model. If you have not yet saved the project at all, this option also acts as \textit{Save As}. The keyboard shortcut for \textit{Save} is \textbf{Ctrl + S}.
+
+\item \textbf{File} $\rightarrow$ \textbf{Save As} will prompt you with a \textit{Save As} dialog of your respective operating system. Upon selecting the folder and choosing the name, the project will be saved inside the folder with the chosen filename. There is no keyboard shortcut for \textit{Save As}.
+\end{enumerate}
+
+If your project has been modified since the last save, you will see an asterisk (*) next to the project's name.
+
+Please note that Pepr3D \textbf{does not} save your work undo history. If you save a project and re-open it, you \textbf{will not} be able to undo any operations done by the previous session.
+
+\subsection{Opening a project}
+
+Opening a project can be done through \textbf{File} $\rightarrow$ \textbf{Open} or simply by pressing \textbf{Ctrl + O}. Both of these options will display the \textit{Open} dialog of you respective operating system. Here you can choose the \textbf{.p3d} file and press open.
+
+Opening a project can also be performed by \textbf{drag and drop}. Simply grab your \textbf{.p3d} file and drop it anywhere into Pepr3D.
+
+As we have mentioned in the section about saving projects, keep in mind that Pepr3D \textbf{does not} save your work undo history.
