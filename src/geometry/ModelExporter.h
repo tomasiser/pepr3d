@@ -70,7 +70,12 @@ class ModelExporter {
         for(auto &scene : scenes) {
             std::stringstream ss;
             ss << filePath << "/" << fileName << "_" << sceneCounter << "." << fileType;
-            exporter.Export(scene.second.get(), assimpFileType, ss.str());
+            auto exportResult = exporter.Export(scene.second.get(), assimpFileType, ss.str());
+            if(exportResult != AI_SUCCESS) {
+                throw std::runtime_error(
+                    "Could not export the scenes to the specified files. Make sure the model is valid and you have "
+                    "write permissions to the directory or files you are exporting to.");
+            }
             sceneCounter++;
         }
 

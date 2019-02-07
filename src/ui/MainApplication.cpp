@@ -246,9 +246,10 @@ bool MainApplication::showLoadingErrorDialog() {
     if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
         const std::string errorCaption = "Warning: Failed to build a polyhedron";
         const std::string errorDescription =
-            "Problems were found in the imported geometry. We could not build a valid polyhedron data "
-            "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
-            "You can still edit the imported model with the remaining tools.";
+            "Problems were found in the imported geometry: it is probably non-manifold and needs fixing in a 3D "
+            "editor such as Blender. We could not build a valid polyhedron data "
+            "structure using the CGAL library.\n\nMost of the tools and SDF extrusion will be disabled. "
+            "You can still edit the model with Triangle Painter and export it.";
         pushDialog(Dialog(DialogType::Warning, errorCaption, errorDescription, "Continue"));
         return true;
     }
@@ -315,7 +316,7 @@ void MainApplication::openFile(const std::string& path) {
             try {
                 loadArchive(mGeometryInProgress);
             } catch(const cereal::Exception&) {
-                const std::string errorCaption = "Error: Pepr project file (.p3d) corrupted";
+                const std::string errorCaption = "Error: Pepr3D project file (.p3d) corrupted";
                 const std::string errorDescription =
                     "The project file you attempted to open is corrupted and cannot be loaded. "
                     "Try loading an earlier backup version, which might not be corrupted yet.";
@@ -631,9 +632,10 @@ void MainApplication::saveProjectAs() {
         {
             std::ofstream os(finalPath, std::ios::binary);
             if(!os.is_open()) {
-                const std::string errorCaption = "Error: Failed to open the file";
+                const std::string errorCaption = "Error: Failed to save project";
                 const std::string errorDescription =
-                    "The file you selected to save into could not be opened. Your project was NOT saved.\n";
+                    "The file you selected to save into could not be opened for saving. Your project was NOT saved. "
+                    "Make sure you have write permissions to the directory or files you are saving to.\n";
                 pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "OK"));
                 return;
             }

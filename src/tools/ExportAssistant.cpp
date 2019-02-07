@@ -390,7 +390,8 @@ void ExportAssistant::prepareExport() {
     if(!isSurfaceExport()) {
         if(mExportType == ExportType::PolyExtrusionWithSDF && !geometry->isSdfComputed()) {
             if(!safeComputeSdf(mApplication)) {
-                throw std::runtime_error("Could not compute SDF. Please export using absolute depth values.");
+                throw std::runtime_error(
+                    "The SDF values for this model could not be computed. Please export using absolute depth values.");
             }
         }
 
@@ -411,7 +412,7 @@ void ExportAssistant::prepareExport() {
 void ExportAssistant::pushErrorDialog(const std::string& errorDetails) {
     const std::string errorCaption = "Error: Failed to export";
     const std::string errorDescription =
-        "An error has occured while exporting the model or showing the export preview.\n\n";
+        "An error has occured while exporting the model or showing the preview of the export.\n\n";
     mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + errorDetails));
 }
 
