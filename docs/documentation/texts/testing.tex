@@ -225,14 +225,15 @@ These files are invalid and error dialogs should be shown when trying to handle 
 \item Opening and/or importing \texttt{invalid.obj}, \texttt{README.md}, or other random files such as JPEG files should result in ``Error: Invalid file'' dialog. The geometry that was loaded before (e.g., the default cube) should stay opened.
 \item Importing \texttt{invalid\_sdf.stl} should work without any problems, but pressing ``Compute SDF'' in the segmentation tools or using ``relative to SDF'' in Export Assistant should result in ``Error: Failed to compute SDF'' dialog. After the dialog is shown, both segmentation tools should be disabled. In Export Assistant, the ``relative to SDF'' option should be hidden. Exporting should still work, just not with SDF values anymore.
 \item Importing \texttt{invalid\_polyhedron.stl} should work but a ``Warning: Failed to build a polyhedron'' dialog should be shown explaining the model is probably non-manifold. For these models, only Triangle Painter should work, other editing tools should be disabled. Exporting should also work, but the ``relative to SDF'' extrusion option should be hidden.
-\item Opening \texttt{corrupted.p3d} should result in ``Error: Pepr project file (.p3d) corrupted'' dialog. The geometry that was loaded before (e.g., the default cube) should stay opened.
+\item Opening \texttt{corrupted.p3d} should result in ``Error: Pepr3D project file (.p3d) corrupted'' dialog. The geometry that was loaded before (e.g., the default cube) should stay opened.
 \item Opening \texttt{corrupted\_crash.p3d} may crash Pepr3D entirely as it looks like valid serialization data but is not. This is a limitation of our serialization library Cereal. Verify that ``pepr3d.crashed'' file was created. Run Pepr3D again and a dialog ``Pepr3D previously terminated with a fatal error'' should appear explaining the crash and where the user can find the log file. Pressind ``Continue'' should close the dialog and everything should be back to normal.
 \end{itemize}
 
-\paragraph{Error when saving a file}
+\paragraph{Error when saving or exporting a file}
 Run Pepr3D and open a \texttt{.p3d} file that is set as read-only in Windows (right-click the file, Properties, check Read-only).
 Try to save the file.
 An error dialog should be shown explaining the file to save into could not be opened.
+Same should happen when exporting a file to a read-only directory or file.
 
 \paragraph{Other errors}
 Some other error situations (such as removing the only remaining color in a palette) have already been described in other testing scenarios and are not mentioned here again.
