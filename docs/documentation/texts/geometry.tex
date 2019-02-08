@@ -4,4 +4,147 @@ In this chapter we describe the \texttt{Geometry} class in detail. We also discu
 
 \label{chap:geom}
 
+\section{Geometry}
+
+\section{Model Importer}
+
+One of the classes included in this section is the \textit{Model Importer}. As the name suggests, this class handles the import of a new triangle mesh model into Pepr3D. This class heavily utilizes the \textit{Assimp} library we have mentioned several times in both the specification and documentation. Here is a quick overview of the class:
+
+\begin{lstlisting}
+
+class ModelImporter {
+    std::string mPath;
+    std::vector<DataTriangle> mTriangles;
+
+    ColorManager mPalette;
+    bool mModelLoaded = false;
+
+    std::vector<glm::vec3> mVertexBuffer;
+    std::vector<std::array<size_t, 3>> mIndexBuffer;
+
+    GeometryProgress *mProgress;
+
+   public:
+    ModelImporter(const std::string p, GeometryProgress *progress, ::ThreadPool &threadPool);
+    bool isModelLoaded();
+
+    ColorManager getColorManager() const;
+    std::vector<DataTriangle> getTriangles() const;
+    std::vector<glm::vec3> getVertexBuffer() const;
+    std::vector<std::array<size_t, 3>> getIndexBuffer() const;
+}
+
+\end{lstlisting}
+
+We will now go through the public API of the class, explaining in detail what each method does and why it is needed.
+
+Firstly, \texttt{ModelImporter} gets initialized using its constructor. It gets the path to the file and our persistent threadpool, as well as a \texttt{GeometryProgress} object, which is used to report the import progress to the UI. This setup makes a single ModelImporter object responsible for a single imported mesh file, which follows the \textit{Resource Acquisition Is Initialization} or \textit{RAII} \footnote{https://en.cppreference.com/w/cpp/language/raii} principle, which is prevalent in the C++ scene. Once initialized, the \texttt{ModelImporter} can now return all the data it loaded.
+
+A simple check of \texttt{ModelImporter}'s ready status can be performed using the method \texttt{isModelLoaded()}. This should primarily be used in combination with C++'s \texttt{assert} call.
+
+Once the model is loaded correctly, the object now provides the data it has loaded. There are several methods to retrieve data.
+
+\begin{itemize}
+\item \texttt{getColorManager()} is a method which returns a \texttt{ColorManager} object, initialized with the colors of the imported file. This means that if a coloured geometry file gets loaded, the \texttt{ModelImporter} will automatically create a coloured model which is then displayed in Pepr3D. It will also initialize the color palette with the model's colors, not with the default ones.
+
+\item \texttt{getTriangles()} is the most important method of the class. This method returns an array of \texttt{DataTriangle} objects. This is the main data Pepr3D works on. These returned triangles are preprocessed using both \textit{Assimp} preprocessing options and our own. Examples of preprocessing include triangulating all non-triangle primitives (like quads), removing duplicated vertices and removing degenerate triangles (with a zero area).
+
+\item The pair of methods \texttt{getVertexBuffer()} and \texttt{getIndexBuffer()} is a secondary means of extracting the same geometry data as in the \texttt{getTriangles} method, but this time in the "OpenGL" format of a vertex buffer and an index buffer. This data is used only during the construction of the polyhedron model for the \textit{CGAL} library. Extracting the secondary data is easier and faster than transforming the \texttt{DataTriangle} array back into this buffer representation just for the polyhedron build.
+
+\end{itemize}
+
+Most of the private members are very self-explanatory, we will, however, briefly comment on the \texttt{mProgress} object. This object takes advantage of \textit{Assimp}'s ability to report the percentage-wise progress during loading and preprocessing. We use this information in the loading dialog, to notify the user on the progress of the import. This makes it clear to the that the program is working as intended and has not crashed or stopped.
+
+\section{Model Exporter}
+
+\section{Font processing}
 \label{sec:fonts}
+
+Big portion of the code of this class is based on the \textit{Font23D} library which can be found on GitHub \footnote{https://github.com/codetiger/Font23D}. The team read through the code, heavily modified it to transform it from the \textit{C} language to the modern \textit{C++} and built a new class around what were only free methods in \textit{Font23D}. This object also uses the \textit{FreeType}, \textit{FTGL} and \textit{Poly2Tri} libraries.
+
+The main goal of the \texttt{FontRasterizer} class is to take smooth bezier curves of letters from the \texttt{.ttf} font files and transform them into a triangle mesh, with a variable rasterization steps. These meshes are then used in the \textbf{Text} tool.
+
+A simple overview of the \texttt{FontRasterizer} class follows:
+
+\begin{lstlisting}
+class FontRasterizer {
+   private:
+	struct Tri {
+        glm::vec3 a, b, c;
+    };
+
+    std::string mFontFile;
+    bool mFontLoaded = false;
+
+    FT_Library mLibrary;
+    FT_Face mFace;
+    FT_UInt mPrevCharIndex = 0, mCurCharIndex = 0;
+    FT_Pos mPrev_rsb_delta = 0;
+
+   public:
+    FontRasterizer(const std::string fontFile);
+    std::string getCurrentFont() const;
+    bool isValid() const;
+
+    std::vector<std::vector<FontRasterizer::Tri>> rasterizeText(const std::string textString, const size_t fontHeight, const size_t bezierSteps);
+}
+\end{lstlisting}
+
+As we can see, similar to the \texttt{ModelImporter} class, this class also uses the \textit{RAII} principle, this time to load and hold the font face, loaded from a \texttt{.ttf} file. Once the font file is loaded successfully, the object can then convert any text into a triangle mesh.
+
+The interface of this class is rather simple -- the constructor takes a single \texttt{std::string}, which is the path to the font file. The API provides a \texttt{isValid()} method to check whether the initialization was performed correctly. The API also provides the font file name, without the whole path, which can be accessed by the method \texttt{getCurrentFont()}. This is used in the user interface to display the currently selected font.
+
+The main method of the class is the \texttt{rasterizeText()}. It takes a \texttt{std::string} containing the text the user wants to convert to triangles, the \texttt{fontHeight} integer, which corresponds to the font height commonly found in text editors and the variable \texttt{bezierSteps}, which allows the user to control the roughness of the approximation. The useful range of the \texttt{bezierSteps} variable is around $1$ -- $5$. $1$ yields very rough results, useful for "blocky" fonts like \textit{Impact}, while $3$ should be sufficient for any standard font. For high precision, a higher setting should be used. Please note that the higher the \texttt{bezierSteps}, the more triangles will be generated.
+
+Last thing to note, is the custom triangle object the \texttt{rasterizeText} method returns. \texttt{Tri} is a custom \texttt{struct} declared private in \texttt{FontRasterizer}. This is done to achieve two things: 
+
+\begin{enumerate}
+\item \texttt{FontRasterizer::Tri} should not be used outside of the class. It is a temporary type and is useful only to the \texttt{FontRasterizer} class. The private definition prevents this behaviour. Users should not create more objects of this type at any time.
+
+\item \texttt{FontRasterizer::Tri} is returned by \texttt{rasterizeText}. This is because we want the \texttt{FontRasterizer} to be an independent class, which can be used on its own and not depend on any Pepr3D types. Returning a custom type achieves this behaviour, and it is expected that the users will want to convert the outcome into a custom type more often than not anyway.
+\end{enumerate}
+
+\section{Color Manager}
+
+The \texttt{ColorManager} is a simple class which manages the current color palette. At most one \texttt{ColorManager} is active, which is the one \texttt{MainApplication} holds as a source of truth. \texttt{ModelImporter} also creates a new \texttt{ColorManager} while importing an already-coloured model.
+
+Now we list a simplified overview of the class:
+
+\begin{lstlisting}
+class ColorManager {
+   public:
+    using ColorMap = std::vector<glm::vec4>;
+
+   private:
+    ColorMap mColorMap;
+    size_t mActiveColorIndex = 0;
+
+    friend class cereal::access;
+
+   public:
+    ColorManager();
+    ColorManager(const ColorMap::const_iterator start, const ColorMap::const_iterator end);
+    explicit ColorManager(const size_t number);
+
+    void addColor(const glm::vec4 newColor);
+    void setColor(const size_t i, const glm::vec4 newColor);
+    void replaceColors(const ColorMap::const_iterator start, const ColorMap::const_iterator end);
+    void replaceColors(const ColorMap& newColors);
+    glm::vec4 getColor(const size_t i) const;
+
+    size_t getActiveColorIndex() const;
+    void setActiveColorIndex(size_t index);
+
+    static void generateColors(const size_t colorCount, std::vector<glm::vec4>& outNewColors);
+}
+\end{lstlisting}
+
+As we can see, \texttt{ColorManager} is basically a simple wrapper around STL's \texttt{std::vector}, specialized on holding \texttt{glm::vec4} and extended with some color-generation features. It also is responsible for handling the current active color in the \texttt{mActiveColorIndex} member variable. This is the color the user has currently selected in his color palette widget.
+
+There are several ways to initialize the \texttt{ColorManager}. You can initialize it to the default palette, with a list of colors or simply with a number of colors you require. In the last case, the \texttt{ColorManager} will generate new colors, which will be \textit{visibly distinct} from each other (you will not get 3 slightly different shades of blue). The generation is done using the \texttt{generateColors()} method.
+
+The \texttt{ColorManager} API has all the different calls you could expect from a \texttt{std::vector} wrapper, like \texttt{empty()}, \texttt{size()} and \texttt{clear()}, which we have omitted from the overview for clarity.
+
+The most important part of the API are the \texttt{addColor()}, \texttt{setColor()} and \texttt{replaceColors()} methods. These allow for changing of the palette on the fly. Note that changing the palette changes the colors on the model in real time. \texttt{getColor()} can be used to query the \texttt{ColorManager} on any color (for example for user interface purposes), and when combined with the following pair of methods, it provides a vital part of Pepr3D by allowing the color palette widget to work.
+
+We have already mentioned one of the two remaining methods -- the getter \texttt{getActiveColorIndex()} and the setter \texttt{setActiveColorIndex()}. These methods are invoked when the user changes the active color in the color palette widget in the user interface. They are also invoked by various tools when the tool is constructing the recolour command and needs to know which colour the user painted with.
