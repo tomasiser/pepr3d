@@ -32,6 +32,213 @@ The general structure of the unit tests is cumulative -- this means that if the 
 
 In this section we describe the reasoning behind manual testing. We also list all of the manual tests the team has accumulated during the development.
 
+Manual tests are based on scenarios, i.e., hypothetical stories simulating what users would typically do when using the application.
+A person performing a manual test is required to proceed exactly as written in the scenario and notice any wrong or unexpected behavior.
+
+There are number of reasons why we use manual testing along with unit testing and continuous integration.
+One of the most important reasons is that writing fully automated tests for applications with user interfaces is a very slow and demanding process.
+Often, there are dedicated employees (sometimes called Software Development Engineers in Test, or SDET) writing the software for testing another software.
+Our team was simply not large enough to handle that.
+
+Another reason is that human testers can quickly identify weird behavior, glitches, or broken look of the user interface.
+Using automated tests for verifying that the design of a user interface is not broken would require updating the tests every time we add a new button.
+Automated tests also only do what they were scripted to do, so they do not ``explore'' the application outside of their boundaries.
+Humans, on the other hand, do not have to be given precise instructions in every single step and they naturally explore other areas as well.
+
+\subsection{Basic first-run tests}
+
+These scenarios are used for verifying basic common situations that every user of Pepr3D would come across.
+They basically check that the application as a whole behaves in an expected way.
+If these tests fail, any user could immediately notice.
+
+\paragraph{Layout and camera control}
+
+\begin{enumerate}
+\item Run Pepr3D. (Note: all scenarios expect the Release build to be run.)
+\item Verify that a new window is open, toolbar on the top, side pane on the right, model view in the rest of the window. The title of the main window should say ``Untitled* - Pepr3D''. No console window should open.
+\item There should be 13 icons in the toolbar and all of them should be active (black) except Undo and Redo that are disabled. Icons are visually divided into 5 parts: File; Undo and Redo; drawing tools; Display Options, Settings, and Information; and Export Assistant.
+\item The default active tool is Triangle Painter, the icon is blue.
+\item Model view should show a blue cube placed precisely in the middle of a grid, touching the grid at the bottom.
+\item Right-clicking and dragging the mouse on the model view should rotate the cube (left-right, top-down). Rotating the cube over $90\degree$ at the top or bottom should not be possible.
+\item Middle-clicking and dragging the mouse should move the cube \emph{and} the grid without rotating. The same for holding Control and right-clicking and dragging.
+\item Scroll wheel should zoom the cube, scrolling up should zoom in, down should zoom out. Zooming too close \emph{may} go inside the cube, but it should be possible to zoom out again and rotate the cube the same as before.
+\item In the toolbar, left-click File (the left-most icon). A popup menu should display with 6 options. Press Exit. The application should exit successfully.
+\end{enumerate}
+
+\paragraph{Loading, saving, and importing basic files}
+
+\begin{enumerate}
+\item Run Pepr3D, drag-and-drop a valid \texttt{.stl} model anywhere onto the main window. Verify that the default cube has been completely replaced by the new model. The new object should be centered on the grid and resized perfectly so it fits on the screen. The title of the main window should say ``file\_name - Pepr3D'', where the file name should be \emph{without} an extension, \emph{without} a full path, and \emph{without} an asterisk. Repeat with valid \texttt{.ply} and \texttt{.obj} models.
+\item Verify the same files can also be successfully imported via File $\rightarrow$ Import. Verify that a progress indicator is shown when importing bigger models and that the user cannot interact with the application while the progress indicator is being shown.
+\item Verify that when a model that has a color palette defined is imported, the color palette in Pepr3D also imports up to 16 colors from the model.
+\item Do a change in the model, e.g., color a single triangle with a different color. Verify an asterisk is now shown in the title denoting an unsaved change.
+\item Select File $\rightarrow$ Save and verify it opens a file dialog with the original file name and path as default. Save the file. Verify the asterisk in the title has disappeared. Do a change in the model. Verify the asterisk has appread again, select File $\rightarrow$ Save, now the file should be saved to the same file without opening a dialog, and the asterisk should disappear.
+\item Select File $\rightarrow$ Save as, verify a file dialog is now opened and save the file with another name.
+\item Exit Pepr3D and run it again. The default cube should be shown. Drag-and-drop the previously saved \texttt{.p3d} file and verify it corresponds to the model you saved. Verify the same via File $\rightarrow$ Open. The overall behavior should be identical to importing models.
+\item Verify that when changes are made and a new model is imported or open, Undo and Redo buttons are reset to their disabled state.
+\end{enumerate}
+
+\paragraph{Toolbar tooltips and hotkeys}
+
+\begin{enumerate}
+\item Verify \texttt{assets/hotkeys.json} file exists and run Pepr3D.
+\item Hover mouse above icons in the toolbar and verify tooltips are shown with correct names, descriptions, and hotkeys.
+\item Verify every single hotkey by hovering on the icon, checking which hotkey should be pressed, and pressing that hotkey. By default, every icon in the toolbar should have a hotkey assigned. Also check that hotkeys work for the color palette.
+\item Exit Pepr3D, remove \texttt{assets/hotkeys.json}, and run Pepr3D again. There should be \emph{no} error, Pepr3D should use the default hotkeys.
+\end{enumerate}
+
+\subsection{Tools tests}
+
+These scenarios verify that all tools behave as expected, except the Export Assistant, which is checked separately.
+For all tools, also verify that the side pane shows the current tool options and that tooltips are shown for all options in the side pane.
+With tools that interact with the models by clicking, hovering mouse over triangles should highlight them, except Brush.
+
+\paragraph{Triangle painter}
+
+\begin{enumerate}
+\item Run Pepr3D, verify a color palette is shown in the side pane. Select different colors in the palette and left-click on the triangles on the cube. They should be colored with the selected colors. Pressing Undo should revert every single click individually.
+\item Now left-click and drag the mouse over multiple triangles. They should all be colored in real time. Pressing Undo should revert the whole click-and-drag operation at once.
+\end{enumerate}
+
+\paragraph{Paint Bucket}
+
+\begin{enumerate}
+\item Run Pepr3D, select Paint Bucket. Verify the side pane is populated with a palette and options. All options should have a tooltip.
+\item Default options should be ``Paint while dragging'', ``Color based on criteria'', and ``Stop on different color''. With these options, select a different color, left-click a triangle, and the whole cube should be colored.
+\item Select ``Stop on sharp edges'', new options should appear, the default options should be $30\degree$ and ``Neighbouring triangles''. Select a different color, left-click a triangle. Only the two triangles on a face of the cube should change color. Now click-and-drag over multiple triangles and the changes should be real-time. Unselect ``Paint while dragging'' and verify that click-and-drag only applies to the first triangle held. Undo should behave as in Triangle Painter.
+\item Set angle to $95\degree$. Clicking and coloring should now be applied to the whole cube but still stop at a boundary with a different color.
+\item Unselect ``Stop on different color'', clicking and coloring should now be applied to the whole cube.
+\item Select ``With starting angle''. Clicking and coloring should now be applied to the whole cube \emph{except} the one face opposite the one being clicked on.
+\item Select ``Color whole model''. All options below ``Color based on criteria'' should disappear. With this option, clicking and coloring should now be applied to the whole cube.
+\end{enumerate}
+
+\paragraph{Brush}
+
+TODO
+
+\paragraph{Text Editor}
+
+TODO
+
+\paragraph{Automatic Segmentation}
+
+\begin{enumerate}
+\item Run Pepr3D and import \texttt{bunny.obj}. Click ``Compute SDF'', which should be the only available option in the side pane. Verify a progress indicator appears. After computing the SDF is finished, ``Segment!'' button and 2 sliders should appear in the side pane.
+\item Keep the default $20\%$ robustness and $30\%$ edge tolerance defaults and click ``Segment!''. The bunny should be segmented into 6 regions numbered 0 to 5. A color palette and segment buttons should also appear in the side pane below the previous options, together with ``Accept'' and ``Cancel''.
+\item Select ``Cancel'', the bunny should revert to its original blue color, side pane should show the main options again.
+\item Change edge tolerance to $50\%$ and click ``Segment!''. The bunny should be segmented into 5 regions corresponding roughly to 2 ears separately, head, both front legs together, and the rest of the body.
+\item Hovering over triangles in model view should highlight the corresponding segment buttons in the side pane. Left-clicking a triangle in a segment should apply a color from the palette to the whole region and also change the color of the segment button in the side pane. The same behavior should apply when one clicks on the segment button in the side pane instead of on a triangle in the model view.
+\item Pressing ``Accept'' if not all regions are colored with palette colors should not do anything. Color all regions and press ``Accept''. Verify the bunny is now colored with the corresponding colors and the side pane reverts to the initial options.
+\item Set robustness to $0\%$ and edge tolerance to $100\%$. Two segments should be created, corresponding roughly to the head with ears and the rest of the bunny.
+\item Verify that canceling does not affect Undo and Redo. Verify that accepting a segmentation is undoable.
+\end{enumerate}
+
+\paragraph{Manual Segmentation}
+
+\begin{enumerate}
+\item Run Pepr3D and import \texttt{bunny.obj}. Click ``Compute SDF'', which should be the only available option in the side pane. Verify a progress indicator appears. After computing the SDF is finished, a color palette should appear in the side pane.
+\item Verify that computing the SDF in Manual Segmentation means that it is no more necessary to also compute it in the Automatic Segmentation, and vice-versa.
+\item Select a different color and roughly paint some triangles in both bunny ears. Once triangles are painted, a ``Spread'' slider with $0\%$ should appear together with unchecked ``Hard edges'' and ``Region overlap'' and an ``Apply'' and ``Cancel'' button.
+\item Increase the spread to roughly $5\%$, verify that both ears get fully colored and the coloring stops at the place where the ears connect with the head. Increasing towards $35\%$ also colors the head, $100\%$ colors the whole bunny.
+\item Verify that Cancel and Accept work as expected similar to Automatic Segmentation, also with Undo.
+\item Undo back to the original blue bunny. Select two different colors, color ears with one and tail with another. Verify that increasing the spread increases the colored regions. With ``Hard edges'' enables, one color should never appear ``inside'' another region and the ``Region overlap'' option should be hidden. With ``Region overlap'', spread at $100\%$ should color the whole bunny with one color, without ``Region overlap'' it should not happen.
+\end{enumerate}
+
+\paragraph{Display Options}
+
+\begin{enumerate}
+\item Run Pepr3D, select Display Options.
+\item With ``Dolly'', zooming in is able to get inside the default cube. With ``Field of view'', this is not possible. ``Reset camera'' resets the view to the default position and rotation.
+\item ``Model roll'' rotates with the object in the third axis which is not possible to rotate with right mouse button dragging over the model view. Changing model position moves the model on the grid, when height is changed, the grid moves \emph{together} with the model. ``Reset model transformation'' reverts all these changes back to the default ones.
+\item When ``Show grid'' is enabled, a grid is shown, and vice-versa. When ``Show wireframe'' is enabled, every single triangle is highlighted and hovering mouse over them in Triangle Painter highlights them with an opposite color.
+\end{enumerate}
+
+\paragraph{Settings}
+
+\begin{enumerate}
+\item Run Pepr3D, select Settings. Two categories should be shown, ``Edit Color Palette'' and ``User Interface'', both open by default. Clicking their headers should toggle between open and close.
+\item Verify that changing the ``Side pane width'' changes the side pane width, with the possible minimum of 200 pixels. Maximum should never be as high to completely cover model view, but icons in the toolbar may be covered.
+\item Verify that the color palette shows the same colors as in the tools. By default, there are 4 colors, which can always be reverted by clicking ``Reset all colors to default''.
+\item Clicking ``Add color'' adds a new color with a random hue, maximum of 16 is allowed. If more colors want to be added, an error dialog is shown explaining the problem.
+\item Drag-and-dropping a color rectangle to the ``Drag color here to delete'' region removes a color. It is forbidden to remove all colors, an error dialog is shown explaining the problem. When a color is deleted, it is also removed from the model. Verify that by painting the cube. Triangles painted with a removed color should get the first color in the palette.
+\item Drag-and-dropping a color rectangle to another color rectangle reorders the colors in the palette, but does \emph{not} change any colors on the model. But when Control is held during the drag-and-drop, verify that the colors are also swapped on the model as well as in the palette.
+\item Left-clicking a color rectangle opens a popup where the color can be changed. Verify that changing a color changes it on the model as well in real time.
+\end{enumerate}
+
+\paragraph{Information}
+
+\begin{enumerate}
+\item Run Pepr3D, select Information. Verify that the URL of Pepr3D GitHub repository is shown.
+\end{enumerate}
+
+\subsection{Exporting}
+
+These scenarios verify that the Export Assistant and exporting geometry work as expected and exported models can be used in 3D printing.
+
+\paragraph{Exporting an extruded cube}
+
+\begin{enumerate}
+\item Run Pepr3D, select Export Assistant. Verify that File $\rightarrow$ Export also opens Export Assistant. By default, ``Depth extrusion'' export should be selected, the ``Update extrusion preview!'' button should be highlighted, and ``Export preview'' and ``Please update the extrusion preview.'' captions should appear on the top-left corner of the model view. Default extrusion depths are $2.50\%$ absolute, all colors are previewed, and \texttt{.stl} is selected without creating a new folder. Preview height is the whole range of zero and hundred percent.
+\item Click ``Update extrusion preview!''. The blue cube should appear, button should not be highlighted anymore and the red caption should disappear. Changing the preview range should ``open'' the cube from the bottom and top respectively.
+\item Select Triangle Painter and color one face with a different color. Select Brush and make a circle with another color on another face.
+\item Select Export Assistant. Verify that the update button is highlighted again. Click it. The preview should now get updated reflecting the new coloring. Inspect the interior of the cube by deselecting ``Preview'' of the various colors and changing the preview height. Verify that the cube is extruded inside!
+\item Change the depths of the colors. Verify that the update button gets highlighted. Try setting the depth to $0\%$ for one color and verify that it disables extrusion for that color.
+\item Change depth values to ``relative to SDF''. Verify that the update button gets highlighted. Click it. The extrusion should now get a little bit uneven as the SDF values for a cube are not constant for all vertices. Verify!
+\item Check that the extruded model can get exported in all three different formats. Clicking ``Export files'' should open a file dialog, enter a file name and verify the files got saved. If you followed this scenario, 3 different files should be exported for the model for every format as there were 3 different colors used.
+\item Verify that ``Create a new folder'' indeed creates a new folder when ``Export files'' is clicked. The folder name should be the same as the name written in the file dialog.
+\item Try importing the exported files back to Pepr3D. Inspect them, verify they correspond to the different parts of different colors, and verify they are indeed extruded unless $0\%$ was chosen for the color.
+\item Open Slic3r PE and drag-and-drop the 3 files \emph{together at the same time} to the main window of Slic3r PE. Confirm the dialog asking if you want to import them as a single object with multiple parts.
+\item Verify that the parts are correctly positioned so that together they form the original cube that you painted. Click ``Slice now'' (on the right), it should succeed. Go to ``Preview'' tab (on the bottom) and move the sliders on the right to inspect the layers of the model. It should correspond to the extrusion parameters you set in Pepr3D and it should correspond to the Export Assistant preview.
+\item Optionally, try printing the cube.
+\end{enumerate}
+
+\paragraph{Exporting surfaces of a cube}
+
+\begin{enumerate}
+\item Run Pepr3D, select Export Assistant. Select ``Surfaces only''. Verify that the whole extrusion part of the side pane gets hidden and that a ``No preview available for surface export.'' caption is shown in the top-left corner of the model view. Nothing except a grid should indeed be shown in the preview.
+\item Select Triangle Painter and color one face with a different color. Select Brush and make a circle with another color on another face.
+\item Select Export Assistant and try exporting the cube in the various formats.
+\item Import the exported parts back to Pepr3D and verify they are indeed only surfaces and they are not extruded. Different colors should still be separated into different files.
+\end{enumerate}
+
+\paragraph{Exporting an SDF extruded bunny}
+
+\begin{enumerate}
+\item Run Pepr3D, import \texttt{bunny.obj}, paint it using Triangle Painter and Brush.
+\item Select Export Assistant, select ``relative to SDF'' depth values. Keep all depths at a same value. Click to update the preview.
+\item Verify that the depth of the extrusion depends on the thickness of the parts of the bunny. For example, ears should be extruded \emph{in lower depth} than the body of the bunny. This is because SDF is lower in the ears, so the depth should also be lower. Inspect various parts of the bunny.
+\item Try exporting and verifying in Slic3r PE as explained in the first scenario with the cube.
+\end{enumerate}
+
+\subsection{Error behaviors}
+
+These scenarios verify that error situations such as loading a corrupted file are handled correctly.
+This means that errors should be explained to users in an error dialog.
+In case Pepr3D crashes entirely, the crash should be logged in a log file and a dialog explaining the log file should appear when the user runs Pepr3D again.
+All files mentioned in this section are located in the Pepr3D repository in the \texttt{assets/models/invalid} directory.
+
+\paragraph{Opening and importing invalid models}
+Run Pepr3D and try opening and importing the following files by drag-and-dropping them onto the main Pepr3D window, by using File $\rightarrow$ Open, and also by using File $\rightarrow$ Import.
+These files are invalid and error dialogs should be shown when trying to handle them in Pepr3D.
+
+\begin{itemize}
+\item Opening and/or importing \texttt{invalid.obj}, \texttt{README.md}, or other random files such as JPEG files should result in ``Error: Invalid file'' dialog. The geometry that was loaded before (e.g., the default cube) should stay opened.
+\item Importing \texttt{invalid\_sdf.stl} should work without any problems, but pressing ``Compute SDF'' in the segmentation tools or using ``relative to SDF'' in Export Assistant should result in ``Error: Failed to compute SDF'' dialog. After the dialog is shown, both segmentation tools should be disabled. In Export Assistant, the ``relative to SDF'' option should be hidden. Exporting should still work, just not with SDF values anymore.
+\item Importing \texttt{invalid\_polyhedron.stl} should work but a ``Warning: Failed to build a polyhedron'' dialog should be shown explaining the model is probably non-manifold. For these models, only Triangle Painter should work, other editing tools should be disabled. Exporting should also work, but the ``relative to SDF'' extrusion option should be hidden.
+\item Opening \texttt{corrupted.p3d} should result in ``Error: Pepr3D project file (.p3d) corrupted'' dialog. The geometry that was loaded before (e.g., the default cube) should stay opened.
+\item Opening \texttt{corrupted\_crash.p3d} may crash Pepr3D entirely as it looks like valid serialization data but is not. This is a limitation of our serialization library Cereal. Verify that ``pepr3d.crashed'' file was created. Run Pepr3D again and a dialog ``Pepr3D previously terminated with a fatal error'' should appear explaining the crash and where the user can find the log file. Pressind ``Continue'' should close the dialog and everything should be back to normal.
+\end{itemize}
+
+\paragraph{Error when saving or exporting a file}
+Run Pepr3D and open a \texttt{.p3d} file that is set as read-only in Windows (right-click the file, Properties, check Read-only).
+Try to save the file.
+An error dialog should be shown explaining the file to save into could not be opened.
+Same should happen when exporting a file to a read-only directory or file.
+
+\paragraph{Other errors}
+Some other error situations (such as removing the only remaining color in a palette) have already been described in other testing scenarios and are not mentioned here again.
+There are also other error situations which may occur (such as providing a geometry file which is corrupted but in a way that cannot be detected early) and are covered by Pepr3D by showing error dialogs, but we were not able to provide reasonable example files here in the manual testing.
+
 \section{Continuous integration}
 
 Continuous integration is a software engineering term used to describe the work flow of a team based project, which is based on merging the work of many individuals into a main stream often \footnote{https://en.wikipedia.org/wiki/Continuous\_integration}. In particular, \textit{Circle CI} is a free service which can be integrated into GitHub's interface, which allows the users of the repository to perform all kinds of checks and tests before the code is merged into a branch (most commonly the \textit{master branch}.
