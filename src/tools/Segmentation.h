@@ -11,6 +11,7 @@
 
 namespace pepr3d {
 
+/// Tool used for automatically separating and coloring the model into regions based on the thickness of the model
 class Segmentation : public Tool {
    public:
     explicit Segmentation(MainApplication& app) : mApplication(app) {}

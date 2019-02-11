@@ -5,6 +5,7 @@
 
 namespace pepr3d {
 
+/// A tool used for painting texts on a model
 class TextEditor : public Tool {
    public:
     virtual std::string getName() const override {

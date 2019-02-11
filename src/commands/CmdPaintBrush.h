@@ -10,6 +10,7 @@
 
 namespace pepr3d {
 
+/// Command that paints a stroke with a brush
 class CmdPaintBrush : public CommandBase<Geometry> {
    public:
     std::string_view getDescription() const override {

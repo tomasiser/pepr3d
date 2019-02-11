@@ -33,6 +33,7 @@ using cinder::app::FileDropEvent;
 using cinder::app::KeyEvent;
 using cinder::app::MouseEvent;
 
+/// The main Cinder-based application, represents a window, handles events, thread pool, active tools, geometry, etc.
 class MainApplication : public cinder::app::App {
    public:
     void setup() override;

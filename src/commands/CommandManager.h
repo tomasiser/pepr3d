@@ -8,11 +8,9 @@
 
 namespace pepr3d {
 
-/**
-CommandManager handles all undoable operations on target in the form of commands See @see
-CommandBase. All commands must be executed via the CommandManager Requirements for Target: Target
-must have a saveState() and loadState(State) methods
-*/
+/// CommandManager handles all undoable operations on target in the form of commands See @see
+/// CommandBase. All commands must be executed via the CommandManager Requirements for Target: Target
+/// must have a saveState() and loadState(State) methods
 template <typename Target>
 class CommandManager {
    public:

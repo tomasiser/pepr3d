@@ -22,6 +22,7 @@
 
 namespace pepr3d {
 
+/// Imports triangles and color palette from a model via Assimp
 class ModelImporter {
     std::string mPath;
     std::vector<DataTriangle> mTriangles;

@@ -11,6 +11,7 @@
 
 namespace pepr3d {
 
+/// Represents a color palette, i.e., all colors and a selected active color
 class ColorManager {
    public:
     using ColorMap = std::vector<glm::vec4>;

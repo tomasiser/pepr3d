@@ -14,6 +14,7 @@
 
 namespace pepr3d {
 
+/// Exports Geometry to separate files via Assimp, supports surface export and depth extrusions
 class ModelExporter {
     const std::vector<DataTriangle> &mTriangles;
     bool mModelSaved = false;
