@@ -9,6 +9,7 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// Right side of the user interface that displays options of the currently selected tool
 class SidePane {
    public:
     explicit SidePane(MainApplication& app) : mApplication(app) {}
@@ -71,6 +72,7 @@ class SidePane {
     void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
                             const std::string& description = "", const std::string& disabled = "");
 
+    /// A category of a SidePane that can be opened and closed by a user
     class Category {
         std::string mCaption;
         bool mIsOpen;

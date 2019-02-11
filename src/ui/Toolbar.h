@@ -11,6 +11,7 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// A top part of the user interface that shows a File menu, Undo, Redo, and all tools
 class Toolbar {
    public:
     explicit Toolbar(MainApplication& app) : mApplication(app) {}
@@ -30,6 +31,7 @@ class Toolbar {
     void drawSeparator();
     void drawButton(std::size_t index, const char* text);
 
+    /// Properties of a clickable and selectable button in the Toolbar
     struct ButtonProperties {
         std::string label = ICON_MD_HELP;
         bool isEnabled = true;

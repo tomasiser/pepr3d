@@ -10,6 +10,7 @@
 
 namespace pepr3d {
 
+/// Enumeration of all actions that can happen via a hotkey
 enum class HotkeyAction : std::size_t {
     Open,
     Save,
@@ -134,6 +135,7 @@ void load_minimal(const Archive&, HotkeyAction& action, const std::string& value
 
 using KeyCode = int;
 
+/// A hotkey, i.e., a keycode and modifiers (Ctrl)
 struct Hotkey {
     KeyCode keycode;
     bool withCtrl;
@@ -161,12 +163,14 @@ struct Hotkey {
     }
 };
 
+/// Used for hashing a hotkey so it can be put in std::unordered_map
 struct HotkeyHasher {
     std::size_t operator()(const Hotkey& hotkey) const {
         return std::hash<KeyCode>()(hotkey.keycode) ^ std::hash<bool>()(hotkey.withCtrl);
     }
 };
 
+/// All hotkeys and their corresponding actions
 class Hotkeys {
     std::unordered_map<Hotkey, HotkeyAction, HotkeyHasher> mKeysToActions;
     std::unordered_map<HotkeyAction, Hotkey> mActionsToKeys;
@@ -174,6 +178,7 @@ class Hotkeys {
     friend class cereal::access;
 
    public:
+    /// Returns a hotkey for a certain action
     std::optional<Hotkey> findHotkey(HotkeyAction action) const {
         auto found = mActionsToKeys.find(action);
         if(found == mActionsToKeys.end()) {
@@ -183,6 +188,7 @@ class Hotkeys {
         }
     }
 
+    /// Returns an action for a certain hotkey
     std::optional<HotkeyAction> findAction(Hotkey hotkey) const {
         auto found = mKeysToActions.find(hotkey);
         if(found == mKeysToActions.end()) {
@@ -192,11 +198,13 @@ class Hotkeys {
         }
     }
 
+    /// Adds a new hotkey & action pair
     void add(Hotkey hotkey, HotkeyAction action) {
         mKeysToActions.insert({hotkey, action});
         mActionsToKeys.insert({action, hotkey});
     }
 
+    /// Loads default hotkeys
     void loadDefaults() {
         mKeysToActions.clear();
         mActionsToKeys.clear();

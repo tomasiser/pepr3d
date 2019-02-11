@@ -70,6 +70,8 @@ struct DataTriangleAABBPrimitive {
 }  // namespace pepr3d
 
 namespace std {
+
+/// Hashes a DetailedTriangleId
 template <>
 struct hash<pepr3d::DetailedTriangleId> {
     size_t operator()(const pepr3d::DetailedTriangleId& id) const {

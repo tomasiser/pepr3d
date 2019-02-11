@@ -5,6 +5,7 @@
 
 namespace pepr3d {
 
+/// Example state used for debugging purposes of the CommandManager system, contains a single integer
 struct IntegerState {
     int mInnerValue = 0;
 
@@ -17,6 +18,7 @@ struct IntegerState {
     }
 };
 
+/// Example command used for debugging purposes of the CommandManager system, adds an integer to IntegerState
 class AddValueCommand : public CommandBase<IntegerState> {
    public:
     virtual std::string_view getDescription() const override {

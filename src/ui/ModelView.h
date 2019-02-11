@@ -15,6 +15,7 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// The main part of the user interface, shows the geometry to the user
 class ModelView {
    public:
     explicit ModelView(MainApplication& app) : mApplication(app) {}
@@ -113,6 +114,7 @@ class ModelView {
     glm::vec3 mModelTranslate = glm::vec3(0);
     float mMaxSize = 1.f;
 
+    /// Color buffer override
     struct ColorOverrideData {
         bool isOverriden = false;
         std::vector<glm::vec4> overrideColorBuffer;
@@ -121,6 +123,7 @@ class ModelView {
     void updateModelMatrix();
     void updateVboAndBatch();
 
+    /// Custom OpenGL attributes
     struct Attributes {
         static const cinder::geom::Attrib COLOR_IDX = cinder::geom::Attrib::CUSTOM_0;
         static const cinder::geom::Attrib HIGHLIGHT_MASK = cinder::geom::Attrib::CUSTOM_1;

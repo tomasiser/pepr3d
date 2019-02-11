@@ -14,6 +14,7 @@ class MainApplication;
 class SidePane;
 class ModelView;
 
+/// A base class of all tools that the user can select and manipulate the Geometry and application with them
 class Tool {
    public:
     Tool() = default;

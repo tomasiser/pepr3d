@@ -22,6 +22,7 @@ namespace pepr3d {
 #ifndef NDEBUG
 #include <fstream>
 
+/// Debugging utility for writing a file that can be used in gnuplot
 class GnuplotDebug {
    public:
     GnuplotDebug() = default;

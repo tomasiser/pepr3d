@@ -5,6 +5,7 @@
 
 namespace pepr3d {
 
+/// Tool used for configuring the color palette and application
 class Settings : public Tool {
     MainApplication& mApplication;
     SidePane::Category mColorPaletteCategory;

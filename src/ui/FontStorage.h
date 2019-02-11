@@ -4,6 +4,7 @@
 
 namespace pepr3d {
 
+/// Keeps pointers to all fonts used in the user interface (regular, small, and icons)
 class FontStorage {
     friend class MainApplication;
 

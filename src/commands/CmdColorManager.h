@@ -8,6 +8,7 @@
 
 namespace pepr3d {
 
+/// Command that changes a color in the palette
 class CmdColorManagerChangeColor : public CommandBase<Geometry> {
    public:
     CmdColorManagerChangeColor(size_t colorIdx, glm::vec4 color)
@@ -42,6 +43,7 @@ class CmdColorManagerChangeColor : public CommandBase<Geometry> {
     glm::vec4 mColor;
 };
 
+/// Command that swaps 2 colors in the palette, which also swaps the colors in the Geometry
 class CmdColorManagerSwapColors : public CommandBase<Geometry> {
    public:
     CmdColorManagerSwapColors(size_t color1Idx, size_t color2Idx)
@@ -63,6 +65,7 @@ class CmdColorManagerSwapColors : public CommandBase<Geometry> {
     size_t mColor2Idx;
 };
 
+/// Command that reorders 2 colors in the palette, which does not change the colors in the Geometry
 class CmdColorManagerReorderColors : public CommandBase<Geometry> {
    public:
     CmdColorManagerReorderColors(size_t color1Idx, size_t color2Idx)
@@ -94,6 +97,7 @@ class CmdColorManagerReorderColors : public CommandBase<Geometry> {
     size_t mColor2Idx;
 };
 
+/// Command that removes a color from the palette, which replaces it in the Geometry with the first color in the palette
 class CmdColorManagerRemoveColor : public CommandBase<Geometry> {
    public:
     CmdColorManagerRemoveColor(size_t colorIdx) : CommandBase(false, false), mColorIdx(colorIdx) {}
@@ -128,6 +132,7 @@ class CmdColorManagerRemoveColor : public CommandBase<Geometry> {
     size_t mColorIdx;
 };
 
+/// Command that adds a new color to the palette
 class CmdColorManagerAddColor : public CommandBase<Geometry> {
    public:
     CmdColorManagerAddColor() : CommandBase(false, false) {}
@@ -147,6 +152,7 @@ class CmdColorManagerAddColor : public CommandBase<Geometry> {
     }
 };
 
+/// Command that resets all colors of the palette to the default 4 colors
 class CmdColorManagerResetColors : public CommandBase<Geometry> {
    public:
     CmdColorManagerResetColors() : CommandBase(false, false) {}

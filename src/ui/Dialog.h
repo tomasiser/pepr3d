@@ -6,6 +6,7 @@ namespace pepr3d {
 
 enum class DialogType : std::size_t { Information = 0, Warning, Error, FatalError };
 
+/// Represents a modal dialog shown to a user in the user interface in front of everything else
 class Dialog {
     DialogType mType;
     std::string mCaption;
