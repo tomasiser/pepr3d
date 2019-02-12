@@ -32,8 +32,98 @@ After you perform either of the two previous steps, the model will start loading
 \label{tab:loadperf}
 \end{table}
 
-\section{Exporting a coloured model}
-% TODO by Tom
+\section{Exporting a colored model}
+
+When you finish painting a model in Pepr3D and you would like to use it in 3D printing or another application, it is necessary to \emph{export} the colored model.
+This saves your work to files which are compatible with other software.
+To be more precise, 3D printing a model with different colors typically requires separate colors in separate files, which exporting in Pepr3D does.
+
+To export a model you have painted in Pepr3D, use our \textbf{Export Assistant}.
+You can access it by clicking on its \textbf{icon in the Toolbar}, by using the default hotkey \textbf{Ctrl + E}, or from the File menu \textbf{File $\rightarrow$ Export}.
+
+Once you select the Export Assistant, you can change its options in the side pane.
+On the left side, a preview of the export will be shown, but only for certain options described later.
+
+In the side pane, as the very first decision, you can choose between exporting \emph{only the surfaces}, or exporting with \emph{depth extrusion of the colors}.
+As these two options influence the rest of the export process, we describe them separately in the following subsections.
+
+\subsection{Exporting surfaces only}
+
+Exporting only surfaces of your painted model is the simplest option.
+All triangles with the same color are grouped together and saved to a separate file.
+The result are multiple files containing the differently colored surfaces of the model.
+
+This option is useful when you want to use your painted model in another 3D editor such as Blender.
+It is not entirely useful for 3D printing as common slicers are not capable of actually printing these exports reasonably.
+That is because volumetric information, i.e., how deep the colors should be extruded, is missing in this export.
+
+The only options in the side pane are the file formats and then a simple \textbf{``Export files''} button which opens a file dialog to save the files.
+Follow Section~\ref{sec:exportformats} for more details.
+
+\subsection{Exporting extruded colors}
+
+Unlike surface export, extrusion export has various options and also provides you with a preview of the options.
+The biggest difference is that extrusion export is much more suitable for 3D printing as it provides volumetric information, i.e., how deep the colors should be extruded.
+The user can specify this extrusion information in the various options.
+
+At any time you can press the \textbf{``Update extrusion preview!''} button and a preview of the export will be shown on the left side of the Pepr3D window.
+The point of the preview is so that you as the user can see how the model is going to look like after being exported.
+Generally, the preview should look exactly as the model you painted, unless there are errors and the options are wrong.
+
+By changing the range in the \textbf{``Preview Height''} option, you can see inside the model.
+Raising the minimum height removes a bottom part of the model.
+Lowering the maximum height removes an upper part of the model.
+This only affects the preview, not the actually exported files!
+
+Being able to see inside the model is very useful in extrusion export, as it helps you understand how deep the colors will actually penetrate.
+One of the most important things to remember is that the extrusion \emph{should never penetrate} the original surface!
+If the extruded part penetrates the surface on the opposite side, you have to lower the depth of that color!
+
+This can be done by changing the \textbf{``Depth''} in the table of colors.
+The depth percentage is with regards to the size of the object, where $100\%$ corresponds to the size of the whole object.
+This means that if you set an extrusion that high, it will almost for sure penetrate the surface and be wrong.
+We should always operate with lower extrusion depths such as a few percent only.
+
+In models that have SDF (shape diameter function) values available, you can set the depths to be \textbf{``relative to SDF''} instead of ``absolute''.
+This is very useful for complex models with varying thickness, e.g., models with spikes, little details, etc.
+Relative depths are not only based on the percentage you set, but they also vary locally with regards to the local thickness of the model.
+So for a certain color and percentage you set, the depth will be \emph{higher} than your percentage in thick parts of the model and \emph{lower} in thin parts of the model.
+This is different than in ``absolute'' thickness where all triangles are extruded the same.
+
+To verify how the extrusion looks inside the model, you may also disable the \textbf{``Preview''} of certain colors in the table of colors.
+This will simply hide all triangles and extrusions of a certain color from the preview, but not from the exported files that you actually export.
+
+The export is finished using the \textbf{``Export files''} button (see Section~\ref{sec:exportformats}).
+
+\subsection{Advice for 3D printing}
+When exporting for 3D printing, try to follow the following recommendations:
+
+\begin{itemize}
+\item Always use the \textbf{``Depth extrusion''} option unless it gives completely wrong results with whatever extrusion options you try. In that case, it might be necessary to use \textbf{``Surfaces only''} and do the extrusions manually in a 3D editor such as Blender.
+\item Make sure the extruded parts never penetrate the object surface from the opposite side. This penetration will be visible in the 3D printing! If that happens, make sure to lower the \textbf{``Depth''} of that color. On the other hand, too low depths may be impossible to print as the model would be too hollow. It is necessary to find the right balance.
+\item For certain slicers such as Slic3r Prusa Edition, the extrusions \emph{may} intersect in the interior of the model. The slicer will fix this automatically when generating the G-code for printing.
+\item In models with various thickness in different parts, e.g., models with spikes, little details, etc., try to use depths \textbf{``relative to SDF''}.
+\item If parts of a model with a certain color are too deep or too shallow but changing the percentage for the whole color breaks in another part of the model, consider adding a new color to the palette. You can paint the two parts with different colors but still print them with the same color! Remember that in the 3D printing slicers, you can set multiple parts from Pepr3D to be printed with the same color. \textbf{The Pepr3D color palette does not have to correspond to the colors you actually print!}
+\item If you want a part of a model to be filled instead of partially hollow, you can \textbf{experiment by setting a color depth to $0.00\%$}. This will not extrude it at all, so certain 3D slicers such as Slic3r Prusa Edition will try to fill in the parts completely! You can verify this when you import the exported files to the slicer and preview the layers.
+\item Always verify the extrusion by importing the exported files to a slicer, generating the G-code, and previewing the model layer by layer, if it is supported by the slicer.
+\end{itemize}
+
+
+\subsection{Supported formats}
+\label{sec:exportformats}
+
+When exporting the files, before clicking on the \textbf{``Export files''} button which opens a file dialog to save the files, there are options to choose from.
+First, you can choose from 3 file formats described below.
+Then, you can also check the \textbf{``Create a new folder''} option, which means that a new folder will be created and all the exported files will be saved in the new separate folder (directory).
+This is useful when using multiple colors and neatly organizing your exports.
+
+The supported file formats are:
+
+\begin{itemize}
+\item binary \textbf{.stl} (stereolithography) files, they are suitable for example for 3D printing with Prusa printers and Slic3r Prusa Edition,
+\item binary \textbf{.ply} (Stanford Triangle Format) files, they are supported by common 3D editors,
+\item non-binary \textbf{.obj} files that are also saved with their corresponding \textbf{.mtl} files, also supported by common 3D editors.
+\end{itemize}
 
 \section{Saving and opening a project}
 
