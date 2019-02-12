@@ -61,6 +61,10 @@ class ModelView {
     /// Draws a 3D line.
     void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white());
 
+    /// Draws a text label (caption) to the top left corner.
+    /// `caption` is black, `errorCaption` is red and below `caption`
+    void drawCaption(const std::string& caption, const std::string& errorCaption);
+
     /// Returns true if wireframe of Geometry is rendered.
     bool isWireframeEnabled() const {
         return mIsWireframeEnabled;
@@ -117,7 +121,7 @@ class ModelView {
         return mCameraUi.isFovZoomEnabled();
     }
 
-    /// Enables color buffer override.
+    /// Enables or disables color buffer override.
     void setColorOverride(bool val) {
         mColorOverride.isOverriden = val;
     }
@@ -130,6 +134,43 @@ class ModelView {
     /// Returns a reference to the override color buffer, so you can read it or write to it.
     std::vector<glm::vec4>& getOverrideColorBuffer() {
         return mColorOverride.overrideColorBuffer;
+    }
+
+    /// Enables or disables vertex, normal, and index buffer override (all at once)
+    void setVertexNormalIndexOverride(bool val) {
+        mVertexNormalIndexOverride.isOverriden = val;
+        mBatch = nullptr;  // reset batch to force update
+    }
+
+    /// Returns true if the vertex, normal, and index buffers are overriden (all at once)
+    bool isVertexNormalIndexOverride() const {
+        return mVertexNormalIndexOverride.isOverriden;
+    }
+
+    /// Returns a reference to the override vertex buffer, so you can read it or write to it.
+    std::vector<glm::vec3>& getOverrideVertexBuffer() {
+        return mVertexNormalIndexOverride.overrideVertexBuffer;
+    }
+
+    /// Returns a reference to the override normal buffer, so you can read it or write to it.
+    std::vector<glm::vec3>& getOverrideNormalBuffer() {
+        return mVertexNormalIndexOverride.overrideNormalBuffer;
+    }
+
+    /// Returns a reference to the override index buffer, so you can read it or write to it.
+    std::vector<uint32_t>& getOverrideIndexBuffer() {
+        return mVertexNormalIndexOverride.overrideIndexBuffer;
+    }
+
+    /// Returns the minimum (first) and maximum (second) height that is rendered in the ModelView.
+    glm::vec2 getPreviewMinMaxHeight() const {
+        return mPreviewMinMaxHeight;
+    }
+
+    /// Sets the minimum (first) and maximum (second) height that is rendered in the ModelView.
+    void setPreviewMinMaxHeight(glm::vec2 minMax) {
+        mPreviewMinMaxHeight = minMax;
+        mModelShader->uniform("uPreviewMinMaxHeight", mPreviewMinMaxHeight);
     }
 
     /// Returns the maximum size (in the X, Y, Z axes) of the current Geometry object.
@@ -153,12 +194,21 @@ class ModelView {
     float mModelRoll = 0.0f;
     glm::vec3 mModelTranslate = glm::vec3(0);
     float mMaxSize = 1.f;
+    glm::vec2 mPreviewMinMaxHeight = glm::vec2(0.0f, 1.0f);
 
     /// Color buffer override
     struct ColorOverrideData {
         bool isOverriden = false;
         std::vector<glm::vec4> overrideColorBuffer;
     } mColorOverride;
+
+    /// Vertex, normal, and index buffer override
+    struct VertexNormalIndexOverrideData {
+        bool isOverriden = false;
+        std::vector<glm::vec3> overrideVertexBuffer;
+        std::vector<glm::vec3> overrideNormalBuffer;
+        std::vector<uint32_t> overrideIndexBuffer;
+    } mVertexNormalIndexOverride;
 
     /// Recalculates the model matrix of the current Geometry object.
     /// The model matrix ensures that the object's maximum displayed size is 1.0 and it is centered above the grid,

@@ -27,6 +27,12 @@ struct GeometryProgress {
         createScenePercentage = -1.0f;
         exportFilePercentage = -1.0f;
     }
+
+    std::atomic<float> sdfPercentage{-1.0f};
+
+    void resetSdf() {
+        sdfPercentage = -1.0f;
+    }
 };
 
 }  // namespace pepr3d

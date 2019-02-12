@@ -25,6 +25,7 @@
 #include "SidePane.h"
 #include "Toolbar.h"
 #include "commands/CommandManager.h"
+#include "geometry/ExportType.h"
 
 namespace pepr3d {
 class Tool;
@@ -123,7 +124,6 @@ class MainApplication : public cinder::app::App {
 
     /// Tries to open a file in the specified path and use it as the new Geometry.
     void openFile(const std::string& path);
-    void saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType);
 
     using ToolsVector = std::vector<std::unique_ptr<Tool>>;
 
@@ -188,10 +188,6 @@ class MainApplication : public cinder::app::App {
     /// Opens the file dialog for import.
     void showImportDialog(const std::vector<std::string>& extensions);
 
-    void showExportDialog() {
-        mShowExportDialog = true;
-    }
-
     /// Draws a tooltip if the previous ImGui item was hovered.
     /// Optionally you can set a custom position and pivot point, if they are not provided, the tooltip will hover above
     /// the item.
@@ -254,6 +250,29 @@ class MainApplication : public cinder::app::App {
         return loadAsset(relativePath);
     }
 
+    // Schedules `operation` to be executed in a separate thread in a thread pool.
+    // If `showIndicator` is true, displays a progress indicator, which disables user interaction with the application.
+    // After the `operation` is finished, `postOperation` is executed in the main thread of the application.
+    // Finally, the progress indicator is hidden.
+    template <typename OperationFunc, typename PostOperationFunc>
+    void enqueueSlowOperation(OperationFunc operation, PostOperationFunc postOperation, bool showIndicator = true) {
+        if(showIndicator) {
+            mProgressIndicator.setGeometryInProgress(mGeometry);
+        }
+        sThreadPool.enqueue([operation, postOperation, this]() {
+            operation();
+            dispatchAsync([postOperation, this]() {
+                postOperation();
+                mProgressIndicator.setGeometryInProgress(nullptr);
+            });
+        });
+    }
+
+    /// Returns the path to the current Geometry file.
+    std::string getGeometryFileName() const {
+        return mGeometryFileName;
+    }
+
    private:
     /// Setups Cinder logging (warnings and errors in Release) and FatalLogger.
     void setupLogging();
@@ -263,7 +282,6 @@ class MainApplication : public cinder::app::App {
 
     /// Setups a WinAPI icon of the main window (only on Windows).
     void setupIcon();
-    void drawExportDialog();
 
     /// Called when the main window loses focus.
     void willResignActive();
@@ -302,8 +320,6 @@ class MainApplication : public cinder::app::App {
     ModelView mModelView;
     ProgressIndicator mProgressIndicator;
     bool mShowDemoWindow = false;
-    bool mShowExportDialog = false;
-    bool mShouldExportInNewFolder = false;
 
     std::priority_queue<pepr3d::Dialog> mDialogQueue;
 

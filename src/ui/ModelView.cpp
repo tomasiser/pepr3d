@@ -17,6 +17,7 @@ void ModelView::setup() {
                                      .fragment(ci::loadString(mApplication.loadRequiredAsset("shaders/ModelView.frag")))
                                      .attrib(Attributes::COLOR_IDX, "aColorIndex")
                                      .attrib(Attributes::HIGHLIGHT_MASK, "aAreaHighlightMask"));
+    mModelShader->uniform("uPreviewMinMaxHeight", mPreviewMinMaxHeight);
 }
 
 void ModelView::resize() {
@@ -50,8 +51,28 @@ void ModelView::draw() {
     }
 
     {
+        // draw dummy window:
+        // (necessary for drawing texts into the model view)
+        ImGuiWindowFlags window_flags = 0;
+        window_flags |= ImGuiWindowFlags_NoTitleBar;
+        window_flags |= ImGuiWindowFlags_NoScrollbar;
+        window_flags |= ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoResize;
+        window_flags |= ImGuiWindowFlags_NoCollapse;
+        window_flags |= ImGuiWindowFlags_NoNav;
+        window_flags |= ImGuiWindowFlags_NoSavedSettings;
+        window_flags |= ImGuiWindowFlags_NoInputs;
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, glm::vec4(0.0f));
+        ImGui::PushStyleColor(ImGuiCol_Border, glm::vec4(0.0f));
+        ImGui::Begin("##modelview-dummy", nullptr, window_flags);
+
+        // let the active tool draw to the model view:
         auto& currentTool = **mApplication.getCurrentToolIterator();
         currentTool.drawToModelView(*this);
+
+        // end the dummy window:
+        ImGui::End();
+        ImGui::PopStyleColor(2);
     }
 }
 
@@ -104,7 +125,7 @@ void ModelView::resetCamera() {
 
 void ModelView::updateVboAndBatch() {
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
-    assert(!glData.isDirty);
+    assert(isVertexNormalIndexOverride() || !glData.isDirty);
 
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
@@ -115,15 +136,24 @@ void ModelView::updateVboAndBatch() {
         cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(Attributes::HIGHLIGHT_MASK, 1)};
 
     // Create elementary buffer of indices
-    const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, glData.indexBuffer, GL_STATIC_DRAW);
+    const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(
+        GL_ELEMENT_ARRAY_BUFFER, isVertexNormalIndexOverride() ? getOverrideIndexBuffer() : glData.indexBuffer,
+        GL_STATIC_DRAW);
 
     // Create the VBO mesh
-    mVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(glData.vertexBuffer.size()), GL_TRIANGLES, {layout},
-                                       static_cast<uint32_t>(glData.vertexBuffer.size()), GL_UNSIGNED_INT, ibo);
+    mVboMesh =
+        ci::gl::VboMesh::create(static_cast<uint32_t>(isVertexNormalIndexOverride() ? getOverrideVertexBuffer().size()
+                                                                                    : glData.vertexBuffer.size()),
+                                GL_TRIANGLES, {layout},
+                                static_cast<uint32_t>(isVertexNormalIndexOverride() ? getOverrideVertexBuffer().size()
+                                                                                    : glData.vertexBuffer.size()),
+                                GL_UNSIGNED_INT, ibo);
 
     // Assign the buffers to the attributes
-    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, glData.vertexBuffer);
-    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, glData.normalBuffer);
+    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION,
+                                      isVertexNormalIndexOverride() ? getOverrideVertexBuffer() : glData.vertexBuffer);
+    mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL,
+                                      isVertexNormalIndexOverride() ? getOverrideNormalBuffer() : glData.normalBuffer);
     mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
     mVboMesh->bufferAttrib<Geometry::ColorIndex>(Attributes::COLOR_IDX, glData.colorBuffer);
     mVboMesh->bufferAttrib<GLint>(Attributes::HIGHLIGHT_MASK, glData.highlightMask);
@@ -154,16 +184,23 @@ void ModelView::updateModelMatrix() {
     mModelMatrix *= glm::translate(-aabbSize / 2.0f);
     mModelMatrix *= glm::translate(-aabbMin);
 
-    const glm::vec4 aabbMinFit = mModelMatrix * glm::vec4(aabbMin, 1.0f);
-    const glm::vec4 aabbMaxFit = mModelMatrix * glm::vec4(aabbMax, 1.0f);
-    const glm::vec4 aabbSizeFit = aabbMaxFit - aabbMinFit;
+    glm::vec4 aabbMinFit = mModelMatrix * glm::vec4(aabbMin, 1.0f);
+    glm::vec4 aabbMaxFit = mModelMatrix * glm::vec4(aabbMax, 1.0f);
+    glm::vec4 aabbSizeFit = aabbMaxFit - aabbMinFit;
 
     mModelMatrix =
         glm::translate(glm::vec3(-aabbSizeFit.x / 2.0f, aabbSizeFit.z / 2.0f, -aabbSizeFit.y / 2.0f)) * mModelMatrix;
     mModelMatrix = glm::rotate(glm::radians(mModelRoll), glm::vec3(1, 0, 0)) * mModelMatrix;
     mModelMatrix = glm::translate(mModelTranslate) * mModelMatrix;
 
-    mGridOffset = -(aabbMaxFit.z - aabbSizeFit.z / 2.0f);
+    aabbMinFit = mModelMatrix * glm::vec4(aabbMin, 1.0f);
+    aabbMaxFit = mModelMatrix * glm::vec4(aabbMax, 1.0f);
+    aabbSizeFit = aabbMaxFit - aabbMinFit;
+    const glm::vec4 aabbDiagonal1Fit = mModelMatrix * glm::vec4(aabbMin.x, aabbMin.y + aabbSize.y, aabbMin.z, 1.0f);
+    const glm::vec4 aabbDiagonal2Fit = mModelMatrix * glm::vec4(aabbMin.x, aabbMin.y, aabbMin.z + aabbSize.z, 1.0f);
+
+    mGridOffset = std::min(aabbDiagonal2Fit.y, std::min(aabbDiagonal1Fit.y, std::min(aabbMinFit.y, aabbMaxFit.y)));
+    mModelShader->uniform("uGridOffset", mGridOffset);
 }
 
 ci::Ray ModelView::getRayFromWindowCoordinates(glm::ivec2 windowCoords) const {
@@ -183,11 +220,15 @@ void ModelView::drawGeometry() {
     }
 
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
-    if(glData.isDirty || !mBatch) {
-        mApplication.getCurrentGeometry()->updateOpenGlBuffers();
+    if(glData.isDirty || !mBatch || isVertexNormalIndexOverride()) {
+        if(glData.isDirty && !isVertexNormalIndexOverride()) {
+            // attention! do not update geometry buffers if isVertexNormalIndexOverride() is true,
+            // because ExportAssistant could be modifying the geometry in a background thread
+            // and the operations are not thread-safe!
+            mApplication.getCurrentGeometry()->updateOpenGlBuffers();
+            CI_LOG_I("Geometry buffers updated");
+        }
         updateVboAndBatch();
-
-        CI_LOG_I("Vbo updated");
     }
 
     // Pass new highlight data if required
@@ -202,12 +243,19 @@ void ModelView::drawGeometry() {
         glData.info.unsetColorFlag();
     }
 
-    assert(!mColorOverride.isOverriden || mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
-
     // Pass overriden colors if required
     if(mColorOverride.isOverriden) {
         mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
     }
+
+    // verify that override buffers are correct:
+    assert(!mVertexNormalIndexOverride.isOverriden || mColorOverride.isOverriden);
+    assert(!mVertexNormalIndexOverride.isOverriden || mVertexNormalIndexOverride.overrideVertexBuffer.size() ==
+                                                          mVertexNormalIndexOverride.overrideNormalBuffer.size());
+    assert(!mVertexNormalIndexOverride.isOverriden ||
+           mVertexNormalIndexOverride.overrideVertexBuffer.size() == mColorOverride.overrideColorBuffer.size());
+    assert(mVertexNormalIndexOverride.isOverriden || !mColorOverride.isOverriden ||
+           mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
 
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
@@ -261,6 +309,18 @@ void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::C
     ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
     gl::ScopedDepth depth(false);
     ci::gl::drawLine(from, to);
+}
+
+void ModelView::drawCaption(const std::string& caption, const std::string& errorCaption) {
+    const float width = ImGui::GetContentRegionAvailWidth();
+    const float padding = ImGui::GetStyle().WindowPadding.x;
+    glm::vec2 cursorPos(10.0f, 8.0f + mApplication.getToolbar().getHeight());
+    auto* drawList = ImGui::GetWindowDrawList();
+    drawList->PushClipRectFullScreen();
+    drawList->AddText(cursorPos, static_cast<ImColor>(ci::ColorA::hex(0x1C2A35)), caption.c_str());
+    drawList->AddText(cursorPos + glm::vec2(0.0f, 16.0f), static_cast<ImColor>(ci::ColorA::hex(0xEB5757)),
+                      errorCaption.c_str());
+    drawList->PopClipRect();
 }
 
 }  // namespace pepr3d

@@ -67,7 +67,11 @@ void SidePane::draw() {
 }
 
 void SidePane::resize() {
-    mWidth = std::max<float>(200.0f, std::min<float>(mApplication.getWindowSize().x - 250.0f, mWidth));
+    float windowWidth = static_cast<float>(mApplication.getWindowSize().x);
+    if(windowWidth <= 0.0f) {
+        return;  // this happens when the application is minimized
+    }
+    mWidth = std::max<float>(200.0f, std::min<float>(windowWidth - 250.0f, mWidth));
 }
 
 void SidePane::drawText(std::string text) {
@@ -291,11 +295,12 @@ void SidePane::drawColorPaletteColorBoxes(ColorManager& colorManager, CommandMan
                               (ImColor)selectColor, 0.0f, 15, thickness);
         }
         if(isEditable) {
-            const glm::vec2 colorPickerSize(ImGui::GetContentRegionAvailWidth(), 285.0f);
+            float approximateColorPickerHeight = 300.0f;
+            const glm::vec2 colorPickerSize(ImGui::GetContentRegionAvailWidth(), 0.0f);
             glm::vec2 colorPickerPos(ImGui::GetIO().DisplaySize.x - mWidth - colorPickerSize.x + 1.0f,
-                                     cursorPos.y + boxHeight - colorPickerSize.y / 2.0f);
-            if(colorPickerPos.y + colorPickerSize.y > ImGui::GetIO().DisplaySize.y) {
-                colorPickerPos.y = ImGui::GetIO().DisplaySize.y - colorPickerSize.y - 1.0f;
+                                     cursorPos.y + boxHeight - approximateColorPickerHeight / 2.0f);
+            if(colorPickerPos.y + approximateColorPickerHeight > ImGui::GetIO().DisplaySize.y) {
+                colorPickerPos.y = ImGui::GetIO().DisplaySize.y - approximateColorPickerHeight - 1.0f;
             } else if(colorPickerPos.y < mApplication.getToolbar().getHeight() - 1.0f) {
                 colorPickerPos.y = mApplication.getToolbar().getHeight() - 1.0f;
             }

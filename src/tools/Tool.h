@@ -86,6 +86,7 @@ class Tool {
     /// This method is safe and if an exception occurs, an error dialog is automatically shown.
     virtual std::optional<DetailedTriangleId> safeIntersectDetailedMesh(MainApplication& mainApplication,
                                                                         const ci::Ray ray) final;
+    virtual bool safeComputeSdf(MainApplication& mainApplication) final;
 };
 
 }  // namespace pepr3d
