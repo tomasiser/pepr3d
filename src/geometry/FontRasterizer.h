@@ -21,9 +21,11 @@
 
 namespace pepr3d {
 
+/// Used for triangulating a font outline
 class FontRasterizer {
    public:
    private:
+    /// Triangle represented by three 3D points
     struct Tri {
         glm::vec3 a, b, c;
     };

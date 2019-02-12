@@ -8,6 +8,7 @@
 
 namespace pepr3d {
 
+/// Tool used for manually expanding specified regions to create a segmentation of the model
 class SemiautomaticSegmentation : public Tool {
    public:
     SemiautomaticSegmentation(MainApplication& app) : mApplication(app) {}
@@ -74,6 +75,7 @@ class SemiautomaticSegmentation : public Tool {
     size_t findClosestColorFromSDF(const size_t triangle, const size_t color1, const size_t color2,
                                    const std::unordered_map<std::size_t, std::vector<double>>& sdfValuesPerColor);
 
+    /// A segmentation criterion that stops when angles of normals are too different
     struct NormalStopping {
         const Geometry* geo;
         const double threshold;
@@ -94,6 +96,7 @@ class SemiautomaticSegmentation : public Tool {
         }
     };
 
+    /// A segmentation criterion that stops when SDF values are too different
     struct SDFStopping {
         const Geometry* const geo;
         double maximumDifference;

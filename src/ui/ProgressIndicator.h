@@ -14,12 +14,15 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// User interface for showing a current progress, contains a spinner and progress bars
 class ProgressIndicator {
    public:
+    /// Sets the current Geometry whose GeometryProgress is going to be used.
     void setGeometryInProgress(std::shared_ptr<Geometry> geometry) {
         mGeometry = geometry;
     }
 
+    /// Renders the progress indicator.
     void draw();
 
    private:

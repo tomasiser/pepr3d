@@ -29,6 +29,8 @@
 #include "tools/Brush.h"
 
 namespace pepr3d {
+
+/// The whole geometry of a model that the user is painting
 class Geometry {
    public:
     using Direction = pepr3d::DataTriangle::K::Direction_3;
@@ -40,6 +42,7 @@ class Geometry {
     using BoundingBox = My_AABB_traits::Bounding_box;
     using ColorIndex = GLuint;
 
+    /// A highlight of a part of the Geometry
     struct AreaHighlight {
         // all the triangles in highlight
         std::set<size_t> triangles;
@@ -53,6 +56,7 @@ class Geometry {
         bool dirty{true};
     };
 
+    /// All OpenGL buffers of the Geometry
     struct OpenGlData {
         /// Vertex buffer with the same data as mTriangles for OpenGL to render the mesh.
         /// Contains position and color data for each vertex.

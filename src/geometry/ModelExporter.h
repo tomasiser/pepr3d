@@ -22,6 +22,7 @@ typedef size_t colorIndex;
 
 namespace pepr3d {
 
+/// Exports Geometry to separate files via Assimp, supports surface export and depth extrusions
 class ModelExporter {
     const Geometry *mGeometry;
 

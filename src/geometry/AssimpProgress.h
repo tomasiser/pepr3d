@@ -8,6 +8,7 @@
 
 namespace pepr3d {
 
+/// Represents a progress of importing/exporting a model via Assimp
 template <typename Progress>
 class AssimpProgress : public Assimp::ProgressHandler {
     Progress* mProgress;
@@ -15,6 +16,8 @@ class AssimpProgress : public Assimp::ProgressHandler {
    public:
     AssimpProgress(Progress* progress) : mProgress(progress) {}
 
+    /// Sets the progress to a certain value, usually -1 means unknown progress / not started yet, 0 means start of a
+    /// progress and 1 means finished
     virtual bool Update(float percentage = -1.f) override {
         if(mProgress != nullptr) {
             *mProgress = percentage;

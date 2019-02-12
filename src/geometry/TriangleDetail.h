@@ -51,7 +51,7 @@ class TriangleDetail {
     using PeprPlane = DataTriangle::K::Plane_3;
     using PeprSphere = DataTriangle::K::Sphere_3;
 
-    // Used in triangulation to distinguish filled faces from holes
+    /// Used in triangulation to distinguish filled faces from holes
     struct FaceInfo {
         int nestingLevel = -1;
     };

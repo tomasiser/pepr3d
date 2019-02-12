@@ -11,6 +11,7 @@
 namespace pepr3d {
 class DataTriangle;
 
+/// Static utility functions that are not closely tied to Geometry
 class GeometryUtils {
    private:
     // Prevent this util class from being constructed

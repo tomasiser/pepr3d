@@ -12,6 +12,7 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// Tool used for real-time debugging purposes
 class LiveDebug : public Tool {
    public:
     explicit LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}

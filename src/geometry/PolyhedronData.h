@@ -5,6 +5,7 @@
 
 namespace pepr3d {
 
+/// CGAL Polyhedron data of the Geometry
 struct PolyhedronData {
     /// Vertex positions after joining all identical vertices.
     /// This is after removing all other componens and as such based only on the position property.

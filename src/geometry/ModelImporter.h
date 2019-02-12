@@ -22,6 +22,7 @@
 
 namespace pepr3d {
 
+/// Imports triangles and color palette from a model via Assimp
 class ModelImporter {
     std::string mPath;
     std::vector<DataTriangle> mTriangles;
@@ -43,24 +44,29 @@ class ModelImporter {
         assert(mTriangles.size() == mIndexBuffer.size());
     }
 
+    /// Returns a vector of all DataTriangle of the imported mesh.
     std::vector<DataTriangle> getTriangles() const {
         return mTriangles;
     }
 
+    /// Returns a ColorManager of the imported mesh.
     ColorManager getColorManager() const {
         assert(!mPalette.empty());
         return mPalette;
     }
 
+    /// Returns true if the mesh was imported successfully.
     bool isModelLoaded() {
         return mModelLoaded;
     }
 
+    /// Returns a vertex buffer of the imported mesh.
     std::vector<glm::vec3> getVertexBuffer() const {
         assert(!mVertexBuffer.empty());
         return mVertexBuffer;
     }
 
+    /// Returns an index buffer of the imported mesh.
     std::vector<std::array<size_t, 3>> getIndexBuffer() const {
         assert(!mIndexBuffer.empty());
         return mIndexBuffer;
