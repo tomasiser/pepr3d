@@ -16,10 +16,12 @@ class Toolbar {
    public:
     explicit Toolbar(MainApplication& app) : mApplication(app) {}
 
+    /// Returns the height.
     float getHeight() {
         return mHeight;
     }
 
+    /// Draws the Toolbar using ImGui.
     void draw();
 
    private:
@@ -28,8 +30,8 @@ class Toolbar {
     std::size_t mSelectedButtonIndex = 3;
     float mHeight = 50.0f;
 
+    /// Draws a vertical separator.
     void drawSeparator();
-    void drawButton(std::size_t index, const char* text);
 
     /// Properties of a clickable and selectable button in the Toolbar
     struct ButtonProperties {
@@ -39,15 +41,22 @@ class Toolbar {
         bool isToggled = false;
     };
 
+    /// Draws a clickable and selectable button in the Toolbar according to the ButtonProperties
     template <typename Callback>
     void drawButton(ButtonProperties& props, Callback onPressed);
 
+    /// Draws a File drop down menu.
     void drawFileDropDown();
+
+    /// Draws the Undo and Redo buttons.
     void drawUndoRedo();
-    void drawDemoWindowToggle();
 
     using ToolsVector = std::vector<std::unique_ptr<Tool>>;
+
+    /// Draws buttons of all Tool instances.
     void drawToolButtons();
+
+    /// Draws a single button for a specified Tool (an iterator to the Tool).
     void drawToolButton(ToolsVector::iterator tool);
 };
 
