@@ -268,6 +268,7 @@ class MainApplication : public cinder::app::App {
         });
     }
 
+    /// Returns the path to the current Geometry file.
     std::string getGeometryFileName() const {
         return mGeometryFileName;
     }

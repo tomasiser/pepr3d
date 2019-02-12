@@ -26,15 +26,13 @@ namespace pepr3d {
 class ModelExporter {
     const Geometry *mGeometry;
 
-    bool mModelSaved = false;
     GeometryProgress *mProgress;
-    std::vector<float> mExtrusioCoef;
+    std::vector<float> mExtrusionCoef;
 
    public:
-    ModelExporter(const Geometry *geometry, GeometryProgress *progress) : mGeometry(geometry), mProgress(progress) {
-        // this->mModelSaved = saveModel(filePath, fileName, fileType, exportType);
-    }
+    ModelExporter(const Geometry *geometry, GeometryProgress *progress) : mGeometry(geometry), mProgress(progress) {}
 
+    /// Returns a map where each color index has a corresponding exported Assimp scene.
     std::map<colorIndex, std::unique_ptr<aiScene>> createScenes(ExportType exportType) {
         switch(exportType) {
         case ExportType::Surface: return createPolySurfaceScenes(); break;
@@ -46,7 +44,8 @@ class ModelExporter {
         }
     }
 
-    bool saveModel(const std::string filePath, const std::string fileName, const std::string fileType,
+    /// Saves the exported Geometry to files, may throw an exception on error.
+    void saveModel(const std::string filePath, const std::string fileName, const std::string fileType,
                    ExportType exportType) {
         Assimp::Exporter exporter;
 
@@ -83,12 +82,12 @@ class ModelExporter {
         if(mProgress != nullptr) {
             mProgress->exportFilePercentage = 1.0f;
         }
-
-        return true;
     }
 
-    void setExtrusionCoef(std::vector<float> extrusioCoef) {
-        mExtrusioCoef = extrusioCoef;
+    /// Sets extrusion coefficients between 0 and 1 indexed by the color index.
+    /// The vector has to be as long as the number of colors in the ColorManager of the current Geometry.
+    void setExtrusionCoef(std::vector<float> extrusionCoef) {
+        mExtrusionCoef = extrusionCoef;
     }
 
    private:
@@ -100,6 +99,8 @@ class ModelExporter {
         bool isBoundary = false;
     };
 
+    /// Creates surface only exported scenes without the need for a CGAL Polyhedron.
+    /// Returns a map where each color index has a corresponding exported Assimp scene.
     std::map<colorIndex, std::unique_ptr<aiScene>> createNonPolySurfaceScenes() {
         std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
@@ -117,6 +118,8 @@ class ModelExporter {
         return scenes;
     }
 
+    /// Creates surface only exported scenes with the need for a CGAL Polyhedron.
+    /// Returns a map where each color index has a corresponding exported Assimp scene.
     std::map<colorIndex, std::unique_ptr<aiScene>> createPolySurfaceScenes() {
         std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
@@ -134,6 +137,8 @@ class ModelExporter {
         return scenes;
     }
 
+    /// Creates extruded scenes without the need for a CGAL Polyhedron.
+    /// Returns a map where each color index has a corresponding exported Assimp scene.
     std::map<colorIndex, std::unique_ptr<aiScene>> createNonPolyScenes() {
         std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
@@ -175,20 +180,20 @@ class ModelExporter {
             auto soloBoundary = selectBoundaryEdgesByColor(edgeLookup, indexOfColor.first);
 
             scenes[indexOfColor.first] = std::move(createNewNonPolyScene(
-                indexOfColor.second, summedVertexNormals, soloBoundary, mExtrusioCoef[indexOfColor.first]));
+                indexOfColor.second, summedVertexNormals, soloBoundary, mExtrusionCoef[indexOfColor.first]));
         }
 
         return scenes;
     }
 
-    // normalize summed vertex normals
+    /// Normalize summed vertex normals
     void normalizeSummedNormals(std::map<std::array<float, 3>, glm::vec3> &summedVertexNormals) {
         for(auto &vertexNormal : summedVertexNormals) {
             vertexNormal.second = glm::normalize(vertexNormal.second);
         }
     }
 
-    // decide if the edge is between two colors
+    /// Decide if the edge is between two colors
     void computeBoundaryEdges(std::map<std::array<std::array<float, 3>, 2>, IndexedEdge> &edgeLookup) {
         for(auto &edge : edgeLookup) {
             if(edgeLookup.count({edge.first[1], edge.first[0]})) {
@@ -200,6 +205,7 @@ class ModelExporter {
         }
     }
 
+    /// Returns a vector of IndexedEdge that were boundary and with the specified color.
     std::vector<IndexedEdge> selectBoundaryEdgesByColor(
         std::map<std::array<std::array<float, 3>, 2>, IndexedEdge> &edgeLookup, colorIndex color) {
         std::vector<IndexedEdge> soloBoundary;
@@ -211,6 +217,9 @@ class ModelExporter {
         return soloBoundary;
     }
 
+    /// Creates extruded scenes with the need for a CGAL Polyhedron.
+    /// Optionally extrudes relative to SDF values.
+    /// Returns a map where each color index has a corresponding exported Assimp scene.
     std::map<colorIndex, std::unique_ptr<aiScene>> createPolyScenes(bool withSDF) {
         std::map<colorIndex, std::unique_ptr<aiScene>> scenes;
 
@@ -287,7 +296,7 @@ class ModelExporter {
         for(auto &indexOfColor : colorsWithIndices) {
             scenes[indexOfColor.first] =
                 std::move(createNewPolyScene(indexOfColor.second, summedVertexNormals, borderEdges[indexOfColor.first],
-                                             vertexSDF, mExtrusioCoef[indexOfColor.first]));
+                                             vertexSDF, mExtrusionCoef[indexOfColor.first]));
         }
 
         return scenes;
@@ -696,6 +705,7 @@ class ModelExporter {
         return scene;
     }
 
+    /// Returns a normal vector of a triangle.
     static aiVector3D calculateNormal(const std::array<glm::vec3, 3> vertices) {
         const glm::vec3 p0 = vertices[1] - vertices[0];
         const glm::vec3 p1 = vertices[2] - vertices[0];
