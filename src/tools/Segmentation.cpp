@@ -116,7 +116,6 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 reset();
                 CI_LOG_I("Segmentation applied.");
             } else {  // Else report the error to the user and continue.
-                /// \todo Popup for the user
                 CI_LOG_W("Please assign all segments to a color from the palette first.");
             }
         }

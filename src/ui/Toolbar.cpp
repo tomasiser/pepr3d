@@ -39,10 +39,6 @@ void Toolbar::draw() {
     ImGui::SameLine(0.0f, 0.0f);
     drawSeparator();
     drawToolButtons();
-    // ImGui::SameLine(0.0f, 0.0f);
-    // drawSeparator();
-    // ImGui::SameLine(0.0f, 0.0f);
-    // drawDemoWindowToggle();
 
     ImGui::End();
 
@@ -55,25 +51,6 @@ void Toolbar::drawSeparator() {
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     drawList->AddLine(cursorPos, cursorPos + glm::ivec2(0, mHeight), ImColor(ci::ColorA::hex(0xEDEDED)));
     ImGui::SetCursorScreenPos(cursorPos + glm::ivec2(1, 0));
-}
-
-void Toolbar::drawButton(std::size_t index, const char* text) {
-    std::size_t active = mSelectedButtonIndex;
-    if(index == active) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
-        ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::hex(0x017BDA));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0x017BDA));
-    }
-    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.76f));
-    ImGui::Button(text, glm::ivec2(static_cast<int>(mHeight)));
-    if(ImGui::IsItemActive()) {
-        mSelectedButtonIndex = index;
-    }
-    ImGui::PopStyleVar();
-    ImGui::SameLine(0.f, 0.f);
-    if(index == active) {
-        ImGui::PopStyleColor(3);
-    }
 }
 
 void Toolbar::drawFileDropDown() {
@@ -151,18 +128,6 @@ void Toolbar::drawUndoRedo() {
     mApplication.drawTooltipOnHover("Redo", redoOptionalHotkey ? redoOptionalHotkey->getString() : "",
                                     "Redo last action.", props.isEnabled ? "" : "No action to redo.",
                                     buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
-}
-
-void Toolbar::drawDemoWindowToggle() {
-    ButtonProperties props;
-    props.label = ICON_MD_CHILD_FRIENDLY;
-    props.isToggled = mApplication.isDemoWindowShown();
-    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
-    drawButton(props, [&]() {
-        props.isToggled = !props.isToggled;
-        mApplication.showDemoWindow(props.isToggled);
-    });
-    ImGui::PopFont();
 }
 
 void Toolbar::drawToolButtons() {

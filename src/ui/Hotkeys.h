@@ -144,6 +144,7 @@ struct Hotkey {
         return keycode == rhs.keycode && withCtrl == rhs.withCtrl;
     }
 
+    /// Returns a string representing the hotkey and its modifier.
     std::string getString() const {
         std::string result;
         if(withCtrl) {

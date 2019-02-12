@@ -4,6 +4,7 @@
 
 namespace {
 
+/// Applies our light ImGui colors.
 inline void applyColors(ImVec4* colors) {
     colors[ImGuiCol_Text] = ci::ColorA::hex(0x1C2A35);
     colors[ImGuiCol_TextDisabled] = ImVec4(0.00f, 0.00f, 0.00f, 0.50f);
@@ -52,23 +53,9 @@ inline void applyColors(ImVec4* colors) {
 
 namespace pepr3d {
 
+/// Applies our light ImGui theme.
 inline void applyLightTheme(ImGuiStyle& style) {
     applyColors(style.Colors);
 }
-
-// enum class StyleColor: std::size_t {
-//     Front,
-//     Back
-// };
-
-// std::vector<ImVec4> styleColors;
-
-// ImVec4 getStyleColor(StyleColor selector) {
-//     return styleColors[static_cast<std::size_t>(selector)];
-// }
-
-// void drawblah() {
-//     getStyleColor(StyleColor::Front);
-// }
 
 }  // namespace pepr3d
