@@ -193,7 +193,8 @@ class MainApplication : public cinder::app::App {
     }
 
     /// Draws a tooltip if the previous ImGui item was hovered.
-    /// Optionally you can set a custom position and pivot point, if they are not provided, the tooltip will hover above the item.
+    /// Optionally you can set a custom position and pivot point, if they are not provided, the tooltip will hover above
+    /// the item.
     void drawTooltipOnHover(const std::string& label, const std::string& shortcut = "",
                             const std::string& description = "", const std::string& disabled = "",
                             glm::vec2 position = glm::vec2(-1.0f), glm::vec2 pivot = glm::vec2(0.0f));
@@ -229,8 +230,8 @@ class MainApplication : public cinder::app::App {
     /// Opens a file dialog to save the .p3d serialized file of the current Geometry.
     void saveProjectAs();
 
-    /// Behaves same as Cinder's getAssetPath, but in this case, if the asset is not found, a fatal error Dialog is shown to the user.
-    /// The fatal error Dialog also causes the application to terminate rendering.
+    /// Behaves same as Cinder's getAssetPath, but in this case, if the asset is not found, a fatal error Dialog is
+    /// shown to the user. The fatal error Dialog also causes the application to terminate rendering.
     ci::fs::path getRequiredAssetPath(const ci::fs::path& relativePath) {
         ci::fs::path path = getAssetPath(relativePath);
         if(path.empty()) {
@@ -246,8 +247,8 @@ class MainApplication : public cinder::app::App {
         return path;
     }
 
-    /// Behaves same as Cinder's loadAsset, but in this case, if the asset is not found, a fatal error Dialog is shown to the user.
-    /// The fatal error Dialog also causes the application to terminate rendering.
+    /// Behaves same as Cinder's loadAsset, but in this case, if the asset is not found, a fatal error Dialog is shown
+    /// to the user. The fatal error Dialog also causes the application to terminate rendering.
     ci::DataSourceRef loadRequiredAsset(const ci::fs::path& relativePath) {
         getRequiredAssetPath(relativePath);
         return loadAsset(relativePath);

@@ -116,7 +116,10 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 reset();
                 CI_LOG_I("Segmentation applied.");
             } else {  // Else report the error to the user and continue.
-                CI_LOG_W("Please assign all segments to a color from the palette first.");
+                mApplication.pushDialog(Dialog(
+                    DialogType::Error, "Please assign a color to all segments",
+                    "The segmentation was not accepted. Please assign all segments a color from the palette first!"));
+                CI_LOG_W("Please assign all segments a color from the palette first.");
             }
         }
         sidePane.drawTooltipOnHover("Apply the results to the model.");

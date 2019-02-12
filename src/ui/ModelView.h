@@ -104,13 +104,15 @@ class ModelView {
     /// Resets the camera to the default position.
     void resetCamera();
 
-    /// Resets the camera and sets zoom to be field-of-view based (so on zoom, the camera position does not change, only FOV).
+    /// Resets the camera and sets zoom to be field-of-view based (so on zoom, the camera position does not change, only
+    /// FOV).
     void setFovZoomEnabled(bool enabled) {
         resetCamera();
         mCameraUi.setFovZoomEnabled(enabled);
     }
 
-    /// Returns true if the camera zoom is field-of-view based (so on zoom, the camera position does not change, only FOV).
+    /// Returns true if the camera zoom is field-of-view based (so on zoom, the camera position does not change, only
+    /// FOV).
     bool isFovZoomEnabled() const {
         return mCameraUi.isFovZoomEnabled();
     }
@@ -159,7 +161,8 @@ class ModelView {
     } mColorOverride;
 
     /// Recalculates the model matrix of the current Geometry object.
-    /// The model matrix ensures that the object's maximum displayed size is 1.0 and it is centered above the grid, touching it on the bottom.
+    /// The model matrix ensures that the object's maximum displayed size is 1.0 and it is centered above the grid,
+    /// touching it on the bottom.
     void updateModelMatrix();
 
     /// Recalculates the OpenGL vertex buffer object and the Cinder batch.
