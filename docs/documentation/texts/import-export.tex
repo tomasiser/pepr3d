@@ -80,11 +80,11 @@ One of the most important things to remember is that the extrusion \emph{should 
 If the extruded part penetrates the surface on the opposite side, you have to lower the depth of that color!
 
 This can be done by changing the \textbf{``Depth''} in the table of colors.
-Generally, the depth percentage is with regards to the size of the object, where $100\%$ corresponds to the size of the whole object.
+The depth percentage is with regards to the size of the object, where $100\%$ corresponds to the size of the whole object.
 This means that if you set an extrusion that high, it will almost for sure penetrate the surface and be wrong.
 We should always operate with lower extrusion depths such as a few percent only.
 
-In models that have SDF (shape diameter function) values available, you can select that the depths should be \textbf{``relative to SDF''} instead of ``absolute''.
+In models that have SDF (shape diameter function) values available, you can set the depths to be \textbf{``relative to SDF''} instead of ``absolute''.
 This is very useful for complex models with varying thickness, e.g., models with spikes, little details, etc.
 Relative depths are not only based on the percentage you set, but they also vary locally with regards to the local thickness of the model.
 So for a certain color and percentage you set, the depth will be \emph{higher} than your percentage in thick parts of the model and \emph{lower} in thin parts of the model.
