@@ -1,6 +1,10 @@
+#include <assert.h>  //Must be above everything else, or Cinder will eat asserts
+
+#include "geometry/GeometryUtils.h"
 #include "geometry/TriangleDetail.h"
 
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_set_2.h>
@@ -9,10 +13,13 @@
 
 #include <cinder/Filesystem.h>
 
-#include <assert.h>
+#ifdef PEPR3D_COLLECT_DEBUG_DATA
+#include <cereal/archives/json.hpp>
+#include <fstream>
+#endif
+
 #include <cinder/Log.h>
 #include <deque>
-#include <glm/gtc/constants.inl>
 #include <list>
 #include <optional>
 #include <type_traits>
@@ -20,13 +27,13 @@
 namespace pepr3d {
 
 #ifndef NDEBUG
-#include <fstream>
 
 class GnuplotDebug {
    public:
     GnuplotDebug() = default;
     GnuplotDebug(const GnuplotDebug&) = delete;
 
+    //@param rgbStr Color in gnuplot format: #CCCCCC
     void addPoly(const TriangleDetail::Polygon& poly, const std::string& rgbStr) {
         mPolysToDraw.push_back(poly);
         mRgbStrings.push_back(rgbStr);
@@ -46,7 +53,7 @@ class GnuplotDebug {
 
         const cinder::fs::path filePath("debugOut.data");
 
-        oFileGnuplot << "plot '" << absolute(filePath) << "' index 0 with lines linestyle 1";
+        oFileGnuplot << "plot '" << absolute(filePath) << "' index 0 with lines linestyle 1 title \"\"";
 
         for(size_t idx = 1; idx < mPolysToDraw.size(); ++idx) {
             oFileGnuplot << ", '" << absolute(filePath) << "' index " << idx << " with lines linestyle " << idx + 1;
@@ -62,11 +69,12 @@ class GnuplotDebug {
             oFileData << "# X Y\n";
             for(TriangleDetail::Polygon::Vertex_const_iterator it = poly.vertices_begin(); it != poly.vertices_end();
                 ++it) {
-                oFileData << it->x() << " " << it->y() << "\n";
+                oFileData << CGAL::to_double(it->x()) << " " << CGAL::to_double(it->y()) << "\n";
             }
 
             // add first point again to connect the poly
-            oFileData << poly.vertices_begin()->x() << " " << poly.vertices_begin()->y() << "\n";
+            oFileData << CGAL::to_double(poly.vertices_begin()->x()) << " "
+                      << CGAL::to_double(poly.vertices_begin()->y()) << "\n";
 
             oFileData << "\n";
             oFileData << "\n";
@@ -106,6 +114,12 @@ void TriangleDetail::paintSphere(const PeprSphere& peprSphere, size_t color) {
 
 std::pair<bool, bool> TriangleDetail::correctSharedVertices(TriangleDetail& other) {
     const Segment3 sharedEdge = findSharedEdge(other);
+    if(mColorChanged) {
+        updatePolysFromTriangles();
+    }
+    if(other.mColorChanged) {
+        other.updatePolysFromTriangles();
+    }
 
     std::set<Point3> myPoints = findPointsOnEdge(sharedEdge);
     assert(myPoints.size() >= 2);
@@ -119,6 +133,15 @@ std::pair<bool, bool> TriangleDetail::correctSharedVertices(TriangleDetail& othe
 
 bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const std::set<Point3>& theirPoints,
                                       const Segment3& sharedEdge) {
+    // assert(!mColorChanged);
+    if(mColorChanged) {
+        updatePolysFromTriangles();
+    }
+
+#ifdef PEPR3D_COLLECT_DEBUG_DATA
+    history.emplace_back(PointEntry{myPoints, theirPoints, sharedEdge});
+#endif
+
     // Find missing points
     std::set<Point3> missingPoints;
     std::set_difference(theirPoints.begin(), theirPoints.end(), myPoints.begin(), myPoints.end(),
@@ -128,12 +151,26 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
         return false;
     }
 
+    for(const auto& pt : missingPoints) {
+        if(!sharedEdge.has_on(pt)) {
+            CI_LOG_E("3D Point is not on 3D shared edge. Possibly invalid input data.");
+            assert(false);
+        }
+    }
+
     // Bring the 3d points to our plane
     std::vector<Point2> points2D;
     std::transform(missingPoints.begin(), missingPoints.end(), std::back_inserter(points2D),
                    [this](auto& e) { return mOriginalPlane.to_2d(e); });
 
-    const Segment2 sharedEdge2D(mOriginalPlane.to_2d(sharedEdge.vertex(0)), mOriginalPlane.to_2d(sharedEdge.vertex(1)));
+    const Line2 sharedEdge2D(mOriginalPlane.to_2d(sharedEdge.vertex(0)), mOriginalPlane.to_2d(sharedEdge.vertex(1)));
+
+    for(const auto& pt : points2D) {
+        if(!sharedEdge2D.has_on(pt)) {
+            CI_LOG_E("2D Point is not on 2D shared edge. Possible conversion inaccuracy");
+            assert(false);
+        }
+    }
 
     // Find edges that contain any of the points
     for(auto& colorSetIt : mColoredPolys) {
@@ -142,62 +179,120 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
 
         for(PolygonWithHoles& polyWithHoles : polys) {
             Polygon& poly = polyWithHoles.outer_boundary();
-            for(auto vertIt = poly.vertices_begin(); vertIt != poly.vertices_end();) {
-                auto nextVertIt = std::next(vertIt) != poly.vertices_end() ? std::next(vertIt) : poly.vertices_begin();
+            assert(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
+
+#ifndef NDEBUG
+            GnuplotDebug dbg;
+            dbg.addPoly(mBounds, "#777777");
+            dbg.addPoly(poly, "#FF0000");
+
+            Polygon tmp;
+            for(auto& pt : points2D) {
+                tmp.push_back(pt);
+            }
+            if(points2D.size()) {
+                dbg.addPoly(tmp, "#00FF00");
+            }
+
+            dbg.exportToFile();
+#endif
+
+            for(size_t vertIdx = 0; vertIdx < poly.size();) {
+                auto vertIt = poly.vertices_circulator() + vertIdx;
+                auto nextVertIt = std::next(vertIt);
+
+                double fromY = CGAL::to_double(vertIt->y());
+                double toY = CGAL::to_double(nextVertIt->y());
+
+                std::stringstream sstream;
+                sstream << *vertIt;
+                std::string yVal = sstream.str();
 
                 if(points2D.empty()) {
                     break;
                 }
 
-                const Segment2 edgeSegment(*vertIt, *nextVertIt);
                 // Is this an edge of the whole triangle?
                 if(sharedEdge2D.has_on(*vertIt) && sharedEdge2D.has_on(*nextVertIt)) {
+                    const Segment2 edgeSegment(*vertIt, *nextVertIt);
                     // Test this segment against all points to see if we split
                     auto pointIt = std::find_if(points2D.begin(), points2D.end(),
                                                 [edgeSegment](Point2& pt) { return edgeSegment.has_on(pt); });
-                    if(pointIt != points2D.end()) {
-                        auto newIt = poly.insert(nextVertIt, *pointIt);
-                        vertIt = newIt == poly.vertices_begin() ? std::prev(poly.vertices_end()) : std::prev(newIt);
-                        points2D.erase(pointIt);
-                        // Stay at this vertex
-                    } else {
-                        vertIt++;
+                    std::vector<double> distances;
+                    for(auto& pt : points2D) {
+                        distances.emplace_back(CGAL::to_double(CGAL::squared_distance(pt, edgeSegment)));
                     }
-                } else {
-                    vertIt++;
+
+                    if(pointIt != points2D.end()) {
+                        if(nextVertIt == poly.vertices_circulator()) {
+                            // Put a new vertex at the end of the polygon instead of the start
+                            poly.push_back(*pointIt);
+                        } else {
+                            poly.insert(nextVertIt, *pointIt);
+                        }
+
+                        assert(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
+                        points2D.erase(pointIt);  // TODO move to end and pop
+                        continue;                 // stay at this vertex
+                    }
                 }
+
+                vertIdx++;
             }
         }
 
         // Insert the polygon back to color set
         colorSetIt.second.clear();
-        for(auto& poly : polys) {
-            colorSetIt.second.insert(poly);
-        }
+        colorSetIt.second.join(polys.begin(), polys.end());
     }
 
-    assert(points2D.empty());  // All points should have found an edge to put them on
+    if(!points2D.empty()) {
+        CI_LOG_E("Some shared points could not be added!");
+
+#ifdef PEPR3D_COLLECT_DEBUG_DATA
+        CI_LOG_E("Bounds:");
+        {
+            std::stringstream sstream;
+            sstream << mOriginal.getTri();
+            CI_LOG_E(sstream.str());
+        }
+        CI_LOG_E("History:");
+        std::stringstream sstream;
+        {
+            cereal::JSONOutputArchive jsonArchive(sstream);
+            jsonArchive(history);
+        }
+        CI_LOG_E(sstream.str());
+#endif
+
+        throw std::exception(
+            "Could not add matching vertex to a shared triangle edge. This was likely caused by corrupted internal "
+            "state.");
+    }
+
     return true;
 }
 
 void TriangleDetail::simplifyPolygons() {
+    assert(!mColorChanged);  // Did you forget to updatePolygons first?
+
     for(auto& colorSetIt : mColoredPolys) {
         if(colorSetIt.second.is_empty())
             continue;
 
-        bool simplified = false;
+        bool updateNeeded = false;
         std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
         colorSetIt.second.polygons_with_holes(polys.begin());
         for(PolygonWithHoles& poly : polys) {
-            simplified |= simplifyPolygon(poly);
+            assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+            updateNeeded |= GeometryUtils::simplifyPolygon(poly.outer_boundary());
+            assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
         }
 
         // Update this polygon set with simplified representation
-        if(simplified) {
+        if(updateNeeded) {
             colorSetIt.second.clear();
-            for(PolygonWithHoles& poly : polys) {
-                colorSetIt.second.insert(poly);
-            }
+            colorSetIt.second.join(polys.begin(), polys.end());
         }
     }
 }
@@ -237,6 +332,9 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
     if(pgn.is_clockwise_oriented())
         pgn.reverse_orientation();
 
+    assert(pgn.is_counterclockwise_oriented());
+    assert(CGAL::is_valid_polygon(pgn, Traits()));
+
     return pgn;
 }
 
@@ -251,6 +349,8 @@ TriangleDetail::Polygon TriangleDetail::polygonFromTriangle(const Triangle2& tri
     if(pgn.is_clockwise_oriented())
         pgn.reverse_orientation();
 
+    assert(pgn.is_counterclockwise_oriented());
+    assert(CGAL::is_valid_polygon(pgn, Traits()));
     return pgn;
 }
 
@@ -286,9 +386,7 @@ std::vector<std::pair<TriangleDetail::Point2, double>> TriangleDetail::getCircle
                                   CGAL::to_double(pt.z()));  // Cannot get exact
 
                 // Make sure the point is exactly on the line
-                Plane perpendicularPlane = triEdge.perpendicular_plane(worldPoint);
-                auto linePlaneIntersection = CGAL::intersection(triEdge, perpendicularPlane);
-                worldPoint = boost::get<Point3>(*linePlaneIntersection);
+                worldPoint = triEdge.projection(worldPoint);
 
                 // Project the vector onto the bases of the circle
                 const auto circleVector(worldPoint - circle.center());
@@ -312,7 +410,7 @@ std::vector<std::pair<TriangleDetail::Point2, double>> TriangleDetail::getCircle
     return result;
 }
 
-TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle) {
+TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle) const {
     // Scale the vertex count based on the size of the circle
     const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
     size_t vertexCount = static_cast<size_t>(radius * VERTICES_PER_UNIT_CIRCLE);
@@ -325,7 +423,7 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle)
 
     // We need a shared vertex on the boundary of triangle details
     // This vertex does not need to be exact, but needs to be the same from both triangles
-    std::vector<std::pair<Point2, double>> sharedPoints = getCircleSharedPoints(circle, xBase, yBase);
+    std::vector<std::pair<Point2, double>> sharedPoints;  //    = getCircleSharedPoints(circle, xBase, yBase);
     auto sharedPointIt = sharedPoints.begin();
 
     // Construct the polygon.
@@ -355,11 +453,17 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle)
     assert(pgn.is_simple());
     assert(pgn.is_counterclockwise_oriented());
     assert(pgn.is_convex());
+    assert(CGAL::is_valid_polygon(pgn, Traits()));
 
     return pgn;
 }
 
 void TriangleDetail::addPolygon(const Polygon& poly, size_t color) {
+#ifdef PEPR3D_COLLECT_DEBUG_DATA
+    history.emplace_back(PolygonEntry{poly, color});
+#endif
+
+    assert(CGAL::is_valid_polygon(poly, Traits()));
     PolygonSet addedShape(poly);
     addedShape.intersection(mBounds);
 
@@ -373,37 +477,16 @@ void TriangleDetail::addPolygon(const Polygon& poly, size_t color) {
     // Remove the new shape from other colors
     for(auto& it : mColoredPolys) {
         if(it.first != color) {
+            debugOnlyVerifyPolygonSet(it.second);
+
             it.second.difference(addedShape);
+
+            debugOnlyVerifyPolygonSet(it.second);
         }
     }
 
     simplifyPolygons();
     updateTrianglesFromPolygons();
-}
-
-bool TriangleDetail::simplifyPolygon(PolygonWithHoles& poly) {
-    using Segment = CGAL::Segment_2<K>;
-    Polygon& boundary = poly.outer_boundary();
-
-    std::vector<size_t> verticesToRemove;
-    size_t edgeCount = boundary.edges_end() - boundary.edges_begin();
-    for(size_t i = 1; i < edgeCount; i++) {
-        Segment lastEdge = boundary.edge(i - 1);
-        Segment edge = boundary.edge(i);
-        if(lastEdge.supporting_line() == edge.supporting_line()) {
-            // Edges are on the same line
-            // Remove their shared vertex to connect them
-            verticesToRemove.push_back(i);
-        }
-    }
-
-    // Remove from the back so that we dont have to move that much data
-    for(auto it = verticesToRemove.rbegin(); it != verticesToRemove.rend(); ++it) {
-        size_t vertexId = *it;
-        boundary.erase(boundary.vertices_begin() + vertexId);
-    }
-
-    return !verticesToRemove.empty();
 }
 
 TriangleDetail::Segment3 TriangleDetail::findSharedEdge(const TriangleDetail& other) {
@@ -440,11 +523,21 @@ void TriangleDetail::updatePolysFromTriangles() {
     for(const auto& it : polygonsByColor) {
         const std::vector<Polygon>& polygons = it.second;
         PolygonSet pSet;
+        assert(std::all_of(polygons.begin(), polygons.end(), [this](const auto& poly) {
+            return CGAL::is_valid_polygon(poly, Traits()) && poly.is_counterclockwise_oriented();
+        }));
+
+        // Must be joined all at the same time
+        // Otherwise cgal creates PolygonSet with invalid holes (vertices of higher degree)
         pSet.join(polygons.begin(), polygons.end());
+        debugOnlyVerifyPolygonSet(pSet);
+
         mColoredPolys.emplace(std::make_pair(it.first, std::move(pSet)));
     }
 
     mColorChanged = false;
+
+    simplifyPolygons();
 }
 
 void TriangleDetail::markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,
@@ -498,6 +591,8 @@ void TriangleDetail::markDomains(ConstrainedTriangulation& ct) {
 }
 
 void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_t color) {
+    assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+
     ConstrainedTriangulation ct;
 
     // Add outer edge
