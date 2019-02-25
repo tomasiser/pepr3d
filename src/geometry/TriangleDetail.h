@@ -20,6 +20,7 @@
 #include <map>
 #include <optional>
 #include <sstream>
+#include <type_traits>
 #include <vector>
 #include "GeometryUtils.h"
 #include "geometry/GlmSerialization.h"
@@ -74,6 +75,31 @@ class TriangleDetail {
     using Tds = CGAL::Triangulation_data_structure_2<CGAL::Triangulation_vertex_base_2<K>, Fb>;
     using ConstrainedTriangulation = CGAL::Constrained_triangulation_2<K, Tds, CGAL::No_intersection_tag>;
 
+    /// Exact triangle with colour and polygon information
+    struct ExactTriangle {
+        ExactTriangle(Triangle2& tri, size_t color, size_t polygonIdx)
+            : triangle(tri), color(color), polygonIdx(polygonIdx) {}
+        ExactTriangle(Triangle2&& tri, size_t color, size_t polygonIdx)
+            : triangle(tri), color(color), polygonIdx(polygonIdx) {}
+        ExactTriangle() = default;
+        ExactTriangle(const ExactTriangle&) = default;
+        ExactTriangle(ExactTriangle&&) = default;
+
+        /// Epeck representation of the triangle
+        Triangle2 triangle;
+
+        size_t color;
+
+        /// Idx of the polygon this triangle belongs to
+        size_t polygonIdx;
+
+        template <typename Archive>
+        void serialize(Archive& archive) {
+            archive(cereal::make_nvp("triangle", triangle), cereal::make_nvp("color", color),
+                    cereal::make_nvp("polygonIdx", polygonIdx));
+        }
+    };
+
 #ifdef PEPR3D_COLLECT_DEBUG_DATA
     struct PolygonEntry {
         Polygon polygon;
@@ -115,13 +141,15 @@ class TriangleDetail {
         mOriginalPlane = Plane(toExactK(tri.vertex(0)), toExactK(tri.vertex(1)), toExactK(tri.vertex(2)));
         mBounds = polygonFromTriangle(mOriginal.getTri());
         mTriangles.push_back(mOriginal);
+        mTrianglesToExactIdx.push_back(0);
 
         std::array<Point2, 3> exactPoints;
         for(int i = 0; i < 3; i++) {
             exactPoints[i] = mOriginalPlane.to_2d(toExactK(mOriginal.getTri().vertex(i)));
         }
-        mTrianglesExact.emplace_back(exactPoints[0], exactPoints[1], exactPoints[2]);
+        mTrianglesExact.emplace_back(Triangle2(exactPoints[0], exactPoints[1], exactPoints[2]), original.getColor(), 0);
         mColoredPolys.emplace(mOriginal.getColor(), PolygonSet(mBounds));
+        mPolygonDegenerateTriangles.push_back({});
     }
 
     // Cereal requires default constructor
@@ -149,30 +177,27 @@ class TriangleDetail {
     void updateTrianglesFromPolygons();
 
     /// Set color of a detail triangle
-    void setColor(size_t detailIdx, size_t color) {
-        assert(detailIdx < mTriangles.size());
-        if(mTriangles[detailIdx].getColor() != color) {
-            mTriangles[detailIdx].setColor(color);
-            mColorChanged = true;
+    void setColor(size_t detailIdx, size_t color);
 
-#ifdef PEPR3D_COLLECT_DEBUG_DATA
-            history.emplace_back(ColorChangeEntry{detailIdx, color});
-#endif
-        }
-    }
+    /// Add polygon to the detail
+    /// @param poly Polygon in the plane-space of this detail
+    void addPolygon(const Polygon& poly, size_t color);
+
+    /// Find all points of polygons that are on the edge
+    std::set<Point3> findPointsOnEdge(const Segment3& edge);
 
     template <class Archive>
     void save(Archive& archive) const {
-        archive(mOriginal, mTriangles, mTrianglesExact);
+        archive(mOriginal, mColoredPolys);
     }
 
     template <class Archive>
     void load(Archive& archive) {
-        archive(mOriginal, mTriangles, mTrianglesExact);
+        archive(mOriginal, mColoredPolys);
         const PeprTriangle& tri = mOriginal.getTri();
         mOriginalPlane = Plane(toExactK(tri.vertex(0)), toExactK(tri.vertex(1)), toExactK(tri.vertex(2)));
         mBounds = polygonFromTriangle(mOriginal.getTri());
-        updatePolysFromTriangles();
+        updateTrianglesFromPolygons();
     }
 
     /// Convert Point_2 from Pepr3d kernel to Exact kernel
@@ -218,13 +243,32 @@ class TriangleDetail {
         return num.to_double();
     }
 
+    /// Creates a map of [ColorID, PolygonSet] of polygon sets made of provided triangles
+    /// @triangles array of DataTriangles, only used to get color information
+    /// @trianglesExact array of Epeck Triangles, used to get exact bounds of each triangle
+    static std::map<size_t, PolygonSet> createPolygonSetsFromTriangles(
+        const std::vector<ExactTriangle>& trianglesExact);
+
+    /// Break down a polygon into an array of triangles
+    /// @return vector of exact triangles that make up the polygon
+    static std::vector<Triangle2> triangulatePolygon(const PolygonWithHoles& poly);
+
    private:
-    /// Temporary storage for DataTriangles. This gets overwritten on every paint operation!
+    /// Temporary storage for DataTriangles.  This gets overwritten on every time updateTrianglesFromPolygons() is run.
+    /// Triangles stored here are non-degenerate triangles that roughly make up the original triangle.
+    /// Becasue DataTriangle is using a limited-precission, these triangles cannot be used to reconstruct the surface.
     std::vector<DataTriangle> mTriangles;
 
-    /// Temporary storage for exact triangles. This gets overwritten on every paint operation!
+    /// Stores index of exact triangle to every DataTriangle  (mTriangles.size() == mTrianglesToExactIdx.size())
+    std::vector<size_t> mTrianglesToExactIdx;
+
+    /// Stores epeck triangles. This gets overwritten on every time updateTrianglesFromPolygons() is run.
     /// This is used for saving andpolygonset reconstruction
-    std::vector<Triangle2> mTrianglesExact;
+    std::vector<ExactTriangle> mTrianglesExact;
+
+    /// Stores index into mTrianglesExact of every degenerate triangle(when represented as DataTriangle), grouped by the
+    /// polygon it belongs to
+    std::vector<std::vector<size_t>> mPolygonDegenerateTriangles;
 
     std::map<size_t, PolygonSet> mColoredPolys;
 
@@ -250,19 +294,12 @@ class TriangleDetail {
     std::vector<std::pair<Point2, double>> getCircleSharedPoints(const Circle3& circle, const Vector3& xBase,
                                                                  const Vector3& yBase);
 
-   public:  // TODO move to private
-    /// Add polygon to the detail
-    void addPolygon(const Polygon& poly, size_t color);
-
    private:
     /// Paint a circle shape onto the plane of the triangle
     void addCircle(const Circle3& circle, size_t color);
 
     /// Find shared edge between triangles
     Segment3 findSharedEdge(const TriangleDetail& other);
-
-    /// Find all points of polygons that are on the edge
-    std::set<Point3> findPointsOnEdge(const Segment3& edge);
 
    public:  // TODO remove after testing
     /// Add points that are missing to our polygons
@@ -277,7 +314,7 @@ class TriangleDetail {
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;
 
     /// Create a polygon from 2D triangle in plane coordinates
-    Polygon polygonFromTriangle(const Triangle2& tri) const;
+    static Polygon polygonFromTriangle(const Triangle2& tri);
 
    private:
     /// Simplify polygons, removing any vertices that are collinear
@@ -309,6 +346,7 @@ class TriangleDetail {
         }
     };
 
+    /// Verify that polygon set is made of valid polygons with holes
     static void debugOnlyVerifyPolygonSet(const PolygonSet& pSet) {
 #ifndef NDEBUG
         // This creates a copy of the data, so run it only in debug
@@ -320,25 +358,146 @@ class TriangleDetail {
         }
 #endif
     }
+
+    /// Verify that the bound vertices are connected via a string of edges
+    void debugEdgeConsistencyCheck() {
+#ifndef NDEBUG
+#ifdef PEPR3D_EDGE_CONSISTENCY_CHECK
+        for(int i = 0; i < 3; i++) {
+            const Point2 firstPoint(mBounds.vertex(i));
+            const Point2 secondPoint(mBounds.vertex((i + 1) % 3));
+
+            if(!isEdgeTraversable(firstPoint, secondPoint, mColoredPolys)) {
+                throw std::exception("Only one outgoing edge should exist on this line");
+            }
+        }
+#endif
+#endif
+    }
+
+   public:
+    // Defined only for debug environments, to avoid accidentaly leaving this expensive check in
+#if !defined(NDEBUG) || defined(PEPR3D_EDGE_CONSISTENCY_CHECK)
+    /// Tests for an existance of a path between the two points. All edges of this path must lie on an edge between the
+    /// original points.
+    /// @return true A path exists
+    static bool isEdgeTraversable(const Point2& form, const Point2& to,
+                                  const std::map<size_t, PolygonSet>& coloredPolys) {
+        const Segment2 sharedEdge = form < to ? Segment2(form, to) : Segment2(to, form);
+
+        // Map a lower sorted point of the edge to a higher sorted point of the edge
+        std::map<Point2, Point2> pointMap;
+
+        for(auto& colorSetIt : coloredPolys) {
+            std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
+            colorSetIt.second.polygons_with_holes(polys.begin());
+
+            for(PolygonWithHoles& polyWithHoles : polys) {
+                Polygon& poly = polyWithHoles.outer_boundary();
+                for(size_t vertIdx = 0; vertIdx < poly.size(); vertIdx++) {
+                    auto vertIt = poly.vertices_circulator() + vertIdx;
+                    auto nextVertIt = std::next(vertIt);
+
+                    // If this edge is on the edge of bounds add it to the map
+                    if(sharedEdge.has_on(*vertIt) && sharedEdge.has_on(*nextVertIt) && *vertIt != *nextVertIt) {
+                        if(*vertIt < *nextVertIt) {
+                            if(pointMap.find(*vertIt) != pointMap.end()) {
+                                return false;
+                            }
+                            pointMap[*vertIt] = *nextVertIt;
+                        } else {
+                            if(pointMap.find(*nextVertIt) != pointMap.end()) {
+                                return false;
+                            }
+                            pointMap[*nextVertIt] = *vertIt;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Now test that the boundary edge is traversable with the gathered edges
+        Point2 currentPt = sharedEdge.min();
+        const Point2 endPt = sharedEdge.max();
+        while(currentPt != endPt) {
+            auto nextPtIt = pointMap.find(currentPt);
+            if(nextPtIt == pointMap.end()) {
+                return false;
+            }
+
+            currentPt = nextPtIt->second;
+        }
+
+        return true;
+    }
+#endif
 };
 
 }  // namespace pepr3d
 
+/**
+ *  CGAL Serialization functions
+ */
+// Note: Keep them tightly specialized, so that they don't try to serialize any other types
 namespace CGAL {
-template <typename Archive, typename CGALType>
+template <typename Archive, typename CGALType,
+          typename std::enable_if<std::is_same<CGALType, pepr3d::TriangleDetail::Point2>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Point3>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Triangle2>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Polygon>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::PolygonWithHoles>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Segment3>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Segment2>::value>::type* = nullptr>
 void save(Archive& archive, const CGALType& val) {
     std::stringstream stream;
     stream << val;
     archive(stream.str());
 }
-
-template <typename Archive, typename CGALType>
+template <typename Archive, typename CGALType,
+          typename std::enable_if<std::is_same<CGALType, pepr3d::TriangleDetail::Point2>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Point3>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Triangle2>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Polygon>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::PolygonWithHoles>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Segment3>::value ||
+                                  std::is_same<CGALType, pepr3d::TriangleDetail::Segment2>::value>::type* = nullptr>
 void load(Archive& archive, CGALType& val) {
     std::string str;
     archive(str);
     std::stringstream stream(str);
     stream.seekg(stream.beg);
     stream >> val;
+}
+
+template <typename Archive>
+void save(Archive& archive, const pepr3d::TriangleDetail::PolygonSet& pset) {
+    std::vector<pepr3d::TriangleDetail::PolygonWithHoles> polys(pset.number_of_polygons_with_holes());
+    pset.polygons_with_holes(polys.begin());
+
+    std::stringstream sstream;
+    sstream << pset.number_of_polygons_with_holes();
+    for(auto& poly : polys) {
+        sstream << " " << poly;
+    }
+
+    archive(sstream.str());
+}
+
+template <typename Archive>
+void load(Archive& archive, pepr3d::TriangleDetail::PolygonSet& pset) {
+    std::string str;
+    archive(str);
+    std::stringstream sstream(str);
+    size_t numPolys;
+    sstream >> numPolys;
+
+    std::vector<pepr3d::TriangleDetail::PolygonWithHoles> polys(numPolys);
+    for(size_t i = 0; i < numPolys; ++i) {
+        sstream >> polys[i];
+    }
+
+    pset.clear();
+    pset.join(polys.begin(), polys.end());
 }
 
 }  // namespace CGAL

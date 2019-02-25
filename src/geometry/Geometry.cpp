@@ -702,6 +702,7 @@ void Geometry::buildDetailedMesh() {
         // Add detail triangles while combining common vertices
         for(size_t detailTriangleIdx = 0; detailTriangleIdx < detailTriangles.size(); detailTriangleIdx++) {
             const DataTriangle& detail = detailTriangles[detailTriangleIdx];
+
             assert(!detail.getTri().is_degenerate());
 
             // Vertex descriptors of current detail triangle

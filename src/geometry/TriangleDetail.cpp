@@ -11,10 +11,9 @@
 #include <CGAL/Spherical_kernel_intersections.h>
 #include <CGAL/partition_2.h>
 
-#include <cinder/Filesystem.h>
-
 #ifdef PEPR3D_COLLECT_DEBUG_DATA
 #include <cereal/archives/json.hpp>
+#include <cereal/types/map.hpp>
 #include <fstream>
 #endif
 
@@ -24,69 +23,11 @@
 #include <optional>
 #include <type_traits>
 
-namespace pepr3d {
-
 #ifndef NDEBUG
-
-class GnuplotDebug {
-   public:
-    GnuplotDebug() = default;
-    GnuplotDebug(const GnuplotDebug&) = delete;
-
-    //@param rgbStr Color in gnuplot format: #CCCCCC
-    void addPoly(const TriangleDetail::Polygon& poly, const std::string& rgbStr) {
-        mPolysToDraw.push_back(poly);
-        mRgbStrings.push_back(rgbStr);
-    }
-
-    void exportToFile() {
-        std::ofstream oFileGnuplot("debugOut.gnuplot");
-        if(oFileGnuplot.bad())
-            return;
-
-        oFileGnuplot << "set size ratio -1 \n";
-
-        for(size_t idx = 0; idx < mRgbStrings.size(); ++idx) {
-            oFileGnuplot << "set style line " << idx + 1 << " linecolor rgb \"" << mRgbStrings[idx]
-                         << "\" linetype 1 linewidth 2\n";
-        }
-
-        const cinder::fs::path filePath("debugOut.data");
-
-        oFileGnuplot << "plot '" << absolute(filePath) << "' index 0 with lines linestyle 1 title \"\"";
-
-        for(size_t idx = 1; idx < mPolysToDraw.size(); ++idx) {
-            oFileGnuplot << ", '" << absolute(filePath) << "' index " << idx << " with lines linestyle " << idx + 1;
-        }
-
-        oFileGnuplot << "\n";
-
-        std::ofstream oFileData(absolute(filePath));
-        if(oFileData.bad())
-            return;
-
-        for(const auto& poly : mPolysToDraw) {
-            oFileData << "# X Y\n";
-            for(TriangleDetail::Polygon::Vertex_const_iterator it = poly.vertices_begin(); it != poly.vertices_end();
-                ++it) {
-                oFileData << CGAL::to_double(it->x()) << " " << CGAL::to_double(it->y()) << "\n";
-            }
-
-            // add first point again to connect the poly
-            oFileData << CGAL::to_double(poly.vertices_begin()->x()) << " "
-                      << CGAL::to_double(poly.vertices_begin()->y()) << "\n";
-
-            oFileData << "\n";
-            oFileData << "\n";
-        }
-    }
-
-   private:
-    std::vector<TriangleDetail::Polygon> mPolysToDraw;
-    std::vector<std::string> mRgbStrings;
-};
-
+#include "geometry/GnuplotDebugHelper.h"
 #endif
+
+namespace pepr3d {
 
 void TriangleDetail::addCircle(const Circle3& circle, size_t color) {
     const Polygon circlePoly = polygonFromCircle(circle);
@@ -133,14 +74,13 @@ std::pair<bool, bool> TriangleDetail::correctSharedVertices(TriangleDetail& othe
 
 bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const std::set<Point3>& theirPoints,
                                       const Segment3& sharedEdge) {
-    // assert(!mColorChanged);
-    if(mColorChanged) {
-        updatePolysFromTriangles();
-    }
-
 #ifdef PEPR3D_COLLECT_DEBUG_DATA
     history.emplace_back(PointEntry{myPoints, theirPoints, sharedEdge});
 #endif
+
+    if(mColorChanged) {
+        updatePolysFromTriangles();
+    }
 
     // Find missing points
     std::set<Point3> missingPoints;
@@ -165,13 +105,6 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
 
     const Line2 sharedEdge2D(mOriginalPlane.to_2d(sharedEdge.vertex(0)), mOriginalPlane.to_2d(sharedEdge.vertex(1)));
 
-    for(const auto& pt : points2D) {
-        if(!sharedEdge2D.has_on(pt)) {
-            CI_LOG_E("2D Point is not on 2D shared edge. Possible conversion inaccuracy");
-            assert(false);
-        }
-    }
-
     // Find edges that contain any of the points
     for(auto& colorSetIt : mColoredPolys) {
         std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
@@ -181,32 +114,9 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
             Polygon& poly = polyWithHoles.outer_boundary();
             assert(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
 
-#ifndef NDEBUG
-            GnuplotDebug dbg;
-            dbg.addPoly(mBounds, "#777777");
-            dbg.addPoly(poly, "#FF0000");
-
-            Polygon tmp;
-            for(auto& pt : points2D) {
-                tmp.push_back(pt);
-            }
-            if(points2D.size()) {
-                dbg.addPoly(tmp, "#00FF00");
-            }
-
-            dbg.exportToFile();
-#endif
-
             for(size_t vertIdx = 0; vertIdx < poly.size();) {
                 auto vertIt = poly.vertices_circulator() + vertIdx;
                 auto nextVertIt = std::next(vertIt);
-
-                double fromY = CGAL::to_double(vertIt->y());
-                double toY = CGAL::to_double(nextVertIt->y());
-
-                std::stringstream sstream;
-                sstream << *vertIt;
-                std::string yVal = sstream.str();
 
                 if(points2D.empty()) {
                     break;
@@ -218,10 +128,6 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
                     // Test this segment against all points to see if we split
                     auto pointIt = std::find_if(points2D.begin(), points2D.end(),
                                                 [edgeSegment](Point2& pt) { return edgeSegment.has_on(pt); });
-                    std::vector<double> distances;
-                    for(auto& pt : points2D) {
-                        distances.emplace_back(CGAL::to_double(CGAL::squared_distance(pt, edgeSegment)));
-                    }
 
                     if(pointIt != points2D.end()) {
                         if(nextVertIt == poly.vertices_circulator()) {
@@ -232,8 +138,11 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
                         }
 
                         assert(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
-                        points2D.erase(pointIt);  // TODO move to end and pop
-                        continue;                 // stay at this vertex
+
+                        std::swap(*pointIt, points2D.back());
+                        points2D.pop_back();  // Remove the point from array
+
+                        continue;  // stay at this vertex
                     }
                 }
 
@@ -269,7 +178,6 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
             "Could not add matching vertex to a shared triangle edge. This was likely caused by corrupted internal "
             "state.");
     }
-
     return true;
 }
 
@@ -338,7 +246,7 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
     return pgn;
 }
 
-TriangleDetail::Polygon TriangleDetail::polygonFromTriangle(const Triangle2& tri) const {
+TriangleDetail::Polygon TriangleDetail::polygonFromTriangle(const Triangle2& tri) {
     Polygon pgn;
     pgn.push_back(tri.vertex(0));
     pgn.push_back(tri.vertex(1));
@@ -509,35 +417,49 @@ TriangleDetail::Segment3 TriangleDetail::findSharedEdge(const TriangleDetail& ot
 }
 
 void TriangleDetail::updatePolysFromTriangles() {
-    assert(mTriangles.size() == mTrianglesExact.size());
+    debugEdgeConsistencyCheck();
+
+    // TODO remove
+    std::ofstream outFile("polysFromTriangles.data");
+    {
+        cereal::JSONOutputArchive jsArch(outFile);
+        jsArch(mOriginal.getTri(), mTrianglesExact);
+    }
+
+    mColoredPolys = createPolygonSetsFromTriangles(mTrianglesExact);
+    mColorChanged = false;
+    debugEdgeConsistencyCheck();
+
+    simplifyPolygons();
+}
+
+std::map<size_t, TriangleDetail::PolygonSet> TriangleDetail::createPolygonSetsFromTriangles(
+    const std::vector<ExactTriangle>& trianglesExact) {
+    std::map<size_t, PolygonSet> coloredPolygonSets;
 
     // Create polygons from triangles
     std::map<size_t, std::vector<Polygon>> polygonsByColor;
-    for(size_t i = 0; i < mTriangles.size(); i++) {
-        const DataTriangle& tri = mTriangles[i];
-        polygonsByColor[tri.getColor()].emplace_back(polygonFromTriangle(mTrianglesExact[i]));
+    for(const ExactTriangle& exactTri : trianglesExact) {
+        polygonsByColor[exactTri.color].emplace_back(polygonFromTriangle(exactTri.triangle));
     }
 
-    // Create polygon set for each color
-    mColoredPolys.clear();
     for(const auto& it : polygonsByColor) {
         const std::vector<Polygon>& polygons = it.second;
-        PolygonSet pSet;
-        assert(std::all_of(polygons.begin(), polygons.end(), [this](const auto& poly) {
+
+        assert(std::all_of(polygons.begin(), polygons.end(), [](const auto& poly) {
             return CGAL::is_valid_polygon(poly, Traits()) && poly.is_counterclockwise_oriented();
         }));
 
         // Must be joined all at the same time
         // Otherwise cgal creates PolygonSet with invalid holes (vertices of higher degree)
+        PolygonSet pSet;
         pSet.join(polygons.begin(), polygons.end());
-        debugOnlyVerifyPolygonSet(pSet);
+        TriangleDetail::debugOnlyVerifyPolygonSet(pSet);
 
-        mColoredPolys.emplace(std::make_pair(it.first, std::move(pSet)));
+        coloredPolygonSets.emplace(std::make_pair(it.first, std::move(pSet)));
     }
 
-    mColorChanged = false;
-
-    simplifyPolygons();
+    return coloredPolygonSets;
 }
 
 void TriangleDetail::markDomains(ConstrainedTriangulation& ct, ConstrainedTriangulation::Face_handle start, int index,
@@ -591,7 +513,40 @@ void TriangleDetail::markDomains(ConstrainedTriangulation& ct) {
 }
 
 void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_t color) {
+    std::vector<Triangle2> newTriangles = triangulatePolygon(poly);
+
+    // Create new array for degenerate triangles
+    const size_t polygonId = mPolygonDegenerateTriangles.size();
+    mPolygonDegenerateTriangles.push_back({});
+
+    // Store all triangles
+    for(Triangle2& exactTri : newTriangles) {
+        const size_t idxOfExactTri = mTrianglesExact.size();
+
+        const glm::vec3 a = toGlmVec(mOriginalPlane.to_3d(exactTri.vertex(0)));
+        const glm::vec3 b = toGlmVec(mOriginalPlane.to_3d(exactTri.vertex(1)));
+        const glm::vec3 c = toGlmVec(mOriginalPlane.to_3d(exactTri.vertex(2)));
+        DataTriangle tri(a, b, c, mOriginal.getNormal());
+        if(!tri.getTri().is_degenerate()) {
+            // Triangle is good
+            tri.setColor(color);
+            mTriangles.emplace_back(std::move(tri));
+            mTrianglesToExactIdx.push_back(mTrianglesExact.size());
+        } else {
+            // Triangle degenerates
+            mPolygonDegenerateTriangles[polygonId].push_back(idxOfExactTri);
+        }
+
+        mTrianglesExact.emplace_back(std::move(exactTri), color, polygonId);
+    }
+
+    assert(mTriangles.size() == mTrianglesToExactIdx.size());
+}
+
+std::vector<TriangleDetail::Triangle2> TriangleDetail::triangulatePolygon(const PolygonWithHoles& poly) {
     assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+
+    std::vector<Triangle2> triangles;
 
     ConstrainedTriangulation ct;
 
@@ -613,30 +568,23 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
         // Keep only faces with odd nesting level, those are inside the polygon and not in the hole
 
         if(faceIt->info().nestingLevel % 2 > 0) {
-            const glm::vec3 a = toGlmVec(mOriginalPlane.to_3d(faceIt->vertex(0)->point()));
-            const glm::vec3 b = toGlmVec(mOriginalPlane.to_3d(faceIt->vertex(1)->point()));
-            const glm::vec3 c = toGlmVec(mOriginalPlane.to_3d(faceIt->vertex(2)->point()));
-
-            DataTriangle tri(a, b, c, mOriginal.getNormal());
-            if(tri.getTri().squared_area() > 0) {
-                tri.setColor(color);
-
-                // Make sure that the original counter-clockwise order is preserved
-                if(glm::dot(mOriginal.getNormal(), glm::cross((b - a), (c - a))) < 0) {
-                    tri = DataTriangle(a, c, b, mOriginal.getNormal());
-                }
-
-                mTriangles.emplace_back(std::move(tri));
-                mTrianglesExact.emplace_back(faceIt->vertex(0)->point(), faceIt->vertex(1)->point(),
-                                             faceIt->vertex(2)->point());
+            Triangle2 tri(faceIt->vertex(0)->point(), faceIt->vertex(1)->point(), faceIt->vertex(2)->point());
+            if(!tri.is_degenerate()) {
+                triangles.emplace_back(tri);
             }
         }
     }
+
+    return triangles;
 }
 
 void TriangleDetail::updateTrianglesFromPolygons() {
     mTriangles.clear();
+    mTrianglesToExactIdx.clear();
     mTrianglesExact.clear();
+    mPolygonDegenerateTriangles.clear();
+
+    debugEdgeConsistencyCheck();
 
     for(auto& colorSetIt : mColoredPolys) {
         if(colorSetIt.second.is_empty())
@@ -649,6 +597,35 @@ void TriangleDetail::updateTrianglesFromPolygons() {
         }
     }
 
-    assert(mTriangles.size() == mTrianglesExact.size());
+    assert(mTriangles.size() == mTrianglesToExactIdx.size());
+}
+
+void TriangleDetail::setColor(size_t detailIdx, size_t color) {
+    assert(detailIdx < mTriangles.size());
+    assert(mTriangles.size() == mTrianglesToExactIdx.size());
+
+    if(mTriangles[detailIdx].getColor() != color) {
+        // Update the inexact representation
+        mTriangles[detailIdx].setColor(color);
+
+        // Update the exact representation
+        const size_t exactTriIdx = mTrianglesToExactIdx[detailIdx];
+        assert(exactTriIdx < mTrianglesExact.size());
+        mTrianglesExact[exactTriIdx].color = color;
+
+        // Also changle all degenerate triangles of this polygon to this colour
+        // These are not otherwise accessible by DetailedTriangleId, but not coloring these
+        // would prevent simplification in case of fill.
+        const size_t polygonIdx = mTrianglesExact[exactTriIdx].polygonIdx;
+        for(size_t exactDegTriIdx : mPolygonDegenerateTriangles[polygonIdx]) {
+            mTrianglesExact[exactDegTriIdx].color = color;
+        }
+
+        mColorChanged = true;
+
+#ifdef PEPR3D_COLLECT_DEBUG_DATA
+        history.emplace_back(ColorChangeEntry{detailIdx, color});
+#endif
+    }
 }
 }  // namespace pepr3d

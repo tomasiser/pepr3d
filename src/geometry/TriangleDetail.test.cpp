@@ -1,9 +1,8 @@
 #ifdef _TEST_
 #include <gtest/gtest.h>
 
-#define assert(x) ASSERT_TRUE(x);
-
 #include "geometry/GeometryUtils.h"
+#include "geometry/GnuplotDebugHelper.h"
 #include "geometry/TriangleDetail.h"
 
 #include <CGAL/Boolean_set_operations_2.h>
@@ -14,6 +13,7 @@
 #include <CGAL/partition_2.h>
 
 #include <cereal/archives/json.hpp>
+#include <cereal/types/map.hpp>
 #include <random>
 #include <set>
 
@@ -21,7 +21,8 @@ namespace pepr3d {
 using Point2 = TriangleDetail::Point2;
 using PolygonWithHoles = TriangleDetail::PolygonWithHoles;
 using Polygon = TriangleDetail::Polygon;
-using Point2 = TriangleDetail::Point2;
+using PolygonSet = TriangleDetail::PolygonSet;
+using Triangle2 = TriangleDetail::Triangle2;
 
 TEST(TriangleDetail, ConstructionSteps) {
     auto mTraits = std::make_unique<TriangleDetail::PolygonSet::Traits_2>();
@@ -86,11 +87,9 @@ TEST(TriangleDetail, PolygonMerging) {
     /**
      *  These two valid polygons when merged form a polygon set with invalid PolygonWithHoles
      *  when using unpatched CGAL Gps_traits_adaptor.h
+     *
+     *  Patch available at https://github.com/CGAL/cgal/pull/3688
      */
-    using K = CGAL::Exact_predicates_exact_constructions_kernel;
-    using PolygonSet = CGAL::Polygon_set_2<K>;
-    using Polygon = CGAL::Polygon_2<K>;
-    using PolygonWithHoles = CGAL::Polygon_with_holes_2<K>;
 
     auto traits = std::make_unique<PolygonSet::Traits_2>();
 
@@ -236,7 +235,10 @@ TEST(TriangleDetail, AddMissingPoints) {
         }
         if(boost::get<PointEntry>(&entry)) {
             PointEntry& pe = boost::get<PointEntry>(entry);
-            ASSERT_NO_THROW(triDetail.addMissingPoints(pe.myPoints, pe.theirPoints, pe.sharedEdge));
+            // Original testcase was containing errorneus data.
+            // Do not reuse 'myPoints' from the test case
+            auto myPoints = triDetail.findPointsOnEdge(pe.sharedEdge);
+            ASSERT_NO_THROW(triDetail.addMissingPoints(myPoints, pe.theirPoints, pe.sharedEdge));
             triDetail.updateTrianglesFromPolygons();
             continue;
         }
@@ -248,6 +250,148 @@ TEST(TriangleDetail, AddMissingPoints) {
 
         ASSERT_TRUE(false);
     }
+}
+
+TEST(TriangleDetail, UpdatePolysFromTriangles) {
+    /**
+     * Test that updating polygon sets from exact triangles preserves correct edge position
+     */
+    // TODO this test fails for unknown reason, fix!
+    using DataTriangle = pepr3d::DataTriangle;
+    using Triangle2 = TriangleDetail::Triangle2;
+    using PolygonSet = TriangleDetail::PolygonSet;
+
+    // Set up the test case
+    TriangleDetail::PeprTriangle peprTri;
+    std::vector<TriangleDetail::ExactTriangle> coloredExactTriangles;
+
+    // Load triangle data form file
+    std::ifstream inFile("../tests/updatePolysFromTriangles.json");
+    ASSERT_TRUE(inFile.good());
+    {
+        cereal::JSONInputArchive jsonArchive(inFile);
+        ASSERT_NO_THROW(jsonArchive(peprTri, coloredExactTriangles));
+    }
+
+    ASSERT_TRUE(!coloredExactTriangles.empty());
+
+    const DataTriangle tri(TriangleDetail::toGlmVec(peprTri.vertex(0)), TriangleDetail::toGlmVec(peprTri.vertex(1)),
+                           TriangleDetail::toGlmVec(peprTri.vertex(2)), glm::vec3(1, 0, 0), 0);
+    const TriangleDetail triDetail(tri);
+
+    const Polygon bounds = triDetail.polygonFromTriangle(peprTri);
+
+    // Create dummy polygon sets to make sure original triangle edges are traversable
+    std::map<size_t, PolygonSet> dummyPolygonSets;
+    for(size_t i = 0; i < coloredExactTriangles.size(); i++) {
+        dummyPolygonSets[i] = PolygonSet(TriangleDetail::polygonFromTriangle(coloredExactTriangles[i].triangle));
+    }
+
+    ASSERT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(0), bounds.vertex(1), dummyPolygonSets));
+    ASSERT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(1), bounds.vertex(2), dummyPolygonSets));
+    ASSERT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(2), bounds.vertex(0), dummyPolygonSets));
+
+    // Check that the polygonSets created by combining all these triangles are traversable too
+    auto coloredPolygonSets = TriangleDetail::createPolygonSetsFromTriangles(coloredExactTriangles);
+    EXPECT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(0), bounds.vertex(1), coloredPolygonSets));
+    EXPECT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(1), bounds.vertex(2), coloredPolygonSets));
+    EXPECT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(2), bounds.vertex(0), coloredPolygonSets));
+}
+
+TEST(TriangleDetail, UpdateTrianglesFromPolys) {
+    /**
+     * Test that triangulating polygon sets and converting back to polygon sets keeps the edges traversable
+     */
+
+    // Set up the test case
+    std::stringstream peprTriStream("-0.5 -0.5 0.5 0.5 -0.5 0.5 0.5 0.5 0.5");
+    TriangleDetail::PeprTriangle peprTri;
+    peprTriStream >> peprTri;
+    const DataTriangle tri(TriangleDetail::toGlmVec(peprTri.vertex(0)), TriangleDetail::toGlmVec(peprTri.vertex(1)),
+                           TriangleDetail::toGlmVec(peprTri.vertex(2)), glm::vec3(1, 0, 0), 0);
+    const TriangleDetail triDetail(tri);
+
+    std::map<size_t, PolygonSet> coloredPolys;
+    // Load colored polygon data form file
+    std::ifstream inFile("../tests/updateTrianglesFromPolygons.json");
+
+    ASSERT_TRUE(inFile.good());
+    {
+        cereal::JSONInputArchive jsonArchive(inFile);
+        ASSERT_NO_THROW(jsonArchive(coloredPolys));
+    }
+
+    ASSERT_TRUE(!coloredPolys.empty());
+    const Polygon bounds = triDetail.polygonFromTriangle(peprTri);
+
+    // Make sure the original polygon sets are traversable
+    ASSERT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(0), bounds.vertex(1), coloredPolys));
+    ASSERT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(1), bounds.vertex(2), coloredPolys));
+    ASSERT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(2), bounds.vertex(0), coloredPolys));
+
+    // Triangulate all polygons
+    std::vector<Triangle2> triangles;
+
+    for(auto& polysetIt : coloredPolys) {
+        std::vector<PolygonWithHoles> polys(polysetIt.second.number_of_polygons_with_holes());
+        polysetIt.second.polygons_with_holes(polys.begin());
+
+        for(auto& poly : polys) {
+            auto newTriangles = TriangleDetail::triangulatePolygon(poly);
+            triangles.insert(triangles.end(), newTriangles.begin(), newTriangles.end());
+        }
+    }
+
+    // Create dummy polygon sets to test traversability
+    std::map<size_t, PolygonSet> dummyPolygonSets;
+    for(size_t i = 0; i < triangles.size(); i++) {
+        dummyPolygonSets[i] = PolygonSet(TriangleDetail::polygonFromTriangle(triangles[i]));
+    }
+
+    // The triangles (and therefore the dummy polygon sets) should be edge traversable
+    EXPECT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(0), bounds.vertex(1), dummyPolygonSets));
+    EXPECT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(1), bounds.vertex(2), dummyPolygonSets));
+    EXPECT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(2), bounds.vertex(0), dummyPolygonSets));
+}
+
+TEST(TriangleDetails, ValidPolygonWithHoles) {
+    /**
+     * This valid PolygonWithHoles causes a CGAL Precondition fail.
+     * Yet needs to be fixed by CGAL
+     */
+
+    std::stringstream sstream(
+        "6 130751869427618004517459717335977/324518553658426726783156020576256 "
+        "353791692968004772063555887839347/1298074214633706907132624082305024 "
+        "2645304850589539436106114470773927262167511609993091574559201417199200984029/"
+        "6558786099572413598322881189648324404883475363173116541129455482126548860928 "
+        "28497296479541294104539559232730816192534288787225501042682105773735261917017/"
+        "104940577593158617573166099034373190478135605810769864658071287714024781774848 "
+        "268021016322673564227226825666057/649037107316853453566312041152512 "
+        "452798967222124161336841071511579/1298074214633706907132624082305024 "
+        "130751869427618004517459717335977/324518553658426726783156020576256 "
+        "353791692968004772063555887839347/1298074214633706907132624082305024 "
+        "65375934713809005880151730975175/162259276829213363391578010288128 "
+        "421330767918851579459364608829001/1298074214633706907132624082305024 28785953274349595/72057594037927936 "
+        "872710306504136969421572480422272625804604625731/2923003274661805836407369665432566039311865085952  0");
+    PolygonWithHoles poly;
+    sstream >> poly;
+
+    EXPECT_TRUE(CGAL::is_valid_polygon_with_holes(poly, TriangleDetail::Traits()));
+}
+
+TEST(TriangleDetails, ValidPolygonWithHoles2) {
+    /**
+     * Simplified version of a ValidPolygonWithHoles test
+     *
+     * This valid PolygonWithHoles causes a CGAL Precondition fail.
+     * Yet needs to be fixed by CGAL
+     */
+    std::stringstream sstream("6  2 1  3 0  5 4  2 1  1 3  0 2  0");
+    PolygonWithHoles poly;
+    sstream >> poly;
+
+    EXPECT_TRUE(CGAL::is_valid_polygon_with_holes(poly, TriangleDetail::Traits()));
 }
 
 }  // namespace pepr3d
