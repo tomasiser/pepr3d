@@ -419,13 +419,6 @@ TriangleDetail::Segment3 TriangleDetail::findSharedEdge(const TriangleDetail& ot
 void TriangleDetail::updatePolysFromTriangles() {
     debugEdgeConsistencyCheck();
 
-    // TODO remove
-    std::ofstream outFile("polysFromTriangles.data");
-    {
-        cereal::JSONOutputArchive jsArch(outFile);
-        jsArch(mOriginal.getTri(), mTrianglesExact);
-    }
-
     mColoredPolys = createPolygonSetsFromTriangles(mTrianglesExact);
     mColorChanged = false;
     debugEdgeConsistencyCheck();

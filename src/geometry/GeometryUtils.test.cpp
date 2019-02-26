@@ -7,6 +7,7 @@
 using glm::vec3;
 using pepr3d::GeometryUtils;
 
+namespace pepr3d {
 TEST(GeometryUtils, segmentPointDistanceSquared) {
     const vec3 start(0, 0, 0);
     const vec3 end(10, 0, 0);
@@ -69,4 +70,5 @@ TEST(GeometryUtils, SimplifyPolygon) {
 
     EXPECT_FALSE(GeometryUtils::simplifyPolygon(pgn));
 }
+}  // namespace pepr3d
 #endif

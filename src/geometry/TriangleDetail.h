@@ -1,4 +1,13 @@
 #pragma once
+/**
+ *  Fix for CGAL bugs in polygon with holes verification
+ *  Contained in CGAL PR #3688, likely to be in 4.14 version of CGAL
+ *
+ *  For now, just keep this custom patched include file first, to avoid using CGAL's version
+ */
+#include "CGAL-patched/Boolean_set_operations_2/Gps_traits_adaptor.h" /
+//---------------------------------------
+
 #include "geometry/Triangle.h"
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -197,6 +206,7 @@ class TriangleDetail {
         const PeprTriangle& tri = mOriginal.getTri();
         mOriginalPlane = Plane(toExactK(tri.vertex(0)), toExactK(tri.vertex(1)), toExactK(tri.vertex(2)));
         mBounds = polygonFromTriangle(mOriginal.getTri());
+
         updateTrianglesFromPolygons();
     }
 
@@ -259,7 +269,9 @@ class TriangleDetail {
     /// Becasue DataTriangle is using a limited-precission, these triangles cannot be used to reconstruct the surface.
     std::vector<DataTriangle> mTriangles;
 
-    /// Stores index of exact triangle to every DataTriangle  (mTriangles.size() == mTrianglesToExactIdx.size())
+    /// Stores index of exact triangle to every DataTriangle of this detail (mTriangles.size() ==
+    /// mTrianglesToExactIdx.size()) Every DataTriangle in this detail has matching exact triangle. But not all exact
+    /// triangles have a DataTriange - some degenerate.
     std::vector<size_t> mTrianglesToExactIdx;
 
     /// Stores epeck triangles. This gets overwritten on every time updateTrianglesFromPolygons() is run.
@@ -267,15 +279,15 @@ class TriangleDetail {
     std::vector<ExactTriangle> mTrianglesExact;
 
     /// Stores index into mTrianglesExact of every degenerate triangle(when represented as DataTriangle), grouped by the
-    /// polygon it belongs to
+    /// polygon it belongs to.
     std::vector<std::vector<size_t>> mPolygonDegenerateTriangles;
 
     std::map<size_t, PolygonSet> mColoredPolys;
 
     DataTriangle mOriginal;
 
-    static const int VERTICES_PER_UNIT_CIRCLE = 100;
-    static const int MIN_VERTICES_IN_CIRCLE = 24;
+    static const int VERTICES_PER_UNIT_CIRCLE = 50;
+    static const int MIN_VERTICES_IN_CIRCLE = 12;
 
 #ifdef PEPR3D_COLLECT_DEBUG_DATA
     std::vector<HistoryEntry> history;
@@ -301,8 +313,10 @@ class TriangleDetail {
     /// Find shared edge between triangles
     Segment3 findSharedEdge(const TriangleDetail& other);
 
-   public:  // TODO remove after testing
-    /// Add points that are missing to our polygons
+#ifdef _TEST_
+   public:  // Testing requires access to these methods
+#endif
+            /// Add points that are missing to our polygons
     /// @return true if any points were added
     bool addMissingPoints(const std::set<Point3>& myPoints, const std::set<Point3>& theirPoints,
                           const Segment3& sharedEdge);

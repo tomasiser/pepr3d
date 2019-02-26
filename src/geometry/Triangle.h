@@ -70,7 +70,7 @@ namespace CGAL {
 
 template <typename Archive>
 void save(Archive& archive, const pepr3d::DataTriangle::Point& point) {
-    archive(point[0], point[1], point[2]);
+    archive(cereal::make_nvp("x", point[0]), cereal::make_nvp("y", point[1]), cereal::make_nvp("z", point[2]));
 }
 
 template <typename Archive>
@@ -78,7 +78,7 @@ void load(Archive& archive, pepr3d::DataTriangle::Point& point) {
     // Important!
     // Keep the same order for points, even if you use NVP. (Only JSON archives support out of order loading)
     std::array<pepr3d::DataTriangle::Point::FT, 3> values;
-    archive(values[0], values[1], values[2]);
+    archive(cereal::make_nvp("x", values[0]), cereal::make_nvp("y", values[1]), cereal::make_nvp("z", values[2]));
     point = pepr3d::DataTriangle::Point(values[0], values[1], values[2]);
 }
 

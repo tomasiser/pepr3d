@@ -200,7 +200,13 @@ TEST(TriangleDetail, PolygonMergingShoelaceOrientationTest) {
     }
 }
 
-TEST(TriangleDetail, AddMissingPoints) {
+TEST(TriangleDetail, TriangleDetailOperations) {
+    /**
+     * Runs a long chain of operations on TriangleDetail
+     * Makes sure none of them fail debugchecks inserted in TriangleDetail code. (PEPR3D_EDGE_CONSISTENCY_CHECK)
+     */
+    static_assert(PEPR3D_EDGE_CONSISTENCY_CHECK, "Make sure your preprocessor definitions are set properly.");
+
     using HistoryEntry = TriangleDetail::HistoryEntry;
     using PolygonEntry = TriangleDetail::PolygonEntry;
     using ColorChangeEntry = TriangleDetail::ColorChangeEntry;
@@ -256,13 +262,12 @@ TEST(TriangleDetail, UpdatePolysFromTriangles) {
     /**
      * Test that updating polygon sets from exact triangles preserves correct edge position
      */
-    // TODO this test fails for unknown reason, fix!
     using DataTriangle = pepr3d::DataTriangle;
     using Triangle2 = TriangleDetail::Triangle2;
     using PolygonSet = TriangleDetail::PolygonSet;
 
     // Set up the test case
-    TriangleDetail::PeprTriangle peprTri;
+    DataTriangle tri{};
     std::vector<TriangleDetail::ExactTriangle> coloredExactTriangles;
 
     // Load triangle data form file
@@ -270,16 +275,13 @@ TEST(TriangleDetail, UpdatePolysFromTriangles) {
     ASSERT_TRUE(inFile.good());
     {
         cereal::JSONInputArchive jsonArchive(inFile);
-        ASSERT_NO_THROW(jsonArchive(peprTri, coloredExactTriangles));
+        ASSERT_NO_THROW(jsonArchive(tri, coloredExactTriangles));
     }
 
     ASSERT_TRUE(!coloredExactTriangles.empty());
 
-    const DataTriangle tri(TriangleDetail::toGlmVec(peprTri.vertex(0)), TriangleDetail::toGlmVec(peprTri.vertex(1)),
-                           TriangleDetail::toGlmVec(peprTri.vertex(2)), glm::vec3(1, 0, 0), 0);
     const TriangleDetail triDetail(tri);
-
-    const Polygon bounds = triDetail.polygonFromTriangle(peprTri);
+    const Polygon bounds = triDetail.polygonFromTriangle(tri.getTri());
 
     // Create dummy polygon sets to make sure original triangle edges are traversable
     std::map<size_t, PolygonSet> dummyPolygonSets;
@@ -354,7 +356,7 @@ TEST(TriangleDetail, UpdateTrianglesFromPolys) {
     EXPECT_TRUE(TriangleDetail::isEdgeTraversable(bounds.vertex(2), bounds.vertex(0), dummyPolygonSets));
 }
 
-TEST(TriangleDetails, ValidPolygonWithHoles) {
+TEST(TriangleDetail, ValidPolygonWithHoles) {
     /**
      * This valid PolygonWithHoles causes a CGAL Precondition fail.
      * Yet needs to be fixed by CGAL
@@ -380,7 +382,7 @@ TEST(TriangleDetails, ValidPolygonWithHoles) {
     EXPECT_TRUE(CGAL::is_valid_polygon_with_holes(poly, TriangleDetail::Traits()));
 }
 
-TEST(TriangleDetails, ValidPolygonWithHoles2) {
+TEST(TriangleDetail, ValidPolygonWithHoles2) {
     /**
      * Simplified version of a ValidPolygonWithHoles test
      *

@@ -1,12 +1,13 @@
 #pragma once
+#include "Triangle.h"
+#include "cinder/Ray.h"
+
 #include <CGAL/Nef_polyhedron_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <optional>
 #include <vector>
-#include "Triangle.h"
-#include "cinder/Ray.h"
 
 namespace pepr3d {
 class DataTriangle;
