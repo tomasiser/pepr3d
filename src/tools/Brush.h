@@ -5,6 +5,8 @@
 #include "ui/SidePane.h"
 
 namespace pepr3d {
+
+/// Current settings of the Brush tool
 struct BrushSettings {
     /// Index of the selected color
     size_t color = 0;
@@ -31,6 +33,7 @@ struct BrushSettings {
     }
 };
 
+/// Tool used for painting a model while not being limited by the original triangles
 class Brush : public Tool {
    public:
     explicit Brush(MainApplication& app) : mApplication(app) {}

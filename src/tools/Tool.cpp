@@ -1,4 +1,5 @@
-#include "tools//Tool.h"
+#include "tools/Tool.h"
+#include "geometry/SdfValuesException.h"
 #include "ui/MainApplication.h"
 
 namespace pepr3d {
@@ -39,6 +40,34 @@ std::optional<DetailedTriangleId> Tool::safeIntersectDetailedMesh(MainApplicatio
         pushErrorDialogCorruptedFile(mainApplication);
     }
     return hoveredTriangleId;
+}
+
+bool Tool::safeComputeSdf(MainApplication& mainApplication) {
+    try {
+        mainApplication.getCurrentGeometry()->computeSdfValues();
+    } catch(SdfValuesException& e) {
+        const std::string errorCaption = "Error: Failed to compute SDF";
+        const std::string errorDescription =
+            "The SDF values returned by the computation were not valid. This can happen when you use the "
+            "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
+            "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
+            "cannot be segmented.\n\nThe full description of the problem is:\n";
+        mainApplication.dispatchAsync([&mainApplication, errorCaption, errorDescription, e]() {
+            mainApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+        });
+        return false;
+    } catch(std::exception& e) {
+        const std::string errorCaption = "Error: Failed to compute SDF";
+        const std::string errorDescription =
+            "An internal error occured while computing the SDF values. If the problem persists, try re-loading "
+            "the mesh.\n\n"
+            "Please report this bug to the developers. The full description of the problem is:\n";
+        mainApplication.dispatchAsync([&mainApplication, errorCaption, errorDescription, e]() {
+            mainApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
+        });
+        return false;
+    }
+    return true;
 }
 
 }  // namespace pepr3d

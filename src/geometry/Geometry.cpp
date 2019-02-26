@@ -8,7 +8,6 @@
 #include <functional>
 #include <set>
 #include <unordered_map>
-#include "geometry/ModelExporter.h"
 #include "geometry/SdfValuesException.h"
 
 namespace pepr3d {
@@ -130,13 +129,6 @@ void Geometry::loadNewGeometry(const std::string& fileName) {
         throw std::runtime_error("Model loading failed.");
         CI_LOG_E("Model not loaded --> write out message for user");
     }
-}
-
-void Geometry::exportGeometry(const std::string filePath, const std::string fileName, const std::string fileType) {
-    // Reset progress
-    mProgress->resetSave();
-
-    ModelExporter modelExporter(mTriangles, filePath, fileName, fileType, mProgress.get());
 }
 
 void Geometry::generateVertexBuffer() {
@@ -873,6 +865,7 @@ std::array<std::optional<DetailedTriangleId>, 3> Geometry::gatherNeighbours(cons
 }
 
 void Geometry::computeSdf() {
+    mProgress->sdfPercentage = 0.0f;
     mPolyhedronData.isSdfComputed = false;
     mPolyhedronData.sdfValuesValid = true;
     mPolyhedronData.mMesh.remove_property_map(mPolyhedronData.sdf_property_map);
@@ -888,18 +881,22 @@ void Geometry::computeSdf() {
                                          25, true);
         } catch(...) {
             mPolyhedronData.sdfValuesValid = false;
+            mProgress->resetSdf();
             throw std::runtime_error("Computation of the SDF values failed internally in CGAL.");
         }
         if(minMaxSdf.first == minMaxSdf.second) {
             mPolyhedronData.sdfValuesValid = false;
             // This happens when the object is flat and thus has no volume
+            mProgress->resetSdf();
             throw SdfValuesException("The SDF computation returned a non-valid result. The values were both equal to " +
                                      std::to_string(minMaxSdf.first) + ".");
         }
         mPolyhedronData.isSdfComputed = true;
+        mProgress->sdfPercentage = 1.0f;
         CI_LOG_I("SDF values computed.");
     } else {
         mPolyhedronData.isSdfComputed = false;
+        mProgress->resetSdf();
         throw std::runtime_error("Computation of the SDF values failed, a new property map could not be tied");
     }
 }

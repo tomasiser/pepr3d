@@ -21,6 +21,7 @@
 
 #include "tools/Brush.h"
 #include "tools/DisplayOptions.h"
+#include "tools/ExportAssistant.h"
 #include "tools/Information.h"
 #include "tools/LiveDebug.h"
 #include "tools/PaintBucket.h"
@@ -40,8 +41,10 @@ using namespace ci::app;
 using namespace std;
 
 namespace pepr3d {
-// At least 2 threads in thread pool must be created, or importing will never finish!
-// std::thread::hardware_concurrency() may return 0
+// At least 2 threads in thread pool must be created!
+// There are several occasions in which we enqueue a new task from inside a thread pool.
+// If there was only 1 thread in the pool, the tasks would never finish causing a deadlock.
+// Note: std::thread::hardware_concurrency() may return 0
 ::ThreadPool MainApplication::sThreadPool(std::max<size_t>(3, std::thread::hardware_concurrency()) - 1);
 
 MainApplication::MainApplication() : mFontStorage{}, mToolbar(*this), mSidePane(*this), mModelView(*this) {}
@@ -92,6 +95,7 @@ void MainApplication::setup() {
     mTools.emplace_back(make_unique<DisplayOptions>(*this));
     mTools.emplace_back(make_unique<pepr3d::Settings>(*this));
     mTools.emplace_back(make_unique<Information>());
+    mTools.emplace_back(make_unique<ExportAssistant>(*this));
 #if !defined(NDEBUG)
     mTools.emplace_back(make_unique<LiveDebug>(*this));
 #endif
@@ -176,7 +180,7 @@ void MainApplication::keyDown(KeyEvent event) {
     case HotkeyAction::Open: showImportDialog(supportedOpenExtensions); break;
     case HotkeyAction::Save: saveProject(); break;
     case HotkeyAction::Import: showImportDialog(supportedImportExtensions); break;
-    case HotkeyAction::Export: showExportDialog(); break;
+    case HotkeyAction::Export: setCurrentTool<ExportAssistant>(); break;
     case HotkeyAction::Undo: mCommandManager->undo(); break;
     case HotkeyAction::Redo: mCommandManager->redo(); break;
     case HotkeyAction::SelectTrianglePainter: setCurrentTool<TrianglePainter>(); break;
@@ -242,9 +246,10 @@ bool MainApplication::showLoadingErrorDialog() {
     if(progress.polyhedronPercentage < 1.0f || !mGeometryInProgress->polyhedronValid()) {
         const std::string errorCaption = "Warning: Failed to build a polyhedron";
         const std::string errorDescription =
-            "Problems were found in the imported geometry. We could not build a valid polyhedron data "
-            "structure using the CGAL library.\n\nCertain tools (Paint Bucket, Segmentation) will be disabled. "
-            "You can still edit the imported model with the remaining tools.";
+            "Problems were found in the imported geometry: it is probably non-manifold and needs fixing in a 3D "
+            "editor such as Blender. We could not build a valid polyhedron data "
+            "structure using the CGAL library.\n\nMost of the tools and SDF extrusion will be disabled. "
+            "You can still edit the model with Triangle Painter and export it.";
         pushDialog(Dialog(DialogType::Warning, errorCaption, errorDescription, "Continue"));
         return true;
     }
@@ -311,7 +316,7 @@ void MainApplication::openFile(const std::string& path) {
             try {
                 loadArchive(mGeometryInProgress);
             } catch(const cereal::Exception&) {
-                const std::string errorCaption = "Error: Pepr project file (.p3d) corrupted";
+                const std::string errorCaption = "Error: Pepr3D project file (.p3d) corrupted";
                 const std::string errorDescription =
                     "The project file you attempted to open is corrupted and cannot be loaded. "
                     "Try loading an earlier backup version, which might not be corrupted yet.";
@@ -356,18 +361,6 @@ void MainApplication::openFile(const std::string& path) {
         };
         sThreadPool.enqueue(importNewModel);
     }
-}
-
-void MainApplication::saveFile(const std::string& filePath, const std::string& fileName, const std::string& fileType) {
-    if(mGeometry == nullptr) {
-        return;
-    }
-
-    mProgressIndicator.setGeometryInProgress(mGeometry);
-    sThreadPool.enqueue([filePath, fileName, fileType, this]() {
-        mGeometry->exportGeometry(filePath, fileName, fileType);
-        dispatchAsync([this]() { mProgressIndicator.setGeometryInProgress(nullptr); });
-    });
 }
 
 void MainApplication::update() {
@@ -431,10 +424,6 @@ void MainApplication::draw() {
     mSidePane.draw();
     mModelView.draw();
     mProgressIndicator.draw();
-
-    if(mShowExportDialog) {
-        drawExportDialog();
-    }
 }
 
 void MainApplication::setupFonts() {
@@ -466,6 +455,7 @@ void MainApplication::setupFonts() {
     iconsRangeBuilder.AddText(ICON_MD_UNDO);
     iconsRangeBuilder.AddText(ICON_MD_REDO);
     iconsRangeBuilder.AddText(ICON_MD_CHILD_FRIENDLY);
+    iconsRangeBuilder.AddText(ICON_MD_ARCHIVE);
     iconsRangeBuilder.BuildRanges(&iconsRange);
     fontConfig.GlyphExtraSpacing.x = 0.0f;
     mFontStorage.mRegularIcons =
@@ -499,146 +489,6 @@ void MainApplication::showImportDialog(const std::vector<std::string>& extension
             openFile(path.string());
         }
     });
-}
-
-void MainApplication::drawExportDialog() {
-    if(mGeometry == nullptr) {
-        return;
-    }
-
-    bool exportStl = false;
-    bool exportPly = false;
-    bool createStlFolder = false;
-    bool createPlyFolder = false;
-
-    if(!ImGui::IsPopupOpen("##exportdialog")) {
-        ImGui::OpenPopup("##exportdialog");
-    }
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_NoNav;
-    const ImGuiIO& io = ImGui::GetIO();
-    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x / 2.0f, io.DisplaySize.y / 2.0f), ImGuiCond_Always,
-                            ImVec2(0.5f, 0.5f));
-    ImGui::SetNextWindowSize(ImVec2(400.0f, -1.0f));
-    ImGui::SetNextWindowBgAlpha(1.0f);
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
-    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
-    ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
-    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
-    ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));
-    if(ImGui::BeginPopupModal("##exportdialog", nullptr, window_flags)) {
-        ImGui::Text("Exporting geometry");
-        ImGui::Spacing();
-        ImGui::Checkbox("Create a new folder for exported files", &mShouldExportInNewFolder);
-        ImGui::Spacing();
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        ImGui::Text(".stl (stereolithography)");
-        ImGui::SameLine();
-        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x017BDA));
-        ImGui::Text("(recommended for Prusa printers)");
-        ImGui::PopStyleColor();
-        ImGui::Spacing();
-        ImGui::TextWrapped(
-            "Exports multiple different .stl files, each with a separate color of the model. "
-            "This is suitable for 3D printing with Prusa printers and Slic3r Prusa Edition.");
-
-        ImGui::Spacing();
-
-        ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::hex(0x017BDA));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0x0165B2));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0x015699));
-        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
-        exportStl = ImGui::Button("Export as multiple .stl files", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
-        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
-                                            (ImColor)ci::ColorA::hex(0xEDEDED));
-        ImGui::PopStyleColor(4);
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        ImGui::Text(".ply (Polygon File Format)");
-        ImGui::Spacing();
-        ImGui::TextWrapped("Exports multiple different .ply files, each with a separate color of the model.");
-        ImGui::Spacing();
-
-        exportPly = ImGui::Button("Export as multiple .ply files", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
-        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
-                                            (ImColor)ci::ColorA::hex(0xEDEDED));
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        const bool shouldClose = ImGui::Button("Cancel", glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
-        ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
-                                            (ImColor)ci::ColorA::hex(0xEDEDED));
-
-        if(shouldClose) {
-            mShowExportDialog = false;
-            ImGui::CloseCurrentPopup();
-        } else if(exportStl || exportPly) {
-            mShowExportDialog = false;
-            ImGui::CloseCurrentPopup();
-            dispatchAsync([exportStl, exportPly, this]() {
-                fs::path initialPath(mGeometryFileName);
-                std::string name = initialPath.filename().replace_extension().string();
-                initialPath.remove_filename();
-                if(initialPath.empty()) {
-                    initialPath = getDocumentsDirectory();
-                    name = "untitled";
-                } else {
-                    name += "_exported";
-                }
-
-                std::string fileType;
-                std::vector<std::string> extensions;
-                if(exportStl) {
-                    extensions.emplace_back("stl");
-                    name += ".stl";
-                    fileType = "stl";
-                } else if(exportPly) {
-                    extensions.emplace_back("ply");
-                    name += ".ply";
-                    fileType = "ply";
-                }
-
-                auto path = getSaveFilePath(initialPath.append(name), extensions);
-
-                if(!path.empty()) {
-                    std::string fileName =
-                        path.filename().string().substr(0, path.filename().string().find_last_of("."));
-                    std::string filePath = path.parent_path().string();
-                    if(mShouldExportInNewFolder) {
-                        filePath += std::string("/") + std::string(fileName);
-                    }
-
-                    if(!fs::is_directory(filePath) || !fs::exists(filePath)) {  // check if folder exists
-                        fs::create_directory(filePath);
-                    }
-
-                    saveFile(filePath, fileName, fileType);
-                }
-            });
-        }
-
-        ImGui::EndPopup();
-    }
-    ImGui::PopStyleVar(3);
-    ImGui::PopStyleColor(7);
 }
 
 void MainApplication::drawTooltipOnHover(const std::string& label, const std::string& shortcut,
@@ -782,9 +632,10 @@ void MainApplication::saveProjectAs() {
         {
             std::ofstream os(finalPath, std::ios::binary);
             if(!os.is_open()) {
-                const std::string errorCaption = "Error: Failed to open the file";
+                const std::string errorCaption = "Error: Failed to save project";
                 const std::string errorDescription =
-                    "The file you selected to save into could not be opened. Your project was NOT saved.\n";
+                    "The file you selected to save into could not be opened for saving. Your project was NOT saved. "
+                    "Make sure you have write permissions to the directory or files you are saving to.\n";
                 pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription, "OK"));
                 return;
             }

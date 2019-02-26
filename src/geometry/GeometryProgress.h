@@ -4,6 +4,7 @@
 
 namespace pepr3d {
 
+/// Atomic values representing percentage progress of geometry import, export, and SDF computation
 struct GeometryProgress {
     std::atomic<float> importRenderPercentage{-1.0f};
     std::atomic<float> importComputePercentage{-1.0f};
@@ -25,6 +26,12 @@ struct GeometryProgress {
     void resetSave() {
         createScenePercentage = -1.0f;
         exportFilePercentage = -1.0f;
+    }
+
+    std::atomic<float> sdfPercentage{-1.0f};
+
+    void resetSdf() {
+        sdfPercentage = -1.0f;
     }
 };
 

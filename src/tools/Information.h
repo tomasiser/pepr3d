@@ -5,6 +5,7 @@
 
 namespace pepr3d {
 
+/// Tool used for getting details about the application
 class Information : public Tool {
    public:
     virtual std::string getName() const override {

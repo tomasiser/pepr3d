@@ -3,11 +3,9 @@
 
 namespace pepr3d {
 
-/**
-CommandBase is a base class for commands representing a single undoable operation.
-The command itself should be an immutable entity, containing only the necessary data to perform the
-action.
-*/
+/// CommandBase is a base class for commands representing a single undoable operation.
+/// The command itself should be an immutable entity, containing only the necessary data to perform the
+/// action.
 template <typename Target>
 class CommandBase {
     template <typename>

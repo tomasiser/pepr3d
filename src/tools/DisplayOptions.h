@@ -7,6 +7,7 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// Tool used to adjust how the model is displayed
 class DisplayOptions : public Tool {
    public:
     explicit DisplayOptions(MainApplication& app) : mApplication(app) {}
