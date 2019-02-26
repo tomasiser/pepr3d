@@ -5,7 +5,7 @@
  *
  *  For now, just keep this custom patched include file first, to avoid using CGAL's version
  */
-#include "CGAL-patched/Boolean_set_operations_2/Gps_traits_adaptor.h" /
+#include "CGAL-patched/Boolean_set_operations_2/Gps_traits_adaptor.h"
 //---------------------------------------
 
 #include "geometry/Triangle.h"

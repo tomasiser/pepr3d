@@ -1,9 +1,19 @@
 #pragma once
+/**
+ *  Fix for CGAL bugs in polygon with holes verification
+ *  Contained in CGAL PR #3688, likely to be in 4.14 version of CGAL
+ *
+ *  For now, just keep this custom patched include file first, to avoid using CGAL's version
+ */
+#include "CGAL-patched/Boolean_set_operations_2/Gps_traits_adaptor.h"
+//---------------------------------------
+
 #include "Triangle.h"
 #include "cinder/Ray.h"
 
 #include <CGAL/Nef_polyhedron_2.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_set_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <optional>
@@ -42,7 +52,7 @@ class GeometryUtils {
         for(size_t i = 0; i < vertexCount; i++) {
             auto currentVertex = std::next(poly.vertices_circulator(), i);
 
-            const K::Line_2 neighbourLine(*std::prev(currentVertex), *std::next(currentVertex));
+            const typename K::Line_2 neighbourLine(*std::prev(currentVertex), *std::next(currentVertex));
             if(neighbourLine.has_on(*currentVertex)) {
                 verticesToRemove.emplace_back(i);
             }
@@ -61,7 +71,7 @@ class GeometryUtils {
     /// Replacement for potentionally buggy CGAL implementation
     template <typename K>
     static CGAL::Orientation shoelaceOrientationTest(const CGAL::Polygon_2<K>& poly) {
-        K::FT shoelaceSum = 0;
+        typename K::FT shoelaceSum = 0;
 
         const size_t vertexCount = poly.vertices_end() - poly.vertices_begin();
         for(size_t i = 0; i < vertexCount; i++) {

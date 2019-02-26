@@ -21,6 +21,7 @@
 #include <deque>
 #include <list>
 #include <optional>
+#include <stdexcept>
 #include <type_traits>
 
 #ifndef NDEBUG
@@ -94,7 +95,7 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
     for(const auto& pt : missingPoints) {
         if(!sharedEdge.has_on(pt)) {
             CI_LOG_E("3D Point is not on 3D shared edge. Possibly invalid input data.");
-            assert(false);
+            throw std::logic_error("3D Point is not on 3D shared edge. Possibly invalid input data.");
         }
     }
 
@@ -173,8 +174,7 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
         }
         CI_LOG_E(sstream.str());
 #endif
-
-        throw std::exception(
+        throw std::logic_error(
             "Could not add matching vertex to a shared triangle edge. This was likely caused by corrupted internal "
             "state.");
     }
