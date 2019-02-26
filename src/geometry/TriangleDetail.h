@@ -29,6 +29,7 @@
 #include <map>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <type_traits>
 #include <vector>
 #include "GeometryUtils.h"
@@ -382,7 +383,7 @@ class TriangleDetail {
             const Point2 secondPoint(mBounds.vertex((i + 1) % 3));
 
             if(!isEdgeTraversable(firstPoint, secondPoint, mColoredPolys)) {
-                throw std::exception("Only one outgoing edge should exist on this line");
+                throw std::logic_error("Only one outgoing edge should exist on this line");
             }
         }
 #endif
