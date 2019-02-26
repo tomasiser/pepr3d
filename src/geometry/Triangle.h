@@ -82,8 +82,8 @@ void load(Archive& archive, pepr3d::DataTriangle::Triangle& tri) {
     archive(cereal::make_nvp("x1", x[0]), cereal::make_nvp("x2", x[1]), cereal::make_nvp("x3", x[2]));
     archive(cereal::make_nvp("y1", y[0]), cereal::make_nvp("y2", y[1]), cereal::make_nvp("y3", y[2]));
     archive(cereal::make_nvp("z1", z[0]), cereal::make_nvp("z2", z[1]), cereal::make_nvp("z3", z[2]));
-    tri = pepr3d::DataTriangle::Triangle(pepr3d::DataTriangle::K::Point_3(x[0], x[1], x[2]),
-                                         pepr3d::DataTriangle::K::Point_3(y[0], y[1], y[2]),
-                                         pepr3d::DataTriangle::K::Point_3(z[0], z[1], z[2]));
+    tri = pepr3d::DataTriangle::Triangle(pepr3d::DataTriangle::K::Point_3(x[0], y[0], z[0]),
+                                         pepr3d::DataTriangle::K::Point_3(x[1], y[1], z[1]),
+                                         pepr3d::DataTriangle::K::Point_3(x[2], y[2], z[2]));
 }
 }  // namespace CGAL
