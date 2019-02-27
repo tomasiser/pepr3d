@@ -219,7 +219,7 @@ TEST(TriangleDetail, TriangleDetailOperations) {
     const DataTriangle tri(TriangleDetail::toGlmVec(peprTri.vertex(0)), TriangleDetail::toGlmVec(peprTri.vertex(1)),
                            TriangleDetail::toGlmVec(peprTri.vertex(2)), glm::vec3(1, 0, 0), 0);
 
-    std::ifstream testFile("../tests/addMissingPoints.json", std::ios::in);
+    std::ifstream testFile("./tests/addMissingPoints.json", std::ios::in);
     ASSERT_TRUE(testFile.good());
 
     std::vector<HistoryEntry> history;
@@ -271,7 +271,7 @@ TEST(TriangleDetail, UpdatePolysFromTriangles) {
     std::vector<TriangleDetail::ExactTriangle> coloredExactTriangles;
 
     // Load triangle data form file
-    std::ifstream inFile("../tests/updatePolysFromTriangles.json");
+    std::ifstream inFile("./tests/updatePolysFromTriangles.json");
     ASSERT_TRUE(inFile.good());
     {
         cereal::JSONInputArchive jsonArchive(inFile);
@@ -315,7 +315,7 @@ TEST(TriangleDetail, UpdateTrianglesFromPolys) {
 
     std::map<size_t, PolygonSet> coloredPolys;
     // Load colored polygon data form file
-    std::ifstream inFile("../tests/updateTrianglesFromPolygons.json");
+    std::ifstream inFile("./tests/updateTrianglesFromPolygons.json");
 
     ASSERT_TRUE(inFile.good());
     {
