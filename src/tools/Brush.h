@@ -50,6 +50,8 @@ class Brush : public Tool {
         return ICON_MD_BRUSH;
     }
 
+    virtual bool isEnabled() const override;
+
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;

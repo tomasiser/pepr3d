@@ -70,6 +70,10 @@ void Brush::updateHighlight() const {
     mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSettings);
 }
 
+bool Brush::isEnabled() const {
+    return mApplication.getCurrentGeometry()->polyhedronValid();
+}
+
 void Brush::drawToSidePane(SidePane& sidePane) {
     sidePane.drawColorPalette();
     sidePane.drawSeparator();
