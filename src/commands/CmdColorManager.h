@@ -82,15 +82,19 @@ class CmdColorManagerReorderColors : public CommandBase<Geometry> {
         const glm::vec4 temp = colorManager.getColor(mColor1Idx);
         colorManager.setColor(mColor1Idx, colorManager.getColor(mColor2Idx));
         colorManager.setColor(mColor2Idx, temp);
+
         // unlike in color swap, we need to preserve model coloring, i.e., swap color IDs in the model:
-        for(size_t i = 0; i < target.getTriangleCount(); ++i) {
-            const auto& triangle = target.getTriangle(i);
-            if(triangle.getColor() == mColor1Idx) {
-                target.setTriangleColor(i, mColor2Idx);
-            } else if(triangle.getColor() == mColor2Idx) {
-                target.setTriangleColor(i, mColor1Idx);
+        const size_t color1Idx = mColor1Idx;  // Local copy to pass to lambda
+        const size_t color2Idx = mColor2Idx;
+        target.changeColorIds([color1Idx, color2Idx](size_t origColor) {
+            if(origColor == color1Idx) {
+                return color2Idx;
             }
-        }
+            if(origColor == color2Idx) {
+                return color1Idx;
+            }
+            return origColor;
+        });
     }
 
     size_t mColor1Idx;
@@ -114,15 +118,17 @@ class CmdColorManagerRemoveColor : public CommandBase<Geometry> {
         colorMap.erase(colorMap.cbegin() + mColorIdx);
         // replace the erased color in the model and shift remaining colors:
         assert(colorManager.size() > 0);
-        for(size_t i = 0; i < target.getTriangleCount(); ++i) {
-            const auto& triangle = target.getTriangle(i);
-            const size_t triangleColor = triangle.getColor();
-            if(triangleColor == mColorIdx) {
-                target.setTriangleColor(i, 0);
-            } else if(triangleColor > mColorIdx) {
-                target.setTriangleColor(i, triangleColor - 1);
+        const size_t colorIdx = mColorIdx;  // Local copy for lambda
+        target.changeColorIds([colorIdx](size_t originalColor) {
+            if(originalColor == colorIdx) {
+                return static_cast<size_t>(0);
+            } else if(originalColor > colorIdx) {
+                return originalColor - 1;
             }
-        }
+
+            return originalColor;
+        });
+
         // set new active (user selected) color:
         if(colorManager.getActiveColorIndex() == mColorIdx) {
             colorManager.setActiveColorIndex(0);
@@ -165,13 +171,13 @@ class CmdColorManagerResetColors : public CommandBase<Geometry> {
     void run(Geometry& target) const override {
         ColorManager& colorManager = target.getColorManager();
         colorManager = ColorManager();
-        for(size_t i = 0; i < target.getTriangleCount(); ++i) {
-            const auto& triangle = target.getTriangle(i);
-            const size_t triangleColor = triangle.getColor();
-            if(triangleColor >= colorManager.size()) {
-                target.setTriangleColor(i, colorManager.size() - 1);
-            }
-        }
+        const size_t maxColorId = colorManager.size() - 1;
+        target.changeColorIds([maxColorId](size_t origColor) {
+            if(origColor > maxColorId)
+                return maxColorId;
+            else
+                return origColor;
+        });
     }
 };
 

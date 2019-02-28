@@ -343,6 +343,23 @@ class Geometry {
     /// Paint continuous area with a brush of specified size
     void paintArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
+    /// Change all color ID's from one to another
+    /// @param ColorFunc functor of type size_t func(size_t originalColor), that returns the new color ID
+    template <typename ColorFunc>
+    void changeColorIds(const ColorFunc& colorFunc) {
+        for(size_t i = 0; i < getTriangleCount(); ++i) {
+            if(isSimpleTriangle(i)) {
+                const auto& triangle = getTriangle(i);
+                setTriangleColor(i, colorFunc(triangle.getColor()));
+            } else {
+                TriangleDetail* triDetail = getTriangleDetail(i);
+                triDetail->changeColorIds(colorFunc);
+            }
+        }
+
+        mOgl.isDirty = true;
+    }
+
     /// Save current state into a struct so that it can be restored later (CommandManager target requirement)
     GeometryState saveState() const;
 

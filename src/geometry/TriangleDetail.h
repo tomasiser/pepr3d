@@ -198,6 +198,7 @@ class TriangleDetail {
 
     template <class Archive>
     void save(Archive& archive) const {
+        assert(!mColorChanged);
         archive(mOriginal, mColoredPolys);
     }
 
@@ -263,6 +264,29 @@ class TriangleDetail {
     /// Break down a polygon into an array of triangles
     /// @return vector of exact triangles that make up the polygon
     static std::vector<Triangle2> triangulatePolygon(const PolygonWithHoles& poly);
+
+    /// Change color IDs of this detail
+    /// @param ColorFunc functor of type size_t func(size_t originalColor), that returns the new color ID
+    template <typename ColorFunc>
+    void changeColorIds(const ColorFunc& colorFunc) {
+        if(!mColorChanged) {
+            std::map<size_t, PolygonSet> coloredPolygonSets;
+
+            for(auto& coloredSetIt : mColoredPolys) {
+                coloredPolygonSets[colorFunc(coloredSetIt.first)].join(coloredSetIt.second);
+            }
+            mColoredPolys = std::move(coloredPolygonSets);
+        }
+
+        // Color of some triangles has been changed, polygon representation is old
+        for(ExactTriangle& exactTri : mTrianglesExact) {
+            exactTri.color = colorFunc(exactTri.color);
+        }
+
+        for(DataTriangle& dataTri : mTriangles) {
+            dataTri.setColor(colorFunc(dataTri.getColor()));
+        }
+    }
 
    private:
     /// Temporary storage for DataTriangles.  This gets overwritten on every time updateTrianglesFromPolygons() is run.
