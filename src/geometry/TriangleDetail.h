@@ -198,7 +198,12 @@ class TriangleDetail {
 
     template <class Archive>
     void save(Archive& archive) const {
-        assert(!mColorChanged);
+        if(mColorChanged) {
+            // Update polygonal representation so that we can save it
+            TriangleDetail* mutableThis = const_cast<TriangleDetail*>(this);
+            mutableThis->updatePolysFromTriangles();
+        }
+
         archive(mOriginal, mColoredPolys);
     }
 
