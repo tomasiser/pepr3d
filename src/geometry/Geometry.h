@@ -34,6 +34,11 @@ namespace pepr3d {
 class Geometry {
    public:
     using Direction = pepr3d::DataTriangle::K::Direction_3;
+    using Circle = DataTriangle::K::Circle_3;
+    using Sphere = DataTriangle::K::Sphere_3;
+    using Line3 = DataTriangle::K::Line_3;
+    using Vector3 = pepr3d::DataTriangle::K::Vector_3;
+    using Point3 = pepr3d::DataTriangle::K::Point_3;
     using Ft = pepr3d::DataTriangle::K::FT;
     using Ray = pepr3d::DataTriangle::K::Ray_3;
     using My_AABB_traits = CGAL::AABB_traits<pepr3d::DataTriangle::K, DataTriangleAABBPrimitive>;
@@ -101,6 +106,11 @@ class Geometry {
     /// Triangle soup of the original model mesh, containing CGAL::Triangle_3 data for AABB tree.
     std::vector<DataTriangle> mTriangles;
 
+    /// Stores a rough collision sphere for each triangle
+    /// in a form of a center point + radius.
+    /// Used to speed up capsule/cylinder querries on original triangles.
+    std::vector<std::pair<Point3, double>> mTriangleBounds;
+
     /// Map of triangle details. (Detailed triangles that replace the original)
     std::map<size_t, TriangleDetail> mTriangleDetails;
 
@@ -159,6 +169,7 @@ class Geometry {
     Geometry(std::vector<DataTriangle>&& triangles)
         : mTriangles(std::move(triangles)), mProgress(std::make_unique<GeometryProgress>()) {
         generateVertexBuffer();
+        generateTriangleBounds();
         generateIndexBuffer();
         generateColorBuffer();
         generateNormalBuffer();
@@ -341,7 +352,10 @@ class Geometry {
     void highlightArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
     /// Paint continuous area with a brush of specified size
-    void paintArea(const ci::Ray& ray, const struct BrushSettings& settings);
+    void paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color);
+
+    /// Paint continuous spherical area with a brush of specified size
+    void paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& settings);
 
     /// Change all color ID's from one to another
     /// @param ColorFunc functor of type size_t func(size_t originalColor), that returns the new color ID
@@ -382,6 +396,9 @@ class Geometry {
     /// Spread as BFS from starting triangle, until the limits of brush settings are reached
     std::vector<size_t> getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection,
                                                size_t startTriangle, const struct BrushSettings& settings);
+
+    /// Get all triangles that might be intersecting infinite cylinder
+    std::vector<size_t> getTrianglesInCylinder(const Line3& cylinderCenter, double radius);
 
     /// Segmentation is CPU heavy because it needs to calculate a lot of data.
     /// This method allows to pre-compute the heaviest calculation.
@@ -453,6 +470,9 @@ class Geometry {
     /// Generate a buffer of highlight information. Saves per-triangle data to each vertex
     void generateHighlightBuffer();
 
+    /// Generate spherical bounds for each original triangle. Used to speed up capsule querries.
+    void generateTriangleBounds();
+
     /// Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild.
     void buildPolyhedron();
 
@@ -472,7 +492,12 @@ class Geometry {
     /// Invalidate temporary detailed data like detailed AABB tree and mesh.
     void invalidateTemporaryDetailedData();
 
-    void updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOrigin, const struct BrushSettings& settings);
+    /// Paint a shape to triangle detail
+    /// @param shape Collection of points that form a polygon, that is going to be projected onto the TriangleDetail
+    /// @param direction Direction vector of the projection
+    void paintToTriangleDetail(size_t triangleIdx, const std::vector<Point3>& shape, const Vector3& direction,
+                               size_t color);
+
     void removeTriangleDetail(size_t triangleIndex);
 
     TriangleDetail* createTriangleDetail(size_t triangleIdx);

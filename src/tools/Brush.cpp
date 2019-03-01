@@ -23,14 +23,15 @@ void Brush::onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event
     if(!event.isLeftDown()) {
         return;
     }
-    mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    updateRay(modelView, event);
     paint();
-    updateHighlight();
+    updateHighlight(modelView, event);
 }
 
 void Brush::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    updateHighlight();
+
+    updateHighlight(modelView, event);
 }
 
 void Brush::onToolSelect(ModelView& modelView) {
@@ -66,8 +67,16 @@ void Brush::stopPaint() {
     mGroupCommands = false;
 }
 
-void Brush::updateHighlight() const {
-    mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSettings);
+void Brush::updateHighlight(ModelView& modelView, ci::app::MouseEvent event) const {
+    if(mBrushSettings.spherical) {
+        mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSettings);
+    } else {
+    }
+}
+
+void Brush::updateRay(ModelView& modelView, ci::app::MouseEvent event) {
+    mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    auto intersection = mApplication.getCurrentGeometry()->intersectMesh(mLastRay, mLastIntersection);
 }
 
 bool Brush::isEnabled() const {
@@ -81,14 +90,37 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     sidePane.drawFloatDragger("Size", mBrushSettings.size, mMaxSize / SIZE_SLIDER_STEPS, 0.0001f, mMaxSize, "%.02f",
                               70.f);
 
-    sidePane.drawCheckbox("Continuous", mBrushSettings.continuous);
-    sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
-    sidePane.drawCheckbox("Respect original triangles", mBrushSettings.respectOriginalTriangles);
+    sidePane.drawIntDragger("Segments", mBrushSettings.segments, 0.1, 3, 50, "%d", 70.f);
 
-    if(mBrushSettings.respectOriginalTriangles) {
-        sidePane.drawCheckbox("Paint outer ring", mBrushSettings.paintOuterRing);
+    sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
+
+    sidePane.drawSeparator();
+    sidePane.drawText("Brush shape:");
+    if(ImGui::RadioButton("Sphere", mBrushSettings.spherical)) {
+        mBrushSettings.spherical = true;
+    }
+    if(ImGui::RadioButton("Flat", !mBrushSettings.spherical)) {
+        mBrushSettings.spherical = false;
+        mApplication.getCurrentGeometry()->hideHighlight();
     }
 
+    if(mBrushSettings.spherical) {
+        sidePane.drawText("Spherical brush settings");
+
+        sidePane.drawCheckbox("Continuous", mBrushSettings.continuous);
+
+        sidePane.drawCheckbox("Respect original triangles", mBrushSettings.respectOriginalTriangles);
+
+        if(mBrushSettings.respectOriginalTriangles) {
+            sidePane.drawCheckbox("Paint outer ring", mBrushSettings.paintOuterRing);
+        }
+    }
+
+    if(!mBrushSettings.spherical) {
+        sidePane.drawText("Flat brush settings");
+        sidePane.drawCheckbox("Align to normal", mBrushSettings.alignToNormal);
+    }
+    sidePane.drawSeparator();
     mPaintsSinceDraw = 0;
 }
 

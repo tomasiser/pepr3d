@@ -62,6 +62,7 @@ class TriangleDetail {
     using Traits = TriangleDetail::PolygonSet::Traits_2;
     using PeprPoint2 = DataTriangle::K::Point_2;
     using PeprPoint3 = DataTriangle::K::Point_3;
+    using PeprVector3 = DataTriangle::K::Vector_3;
     using Point2 = TriangleDetail::K::Point_2;
     using Point3 = TriangleDetail::K::Point_3;
     using Vector2 = TriangleDetail::K::Vector_2;
@@ -166,7 +167,14 @@ class TriangleDetail {
     TriangleDetail() = default;
 
     /// Paint sphere onto this detail
-    void paintSphere(const PeprSphere& sphere, size_t color);
+    /// @param minSegments Minimum number of segments of each sphere/plane intersection. Additional points may be added
+    /// on boundaries.
+    void paintSphere(const PeprSphere& sphere, int minSegments, size_t color);
+
+    /// Paint a shape to triangle detail
+    /// @param shape Collection of points that form a polygon, that is going to be projected onto the TriangleDetail
+    /// @param direction Direction vector of the projection
+    void paintShape(const std::vector<PeprPoint3>& shape, const PeprVector3& direction, size_t color);
 
     /// Makes sure all vertices on the common edge between these two triangles are matched
     /// Creates new vertices for both triangles if there are missing
@@ -230,6 +238,11 @@ class TriangleDetail {
     /// Convert glm::vec3 to Exact kernel
     inline static K::Point_3 toExactK(const glm::vec3& vec) {
         return Point3(vec.x, vec.y, vec.z);
+    }
+
+    /// Convert Point_3 from Pepr3d kernel to Exact kernel
+    inline static K::Vector_3 toExactK(const PeprVector3& vec) {
+        return K::Vector_3(vec.x(), vec.y(), vec.z());
     }
 
     /// Convert Exact kernel Point_2 to normal Pepr3d kernel
@@ -334,14 +347,13 @@ class TriangleDetail {
 
     /// Get points of a circle that are shared with border triangles
     std::vector<std::pair<Point2, double>> getCircleSharedPoints(const Circle3& circle, const Vector3& xBase,
-                                                                 const Vector3& yBase);
+                                                                 const Vector3& yBase) const;
 
    private:
-    /// Paint a circle shape onto the plane of the triangle
-    void addCircle(const Circle3& circle, size_t color);
-
     /// Find shared edge between triangles
     Segment3 findSharedEdge(const TriangleDetail& other);
+
+    Polygon projectShapeToPolygon(const std::vector<PeprPoint3>& shape, const PeprVector3& direction);
 
 #ifdef _TEST_
    public:  // Testing requires access to these methods
@@ -352,7 +364,7 @@ class TriangleDetail {
                           const Segment3& sharedEdge);
 
     /// Construct a polygon from a circle.
-    Polygon polygonFromCircle(const Circle3& circle) const;
+    Polygon polygonFromCircle(const Circle3& circle, int segments) const;
 
     /// Create a polygon from a PeprTriangle
     Polygon polygonFromTriangle(const PeprTriangle& tri) const;

@@ -12,6 +12,10 @@ namespace pepr3d {
 
 /// Command that paints a stroke with a brush
 class CmdPaintBrush : public CommandBase<Geometry> {
+    using Point3 = Geometry::Point3;
+    using Vector3 = Geometry::Vector3;
+    using Circle = Geometry::Circle;
+
    public:
     std::string_view getDescription() const override {
         return "Paint with a brush";
@@ -25,7 +29,27 @@ class CmdPaintBrush : public CommandBase<Geometry> {
         const auto start = std::chrono::high_resolution_clock::now();
 
         for(const ci::Ray& ray : mRays) {
-            target.paintArea(ray, mSettings);
+            if(mSettings.spherical) {
+                target.paintAreaWithSphere(ray, mSettings);
+            } else {
+                glm::vec3 ro = ray.getOrigin();
+                glm::vec3 rd = ray.getDirection();
+                if(mSettings.alignToNormal) {
+                    auto intersection = target.intersectMesh(ray, ro);
+                    if(!intersection) {
+                        continue;
+                    }
+
+                    rd = -target.getTriangle(*intersection).getNormal();
+                }
+
+                // Create a shape to paint with
+                const Vector3 rayDirectionVector(rd.x, rd.y, rd.z);
+                const Circle circle(Point3(ro.x, ro.y, ro.z), mSettings.size * mSettings.size, rayDirectionVector);
+                const std::vector<Point3> circlePoints = GeometryUtils::pointsOnCircle(circle, mSettings.segments);
+
+                target.paintWithShape(ray, circlePoints, mSettings.color);
+            }
         }
 
         const auto end = std::chrono::high_resolution_clock::now();

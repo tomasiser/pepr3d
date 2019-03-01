@@ -302,11 +302,11 @@ void ModelView::drawTriangleHighlight(const DetailedTriangleId triangleId) {
     ci::gl::drawLine(triangle.getVertex(2), triangle.getVertex(0));
 }
 
-void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color) {
+void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color, float width) {
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
     ci::gl::ScopedColor drawColor(color);
-    ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
+    ci::gl::ScopedLineWidth drawWidth(width);
     gl::ScopedDepth depth(false);
     ci::gl::drawLine(from, to);
 }

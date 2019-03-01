@@ -59,7 +59,8 @@ class ModelView {
     }
 
     /// Draws a 3D line.
-    void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white());
+    void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white(),
+                  float width = 1.0f);
 
     /// Draws a text label (caption) to the top left corner.
     /// `caption` is black, `errorCaption` is red and below `caption`

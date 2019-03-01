@@ -87,6 +87,8 @@ void Geometry::recomputeFromData() {
     generateNormalBuffer();
     mProgress->buffersPercentage = 1.0f;
 
+    generateTriangleBounds();
+
     /// Wait for building the polyhedron and tree
     buildTreeFuture.get();
     buildPolyhedronFuture.get();
@@ -267,6 +269,41 @@ void Geometry::generateHighlightBuffer() {
     mOgl.info.didHighlightUpdate = true;
 }
 
+void Geometry::generateTriangleBounds() {
+    mTriangleBounds.clear();
+    for(const DataTriangle& dataTri : mTriangles) {
+        const auto& tri = dataTri.getTri();
+        const Point3 zeroPt(0, 0, 0);
+        Point3 centerPoint = zeroPt + (Vector3(tri.vertex(0) - zeroPt) + Vector3(tri.vertex(1) - zeroPt) +
+                                       Vector3(tri.vertex(2) - zeroPt) / 3);
+        double maxSquaredDist = 0;
+        for(int i = 0; i < 3; i++) {
+            maxSquaredDist = std::max(CGAL::squared_distance(centerPoint, tri.vertex(i)), maxSquaredDist);
+        }
+
+        mTriangleBounds.push_back(std::make_pair(centerPoint, CGAL::sqrt(maxSquaredDist)));
+    }
+}
+
+std::vector<size_t> Geometry::getTrianglesInCylinder(const Line3& cylinderCenter, double radius) {
+    assert(mTriangleBounds.size() == mTriangles.size());
+    std::vector<size_t> result;
+
+    for(size_t triIdx = 0; triIdx < mTriangleBounds.size(); ++triIdx) {
+        const Point3& sphereCenter = mTriangleBounds[triIdx].first;
+        const double sphereRadius = mTriangleBounds[triIdx].second;
+
+        // Any sphere in contact with the cylinder is going to have this max squared distance
+        const double distanceLimitSquared = (radius + sphereRadius) * (radius + sphereRadius);
+
+        if(CGAL::squared_distance(cylinderCenter, sphereCenter) <= distanceLimitSquared) {
+            result.push_back(triIdx);
+        }
+    }
+
+    return result;
+}
+
 /* -------------------- Tool support -------------------- */
 
 std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray) const {
@@ -421,7 +458,51 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
     }
 }
 
-void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
+void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color) {
+    glm::vec3 intersectionPoint{};
+    auto intersectedTri = intersectMesh(ray, intersectionPoint);
+
+    if(!intersectedTri) {
+        return;
+    }
+
+    const std::pair<Point3, double> shapeBounds = GeometryUtils::getShapeBoundingSphere(shape);
+    const auto ro = ray.getOrigin();
+    const auto rd = ray.getDirection();
+    const Line3 rayLine(Point3(ro.x, ro.y, ro.z), Vector3(rd.x, rd.y, rd.z));
+    std::vector<size_t> trianglesInCylinder = getTrianglesInCylinder(rayLine, shapeBounds.second);
+
+    std::vector<size_t> detailsToUpdate;
+
+    for(size_t triIdx : trianglesInCylinder) {
+        const auto& cgalTri = getTriangle(triIdx).getTri();
+
+        if(glm::dot(rd, getTriangle(triIdx).getNormal()) > 0) {
+            continue;  // Skip triangles facing away
+        }
+
+        if(isSimpleTriangle(triIdx) && getTriangleColor(triIdx) == color) {
+            continue;  // Do not paint simple triangles of the same color
+        }
+
+        detailsToUpdate.emplace_back(triIdx);
+        getTriangleDetail(triIdx);  // Make sure triangle detail is created
+    }
+
+    if(!detailsToUpdate.empty()) {
+        invalidateTemporaryDetailedData();
+    }
+
+    auto& threadPool = MainApplication::getThreadPool();
+    threadPool.parallel_for(detailsToUpdate.begin(), detailsToUpdate.end(),
+                            [this, &shape, color, &rayLine](size_t triIdx) {
+                                paintToTriangleDetail(triIdx, shape, rayLine.direction().vector(), color);
+                            });
+
+    mOgl.isDirty = true;
+}
+
+void Geometry::paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& settings) {
     glm::vec3 intersectionPoint{};
     auto intersectedTri = intersectMesh(ray, intersectionPoint);
 
@@ -459,18 +540,14 @@ void Geometry::paintArea(const ci::Ray& ray, const BrushSettings& settings) {
         invalidateTemporaryDetailedData();
     }
 
-    auto& threadPool = MainApplication::getThreadPool();
-    std::vector<std::future<void>> futures;
+    const Sphere brushShape(Point3(intersectionPoint.x, intersectionPoint.y, intersectionPoint.z),
+                            settings.size * settings.size);
 
-    // Paint to details in multiple threads
-    for(size_t triIdx : detailsToUpdate) {
-        futures.emplace_back(threadPool.enqueue(
-            [this](size_t triIdx, const glm::vec3& brushOrigin, const struct BrushSettings& settings) {
-                updateTriangleDetail(triIdx, brushOrigin, settings);
-            },
-            triIdx, intersectionPoint, settings));
-    }
-    std::for_each(futures.begin(), futures.end(), [](auto& f) { f.get(); });
+    auto& threadPool = MainApplication::getThreadPool();
+    threadPool.parallel_for(detailsToUpdate.begin(), detailsToUpdate.end(),
+                            [this, &brushShape, &settings](size_t triIdx) {
+                                getTriangleDetail(triIdx)->paintSphere(brushShape, settings.segments, settings.color);
+                            });
 
     mOgl.isDirty = true;
 }
@@ -481,13 +558,9 @@ TriangleDetail* Geometry::createTriangleDetail(size_t triangleIdx) {
     return &(result.first->second);
 }
 
-void Geometry::updateTriangleDetail(size_t triangleIdx, const glm::vec3& brushOrigin,
-                                    const struct BrushSettings& settings) {
-    using Point = DataTriangle::K::Point_3;
-    using Sphere = DataTriangle::K::Sphere_3;
-
-    const Sphere brushShape(Point(brushOrigin.x, brushOrigin.y, brushOrigin.z), settings.size * settings.size);
-    getTriangleDetail(triangleIdx)->paintSphere(brushShape, settings.color);
+void Geometry::paintToTriangleDetail(size_t triangleIdx, const std::vector<Point3>& shape, const Vector3& direction,
+                                     size_t color) {
+    getTriangleDetail(triangleIdx)->paintShape(shape, direction, color);
 }
 
 void Geometry::removeTriangleDetail(const size_t triangleIndex) {
