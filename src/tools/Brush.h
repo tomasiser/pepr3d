@@ -76,6 +76,8 @@ class Brush : public Tool {
     virtual void onToolSelect(ModelView& modelView) override;
     virtual void onToolDeselect(ModelView& modelView) override;
 
+    virtual void onNewGeometryLoaded(ModelView& modelView);
+
    private:
     /// Do painting tick on the model
     void paint();

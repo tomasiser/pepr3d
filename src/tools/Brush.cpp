@@ -127,13 +127,15 @@ void Brush::drawToSidePane(SidePane& sidePane) {
 void Brush::drawToModelView(ModelView& modelView) {
     Geometry* geometry = mApplication.getCurrentGeometry();
     if(geometry) {
-        mMaxSize = modelView.getMaxSize();
-
         if(mBrushSettings.respectOriginalTriangles && geometry->getAreaHighlight().enabled) {
             for(size_t triIdx : geometry->getAreaHighlight().triangles) {
                 modelView.drawTriangleHighlight(triIdx);
             }
         }
     }
+}
+
+void Brush::onNewGeometryLoaded(ModelView& modelView) {
+    mMaxSize = modelView.getMaxSize();
 }
 }  // namespace pepr3d
