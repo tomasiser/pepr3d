@@ -21,7 +21,7 @@ struct BrushSettings {
     bool paintBackfaces = false;
 
     /// Use spherical brush (otherwise shape brush will be used
-    bool spherical = false;
+    bool spherical = true;
 
     // -- Spherical brush setting
 

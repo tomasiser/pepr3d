@@ -48,7 +48,7 @@ class CmdPaintBrush : public CommandBase<Geometry> {
                 const Circle circle(Point3(ro.x, ro.y, ro.z), mSettings.size * mSettings.size, rayDirectionVector);
                 const std::vector<Point3> circlePoints = GeometryUtils::pointsOnCircle(circle, mSettings.segments);
 
-                target.paintWithShape(ray, circlePoints, mSettings.color);
+                target.paintWithShape(ray, circlePoints, mSettings.color, mSettings.paintBackfaces);
             }
         }
 

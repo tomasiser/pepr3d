@@ -352,7 +352,10 @@ class Geometry {
     void highlightArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
     /// Paint continuous area with a brush of specified size
-    void paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color);
+    /// @param ray Ray along which to project the shape, using orthogonal projection
+    /// @param shape Points in world space representing a polygonal shape
+    void paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color,
+                        bool paintBackfaces = false);
 
     /// Paint continuous spherical area with a brush of specified size
     void paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& settings);
@@ -492,14 +495,6 @@ class Geometry {
     /// Invalidate temporary detailed data like detailed AABB tree and mesh.
     void invalidateTemporaryDetailedData();
 
-    /// Paint a shape to triangle detail
-    /// @param shape Collection of points that form a polygon, that is going to be projected onto the TriangleDetail
-    /// @param direction Direction vector of the projection
-    void paintToTriangleDetail(size_t triangleIdx, const std::vector<Point3>& shape, const Vector3& direction,
-                               size_t color);
-
-    void removeTriangleDetail(size_t triangleIndex);
-
     TriangleDetail* createTriangleDetail(size_t triangleIdx);
 
     TriangleDetail* getTriangleDetail(const size_t triangleIndex) {
@@ -510,6 +505,8 @@ class Geometry {
             return &(it->second);
         }
     }
+
+    void removeTriangleDetail(size_t triangleIndex);
 
     /// Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking
     /// into the CGAL Polyhedron construct.

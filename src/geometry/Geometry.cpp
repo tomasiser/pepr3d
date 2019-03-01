@@ -458,7 +458,7 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
     }
 }
 
-void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color) {
+void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color, bool paintBackfaces) {
     glm::vec3 intersectionPoint{};
     auto intersectedTri = intersectMesh(ray, intersectionPoint);
 
@@ -477,7 +477,7 @@ void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& sha
     for(size_t triIdx : trianglesInCylinder) {
         const auto& cgalTri = getTriangle(triIdx).getTri();
 
-        if(glm::dot(rd, getTriangle(triIdx).getNormal()) > 0) {
+        if(glm::dot(rd, getTriangle(triIdx).getNormal()) > 0 && !paintBackfaces) {
             continue;  // Skip triangles facing away
         }
 
@@ -496,7 +496,7 @@ void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& sha
     auto& threadPool = MainApplication::getThreadPool();
     threadPool.parallel_for(detailsToUpdate.begin(), detailsToUpdate.end(),
                             [this, &shape, color, &rayLine](size_t triIdx) {
-                                paintToTriangleDetail(triIdx, shape, rayLine.direction().vector(), color);
+                                getTriangleDetail(triIdx)->paintShape(shape, rayLine.direction().vector(), color);
                             });
 
     mOgl.isDirty = true;
@@ -556,11 +556,6 @@ TriangleDetail* Geometry::createTriangleDetail(size_t triangleIdx) {
     auto result = mTriangleDetails.emplace(triangleIdx, TriangleDetail(getTriangle(triangleIdx)));
 
     return &(result.first->second);
-}
-
-void Geometry::paintToTriangleDetail(size_t triangleIdx, const std::vector<Point3>& shape, const Vector3& direction,
-                                     size_t color) {
-    getTriangleDetail(triangleIdx)->paintShape(shape, direction, color);
 }
 
 void Geometry::removeTriangleDetail(const size_t triangleIndex) {

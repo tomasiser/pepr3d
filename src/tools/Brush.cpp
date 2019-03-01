@@ -88,9 +88,9 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     sidePane.drawSeparator();
 
     sidePane.drawFloatDragger("Size", mBrushSettings.size, mMaxSize / SIZE_SLIDER_STEPS, 0.0001f, mMaxSize, "%.02f",
-                              70.f);
+                              140.f);
 
-    sidePane.drawIntDragger("Segments", mBrushSettings.segments, 0.1, 3, 50, "%d", 70.f);
+    sidePane.drawIntDragger("Segments", mBrushSettings.segments, 0.1, 3, 50, "%d", 140.f);
 
     sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
 
