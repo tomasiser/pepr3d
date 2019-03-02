@@ -137,5 +137,6 @@ void Brush::drawToModelView(ModelView& modelView) {
 
 void Brush::onNewGeometryLoaded(ModelView& modelView) {
     mMaxSize = modelView.getMaxSize();
+    mBrushSettings.size = mMaxSize / 10;
 }
 }  // namespace pepr3d
