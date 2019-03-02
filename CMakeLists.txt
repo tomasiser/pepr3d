@@ -165,6 +165,9 @@ if(WIN32)
   endif()
 endif()
 
+# copy test files to binary dir
+file(COPY ${APP_PATH}/tests DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 # ------------------------------------------------------------------------
 # --------------------------- COMPILER FLAGS -----------------------------
 # ------------------------------------------------------------------------
@@ -173,7 +176,7 @@ target_compile_definitions(pepr3d PRIVATE $<$<CONFIG:RELEASE>:CI_MIN_LOG_LEVEL=3
 
 if(MSVC)
   target_compile_options(pepr3d PRIVATE /W3 /std:c++17 /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
-  target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_ /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
+  target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_ /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING /DPEPR3D_EDGE_CONSISTENCY_CHECK)
   target_compile_options(cinder PRIVATE /W0)
 
   # Note: /std:c++14 flag is not present in cinder INTERFACE_COMPILE_OPTIONS for some reason for
@@ -186,7 +189,7 @@ if(MSVC)
   file(COPY ${APP_PATH}/pepr3d.sln.DotSettings DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 else()
   target_compile_options(pepr3d PRIVATE -Wall -Wextra -pedantic -std=c++17)
-  target_compile_options(pepr3dtests PRIVATE -Wall -Wextra -pedantic -std=c++17 -D_TEST_)
+  target_compile_options(pepr3dtests PRIVATE -Wall -Wextra -pedantic -std=c++17 -D_TEST_ -DPEPR3D_EDGE_CONSISTENCY_CHECK)
 
   # Replace c++14 flag forced by Cinder with c++17
   get_target_property(CINDER_COMPILE_FLAGS cinder INTERFACE_COMPILE_OPTIONS)

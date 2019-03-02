@@ -1,8 +1,10 @@
 #include "geometry/GeometryUtils.h"
 #include <CGAL/Aff_transformation_3.h>
 #include "geometry/Geometry.h"
+#include "geometry/TriangleDetail.h"
 
 namespace pepr3d {
+
 float GeometryUtils::segmentPointDistanceSquared(const glm::vec3 &start, const glm::vec3 &end, const glm::vec3 &point) {
     using K = CGAL::Simple_cartesian<double>;
     using Point = K::Point_3;

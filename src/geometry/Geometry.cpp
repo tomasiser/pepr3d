@@ -694,6 +694,7 @@ void Geometry::buildDetailedMesh() {
         // Add detail triangles while combining common vertices
         for(size_t detailTriangleIdx = 0; detailTriangleIdx < detailTriangles.size(); detailTriangleIdx++) {
             const DataTriangle& detail = detailTriangles[detailTriangleIdx];
+
             assert(!detail.getTri().is_degenerate());
 
             // Vertex descriptors of current detail triangle
@@ -796,15 +797,12 @@ void Geometry::correctSharedVertices() {
 
 void Geometry::updateTemporaryDetailedData() {
     const auto start = std::chrono::high_resolution_clock::now();
-    ::ThreadPool& threadPool = MainApplication::getThreadPool();
 
     correctSharedVertices();
-
-    /// Async build the data
-    auto buildDetailedMeshFuture = threadPool.enqueue([this]() { buildDetailedMesh(); });
-    auto buildDetailedTreeFuture = threadPool.enqueue([this]() { buildDetailedTree(); });
-    buildDetailedMeshFuture.get();
-    buildDetailedTreeFuture.get();
+    // Important! Do this in a single thread. Epeck kernel used by TriangleDetail
+    // is not thread safe even for read-only access
+    buildDetailedMesh();
+    buildDetailedTree();
 
     const auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> timeMs = end - start;

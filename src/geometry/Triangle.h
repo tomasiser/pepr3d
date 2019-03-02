@@ -67,23 +67,32 @@ class DataTriangle {
 }  // namespace pepr3d
 
 namespace CGAL {
+
 template <typename Archive>
-void save(Archive& archive, pepr3d::DataTriangle::Triangle const& tri) {
-    archive(cereal::make_nvp("x1", tri[0][0]), cereal::make_nvp("y1", tri[0][1]), cereal::make_nvp("z1", tri[0][2]));
-    archive(cereal::make_nvp("x2", tri[1][0]), cereal::make_nvp("y2", tri[1][1]), cereal::make_nvp("z2", tri[1][2]));
-    archive(cereal::make_nvp("x3", tri[2][0]), cereal::make_nvp("y3", tri[2][1]), cereal::make_nvp("z3", tri[2][2]));
+void save(Archive& archive, const pepr3d::DataTriangle::Point& point) {
+    archive(cereal::make_nvp("x", point[0]), cereal::make_nvp("y", point[1]), cereal::make_nvp("z", point[2]));
+}
+
+template <typename Archive>
+void load(Archive& archive, pepr3d::DataTriangle::Point& point) {
+    // Important!
+    // Keep the same order for points, even if you use NVP. (Only JSON archives support out of order loading)
+    std::array<pepr3d::DataTriangle::Point::FT, 3> values;
+    archive(cereal::make_nvp("x", values[0]), cereal::make_nvp("y", values[1]), cereal::make_nvp("z", values[2]));
+    point = pepr3d::DataTriangle::Point(values[0], values[1], values[2]);
+}
+
+template <typename Archive>
+void save(Archive& archive, const pepr3d::DataTriangle::Triangle& tri) {
+    archive(tri[0], tri[1], tri[2]);
 }
 
 template <typename Archive>
 void load(Archive& archive, pepr3d::DataTriangle::Triangle& tri) {
-    std::array<double, 3> x;
-    std::array<double, 3> y;
-    std::array<double, 3> z;
-    archive(cereal::make_nvp("x1", x[0]), cereal::make_nvp("x2", x[1]), cereal::make_nvp("x3", x[2]));
-    archive(cereal::make_nvp("y1", y[0]), cereal::make_nvp("y2", y[1]), cereal::make_nvp("y3", y[2]));
-    archive(cereal::make_nvp("z1", z[0]), cereal::make_nvp("z2", z[1]), cereal::make_nvp("z3", z[2]));
-    tri = pepr3d::DataTriangle::Triangle(pepr3d::DataTriangle::K::Point_3(x[0], x[1], x[2]),
-                                         pepr3d::DataTriangle::K::Point_3(y[0], y[1], y[2]),
-                                         pepr3d::DataTriangle::K::Point_3(z[0], z[1], z[2]));
+    // Important!
+    // Keep the same order for points, even if you use NVP. (Only JSON archives support out of order loading)
+    std::array<pepr3d::DataTriangle::Point, 3> points;
+    archive(points[0], points[1], points[2]);
+    tri = pepr3d::DataTriangle::Triangle(points[0], points[1], points[2]);
 }
 }  // namespace CGAL
