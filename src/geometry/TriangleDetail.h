@@ -35,8 +35,6 @@
 #include "GeometryUtils.h"
 #include "geometry/GlmSerialization.h"
 
-#define PEPR3D_COLLECT_DEBUG_DATA
-
 #ifdef PEPR3D_COLLECT_DEBUG_DATA
 #include <boost/variant.hpp>
 #include <cereal/types/boost_variant.hpp>
