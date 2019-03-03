@@ -123,6 +123,20 @@ void ModelView::resetCamera() {
     mCamera.setFov(35.0f);
 }
 
+void ModelView::onNewGeometryLoaded() {
+    const Geometry* const geometry = mApplication.getCurrentGeometry();
+    if(!geometry) {
+        return;
+    }
+
+    // Update maxSize
+    const glm::vec3 aabbMin = geometry->getBoundingBoxMin();
+    const glm::vec3 aabbMax = geometry->getBoundingBoxMax();
+    const glm::vec3 aabbSize = aabbMax - aabbMin;
+    const float maxSize = glm::max(glm::max(aabbSize.x, aabbSize.y), aabbSize.z);
+    mMaxSize = maxSize;
+}
+
 void ModelView::updateVboAndBatch() {
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
     assert(isVertexNormalIndexOverride() || !glData.isDirty);

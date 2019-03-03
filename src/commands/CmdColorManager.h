@@ -173,10 +173,11 @@ class CmdColorManagerResetColors : public CommandBase<Geometry> {
         colorManager = ColorManager();
         const size_t maxColorId = colorManager.size() - 1;
         target.changeColorIds([maxColorId](size_t origColor) {
-            if(origColor > maxColorId)
+            if(origColor > maxColorId) {
                 return maxColorId;
-            else
+            } else {
                 return origColor;
+            }
         });
     }
 };

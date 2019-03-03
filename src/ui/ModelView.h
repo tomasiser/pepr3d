@@ -179,6 +179,9 @@ class ModelView {
         return mMaxSize;
     }
 
+    /// Called by MainAplication when new geometry is loaded
+    void onNewGeometryLoaded();
+
    private:
     MainApplication& mApplication;
     ci::gl::VboMeshRef mVboMesh;

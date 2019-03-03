@@ -107,6 +107,11 @@ void MainApplication::setup() {
     } catch(const AssetNotFoundException&) {
         // do nothing, a Fatal Error dialog has already been created
     }
+
+    mModelView.onNewGeometryLoaded();
+    for(auto& tool : mTools) {
+        tool->onNewGeometryLoaded(mModelView);
+    }
 }
 
 void MainApplication::setupLogging() {
@@ -301,6 +306,7 @@ void MainApplication::openFile(const std::string& path) {
         fs::path fsPath(path);
         getWindow()->setTitle(fsPath.stem().string() + std::string(" - Pepr3D"));
         mProgressIndicator.setGeometryInProgress(nullptr);
+        mModelView.onNewGeometryLoaded();
         for(auto& tool : mTools) {
             tool->onNewGeometryLoaded(mModelView);
         }
