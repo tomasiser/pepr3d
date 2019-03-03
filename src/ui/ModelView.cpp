@@ -39,6 +39,33 @@ void ModelView::draw() {
 
     drawGeometry();
 
+    if(!debugTriangles.empty()) {
+        // Create buffer layout
+        const std::vector<cinder::gl::VboMesh::Layout> layout = {
+            cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::POSITION, 3),
+            cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::NORMAL, 3),
+            cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::COLOR, 4)};  // color index
+
+        // Create elementary buffer of indices
+        const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, debugIndices, GL_STATIC_DRAW);
+
+        // Create the VBO mesh
+        auto myVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(debugTriangles.size()), GL_TRIANGLES, {layout},
+                                                 static_cast<uint32_t>(debugIndices.size()), GL_UNSIGNED_INT, ibo);
+
+        // Assign the buffers to the attributes
+        myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, debugTriangles);
+        myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, debugNormals);
+        myVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, debugColors);
+
+        const ci::gl::ScopedModelMatrix scopedModelMatrix;
+        ci::gl::multModelMatrix(mModelMatrix);
+
+        // Create batch and draw
+        auto myBatch = ci::gl::Batch::create(myVboMesh, ci::gl::getStockShader(ci::gl::ShaderDef().color()));
+        myBatch->draw();
+    }
+
     if(mIsGridEnabled) {
         ci::gl::ScopedModelMatrix modelScope;
         ci::gl::multModelMatrix(glm::translate(glm::vec3(0.0f, mGridOffset, 0.0f)) *

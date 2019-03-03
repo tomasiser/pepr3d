@@ -19,6 +19,10 @@ class MainApplication;
 class ModelView {
    public:
     explicit ModelView(MainApplication& app) : mApplication(app) {}
+    std::vector<glm::vec3> debugTriangles;
+    std::vector<uint32_t> debugIndices;
+    std::vector<glm::vec4> debugColors;
+    std::vector<glm::vec3> debugNormals;
 
     /// Setups the camera and shaders. Call only once!
     void setup();
@@ -181,6 +185,14 @@ class ModelView {
 
     /// Called by MainAplication when new geometry is loaded
     void onNewGeometryLoaded();
+
+    glm::mat4 getModelMatrix() const {
+        return mModelMatrix;
+    }
+
+    const ci::CameraPersp& getCamera() const {
+        return mCamera;
+    }
 
    private:
     MainApplication& mApplication;
