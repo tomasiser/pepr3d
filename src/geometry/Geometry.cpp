@@ -285,25 +285,6 @@ void Geometry::generateTriangleBounds() {
     }
 }
 
-std::vector<size_t> Geometry::getTrianglesInCylinder(const Line3& cylinderCenter, double radius) {
-    assert(mTriangleBounds.size() == mTriangles.size());
-    std::vector<size_t> result;
-
-    for(size_t triIdx = 0; triIdx < mTriangleBounds.size(); ++triIdx) {
-        const Point3& sphereCenter = mTriangleBounds[triIdx].first;
-        const double sphereRadius = mTriangleBounds[triIdx].second;
-
-        // Any sphere in contact with the cylinder is going to have this max squared distance
-        const double distanceLimitSquared = (radius + sphereRadius) * (radius + sphereRadius);
-
-        if(CGAL::squared_distance(cylinderCenter, sphereCenter) <= distanceLimitSquared) {
-            result.push_back(triIdx);
-        }
-    }
-
-    return result;
-}
-
 /* -------------------- Tool support -------------------- */
 
 std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray) const {
@@ -405,6 +386,11 @@ std::vector<size_t> Geometry::getTrianglesUnderBrush(const glm::vec3& originPoin
         if(!settings.paintBackfaces && glm::dot(tri.getNormal(), insideDirection) > 0.f)
             return false;  // stop on triangles facing away from the ray
 
+        // If triangle's bounding sphere is out of range no need to test further
+        if(!isTriangleInRadius(Point3(originPoint.x, originPoint.y, originPoint.z), settings.size, triId)) {
+            return false;
+        }
+
         // If any side has intersection with the brush keep the triangle
         if(GeometryUtils::segmentPointDistanceSquared(a, b, originPoint) < sizeSquared)
             return true;
@@ -420,7 +406,18 @@ std::vector<size_t> Geometry::getTrianglesUnderBrush(const glm::vec3& originPoin
         return stoppingCriterionSingleTri(a) && stoppingCriterionSingleTri(b);
     };
 
-    return bucket(startTriangle, stoppingCriterion);
+    if(settings.continuous) {
+        return bucket(startTriangle, stoppingCriterion);
+    } else {
+        std::vector<size_t> trianglesInRadius =
+            getTrianglesInRadius(Point3(originPoint.x, originPoint.y, originPoint.z), settings.size);
+
+        std::vector<size_t> result;
+        std::copy_if(trianglesInRadius.begin(), trianglesInRadius.end(), std::back_inserter(result),
+                     stoppingCriterionSingleTri);
+
+        return result;
+    }
 }
 
 void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) {
@@ -470,7 +467,7 @@ void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& sha
     const auto ro = ray.getOrigin();
     const auto rd = ray.getDirection();
     const Line3 rayLine(Point3(ro.x, ro.y, ro.z), Vector3(rd.x, rd.y, rd.z));
-    std::vector<size_t> trianglesInCylinder = getTrianglesInCylinder(rayLine, shapeBounds.second);
+    std::vector<size_t> trianglesInCylinder = getTrianglesInRadius(rayLine, shapeBounds.second);
 
     std::vector<size_t> detailsToUpdate;
 

@@ -400,8 +400,42 @@ class Geometry {
     std::vector<size_t> getTrianglesUnderBrush(const glm::vec3& originPoint, const glm::vec3& insideDirection,
                                                size_t startTriangle, const struct BrushSettings& settings);
 
-    /// Get all triangles that might be intersecting infinite cylinder
-    std::vector<size_t> getTrianglesInCylinder(const Line3& cylinderCenter, double radius);
+    /// Get all triangles that are closer to the object than radius
+    /// This function operates on spherical bounds of triangles and may therefore return false positives
+    /// @param object CGAL Object - point, line, etc
+    template <typename Object>
+    std::vector<size_t> getTrianglesInRadius(const Object& object, double radius) const {
+        assert(mTriangleBounds.size() == mTriangles.size());
+        std::vector<size_t> result;
+
+        for(size_t triIdx = 0; triIdx < mTriangleBounds.size(); ++triIdx) {
+            if(isTriangleInRadius(object, radius, triIdx))
+                result.push_back(triIdx);
+        }
+
+        return result;
+    }
+
+    /// Test if distance from object to spherical boundary of a triangle is closer than radius
+    /// @param object CGAL Object - point, line, etc
+    /// @return true, object is closer than radius to the triangle bound shpere
+    template <typename Object>
+    bool isTriangleInRadius(const Object& object, double radius, size_t triangleIdx) const {
+        assert(triangleIdx < mTriangleBounds.size());
+        assert(mTriangleBounds.size() == mTriangles.size());
+
+        const Point3& sphereCenter = mTriangleBounds[triangleIdx].first;
+        const double sphereRadius = mTriangleBounds[triangleIdx].second;
+
+        // Any sphere in contact with the cylinder is going to have this max squared distance
+        const double distanceLimitSquared = (radius + sphereRadius) * (radius + sphereRadius);
+
+        if(CGAL::squared_distance(object, sphereCenter) <= distanceLimitSquared) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /// Segmentation is CPU heavy because it needs to calculate a lot of data.
     /// This method allows to pre-compute the heaviest calculation.
