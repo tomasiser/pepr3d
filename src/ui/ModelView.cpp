@@ -282,10 +282,12 @@ void ModelView::drawGeometry() {
 
     // Assign highlight uniforms
     auto& areaHighlight = mApplication.getCurrentGeometry()->getAreaHighlight();
+    size_t activeColorIdx = mApplication.getCurrentGeometry()->getColorManager().getActiveColorIndex();
+    auto activeColor = colorMap[activeColorIdx];
     mModelShader->uniform("uAreaHighlightEnabled", areaHighlight.enabled);
     mModelShader->uniform("uAreaHighlightOrigin", areaHighlight.origin - mModelTranslate);
     mModelShader->uniform("uAreaHighlightSize", static_cast<float>(areaHighlight.size));
-    mModelShader->uniform("uAreaHighlightColor", vec3(0.f, 1.f, 0.f));
+    mModelShader->uniform("uAreaHighlightColor", vec3(activeColor.x, activeColor.y, activeColor.z));
 
     mBatch->draw();
 }
