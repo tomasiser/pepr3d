@@ -35,7 +35,7 @@
 #include "GeometryUtils.h"
 #include "geometry/GlmSerialization.h"
 
-#ifdef PEPR3D_COLLECT_DEBUG_DATA
+#if defined(PEPR3D_COLLECT_DEBUG_DATA) || defined(_TEST_)
 #include <boost/variant.hpp>
 #include <cereal/types/boost_variant.hpp>
 #endif
@@ -109,7 +109,7 @@ class TriangleDetail {
         }
     };
 
-#ifdef PEPR3D_COLLECT_DEBUG_DATA
+#if defined(PEPR3D_COLLECT_DEBUG_DATA) || defined(_TEST_)
     struct PolygonEntry {
         Polygon polygon;
         size_t color;
