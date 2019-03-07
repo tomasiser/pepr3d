@@ -39,7 +39,7 @@ void ModelView::draw() {
 
     drawGeometry();
 
-    if(!debugTriangles.empty()) {
+    if(!previewTriangles.empty()) {
         // Create buffer layout
         const std::vector<cinder::gl::VboMesh::Layout> layout = {
             cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::POSITION, 3),
@@ -47,16 +47,16 @@ void ModelView::draw() {
             cinder::gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(ci::geom::Attrib::COLOR, 4)};  // color index
 
         // Create elementary buffer of indices
-        const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, debugIndices, GL_STATIC_DRAW);
+        const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(GL_ELEMENT_ARRAY_BUFFER, previewIndices, GL_STATIC_DRAW);
 
         // Create the VBO mesh
-        auto myVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(debugTriangles.size()), GL_TRIANGLES, {layout},
-                                                 static_cast<uint32_t>(debugIndices.size()), GL_UNSIGNED_INT, ibo);
+        auto myVboMesh = ci::gl::VboMesh::create(static_cast<uint32_t>(previewTriangles.size()), GL_TRIANGLES, {layout},
+                                                 static_cast<uint32_t>(previewIndices.size()), GL_UNSIGNED_INT, ibo);
 
         // Assign the buffers to the attributes
-        myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, debugTriangles);
-        myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, debugNormals);
-        myVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, debugColors);
+        myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION, previewTriangles);
+        myVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL, previewNormals);
+        myVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, previewColors);
 
         const ci::gl::ScopedModelMatrix scopedModelMatrix;
         ci::gl::multModelMatrix(mModelMatrix);
@@ -345,12 +345,13 @@ void ModelView::drawTriangleHighlight(const DetailedTriangleId triangleId) {
     ci::gl::drawLine(triangle.getVertex(2), triangle.getVertex(0));
 }
 
-void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color, float width) {
+void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color, float width,
+                         bool depthTest) {
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
     ci::gl::ScopedColor drawColor(color);
     ci::gl::ScopedLineWidth drawWidth(width);
-    gl::ScopedDepth depth(false);
+    gl::ScopedDepth depth(depthTest);
     ci::gl::drawLine(from, to);
 }
 

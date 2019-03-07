@@ -112,6 +112,10 @@ class ColorManager {
         mActiveColorIndex = std::min<size_t>(std::max<size_t>(index, 0), size() - 1);
     }
 
+    glm::vec4 getActiveColor() const {
+        return mColorMap[mActiveColorIndex];
+    }
+
     ColorMap& getColorMap() {
         return mColorMap;
     }

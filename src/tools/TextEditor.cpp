@@ -1,45 +1,37 @@
 #include "tools/TextEditor.h"
 
 #include <exception>
+#include <glm/gtx/rotate_vector.hpp>
 #include "imgui_stdlib.h"
 
 namespace pepr3d {
 
-void TextEditor::renderText(std::vector<std::vector<FontRasterizer::Tri>>& result, bool reset) const {
+void TextEditor::createPreviewMesh() const {
     auto& modelView = mApplication.getModelView();
+    modelView.resetPreview();
 
-    if(reset) {
-        modelView.debugTriangles.clear();
-        modelView.debugIndices.clear();
-        modelView.debugColors.clear();
-        modelView.debugNormals.clear();
-    }
-    const size_t alreadyThere = modelView.debugTriangles.size();
-
-    for(auto& letter : result) {
+    for(auto& letter : mRenderedText) {
         for(auto& t : letter) {
-            modelView.debugTriangles.push_back(glm::vec3(t.a.x, t.a.y, t.a.z));
-            modelView.debugTriangles.push_back(glm::vec3(t.b.x, t.b.y, t.b.z));
-            modelView.debugTriangles.push_back(glm::vec3(t.c.x, t.c.y, t.c.z));
+            modelView.previewTriangles.push_back(glm::vec3(t.a.x, t.a.y, t.a.z));
+            modelView.previewTriangles.push_back(glm::vec3(t.b.x, t.b.y, t.b.z));
+            modelView.previewTriangles.push_back(glm::vec3(t.c.x, t.c.y, t.c.z));
         }
     }
 
-    const size_t added = modelView.debugTriangles.size() - alreadyThere;
+    const size_t triangleCount = static_cast<uint32_t>(modelView.previewTriangles.size());
 
-    for(uint32_t i = 0; i < added; ++i) {
-        modelView.debugIndices.push_back(alreadyThere + i);
+    for(size_t i = 0; i < triangleCount; ++i) {
+        modelView.previewIndices.push_back(static_cast<uint32_t>(i));
     }
 
-    for(int i = 0; i < added; ++i) {
-        modelView.debugNormals.push_back(glm::vec3(1, 1, 0));
+    for(size_t i = 0; i < triangleCount; ++i) {
+        modelView.previewNormals.push_back(glm::vec3(1, 1, 0));
     }
 
-    for(uint32_t i = 0; i < added; ++i) {
-        if(reset) {
-            modelView.debugColors.push_back(glm::vec4(0.2, 1, 0.2, 1));
-        } else {
-            modelView.debugColors.push_back(glm::vec4(1, 0.2, 0.2, 1));
-        }
+    const auto currentColor = mApplication.getCurrentGeometry()->getColorManager().getActiveColor();
+
+    for(uint32_t i = 0; i < triangleCount; ++i) {
+        modelView.previewColors.push_back(currentColor);
     }
 }
 
@@ -59,7 +51,7 @@ std::vector<std::vector<FontRasterizer::Tri>> TextEditor::triangulateText() cons
     return result;
 }
 
-void TextEditor::rotateText(std::vector<std::vector<FontRasterizer::Tri>>& result) const {
+void TextEditor::transformToModelSpace(std::vector<std::vector<FontRasterizer::Tri>>& result) const {
     const ModelView& modelView = mApplication.getModelView();
     const glm::mat4 modelMatrix = modelView.getModelMatrix();
     const glm::mat4 modelMatrixInverse = glm::inverse(modelMatrix);
@@ -77,18 +69,39 @@ void TextEditor::rotateText(std::vector<std::vector<FontRasterizer::Tri>>& resul
     }
 }
 
-void TextEditor::processText() {
-    auto triPerLetter = triangulateText();
+void TextEditor::rotateText(std::vector<std::vector<FontRasterizer::Tri>>& text) {
+    if(text.empty())
+        return;
 
-    rescaleText(triPerLetter);
+    assert(mLastIntersection);
+    Geometry* geometry = mApplication.getCurrentGeometry();
 
-    renderText(triPerLetter, true);
+    const glm::vec3 direction = -geometry->getTriangle(*mLastIntersection).getNormal();
+    const glm::vec3 origin = getPreviewOrigin(direction);
+    const glm::vec3 planeBase1 = getPlaneBaseVector(direction);
+    const glm::vec3 planeBase2 = glm::cross(planeBase1, direction);
 
-    rotateText(triPerLetter);
+    glm::mat3 rotationMat(planeBase1, planeBase2, direction);
 
-    renderText(triPerLetter, false);
+    for(auto& letter : text) {
+        for(auto& tri : letter) {
+            tri.a = origin + rotationMat * tri.a;
+            tri.b = origin + rotationMat * tri.b;
+            tri.c = origin + rotationMat * tri.c;
+        }
+    }
+}
 
-    mRenderedText = std::move(triPerLetter);
+void TextEditor::generateAndUpdate() {
+    mTriangulatedText = triangulateText();
+    updateTextPreview();
+}
+
+void TextEditor::updateTextPreview() {
+    mRenderedText = mTriangulatedText;
+    rescaleText(mRenderedText);
+    rotateText(mRenderedText);
+    createPreviewMesh();
 }
 
 void TextEditor::rescaleText(std::vector<std::vector<FontRasterizer::Tri>>& result) {
@@ -148,31 +161,133 @@ void TextEditor::rescaleText(std::vector<std::vector<FontRasterizer::Tri>>& resu
     }
 }
 
+glm::vec3 TextEditor::getPlaneBaseVector(const glm::vec3& direction) const {
+    assert(glm::abs(glm::length(direction) - 1) < 0.01);  // Is normalized
+
+    const glm::vec3 upVector(0.f, 0.f, 1.f);
+
+    glm::vec3 otherDirection{};
+
+    // Test if direction is already pointing upwards or downwards
+    if(glm::abs(glm::dot(direction, upVector) > 0.98)) {
+        otherDirection = glm::vec3(1.f, 0.f, 0.f);  // World right vector
+    } else {
+        otherDirection = upVector;
+    }
+
+    const auto baseVector = glm::cross(direction, otherDirection);
+    return glm::rotate(baseVector, glm::radians(mTextRotation), direction);
+}
+
+glm::vec3 TextEditor::getPreviewOrigin(const glm::vec3& direction) const {
+    assert(mLastIntersection);
+
+    Geometry* geometry = mApplication.getCurrentGeometry();
+    const float distFromModel = TEXT_DISTANCE_SCALE * mApplication.getModelView().getMaxSize();
+
+    return mLastIntersectionPoint - direction * distFromModel;
+}
+
 void TextEditor::drawToSidePane(SidePane& sidePane) {
+    sidePane.drawColorPalette();
+    sidePane.drawSeparator();
+
     sidePane.drawText("Font: " + mFont);
     if(sidePane.drawButton("Load new font")) {
         std::vector<std::string> extensions = {"ttf"};
 
         mApplication.dispatchAsync([extensions, this]() {
-            auto path = getOpenFilePath("", {"ttf"});
+            auto path = cinder::app::getOpenFilePath("", {"ttf"});
             mFontPath = path.string();
             mFont = path.filename().string();
         });
     }
-    sidePane.drawIntDragger("Font size", mFontSize, 1, 10, 200, "%i", 50.f);
-    sidePane.drawIntDragger("Bezier steps", mBezierSteps, 1, 1, 8, "%i", 50.f);
 
-    ImGui::InputText("Text", &mText);
+    // -- Text settings --
 
-    sidePane.drawFloatDragger("Font scale", mFontScale, .01f, 0.01f, 1.f, "%.02f", 50.f);
+    if(sidePane.drawIntDragger("Font size", mFontSize, 1, 10, 200, "%i", 50.f)) {
+        generateAndUpdate();
+    }
 
-    if(sidePane.drawButton("Go")) {
-        processText();
+    if(sidePane.drawIntDragger("Bezier steps", mBezierSteps, 1, 1, 8, "%i", 50.f)) {
+        generateAndUpdate();
+    }
+
+    if(ImGui::InputText("Text", &mText)) {
+        generateAndUpdate();
+    }
+
+    // -- Preview settings --
+
+    if(sidePane.drawFloatDragger("Font scale", mFontScale, .01f, 0.01f, 1.f, "%.02f", 50.f)) {
+        updateTextPreview();
+    }
+
+    if(sidePane.drawFloatDragger("Text rotation", mTextRotation, 1.f, 0.f, 360.f, "%1.f", 50.f)) {
+        updateTextPreview();
+    }
+
+    if(sidePane.drawButton("Place marker")) {
+        mIsPlacingTextMarker = true;
+        mLastIntersection = {};
+    }
+
+    if(sidePane.drawButton("Paint")) {
+        paintText();
     }
 
     sidePane.drawSeparator();
 
     sidePane.drawText(mText);
     sidePane.drawText(mFontPath);
+}
+
+void TextEditor::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
+    if(!event.isLeft()) {
+        return;
+    }
+
+    // Store current ray position if it is a hit
+    if(mIsPlacingTextMarker && mLastIntersection) {
+        mIsPlacingTextMarker = false;
+        generateAndUpdate();
+    }
+}
+
+void TextEditor::paintText() {
+    if(mRenderedText.empty())
+        return;
+
+    // mApplication.getCommandManager()->execute(std::make_unique<CmdPaintText>(mRenderedText, ))
+}
+
+void TextEditor::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
+    if(mIsPlacingTextMarker) {
+        mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
+        Geometry* geometry = mApplication.getCurrentGeometry();
+        mLastIntersection = geometry->intersectMesh(mLastRay, mLastIntersectionPoint);
+
+        if(mLastIntersection && !mTriangulatedText.empty()) {
+            updateTextPreview();
+        }
+    }
+}
+
+void TextEditor::drawToModelView(ModelView& modelView) {
+    Geometry* geometry = mApplication.getCurrentGeometry();
+
+    if(mLastIntersection) {
+        const float modelSize = modelView.getMaxSize();
+        const glm::vec3 triNormal = geometry->getTriangle(*mLastIntersection).getNormal();
+        modelView.drawLine(mLastIntersectionPoint, mLastIntersectionPoint + triNormal * modelSize, ci::Color::black(),
+                           mIsPlacingTextMarker ? 1.f : 2.f, true);
+
+        const glm::vec3 direction = -triNormal;
+        const glm::vec3 origin = getPreviewOrigin(direction);
+        const glm::vec3 base1 = getPlaneBaseVector(direction);
+        const glm::vec3 base2 = glm::cross(base1, direction);
+        modelView.drawLine(origin, origin + base1, ci::Color(1.0f, 0.f, 0.f));
+        modelView.drawLine(origin, origin + base2, ci::Color(0.0f, 1.f, 0.f));
+    }
 }
 }  // namespace pepr3d

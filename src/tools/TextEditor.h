@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 
+#include <cinder/app/AppBase.h>
 #include "geometry/FontRasterizer.h"
 #include "tools/Tool.h"
 #include "ui/IconsMaterialDesign.h"
@@ -14,7 +15,7 @@ namespace pepr3d {
 class TextEditor : public Tool {
    public:
     TextEditor(MainApplication& app) : mApplication(app) {
-        auto fontPath = getAssetPath("fonts/OpenSans-Regular.ttf");
+        auto fontPath = cinder::app::getAssetPath("fonts/OpenSans-Regular.ttf");
         mFont = fontPath.filename().string();
         mFontPath = fontPath.string();
     }
@@ -32,23 +33,77 @@ class TextEditor : public Tool {
     }
 
     virtual void drawToSidePane(SidePane& sidePane) override;
+    virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
+    virtual void drawToModelView(ModelView& modelView) override;
+
+    virtual void onToolSelect(ModelView& modelView) override
+    {
+        mIsPlacingTextMarker = true;
+    }
+
+    virtual void onToolDeselect(ModelView& modelView) override
+    {
+        modelView.resetPreview();
+    }
+
+    virtual void onNewGeometryLoaded(ModelView& modelView) override
+    {
+        mIsPlacingTextMarker = true;
+    }
+
+    /// Paint prepared text onto the model
+    void paintText();
 
    private:
     MainApplication& mApplication;
+
+    ci::Ray mLastRay{};
+    std::optional<size_t> mLastIntersection{};
+    glm::vec3 mLastIntersectionPoint{};
 
     std::string mFont;
     std::string mFontPath;
     std::string mText = "Pepr";
     int mFontSize = 12;
     int mBezierSteps = 3;
-    float mFontScale = 0.05f;
+    float mFontScale = 0.2f;
 
+    /// Rotation of text in degrees
+    float mTextRotation = 0.f;
+
+    /// How far should the text preview placed from the model (normalized by model scale)
+    const float TEXT_DISTANCE_SCALE = 0.05f;
+
+    /// Is the user currently placing the text marker (the origin of future text operations)
+    bool mIsPlacingTextMarker = true;
+
+    std::vector<std::vector<FontRasterizer::Tri>> mTriangulatedText;
     std::vector<std::vector<FontRasterizer::Tri>> mRenderedText;
 
     std::vector<std::vector<FontRasterizer::Tri>> triangulateText() const;
-    void renderText(std::vector<std::vector<FontRasterizer::Tri>>& result, bool reset) const;
-    void processText();
-    void rotateText(std::vector<std::vector<FontRasterizer::Tri>>& result) const;
+
+    /// Update modelView's preview data with new triangles to render
+    void createPreviewMesh() const;
+
+    /// Generate text and update preview
+    void generateAndUpdate();
+
+    /// Update text preview without generating again
+    void updateTextPreview();
+
+    /// Transform text from view-space to model space
+    void transformToModelSpace(std::vector<std::vector<FontRasterizer::Tri>>& result) const;
+
+    /// Rotate to face ray direction
+    void rotateText(std::vector<std::vector<FontRasterizer::Tri>>& text);
+
     void rescaleText(std::vector<std::vector<FontRasterizer::Tri>>& result);
+
+    /// Get vector perpendicular to the direction, that is pointing towards the right halfplane
+    glm::vec3 getPlaneBaseVector(const glm::vec3& direction) const;
+
+    /// Get origin point of the text preview
+    glm::vec3 getPreviewOrigin(const glm::vec3& direction) const;
 };
 }  // namespace pepr3d

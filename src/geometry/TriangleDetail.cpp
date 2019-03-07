@@ -81,6 +81,21 @@ void TriangleDetail::paintShape(const std::vector<PeprPoint3>& shape, const Pepr
     addPolygon(projectShapeToPolygon(shape, direction), color);
 }
 
+void TriangleDetail::paintShape(const std::vector<PeprTriangle>& triangles, const PeprVector3& direction, size_t color) {
+    std::vector<Polygon> polygons;
+    polygons.reserve(triangles.size());
+    for(const auto& tri: triangles)
+    {
+        std::vector<PeprPoint3> points = {tri.vertex(0), tri.vertex(1), tri.vertex(2)};
+        polygons.emplace_back(projectShapeToPolygon(points, direction));
+    }
+
+    PolygonSet pSet{};
+    pSet.join(polygons.begin(), polygons.end());
+
+    addPolygonSet(pSet, color);
+}
+
 std::pair<bool, bool> TriangleDetail::correctSharedVertices(TriangleDetail& other) {
     const Segment3 sharedEdge = findSharedEdge(other);
     if(mColorChanged) {
@@ -399,21 +414,29 @@ void TriangleDetail::addPolygon(const Polygon& poly, size_t color) {
 
     assert(CGAL::is_valid_polygon(poly, Traits()));
     PolygonSet addedShape(poly);
-    addedShape.intersection(mBounds);
+    addPolygonSet(addedShape, color);
+}
+
+void TriangleDetail::addPolygonSet(PolygonSet& polySet, size_t color) {
+#ifdef PEPR3D_COLLECT_DEBUG_DATA
+    history.emplace_back(PolygonSetEntry{polySet, color});
+#endif
+
+    polySet.intersection(mBounds);
 
     if(mColorChanged) {
         updatePolysFromTriangles();
     }
 
     // Add the shape to its color layer
-    mColoredPolys[color].join(addedShape);
+    mColoredPolys[color].join(polySet);
 
     // Remove the new shape from other colors
     for(auto& it : mColoredPolys) {
         if(it.first != color) {
             debugOnlyVerifyPolygonSet(it.second);
 
-            it.second.difference(addedShape);
+            it.second.difference(polySet);
 
             debugOnlyVerifyPolygonSet(it.second);
         }

@@ -32,12 +32,11 @@
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
+#include "FontRasterizer.h"
 #include "GeometryUtils.h"
 #include "geometry/GlmSerialization.h"
 
-#define PEPR3D_COLLECT_DEBUG_DATA
-
-#ifdef PEPR3D_COLLECT_DEBUG_DATA
+#if defined(PEPR3D_COLLECT_DEBUG_DATA) || defined(_TEST_)
 #include <boost/variant.hpp>
 #include <cereal/types/boost_variant.hpp>
 #endif
@@ -111,7 +110,7 @@ class TriangleDetail {
         }
     };
 
-#ifdef PEPR3D_COLLECT_DEBUG_DATA
+#if defined(PEPR3D_COLLECT_DEBUG_DATA) || defined(_TEST_)
     struct PolygonEntry {
         Polygon polygon;
         size_t color;
@@ -119,6 +118,16 @@ class TriangleDetail {
         template <typename Archive>
         void serialize(Archive& archive) {
             archive(cereal::make_nvp("polygon", polygon), cereal::make_nvp("color", color));
+        }
+    };
+
+    struct PolygonSetEntry {
+        PolygonSet polygonSet;
+        size_t color;
+
+        template <typename Archive>
+        void serialize(Archive& archive) {
+            archive(cereal::make_nvp("polygonSet", polygonSet), cereal::make_nvp("color", color));
         }
     };
 
@@ -176,6 +185,12 @@ class TriangleDetail {
     /// @param direction Direction vector of the projection
     void paintShape(const std::vector<PeprPoint3>& shape, const PeprVector3& direction, size_t color);
 
+    /// Paint a shape to triangle detail
+    /// @param triangles Collection of triangles that form a shape, that is going to be projected onto the
+    /// TriangleDetail
+    /// @param direction Direction vector of the projection
+    void paintShape(const std::vector<PeprTriangle>& triangles, const PeprVector3& direction, size_t color);
+
     /// Makes sure all vertices on the common edge between these two triangles are matched
     /// Creates new vertices for both triangles if there are missing
     /// You will need to updateTrianglesFromPolygons() after calling this method!
@@ -200,6 +215,10 @@ class TriangleDetail {
     /// Add polygon to the detail
     /// @param poly Polygon in the plane-space of this detail
     void addPolygon(const Polygon& poly, size_t color);
+
+    /// Add polygon set to the detail
+    /// @param poly PolygonSet in the plane-space of this detail
+    void addPolygonSet(PolygonSet& polySet, size_t color);
 
     /// Find all points of polygons that are on the edge
     std::set<Point3> findPointsOnEdge(const Segment3& edge);

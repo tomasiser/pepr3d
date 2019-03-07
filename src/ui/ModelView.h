@@ -19,10 +19,20 @@ class MainApplication;
 class ModelView {
    public:
     explicit ModelView(MainApplication& app) : mApplication(app) {}
-    std::vector<glm::vec3> debugTriangles;
-    std::vector<uint32_t> debugIndices;
-    std::vector<glm::vec4> debugColors;
-    std::vector<glm::vec3> debugNormals;
+
+    // TODO: Hide this behind some api
+    std::vector<glm::vec3> previewTriangles;
+    std::vector<uint32_t> previewIndices;
+    std::vector<glm::vec4> previewColors;
+    std::vector<glm::vec3> previewNormals;
+
+    void resetPreview()
+    {
+        previewTriangles.clear();
+        previewIndices.clear();
+        previewColors.clear();
+        previewNormals.clear();
+    }
 
     /// Setups the camera and shaders. Call only once!
     void setup();
@@ -64,7 +74,7 @@ class ModelView {
 
     /// Draws a 3D line.
     void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white(),
-                  float width = 1.0f);
+                  float width = 1.0f, bool depthTest = false);
 
     /// Draws a text label (caption) to the top left corner.
     /// `caption` is black, `errorCaption` is red and below `caption`
