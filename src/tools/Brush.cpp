@@ -89,6 +89,7 @@ void Brush::drawToSidePane(SidePane& sidePane) {
 
     sidePane.drawFloatDragger("Size", mBrushSettings.size, mMaxSize / SIZE_SLIDER_STEPS, 0.0001f, mMaxSize, "%.02f",
                               140.f);
+    sidePane.drawTooltipOnHover("Size of the brush in world units.");
 
     sidePane.drawIntDragger("Segments", mBrushSettings.segments, 0.1, 3, 50, "%d", 140.f);
     sidePane.drawTooltipOnHover("Higher number of segments increases \"roundness\" of the brush.");
@@ -112,11 +113,11 @@ void Brush::drawToSidePane(SidePane& sidePane) {
         "Flat brush paints the shape directly to the surface, ignoring any distance limitations.");
 
     if(mBrushSettings.spherical) {
-        sidePane.drawText("Spherical brush settings");
+        sidePane.drawText("Spherical brush settings:");
 
         sidePane.drawCheckbox("Continuous", mBrushSettings.continuous);
         sidePane.drawTooltipOnHover(
-            "Paint only triangles that are connected inside the painting radius. This prevents accidentaly painting "
+            "Paint only triangles that are connected inside the painting radius. This prevents accidentally painting "
             "two parts connected only via an air-gap.");
 
         sidePane.drawCheckbox("Respect original triangles", mBrushSettings.respectOriginalTriangles);
@@ -131,9 +132,17 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     }
 
     if(!mBrushSettings.spherical) {
-        sidePane.drawText("Flat brush settings");
-        sidePane.drawCheckbox("Align to normal", mBrushSettings.alignToNormal);
-        sidePane.drawTooltipOnHover("Align painting direction to the surface normal.");
+        sidePane.drawText("Flat brush settings:");
+
+        if(ImGui::RadioButton("Perspective", !mBrushSettings.alignToNormal)) {
+            mBrushSettings.alignToNormal = false;
+        }
+        sidePane.drawTooltipOnHover("Paint from the direction of the camera.");
+
+        if(ImGui::RadioButton("Normal", mBrushSettings.alignToNormal)) {
+            mBrushSettings.alignToNormal = true;
+        }
+        sidePane.drawTooltipOnHover("Paint aligned against normal.");
     }
     sidePane.drawSeparator();
     mPaintsSinceDraw = 0;
