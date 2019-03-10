@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <glm/gtx/rotate_vector.hpp>
+#include "commands/CmdPaintText.h"
 #include "imgui_stdlib.h"
 
 namespace pepr3d {
@@ -51,32 +52,14 @@ std::vector<std::vector<FontRasterizer::Tri>> TextEditor::triangulateText() cons
     return result;
 }
 
-void TextEditor::transformToModelSpace(std::vector<std::vector<FontRasterizer::Tri>>& result) const {
-    const ModelView& modelView = mApplication.getModelView();
-    const glm::mat4 modelMatrix = modelView.getModelMatrix();
-    const glm::mat4 modelMatrixInverse = glm::inverse(modelMatrix);
-    const ci::CameraPersp& camera = modelView.getCamera();
-    const glm::mat4 inverseView = camera.getInverseViewMatrix();
-
-    const glm::mat4 finalRotate = modelMatrixInverse * inverseView;
-
-    for(auto& letter : result) {
-        for(auto& t : letter) {
-            t.a = finalRotate * glm::vec4(t.a, 1);
-            t.b = finalRotate * glm::vec4(t.b, 1);
-            t.c = finalRotate * glm::vec4(t.c, 1);
-        }
-    }
-}
-
 void TextEditor::rotateText(std::vector<std::vector<FontRasterizer::Tri>>& text) {
     if(text.empty())
         return;
 
-    assert(mLastIntersection);
+    assert(mSelectedIntersection);
     Geometry* geometry = mApplication.getCurrentGeometry();
 
-    const glm::vec3 direction = -geometry->getTriangle(*mLastIntersection).getNormal();
+    const glm::vec3 direction = -geometry->getTriangle(*mSelectedIntersection).getNormal();
     const glm::vec3 origin = getPreviewOrigin(direction);
     const glm::vec3 planeBase1 = getPlaneBaseVector(direction);
     const glm::vec3 planeBase2 = glm::cross(planeBase1, direction);
@@ -144,15 +127,15 @@ void TextEditor::rescaleText(std::vector<std::vector<FontRasterizer::Tri>>& resu
         for(auto& t : letter) {
             t.a.x = t.a.x - min.first - max.first / 2.f;
             t.a.y = t.a.y - min.second - max.second / 2.f;
-            t.a.z = -2.f;
+            t.a.z = 0.f;
 
             t.b.x = t.b.x - min.first - max.first / 2.f;
             t.b.y = t.b.y - min.second - max.second / 2.f;
-            t.b.z = -2.f;
+            t.b.z = 0.f;
 
             t.c.x = t.c.x - min.first - max.first / 2.f;
             t.c.y = t.c.y - min.second - max.second / 2.f;
-            t.c.z = -2.f;
+            t.c.z = 0.f;
 
             t.a.y *= -1;
             t.b.y *= -1;
@@ -169,7 +152,7 @@ glm::vec3 TextEditor::getPlaneBaseVector(const glm::vec3& direction) const {
     glm::vec3 otherDirection{};
 
     // Test if direction is already pointing upwards or downwards
-    if(glm::abs(glm::dot(direction, upVector) > 0.98)) {
+    if(glm::abs(glm::dot(direction, upVector)) > 0.98) {
         otherDirection = glm::vec3(1.f, 0.f, 0.f);  // World right vector
     } else {
         otherDirection = upVector;
@@ -180,12 +163,12 @@ glm::vec3 TextEditor::getPlaneBaseVector(const glm::vec3& direction) const {
 }
 
 glm::vec3 TextEditor::getPreviewOrigin(const glm::vec3& direction) const {
-    assert(mLastIntersection);
+    assert(mSelectedIntersection);
 
     Geometry* geometry = mApplication.getCurrentGeometry();
     const float distFromModel = TEXT_DISTANCE_SCALE * mApplication.getModelView().getMaxSize();
 
-    return mLastIntersectionPoint - direction * distFromModel;
+    return mSelectedIntersectionPoint - direction * distFromModel;
 }
 
 void TextEditor::drawToSidePane(SidePane& sidePane) {
@@ -214,7 +197,9 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
     }
 
     if(ImGui::InputText("Text", &mText)) {
-        generateAndUpdate();
+        if(mSelectedIntersection) {
+            generateAndUpdate();
+        }
     }
 
     // -- Preview settings --
@@ -225,11 +210,6 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
 
     if(sidePane.drawFloatDragger("Text rotation", mTextRotation, 1.f, 0.f, 360.f, "%1.f", 50.f)) {
         updateTextPreview();
-    }
-
-    if(sidePane.drawButton("Place marker")) {
-        mIsPlacingTextMarker = true;
-        mLastIntersection = {};
     }
 
     if(sidePane.drawButton("Paint")) {
@@ -248,39 +228,44 @@ void TextEditor::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent 
     }
 
     // Store current ray position if it is a hit
-    if(mIsPlacingTextMarker && mLastIntersection) {
-        mIsPlacingTextMarker = false;
+    if(mCurrentIntersection) {
+        mSelectedIntersection = mCurrentIntersection;
+        mSelectedIntersectionPoint = mCurrentIntersectionPoint;
+        mSelectedRay = mCurrentRay;
         generateAndUpdate();
     }
 }
 
 void TextEditor::paintText() {
-    if(mRenderedText.empty())
+    if(mRenderedText.empty() || !mSelectedIntersection)
         return;
 
-    // mApplication.getCommandManager()->execute(std::make_unique<CmdPaintText>(mRenderedText, ))
+    const Geometry* geometry = mApplication.getCurrentGeometry();
+    assert(geometry);
+    const size_t color = geometry->getColorManager().getActiveColorIndex();
+    ci::Ray ray = mSelectedRay;
+    ray.setDirection(-geometry->getTriangle(*mSelectedIntersection).getNormal());
+    mApplication.getCommandManager()->execute(std::make_unique<CmdPaintText>(ray, mRenderedText, color));
+
+    mRenderedText.clear();  // Hide the preview
+    mApplication.getModelView().resetPreview();
 }
 
 void TextEditor::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
-    if(mIsPlacingTextMarker) {
-        mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
-        Geometry* geometry = mApplication.getCurrentGeometry();
-        mLastIntersection = geometry->intersectMesh(mLastRay, mLastIntersectionPoint);
-
-        if(mLastIntersection && !mTriangulatedText.empty()) {
-            updateTextPreview();
-        }
-    }
+    mCurrentRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    Geometry* geometry = mApplication.getCurrentGeometry();
+    mCurrentIntersection = geometry->intersectMesh(mCurrentRay, mCurrentIntersectionPoint);
 }
 
 void TextEditor::drawToModelView(ModelView& modelView) {
     Geometry* geometry = mApplication.getCurrentGeometry();
 
-    if(mLastIntersection) {
+    // Draw line from selected intersection point
+    if(mSelectedIntersection) {
         const float modelSize = modelView.getMaxSize();
-        const glm::vec3 triNormal = geometry->getTriangle(*mLastIntersection).getNormal();
-        modelView.drawLine(mLastIntersectionPoint, mLastIntersectionPoint + triNormal * modelSize, ci::Color::black(),
-                           mIsPlacingTextMarker ? 1.f : 2.f, true);
+        const glm::vec3 triNormal = geometry->getTriangle(*mSelectedIntersection).getNormal();
+        modelView.drawLine(mSelectedIntersectionPoint, mSelectedIntersectionPoint + triNormal * modelSize,
+                           ci::Color::black(), 2.f, true);
 
         const glm::vec3 direction = -triNormal;
         const glm::vec3 origin = getPreviewOrigin(direction);
@@ -288,6 +273,14 @@ void TextEditor::drawToModelView(ModelView& modelView) {
         const glm::vec3 base2 = glm::cross(base1, direction);
         modelView.drawLine(origin, origin + base1, ci::Color(1.0f, 0.f, 0.f));
         modelView.drawLine(origin, origin + base2, ci::Color(0.0f, 1.f, 0.f));
+    }
+
+    // Draw line from point under mouse
+    if(mCurrentIntersection) {
+        const float modelSize = modelView.getMaxSize();
+        const glm::vec3 triNormal = geometry->getTriangle(*mCurrentIntersection).getNormal();
+        modelView.drawLine(mCurrentIntersectionPoint, mCurrentIntersectionPoint + triNormal * modelSize,
+                           ci::Color::black(), 1.f, true);
     }
 }
 }  // namespace pepr3d

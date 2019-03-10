@@ -165,8 +165,13 @@ class GeometryUtils {
 
     /// Get bounding sphere of a shape
     /// @param shape Polygonal shape represented by a set of points
-    static std::pair<DataTriangle::K::Point_3, double> getShapeBoundingSphere(
+    static std::pair<DataTriangle::K::Point_3, double> getBoundingSphere(
         const std::vector<DataTriangle::K::Point_3>& shape);
+
+    /// Get bounding sphere of a shape
+    /// @param shape Polygonal shape represented by a set of points
+    static std::pair<DataTriangle::K::Point_3, double> getBoundingSphere(
+        const std::vector<DataTriangle::Triangle>& triangles);
 
     /// Find squared distance between a line segment and a point in 3D space
     static float segmentPointDistanceSquared(const glm::vec3& start, const glm::vec3& end, const glm::vec3& point);

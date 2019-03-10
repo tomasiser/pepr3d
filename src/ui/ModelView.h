@@ -26,8 +26,7 @@ class ModelView {
     std::vector<glm::vec4> previewColors;
     std::vector<glm::vec3> previewNormals;
 
-    void resetPreview()
-    {
+    void resetPreview() {
         previewTriangles.clear();
         previewIndices.clear();
         previewColors.clear();

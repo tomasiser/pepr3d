@@ -456,21 +456,14 @@ void Geometry::highlightArea(const ci::Ray& ray, const BrushSettings& settings) 
 }
 
 void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color, bool paintBackfaces) {
-    glm::vec3 intersectionPoint{};
-    auto intersectedTri = intersectMesh(ray, intersectionPoint);
-
-    if(!intersectedTri) {
-        return;
-    }
-
-    const std::pair<Point3, double> shapeBounds = GeometryUtils::getShapeBoundingSphere(shape);
-    const auto ro = ray.getOrigin();
+    const std::pair<Point3, double> shapeBounds = GeometryUtils::getBoundingSphere(shape);
     const auto rd = ray.getDirection();
-    const Line3 rayLine(Point3(ro.x, ro.y, ro.z), Vector3(rd.x, rd.y, rd.z));
+    const Line3 rayLine(shapeBounds.first, Vector3(rd.x, rd.y, rd.z));
+
     std::vector<size_t> trianglesInCylinder = getTrianglesInRadius(rayLine, shapeBounds.second);
 
+    // Gather all the TriangleDetails that we want to update
     std::vector<size_t> detailsToUpdate;
-
     for(size_t triIdx : trianglesInCylinder) {
         const auto& cgalTri = getTriangle(triIdx).getTri();
 
@@ -490,10 +483,49 @@ void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& sha
         invalidateTemporaryDetailedData();
     }
 
+    // Update in parallel
     auto& threadPool = MainApplication::getThreadPool();
     threadPool.parallel_for(detailsToUpdate.begin(), detailsToUpdate.end(),
                             [this, &shape, color, &rayLine](size_t triIdx) {
                                 getTriangleDetail(triIdx)->paintShape(shape, rayLine.direction().vector(), color);
+                            });
+
+    mOgl.isDirty = true;
+}
+
+void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<DataTriangle::Triangle>& triangles, size_t color) {
+    const std::pair<Point3, double> shapeBounds = GeometryUtils::getBoundingSphere(triangles);
+    const auto rd = ray.getDirection();
+    const Line3 rayLine(shapeBounds.first, Vector3(rd.x, rd.y, rd.z));
+
+    std::vector<size_t> trianglesInCylinder = getTrianglesInRadius(rayLine, shapeBounds.second);
+
+    // Gather all the TriangleDetails that we want to update
+    std::vector<size_t> detailsToUpdate;
+    for(size_t triIdx : trianglesInCylinder) {
+        const auto& cgalTri = getTriangle(triIdx).getTri();
+
+        if(glm::dot(rd, getTriangle(triIdx).getNormal()) > 0) {
+            continue;  // Skip triangles facing away
+        }
+
+        if(isSimpleTriangle(triIdx) && getTriangleColor(triIdx) == color) {
+            continue;  // Do not paint simple triangles of the same color
+        }
+
+        detailsToUpdate.emplace_back(triIdx);
+        getTriangleDetail(triIdx);  // Make sure triangle detail is created
+    }
+
+    if(!detailsToUpdate.empty()) {
+        invalidateTemporaryDetailedData();
+    }
+
+    // Update in parallel
+    auto& threadPool = MainApplication::getThreadPool();
+    threadPool.parallel_for(detailsToUpdate.begin(), detailsToUpdate.end(),
+                            [this, &triangles, color, &rayLine](size_t triIdx) {
+                                getTriangleDetail(triIdx)->paintShape(triangles, rayLine.direction().vector(), color);
                             });
 
     mOgl.isDirty = true;

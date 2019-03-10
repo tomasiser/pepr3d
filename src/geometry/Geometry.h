@@ -351,11 +351,16 @@ class Geometry {
     /// highlighted.
     void highlightArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
-    /// Paint continuous area with a brush of specified size
+    /// Paint area with a shaped brush
     /// @param ray Ray along which to project the shape, using orthogonal projection
     /// @param shape Points in world space representing a polygonal shape
     void paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color,
                         bool paintBackfaces = false);
+
+    /// Paint area with a shaped brush
+    /// @param ray Ray along which to project the shape, using orthogonal projection
+    /// @param triangles Triangles in world space representing the shape
+    void paintWithShape(const ci::Ray& ray, const std::vector<DataTriangle::Triangle>& triangles, size_t color);
 
     /// Paint continuous spherical area with a brush of specified size
     void paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& settings);

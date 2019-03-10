@@ -37,19 +37,15 @@ class TextEditor : public Tool {
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void drawToModelView(ModelView& modelView) override;
 
-    virtual void onToolSelect(ModelView& modelView) override
-    {
-        mIsPlacingTextMarker = true;
-    }
+    virtual void onToolSelect(ModelView& modelView) override {}
 
-    virtual void onToolDeselect(ModelView& modelView) override
-    {
+    virtual void onToolDeselect(ModelView& modelView) override {
         modelView.resetPreview();
     }
 
-    virtual void onNewGeometryLoaded(ModelView& modelView) override
-    {
-        mIsPlacingTextMarker = true;
+    virtual void onNewGeometryLoaded(ModelView& modelView) override {
+        mCurrentIntersection = {};
+        mSelectedIntersection = {};
     }
 
     /// Paint prepared text onto the model
@@ -58,9 +54,15 @@ class TextEditor : public Tool {
    private:
     MainApplication& mApplication;
 
-    ci::Ray mLastRay{};
-    std::optional<size_t> mLastIntersection{};
-    glm::vec3 mLastIntersectionPoint{};
+    /// Intersection and point used for for text projection
+    ci::Ray mSelectedRay{};
+    std::optional<size_t> mSelectedIntersection{};
+    glm::vec3 mSelectedIntersectionPoint{};
+
+    /// Intersection and point used for cursor highlight
+    ci::Ray mCurrentRay{};
+    std::optional<size_t> mCurrentIntersection{};
+    glm::vec3 mCurrentIntersectionPoint{};
 
     std::string mFont;
     std::string mFontPath;
@@ -73,10 +75,7 @@ class TextEditor : public Tool {
     float mTextRotation = 0.f;
 
     /// How far should the text preview placed from the model (normalized by model scale)
-    const float TEXT_DISTANCE_SCALE = 0.05f;
-
-    /// Is the user currently placing the text marker (the origin of future text operations)
-    bool mIsPlacingTextMarker = true;
+    const float TEXT_DISTANCE_SCALE = 0.02f;
 
     std::vector<std::vector<FontRasterizer::Tri>> mTriangulatedText;
     std::vector<std::vector<FontRasterizer::Tri>> mRenderedText;
@@ -91,9 +90,6 @@ class TextEditor : public Tool {
 
     /// Update text preview without generating again
     void updateTextPreview();
-
-    /// Transform text from view-space to model space
-    void transformToModelSpace(std::vector<std::vector<FontRasterizer::Tri>>& result) const;
 
     /// Rotate to face ray direction
     void rotateText(std::vector<std::vector<FontRasterizer::Tri>>& text);

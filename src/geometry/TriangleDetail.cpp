@@ -50,6 +50,8 @@ void TriangleDetail::paintSphere(const PeprSphere& peprSphere, int minSegments, 
 }
 TriangleDetail::Polygon TriangleDetail::projectShapeToPolygon(const std::vector<PeprPoint3>& shape,
                                                               const PeprVector3& direction) {
+    assert(shape.size() >= 3);
+
     // Create a polygon of the shape
     Polygon pgn;
     for(size_t i = 0; i < shape.size(); ++i) {
@@ -62,6 +64,10 @@ TriangleDetail::Polygon TriangleDetail::projectShapeToPolygon(const std::vector<
                 pgn.push_back(mOriginalPlane.to_2d(*intersectionPoint));
             }
         }
+    }
+
+    if(pgn.size() < 3) {
+        return {};
     }
 
     if(pgn.is_clockwise_oriented()) {
@@ -81,11 +87,11 @@ void TriangleDetail::paintShape(const std::vector<PeprPoint3>& shape, const Pepr
     addPolygon(projectShapeToPolygon(shape, direction), color);
 }
 
-void TriangleDetail::paintShape(const std::vector<PeprTriangle>& triangles, const PeprVector3& direction, size_t color) {
+void TriangleDetail::paintShape(const std::vector<PeprTriangle>& triangles, const PeprVector3& direction,
+                                size_t color) {
     std::vector<Polygon> polygons;
     polygons.reserve(triangles.size());
-    for(const auto& tri: triangles)
-    {
+    for(const auto& tri : triangles) {
         std::vector<PeprPoint3> points = {tri.vertex(0), tri.vertex(1), tri.vertex(2)};
         polygons.emplace_back(projectShapeToPolygon(points, direction));
     }
@@ -411,6 +417,10 @@ void TriangleDetail::addPolygon(const Polygon& poly, size_t color) {
 #ifdef PEPR3D_COLLECT_DEBUG_DATA
     history.emplace_back(PolygonEntry{poly, color});
 #endif
+
+    if(poly.is_empty()) {
+        return;
+    }
 
     assert(CGAL::is_valid_polygon(poly, Traits()));
     PolygonSet addedShape(poly);

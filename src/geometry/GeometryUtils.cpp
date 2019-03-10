@@ -43,7 +43,7 @@ bool GeometryUtils::isFullyInsideASphere(const DataTriangle::K::Triangle_3 &tri,
     return dist0 <= radiusSquared && dist1 <= radiusSquared && dist2 <= radiusSquared;
 }
 
-std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getShapeBoundingSphere(
+std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(
     const std::vector<DataTriangle::K::Point_3> &shape) {
     using Vector3 = Geometry::Vector3;
     using Point3 = Geometry::Point3;
@@ -61,6 +61,36 @@ std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getShapeBoundingSpher
     double maxDistSquared = 0;
     for(const Point3 &pt : shape) {
         maxDistSquared = std::max(maxDistSquared, CGAL::squared_distance(pt, centerPoint));
+    }
+
+    return std::make_pair(centerPoint, CGAL::sqrt(maxDistSquared));
+}
+
+std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(
+    const std::vector<DataTriangle::Triangle> &triangles) {
+    using Vector3 = Geometry::Vector3;
+    using Point3 = Geometry::Point3;
+
+    const double pointCount = static_cast<double>(triangles.size() * 3);
+
+    // Find center
+    Vector3 center(0, 0, 0);
+    for(auto &tri : triangles) {
+        for(int i = 0; i < 3; i++) {
+            auto &pt = tri.vertex(0);
+            center += Vector3(pt.x() / pointCount, pt.y() / pointCount, pt.z() / pointCount);
+        }
+    }
+
+    const Point3 centerPoint(center.x(), center.y(), center.z());
+
+    // Find max squared distance
+    double maxDistSquared = 0;
+    for(auto &tri : triangles) {
+        for(int i = 0; i < 3; i++) {
+            auto &pt = tri.vertex(0);
+            maxDistSquared = std::max(maxDistSquared, CGAL::squared_distance(pt, centerPoint));
+        }
     }
 
     return std::make_pair(centerPoint, CGAL::sqrt(maxDistSquared));
