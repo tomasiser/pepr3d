@@ -234,8 +234,7 @@ void ExportAssistant::onNewGeometryLoaded(ModelView& modelView) {
 
 void ExportAssistant::resetOverride() {
     auto& modelView = mApplication.getModelView();
-    modelView.setVertexNormalIndexOverride(false);
-    modelView.setColorOverride(false);
+    modelView.toggleMeshOverride(false);
     modelView.getOverrideColorBuffer().clear();
     modelView.getOverrideIndexBuffer().clear();
     modelView.getOverrideNormalBuffer().clear();
@@ -276,8 +275,7 @@ void ExportAssistant::setOverride() {
         bufferOffset += mesh->mNumVertices;
     }
 
-    modelView.setColorOverride(true);
-    modelView.setVertexNormalIndexOverride(true);
+    modelView.toggleMeshOverride(true);
     modelView.setPreviewMinMaxHeight(mPreviewMinMaxHeight);
 }
 
