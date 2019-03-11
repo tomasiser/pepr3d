@@ -23,14 +23,15 @@ void Brush::onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event
     if(!event.isLeftDown()) {
         return;
     }
-    mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    updateRay(modelView, event);
     paint();
-    updateHighlight();
+    updateHighlight(modelView, event);
 }
 
 void Brush::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
-    updateHighlight();
+
+    updateHighlight(modelView, event);
 }
 
 void Brush::onToolSelect(ModelView& modelView) {
@@ -66,8 +67,20 @@ void Brush::stopPaint() {
     mGroupCommands = false;
 }
 
-void Brush::updateHighlight() const {
-    mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSettings);
+void Brush::updateHighlight(ModelView& modelView, ci::app::MouseEvent event) const {
+    if(mBrushSettings.spherical) {
+        mApplication.getCurrentGeometry()->highlightArea(mLastRay, mBrushSettings);
+    } else {
+    }
+}
+
+void Brush::updateRay(ModelView& modelView, ci::app::MouseEvent event) {
+    mLastRay = modelView.getRayFromWindowCoordinates(event.getPos());
+    auto intersection = mApplication.getCurrentGeometry()->intersectMesh(mLastRay, mLastIntersection);
+}
+
+bool Brush::isEnabled() const {
+    return mApplication.getCurrentGeometry()->polyhedronValid();
 }
 
 void Brush::drawToSidePane(SidePane& sidePane) {
@@ -75,29 +88,79 @@ void Brush::drawToSidePane(SidePane& sidePane) {
     sidePane.drawSeparator();
 
     sidePane.drawFloatDragger("Size", mBrushSettings.size, mMaxSize / SIZE_SLIDER_STEPS, 0.0001f, mMaxSize, "%.02f",
-                              70.f);
+                              140.f);
+    sidePane.drawTooltipOnHover("Size of the brush in world units.");
 
-    sidePane.drawCheckbox("Continuous", mBrushSettings.continuous);
+    sidePane.drawIntDragger("Segments", mBrushSettings.segments, 0.1f, 3, 50, "%d", 140.f);
+    sidePane.drawTooltipOnHover("Higher number of segments increases \"roundness\" of the brush.");
+
     sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
-    sidePane.drawCheckbox("Respect original triangles", mBrushSettings.respectOriginalTriangles);
+    sidePane.drawTooltipOnHover("Paint triangles even if they are facing away from the camera.");
 
-    if(mBrushSettings.respectOriginalTriangles) {
-        sidePane.drawCheckbox("Paint outer ring", mBrushSettings.paintOuterRing);
+    sidePane.drawSeparator();
+    sidePane.drawText("Brush shape:");
+    if(ImGui::RadioButton("Sphere", mBrushSettings.spherical)) {
+        mBrushSettings.spherical = true;
+    }
+    sidePane.drawTooltipOnHover(
+        "Spherical brush paints everything within a radius, and will create additional edges to smooth transitions "
+        "over triangle boundaries.");
+    if(ImGui::RadioButton("Flat", !mBrushSettings.spherical)) {
+        mBrushSettings.spherical = false;
+        mApplication.getCurrentGeometry()->hideHighlight();
+    }
+    sidePane.drawTooltipOnHover(
+        "Flat brush paints the shape directly to the surface, ignoring any distance limitations.");
+
+    if(mBrushSettings.spherical) {
+        sidePane.drawText("Spherical brush settings:");
+
+        sidePane.drawCheckbox("Continuous", mBrushSettings.continuous);
+        sidePane.drawTooltipOnHover(
+            "Paint only triangles that are connected inside the painting radius. This prevents accidentally painting "
+            "two parts connected only via an air-gap.");
+
+        sidePane.drawCheckbox("Respect original triangles", mBrushSettings.respectOriginalTriangles);
+        sidePane.drawTooltipOnHover(
+            "Prevent brush from creating new triangles. This makes Brush tool behave like a Triangle Painter tool with "
+            "a radius.");
+
+        if(mBrushSettings.respectOriginalTriangles) {
+            sidePane.drawCheckbox("Paint outer ring", mBrushSettings.paintOuterRing);
+            sidePane.drawTooltipOnHover("Paint the whole triangle, even if it is not fully inside the brush.");
+        }
     }
 
+    if(!mBrushSettings.spherical) {
+        sidePane.drawText("Flat brush settings:");
+
+        if(ImGui::RadioButton("Perspective", !mBrushSettings.alignToNormal)) {
+            mBrushSettings.alignToNormal = false;
+        }
+        sidePane.drawTooltipOnHover("Paint from the direction of the camera.");
+
+        if(ImGui::RadioButton("Normal", mBrushSettings.alignToNormal)) {
+            mBrushSettings.alignToNormal = true;
+        }
+        sidePane.drawTooltipOnHover("Paint aligned against normal.");
+    }
+    sidePane.drawSeparator();
     mPaintsSinceDraw = 0;
 }
 
 void Brush::drawToModelView(ModelView& modelView) {
     Geometry* geometry = mApplication.getCurrentGeometry();
     if(geometry) {
-        mMaxSize = modelView.getMaxSize();
-
         if(mBrushSettings.respectOriginalTriangles && geometry->getAreaHighlight().enabled) {
             for(size_t triIdx : geometry->getAreaHighlight().triangles) {
                 modelView.drawTriangleHighlight(triIdx);
             }
         }
     }
+}
+
+void Brush::onNewGeometryLoaded(ModelView& modelView) {
+    mMaxSize = modelView.getMaxSize();
+    mBrushSettings.size = mMaxSize / 10;
 }
 }  // namespace pepr3d

@@ -67,7 +67,30 @@ class GeometryUtils {
         return !verticesToRemove.empty();
     }
 
-    /// Determine orientation of a polygon using a shoelace formula
+    /// Get equidistant points on circle
+    static std::vector<DataTriangle::K::Point_3> pointsOnCircle(const DataTriangle::K::Circle_3& circle, int segments) {
+        using Point3 = DataTriangle::K::Point_3;
+        assert(segments >= 3);
+        assert(!circle.is_degenerate());
+
+        auto plane = circle.supporting_plane();
+        const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
+        const auto xBase = plane.base1() / CGAL::sqrt(CGAL::to_double(plane.base1().squared_length()));
+        const auto yBase = plane.base2() / CGAL::sqrt(CGAL::to_double(plane.base2().squared_length()));
+
+        std::vector<DataTriangle::K::Point_3> points;
+
+        for(size_t i = 0; i < segments; i++) {
+            const double circleCoord = (static_cast<double>(i) / segments) * 2 * glm::pi<double>();
+            const Point3 pt = circle.center() + xBase * cos(circleCoord) * radius + yBase * sin(circleCoord) * radius;
+
+            points.push_back(pt);
+        }
+
+        return points;
+    }
+
+    /// Determine orientation of a polygon using shoelace formula
     /// Replacement for potentionally buggy CGAL implementation
     template <typename K>
     static CGAL::Orientation shoelaceOrientationTest(const CGAL::Polygon_2<K>& poly) {
@@ -139,6 +162,11 @@ class GeometryUtils {
 
         return true;
     }
+
+    /// Get bounding sphere of a shape
+    /// @param shape Polygonal shape represented by a set of points
+    static std::pair<DataTriangle::K::Point_3, double> getShapeBoundingSphere(
+        const std::vector<DataTriangle::K::Point_3>& shape);
 
     /// Find squared distance between a line segment and a point in 3D space
     static float segmentPointDistanceSquared(const glm::vec3& start, const glm::vec3& end, const glm::vec3& point);

@@ -265,7 +265,7 @@ void SemiautomaticSegmentation::spreadColors() {
 
     // Render all new colorings
     for(const auto& coloring : mCurrentColoring) {
-        if(mApplication.getModelView().isColorOverride()) {
+        if(mApplication.getModelView().isMeshOverriden()) {
             for(const size_t tri : coloring.second) {
                 const auto rgbTriangleColor = currentGeometry->getColorManager().getColor(coloring.first);
                 overrideBuffer[3 * tri] = rgbTriangleColor;
@@ -325,9 +325,10 @@ void SemiautomaticSegmentation::setupOverride() {
         newOverrideBuffer[3 * triIndex + 2] = rgbTriangleColor;
     }
 
+    mApplication.getModelView().toggleMeshOverride(true);
+    mApplication.getModelView().initOverrideFromBasicGeoemtry();
     mBackupColorBuffer = newOverrideBuffer;
     mApplication.getModelView().getOverrideColorBuffer() = newOverrideBuffer;
-    mApplication.getModelView().setColorOverride(true);
 }
 
 void SemiautomaticSegmentation::setTriangleColor() {
@@ -345,7 +346,7 @@ void SemiautomaticSegmentation::setTriangleColor() {
             findSameColorList->second = activeColor;
         }
 
-        if(mApplication.getModelView().isColorOverride()) {
+        if(mApplication.getModelView().isMeshOverriden()) {
             const auto rgbTriangleColor = mApplication.getCurrentGeometry()->getColorManager().getColor(activeColor);
             auto& overrideBuffer = mApplication.getModelView().getOverrideColorBuffer();
             overrideBuffer[3 * triIndex] = rgbTriangleColor;
@@ -467,7 +468,7 @@ void SemiautomaticSegmentation::reset() {
     mCurrentColoring.clear();
 
     mApplication.getModelView().getOverrideColorBuffer().clear();
-    mApplication.getModelView().setColorOverride(false);
+    mApplication.getModelView().toggleMeshOverride(false);
 }
 
 }  // namespace pepr3d

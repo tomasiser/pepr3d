@@ -123,9 +123,64 @@ void ModelView::resetCamera() {
     mCamera.setFov(35.0f);
 }
 
+void ModelView::initOverrideFromBasicGeoemtry() {
+    const Geometry* geometry = mApplication.getCurrentGeometry();
+    assert(geometry);
+
+    auto& overrideVertexBuffer = getOverrideVertexBuffer();
+    auto& overrideNormalBuffer = getOverrideNormalBuffer();
+    auto& overrideIndexBuffer = getOverrideIndexBuffer();
+    auto& overrideColorBuffer = getOverrideColorBuffer();
+
+    overrideVertexBuffer.clear();
+    overrideNormalBuffer.clear();
+    overrideIndexBuffer.clear();
+    const size_t triCount = geometry->getTriangleCount();
+    for(size_t i = 0; i < triCount; ++i) {
+        const DataTriangle& tri = geometry->getTriangle(i);
+        overrideVertexBuffer.push_back(tri.getVertex(0));
+        overrideVertexBuffer.push_back(tri.getVertex(1));
+        overrideVertexBuffer.push_back(tri.getVertex(2));
+
+        overrideNormalBuffer.push_back(tri.getNormal());
+        overrideNormalBuffer.push_back(tri.getNormal());
+        overrideNormalBuffer.push_back(tri.getNormal());
+
+        const glm::vec4 triColor = geometry->getColorManager().getColor(geometry->getTriangle(i).getColor());
+        overrideColorBuffer.push_back(triColor);
+        overrideColorBuffer.push_back(triColor);
+        overrideColorBuffer.push_back(triColor);
+
+        overrideIndexBuffer.push_back(static_cast<uint32_t>(overrideIndexBuffer.size()));
+        overrideIndexBuffer.push_back(static_cast<uint32_t>(overrideIndexBuffer.size()));
+        overrideIndexBuffer.push_back(static_cast<uint32_t>(overrideIndexBuffer.size()));
+    }
+}
+
+void ModelView::onNewGeometryLoaded() {
+    const Geometry* const geometry = mApplication.getCurrentGeometry();
+    if(!geometry) {
+        return;
+    }
+
+    // Update maxSize
+    const glm::vec3 aabbMin = geometry->getBoundingBoxMin();
+    const glm::vec3 aabbMax = geometry->getBoundingBoxMax();
+    const glm::vec3 aabbSize = aabbMax - aabbMin;
+    const float maxSize = glm::max(glm::max(aabbSize.x, aabbSize.y), aabbSize.z);
+    mMaxSize = maxSize;
+}
+
 void ModelView::updateVboAndBatch() {
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
-    assert(isVertexNormalIndexOverride() || !glData.isDirty);
+    assert(isMeshOverriden() || !glData.isDirty);
+
+    if(isMeshOverriden()) {
+        // All override buffer sizes must match
+        assert(mMeshOverride.overrideVertexBuffer.size() == mMeshOverride.overrideColorBuffer.size());
+        assert(mMeshOverride.overrideVertexBuffer.size() == mMeshOverride.overrideNormalBuffer.size());
+        assert(mMeshOverride.overrideVertexBuffer.size() == mMeshOverride.overrideIndexBuffer.size());
+    }
 
     // Create buffer layout
     const std::vector<cinder::gl::VboMesh::Layout> layout = {
@@ -137,24 +192,21 @@ void ModelView::updateVboAndBatch() {
 
     // Create elementary buffer of indices
     const cinder::gl::VboRef ibo = cinder::gl::Vbo::create(
-        GL_ELEMENT_ARRAY_BUFFER, isVertexNormalIndexOverride() ? getOverrideIndexBuffer() : glData.indexBuffer,
-        GL_STATIC_DRAW);
+        GL_ELEMENT_ARRAY_BUFFER, isMeshOverriden() ? getOverrideIndexBuffer() : glData.indexBuffer, GL_STATIC_DRAW);
 
     // Create the VBO mesh
-    mVboMesh =
-        ci::gl::VboMesh::create(static_cast<uint32_t>(isVertexNormalIndexOverride() ? getOverrideVertexBuffer().size()
-                                                                                    : glData.vertexBuffer.size()),
-                                GL_TRIANGLES, {layout},
-                                static_cast<uint32_t>(isVertexNormalIndexOverride() ? getOverrideVertexBuffer().size()
-                                                                                    : glData.vertexBuffer.size()),
-                                GL_UNSIGNED_INT, ibo);
+    mVboMesh = ci::gl::VboMesh::create(
+        static_cast<uint32_t>(isMeshOverriden() ? getOverrideVertexBuffer().size() : glData.vertexBuffer.size()),
+        GL_TRIANGLES, {layout},
+        static_cast<uint32_t>(isMeshOverriden() ? getOverrideVertexBuffer().size() : glData.vertexBuffer.size()),
+        GL_UNSIGNED_INT, ibo);
 
     // Assign the buffers to the attributes
     mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::POSITION,
-                                      isVertexNormalIndexOverride() ? getOverrideVertexBuffer() : glData.vertexBuffer);
+                                      isMeshOverriden() ? getOverrideVertexBuffer() : glData.vertexBuffer);
     mVboMesh->bufferAttrib<glm::vec3>(ci::geom::Attrib::NORMAL,
-                                      isVertexNormalIndexOverride() ? getOverrideNormalBuffer() : glData.normalBuffer);
-    mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
+                                      isMeshOverriden() ? getOverrideNormalBuffer() : glData.normalBuffer);
+    mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mMeshOverride.overrideColorBuffer);
     mVboMesh->bufferAttrib<Geometry::ColorIndex>(Attributes::COLOR_IDX, glData.colorBuffer);
     mVboMesh->bufferAttrib<GLint>(Attributes::HIGHLIGHT_MASK, glData.highlightMask);
 
@@ -220,9 +272,9 @@ void ModelView::drawGeometry() {
     }
 
     const Geometry::OpenGlData& glData = mApplication.getCurrentGeometry()->getOpenGlData();
-    if(glData.isDirty || !mBatch || isVertexNormalIndexOverride()) {
-        if(glData.isDirty && !isVertexNormalIndexOverride()) {
-            // attention! do not update geometry buffers if isVertexNormalIndexOverride() is true,
+    if(glData.isDirty || !mBatch || isMeshOverriden()) {
+        if(glData.isDirty && !isMeshOverriden()) {
+            // attention! do not update geometry buffers if isMeshOverriden() is true,
             // because ExportAssistant could be modifying the geometry in a background thread
             // and the operations are not thread-safe!
             mApplication.getCurrentGeometry()->updateOpenGlBuffers();
@@ -244,34 +296,27 @@ void ModelView::drawGeometry() {
     }
 
     // Pass overriden colors if required
-    if(mColorOverride.isOverriden) {
-        mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mColorOverride.overrideColorBuffer);
+    if(isMeshOverriden()) {
+        assert(mMeshOverride.overrideColorBuffer.size() == mMeshOverride.overrideVertexBuffer.size());
+        mVboMesh->bufferAttrib<glm::vec4>(ci::geom::Attrib::COLOR, mMeshOverride.overrideColorBuffer);
     }
-
-    // verify that override buffers are correct:
-    assert(!mVertexNormalIndexOverride.isOverriden || mColorOverride.isOverriden);
-    assert(!mVertexNormalIndexOverride.isOverriden || mVertexNormalIndexOverride.overrideVertexBuffer.size() ==
-                                                          mVertexNormalIndexOverride.overrideNormalBuffer.size());
-    assert(!mVertexNormalIndexOverride.isOverriden ||
-           mVertexNormalIndexOverride.overrideVertexBuffer.size() == mColorOverride.overrideColorBuffer.size());
-    assert(mVertexNormalIndexOverride.isOverriden || !mColorOverride.isOverriden ||
-           mColorOverride.overrideColorBuffer.size() == glData.vertexBuffer.size());
-
     // Assign color palette
     auto& colorMap = mApplication.getCurrentGeometry()->getColorManager().getColorMap();
     mModelShader->uniform("uColorPalette", &colorMap[0], static_cast<int>(colorMap.size()));
     mModelShader->uniform("uShowWireframe", mIsWireframeEnabled);
-    mModelShader->uniform("uOverridePalette", mColorOverride.isOverriden);
+    mModelShader->uniform("uOverridePalette", mMeshOverride.isOverriden);
 
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
 
     // Assign highlight uniforms
     auto& areaHighlight = mApplication.getCurrentGeometry()->getAreaHighlight();
+    size_t activeColorIdx = mApplication.getCurrentGeometry()->getColorManager().getActiveColorIndex();
+    auto activeColor = colorMap[activeColorIdx];
     mModelShader->uniform("uAreaHighlightEnabled", areaHighlight.enabled);
     mModelShader->uniform("uAreaHighlightOrigin", areaHighlight.origin - mModelTranslate);
     mModelShader->uniform("uAreaHighlightSize", static_cast<float>(areaHighlight.size));
-    mModelShader->uniform("uAreaHighlightColor", vec3(0.f, 1.f, 0.f));
+    mModelShader->uniform("uAreaHighlightColor", vec3(activeColor.x, activeColor.y, activeColor.z));
 
     mBatch->draw();
 }
@@ -302,11 +347,11 @@ void ModelView::drawTriangleHighlight(const DetailedTriangleId triangleId) {
     ci::gl::drawLine(triangle.getVertex(2), triangle.getVertex(0));
 }
 
-void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color) {
+void ModelView::drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color, float width) {
     const ci::gl::ScopedModelMatrix scopedModelMatrix;
     ci::gl::multModelMatrix(mModelMatrix);
     ci::gl::ScopedColor drawColor(color);
-    ci::gl::ScopedLineWidth drawWidth(mIsWireframeEnabled ? 3.0f : 1.0f);
+    ci::gl::ScopedLineWidth drawWidth(width);
     gl::ScopedDepth depth(false);
     ci::gl::drawLine(from, to);
 }

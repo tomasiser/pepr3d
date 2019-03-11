@@ -14,11 +14,19 @@ struct BrushSettings {
     /// Size of a brush in model space units
     float size = 0.2f;
 
-    /// Paint only to triangles connected to the origin
-    bool continuous = false;
+    /// Number of segments of the brush
+    int segments = 12;
 
     /// Paint onto backward facing triangles
     bool paintBackfaces = false;
+
+    /// Use spherical brush (otherwise shape brush will be used
+    bool spherical = true;
+
+    // -- Spherical brush setting
+
+    /// Paint only to triangles connected to the origin
+    bool continuous = false;
 
     /// Will not create new triangles to match brush shape
     bool respectOriginalTriangles = false;
@@ -26,10 +34,16 @@ struct BrushSettings {
     /// When respecting original triangles should we paint triangles that are not fully inside the brush?
     bool paintOuterRing = false;
 
+    // -- Shape brush setting
+
+    /// Use local normal for direction of shape brush
+    bool alignToNormal = false;
+
     bool operator==(const BrushSettings& other) const {
-        return color == other.color && size == other.size && continuous == other.continuous &&
-               paintBackfaces == other.paintBackfaces && respectOriginalTriangles == other.respectOriginalTriangles &&
-               paintOuterRing == other.paintOuterRing;
+        return color == other.color && size == other.size && segments == other.segments &&
+               paintBackfaces == other.paintBackfaces && spherical == other.spherical &&
+               continuous == other.continuous && respectOriginalTriangles == other.respectOriginalTriangles &&
+               paintOuterRing == other.paintOuterRing && alignToNormal == other.alignToNormal;
     }
 };
 
@@ -50,6 +64,8 @@ class Brush : public Tool {
         return ICON_MD_BRUSH;
     }
 
+    virtual bool isEnabled() const override;
+
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
@@ -60,6 +76,8 @@ class Brush : public Tool {
     virtual void onToolSelect(ModelView& modelView) override;
     virtual void onToolDeselect(ModelView& modelView) override;
 
+    virtual void onNewGeometryLoaded(ModelView& modelView);
+
    private:
     /// Do painting tick on the model
     void paint();
@@ -67,9 +85,13 @@ class Brush : public Tool {
     /// Stop painting
     void stopPaint();
 
-    void updateHighlight() const;
+    void updateHighlight(ModelView& modelView, ci::app::MouseEvent event) const;
 
+    /// Update ray and intersection data
+    void updateRay(ModelView& modelView, ci::app::MouseEvent event);
     ci::Ray mLastRay;
+    glm::vec3 mLastIntersection;
+
     MainApplication& mApplication;
 
     BrushSettings mBrushSettings;
@@ -86,4 +108,5 @@ class Brush : public Tool {
     int mPaintsSinceDraw = 0;
     const int MAX_PAINTS_WITHOUT_DRAW = 1;
 };
+
 }  // namespace pepr3d

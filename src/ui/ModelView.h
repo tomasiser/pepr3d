@@ -59,7 +59,8 @@ class ModelView {
     }
 
     /// Draws a 3D line.
-    void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white());
+    void drawLine(const glm::vec3& from, const glm::vec3& to, const ci::Color& color = ci::Color::white(),
+                  float width = 1.0f);
 
     /// Draws a text label (caption) to the top left corner.
     /// `caption` is black, `errorCaption` is red and below `caption`
@@ -121,46 +122,44 @@ class ModelView {
         return mCameraUi.isFovZoomEnabled();
     }
 
-    /// Enables or disables color buffer override.
-    void setColorOverride(bool val) {
-        mColorOverride.isOverriden = val;
+    /// Enables or disables vertex, normal, and index buffer override (all at once)
+    void toggleMeshOverride(bool newState) {
+        mMeshOverride.isOverriden = newState;
+        forceBatchRefresh();
     }
 
-    /// Returns true if the color buffer is overridden.
-    bool isColorOverride() const {
-        return mColorOverride.isOverriden;
+    /// Batch data is going to be created again before rendering new frame. This will apply the overriden mesh.
+    void forceBatchRefresh() {
+        mBatch = nullptr;  // reset batch to force update
     }
 
     /// Returns a reference to the override color buffer, so you can read it or write to it.
     std::vector<glm::vec4>& getOverrideColorBuffer() {
-        return mColorOverride.overrideColorBuffer;
+        return mMeshOverride.overrideColorBuffer;
     }
 
-    /// Enables or disables vertex, normal, and index buffer override (all at once)
-    void setVertexNormalIndexOverride(bool val) {
-        mVertexNormalIndexOverride.isOverriden = val;
-        mBatch = nullptr;  // reset batch to force update
-    }
-
-    /// Returns true if the vertex, normal, and index buffers are overriden (all at once)
-    bool isVertexNormalIndexOverride() const {
-        return mVertexNormalIndexOverride.isOverriden;
+    /// Returns true if the mesh data is overriden. (A mesh different from the geometry is being displayed)
+    bool isMeshOverriden() const {
+        return mMeshOverride.isOverriden;
     }
 
     /// Returns a reference to the override vertex buffer, so you can read it or write to it.
     std::vector<glm::vec3>& getOverrideVertexBuffer() {
-        return mVertexNormalIndexOverride.overrideVertexBuffer;
+        return mMeshOverride.overrideVertexBuffer;
     }
 
     /// Returns a reference to the override normal buffer, so you can read it or write to it.
     std::vector<glm::vec3>& getOverrideNormalBuffer() {
-        return mVertexNormalIndexOverride.overrideNormalBuffer;
+        return mMeshOverride.overrideNormalBuffer;
     }
 
     /// Returns a reference to the override index buffer, so you can read it or write to it.
     std::vector<uint32_t>& getOverrideIndexBuffer() {
-        return mVertexNormalIndexOverride.overrideIndexBuffer;
+        return mMeshOverride.overrideIndexBuffer;
     }
+
+    /// Initialize override buffer to data from non-detailed geometry.
+    void initOverrideFromBasicGeoemtry();
 
     /// Returns the minimum (first) and maximum (second) height that is rendered in the ModelView.
     glm::vec2 getPreviewMinMaxHeight() const {
@@ -177,6 +176,9 @@ class ModelView {
     float getMaxSize() const {
         return mMaxSize;
     }
+
+    /// Called by MainAplication when new geometry is loaded
+    void onNewGeometryLoaded();
 
    private:
     MainApplication& mApplication;
@@ -196,19 +198,15 @@ class ModelView {
     float mMaxSize = 1.f;
     glm::vec2 mPreviewMinMaxHeight = glm::vec2(0.0f, 1.0f);
 
-    /// Color buffer override
-    struct ColorOverrideData {
-        bool isOverriden = false;
-        std::vector<glm::vec4> overrideColorBuffer;
-    } mColorOverride;
-
-    /// Vertex, normal, and index buffer override
-    struct VertexNormalIndexOverrideData {
+    /// Override currently displayed mesh data, making it possibly to æhange displayed mesh
+    /// without chaning the geometry itself
+    struct MeshDataOverride {
         bool isOverriden = false;
         std::vector<glm::vec3> overrideVertexBuffer;
         std::vector<glm::vec3> overrideNormalBuffer;
         std::vector<uint32_t> overrideIndexBuffer;
-    } mVertexNormalIndexOverride;
+        std::vector<glm::vec4> overrideColorBuffer;
+    } mMeshOverride;
 
     /// Recalculates the model matrix of the current Geometry object.
     /// The model matrix ensures that the object's maximum displayed size is 1.0 and it is centered above the grid,
