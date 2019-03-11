@@ -91,7 +91,7 @@ void Brush::drawToSidePane(SidePane& sidePane) {
                               140.f);
     sidePane.drawTooltipOnHover("Size of the brush in world units.");
 
-    sidePane.drawIntDragger("Segments", mBrushSettings.segments, 0.1, 3, 50, "%d", 140.f);
+    sidePane.drawIntDragger("Segments", mBrushSettings.segments, 0.1f, 3, 50, "%d", 140.f);
     sidePane.drawTooltipOnHover("Higher number of segments increases \"roundness\" of the brush.");
 
     sidePane.drawCheckbox("Paint backfaces", mBrushSettings.paintBackfaces);
