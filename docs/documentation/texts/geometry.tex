@@ -6,6 +6,128 @@ In this chapter we describe the \texttt{Geometry} class in detail. We also discu
 
 \section{Geometry}
 
+\subsection{Geometry}
+
+\texttt{Geometry} is the main class of the whole data pipeline in Pepr3D. Here we explain the high-level details of this class, to hopefully give the reader a broader picture of the architecture, which makes navigating the code much easier. Since the class is rather large, we will not present a complete overview as in the following sections, but rather discuss several parts separately.
+
+\subsubsection{Public data members}
+
+The class itself does not provide any data as public. This is because it holds the geometry model, which cannot and should not be easily altered, since altering requires non-trivial re-computations (such as the acceleration tree structure or the Polyhedral surface data structure).
+
+\subsubsection{Private data members}
+
+All of the class' data is stored in private members, we present a list of the most important ones here:
+
+\begin{lstlisting}
+std::vector<DataTriangle> mTriangles;
+std::map<size_t, TriangleDetail> mTriangleDetails;
+
+std::unique_ptr<Tree> mTree;
+std::unique_ptr<Tree> mTreeDetailed;
+
+PolyhedronData mPolyhedronData;
+std::unique_ptr<PolyhedronData::Mesh> mMeshDetailed;
+
+std::unique_ptr<BoundingBox> mBoundingBox;
+ColorManager mColorManager;
+
+friend class cereal::access;
+OpenGlData mOgl;
+\end{lstlisting}
+
+As we can see, the members are of two main functions: the ones holding the actual data (such as \texttt{mTriangles} and \texttt{mTriangleDetails}) and data structures built upon the data, which help us perform the operations quickly. There are several more conversion \texttt{std::map} objects which help the user retrieve the correct triangle data with an arbitrary information about the triangle (an id, a pointer in the surface mesh, etc.), which are not listed here for clarity's sake.
+
+The \texttt{mTriangles} array functions as one would expect -- this is the main array, which stores the basic information for each triangle (the position, normals, etc.). If the \textit{Brush} or \textit{Text} tools are used, the triangles get split into detailed ones, and \texttt{mTriangleDetails} needs to be utilized to look up information about a triangle.
+
+The \texttt{Tree} structure is CGAL's AABB hierarchical search tree which allows us to intersect the model with rays. This is especially useful during the user interaction (retrieving the triangle id which corresponds to the user-clicked triangle).
+
+We also point out the duality of many of these data structures -- \texttt{mTree} and it's detailed version, as well as the  \texttt{PolyhedronData} object and it's detailed version. This is required, because the user can change the geometry of the model extensively by adding new details. Changing the geometry then alters the behaviour of several algorithms -- a \textit{breath-first} search behaves differently on a non-detailed model and a detailed model. However, completely discarding the non-detailed version is not wise either, since some operations may be faster to perform on the non-detailed versions, if the result does not depend on whether the mesh is detailed or not (for example, finding a position of ray-model intersection does not depend on any added details and should utilize the \texttt{mTree} member).
+
+The last notable members are the \textbf{cereal} friend access and \textbf{OpenGL} buffer object. Cereal requires friend access to the class if we want the class to be exported. Since \texttt{Geometry} is the most important data object in Pepr3D, we obviously want to be able to save parts of it. The \texttt{OpenGlData} object is used to transport the geometry to the front-end rendering part of Pepr3D. The \texttt{Geometry} class creates and updates the buffers, and the front-end only re-renders the model when the buffers are changed. This way the front-end does not have to have any knowledge about the geometry and can be kept separate.
+
+\subsubsection{Public methods}
+
+The main way to work with the \texttt{Geometry} class. They can be divided into two obvious categories: the \textit{getters} and the rest.
+
+We provide a lot of getter methods, so the user has a good way of communicating with the object and can extract as much information out as he wants. Most of the getter methods are \texttt{const}, since changing certain members is not allowed. There are, however, several which permit the user to change them, since the effect is immediate and doesn't have deeper consequences (like changing the colour palette in the \texttt{ColorManager}).
+
+The other category of the methods are the algorithms used to implement Pepr3D's tools, load the data correctly and compute the necessary information. We list a few of the most important ones here:
+
+\begin{lstlisting}
+// Loading and computation
+void computeSdfValues();
+void loadNewGeometry(const std::string& fileName);
+void recomputeFromData();
+GeometryState saveState() const;
+void loadState(const GeometryState&);
+
+// Algorithms
+std::optional<size_t> intersectMesh(const ci::Ray& ray) const;
+template <typename StoppingCondition>
+std::vector<size_t> bucket(const size_t startTriangle, const StoppingCondition& stopFunctor);
+void paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& settings);
+void paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color, bool paintBackfaces = false);
+size_t segmentation( ... );
+\end{lstlisting}
+
+The first few methods are the main way to alter the \texttt{Geometry} and perform computations on the loaded model. The first batch of methods provides the tools to load and save the model correctly, as well as recompute the data if required (e.g. if a bug was encountered and the data is corrupted). Many of these methods utilize the \texttt{GeometryProgress} capability of Pepr3D, which allows the user to know how long the selected operation will run, or at least re-assures him that Pepr3D has not frozen.
+
+The second group of methods are the algorithms employed to implement all the tools in the release version. We describe these methods in greater detail here:
+
+\begin{itemize}
+\item \texttt{intersectMesh(ray)} is the main method used to transform the user's clicks with tools into the geometry pipeline. Given a ray, this returns the id of the triangle which got intersected by the ray. Modern \texttt{std::optional} is utilized to avoid various "return codes" (like returning -1 for \textit{no hit}).
+
+\item \texttt{bucket(startTriangle, stoppingCriterion} is used in several tools and implements the \textit{breath-first} search over a 3D triangle mesh. The \textit{BFS} traverses the mesh triangle to triangle until it is stopped by the stopping criterion. This criterion corresponds to the user interface of the \textit{Bucket} tool -- the user can either select to never stop, to stop upon meeting a different color, to stop on sharp edges or a combination of both. Modern C++ template approach is utilized to replace the runtime \texttt{if-else} decisions with compile time template processing.
+
+\item \texttt{paintWith} are two methods used by the \textit{Brush} and \textit{Text} tools. They allow to paint with selected settings along a target ray. \texttt{paintAreaWithSphere} only paints a circular region on the surface of the mesh, where the circle is computed as the intersection of a sphere placed on the surface of the mesh with the mesh's sides. \texttt{paintWithShape} accepts a \texttt{shape} vector composed of points in 3D space and allows the user to paint a custom shape onto the mesh's surface.
+
+\item \texttt{segmentation} implements the \textit{Automatic segmentation} tool by using the CGAL library, namely the \textit{Triangulated Surface Mesh Segmentation} \footnote{https://doc.cgal.org/latest/Surface\_mesh\_segmentation/index.html}. This process is dependant on the SDF values being calculated, which can be done with the computation method \texttt{computeSdfValues}.
+\end{itemize}
+
+\subsubsection{Private methods}
+
+We will only describe a handful of private methods, since they are largely unimportant and only contain technical details which are not required for a general understanding. We will, however, mention the \textbf{OpenGL} buffer generators, since this is something not obvious from the first look on the \texttt{Geometry} class. As we have already mentioned above, the \texttt{Geometry} class handles all the buffer creation and keeps the buffers up-to-date, which allows us to shield the front end from the \texttt{Geometry} structure completely. If the structure of the geometry class changes, no further changes in the rendering front end code are required. The only thing which is required is to keep these methods correct. Namely:
+
+\begin{lstlisting}
+void generateVertexBuffer();
+void generateIndexBuffer();
+void generateColorBuffer();
+void generateNormalBuffer();
+void generateHighlightBuffer();
+\end{lstlisting}
+
+Further information is available in the \textit{doxygen} documentation or directly in the code.
+
+\subsection{Triangle Detail}
+
+\texttt{TriangleDetail}
+
+\textbf{TODO after @ LUIS sends info}
+
+\subsection{Detailed Triangle Id}
+
+This \texttt{struct} is a very simple object, but important to understand, so we present it here, even though it is not a complex or confusing concept. It is a way to connect the original triangles with the detailed ones, once the user paints with the \textit{Brush} or uses the \textit{Text} tool. Before the user uses these tools, each triangle has its own id -- a \texttt{size\_t} type number. However, once the triangles are subdivided by use of one of these tools, this is no longer the case, since we are adding new triangles. The tools also support re-merging and simplifying the topology if the user removes the details by painting over them again. This would not be possible if we simply added the new triangles to the end and kept indexing by the \texttt{size\_t}, hence why we use this, admittedly more complex way of indexing.
+
+\begin{lstlisting}
+struct DetailedTriangleId {
+    DetailedTriangleId()
+    explicit DetailedTriangleId(size_t baseId, std::optional<size_t> detailId = {})
+
+    size_t getBaseId() const;
+    std::optional<size_t> getDetailId();
+
+    bool operator==(const DetailedTriangleId& other) const;
+
+   private:
+    size_t mBaseId;
+    std::optional<size_t> mDetailId;
+};
+\end{lstlisting}
+
+The \texttt{BaseId} property is the triangle id of the original triangle, that has been split into many more. The \texttt{DetailId} is the id of the one of the smaller triangles, which form the original one (the one identified by \texttt{BaseId}).
+
+A triangle which has not been subdivided, will have the \texttt{DetailId} empty, which indicates it is a base triangle. A triangle which formed by subdividing an already existing triangle, will have the \texttt{BaseId} equal to the id of the triangle which it has subdivided -- used to look up the \texttt{TriangleDetail} object in \texttt{mTriangleDetails}, and the \texttt{DetailId} will be used to look up the actual triangle, within this object.
+
 \subsection{Data Triangle}
 
 \texttt{DataTriangle} is the main way the geometry is stored in Pepr3D. It is a custom wrapper around \textit{CGAL}'s \texttt{Triangle\_3} class. Adding this wrapper allows us to attach additional information to each triangle. The information attached in our case is:
@@ -18,10 +140,6 @@ In this chapter we describe the \texttt{Geometry} class in detail. We also discu
 \end{itemize}
 
 A second important class to talk about in this section is the \texttt{Data\-Triangle\-AABB\-Primitive}. This class provides the conversion between our \texttt{Data\-Triangle} (which contains a \texttt{CGAL::Triangle\_3}) and the \texttt{CGAL::AABB\_tree} which requires \texttt{CGAL::Triangle\_3} as input to build the tree around. We provide the tree our \texttt{Data\-Triangle} array and the tree converts it into \texttt{Data\-Triangle\-AABB\-Primitive}, which it accepts as a geometry primitive.
-
-\texttt{TriangleDetail}
-
-\textbf{TODO @ LUIS}
 
 \section{Model Importer}
 
