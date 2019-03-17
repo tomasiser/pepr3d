@@ -25,8 +25,8 @@
 #include "geometry/Triangle.h"
 #include "geometry/TriangleDetail.h"
 #include "geometry/TrianglePrimitive.h"
-#include "tools/Brush.h"
 #include "peprassert.h"
+#include "tools/Brush.h"
 
 namespace pepr3d {
 
@@ -454,7 +454,7 @@ class Geometry {
             return false;
         } else {
             P_ASSERT(mPolyhedronData.indices.size() == static_cast<size_t>(mPolyhedronData.sdf_property_map.end() -
-                                                                         mPolyhedronData.sdf_property_map.begin()));
+                                                                           mPolyhedronData.sdf_property_map.begin()));
             return mPolyhedronData.isSdfComputed;
         }
     }

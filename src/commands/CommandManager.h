@@ -1,10 +1,10 @@
 #pragma once
-#include "peprassert.h"
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
 #include "commands/Command.h"
+#include "peprassert.h"
 
 namespace pepr3d {
 

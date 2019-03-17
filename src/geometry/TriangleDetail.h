@@ -8,10 +8,10 @@
 #include "CGAL-patched/Boolean_set_operations_2/Gps_traits_adaptor.h"
 //---------------------------------------
 
-#include "geometry/Triangle.h"
 #include "FontRasterizer.h"
 #include "GeometryUtils.h"
 #include "geometry/GlmSerialization.h"
+#include "geometry/Triangle.h"
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
@@ -37,7 +37,6 @@
 #include <vector>
 
 #include "peprassert.h"
-
 
 #if defined(PEPR3D_COLLECT_DEBUG_DATA) || defined(_TEST_)
 #include <boost/variant.hpp>

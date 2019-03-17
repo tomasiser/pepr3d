@@ -272,7 +272,7 @@ void Geometry::generateHighlightBuffer() {
 void Geometry::generateTriangleBounds() {
     mTriangleBounds.clear();
     for(const DataTriangle& dataTri : mTriangles) {
-        const auto& tri = dataTri.getTri();       
+        const auto& tri = dataTri.getTri();
         mTriangleBounds.push_back(GeometryUtils::getBoundingSphere(tri));
     }
 }

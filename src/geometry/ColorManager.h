@@ -5,8 +5,8 @@
 #include <random>
 #include <vector>
 #include "cinder/Color.h"
-#include "peprassert.h"
 #include "glm/glm.hpp"
+#include "peprassert.h"
 
 #define PEPR3D_MAX_PALETTE_COLORS 16
 
