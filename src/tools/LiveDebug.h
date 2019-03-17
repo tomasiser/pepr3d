@@ -40,6 +40,10 @@ class LiveDebug : public Tool {
     CommandManager<IntegerState> mIntegerManager;
     glm::ivec2 mMousePos;
     std::optional<std::size_t> mTriangleUnderRay{};
+
+    std::vector<std::size_t> mTrianglesInRadius;
+
+    float mSquaredRadius = 0.1;
 };
 
 }  // namespace pepr3d

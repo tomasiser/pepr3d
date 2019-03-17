@@ -46,6 +46,8 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
     if(ImGui::Button("Add")) {
         mIntegerManager.execute(std::make_unique<AddValueCommand>(addedValue));
     }
+    sidePane.drawSeparator();
+    sidePane.drawFloatDragger("Radius sq", mSquaredRadius, 0.01, 0.1, 10, "%f", 70.f);
 
     ImGui::EndChild();
 }
@@ -63,11 +65,29 @@ void LiveDebug::drawToModelView(ModelView& modelView) {
         modelView.drawLine(center, center + glm::vec3(base1.x(), base1.y(), base1.z()), ci::Color(1.f, 0.f, 0.f));
         modelView.drawLine(center, center + glm::vec3(base2.x(), base2.y(), base2.z()), ci::Color(0.f, 1.f, 0.f));
     }
+
+    for(size_t tri : mTrianglesInRadius) {
+        const auto& triangle = mApplication.getCurrentGeometry()->getTriangle(tri);
+        modelView.drawLine(triangle.getVertex(0), triangle.getVertex(1), ci::Color(1.0f, 0.f, 0.f), 2);
+        modelView.drawLine(triangle.getVertex(1), triangle.getVertex(2), ci::Color(1.0f, 0.f, 0.f), 2);
+        modelView.drawLine(triangle.getVertex(2), triangle.getVertex(0), ci::Color(1.0f, 0.f, 0.f), 2);
+    }
 }
 
 void LiveDebug::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {
     mMousePos = event.getPos();
     auto ray = modelView.getRayFromWindowCoordinates(event.getPos());
-    mTriangleUnderRay = mApplication.getCurrentGeometry()->intersectMesh(ray);
+    glm::vec3 isectPos{};
+    mTriangleUnderRay = mApplication.getCurrentGeometry()->intersectMesh(ray, isectPos);
+    if(mTriangleUnderRay) {
+        const auto rd = ray.getDirection();
+
+        using Line3 = DataTriangle::K::Line_3;
+        using Point3 = DataTriangle::K::Point_3;
+        using Vector3 = DataTriangle::K::Vector_3;
+
+        const DataTriangle::K::Line_3 rayLine(Point3(isectPos.x, isectPos.y, isectPos.z), Vector3(rd.x, rd.y, rd.z));
+        mTrianglesInRadius = mApplication.getCurrentGeometry()->getTrianglesInRadius(rayLine, mSquaredRadius);
+    }
 }
 }  // namespace pepr3d
