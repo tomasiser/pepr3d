@@ -1,7 +1,10 @@
 #include "geometry/GeometryUtils.h"
-#include <CGAL/Aff_transformation_3.h>
 #include "geometry/Geometry.h"
 #include "geometry/TriangleDetail.h"
+
+#include <CGAL/Aff_transformation_3.h>
+#include <CGAL/Min_sphere_of_points_d_traits_3.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
 
 namespace pepr3d {
 
@@ -45,55 +48,63 @@ bool GeometryUtils::isFullyInsideASphere(const DataTriangle::K::Triangle_3 &tri,
 
 std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(
     const std::vector<DataTriangle::K::Point_3> &shape) {
-    using Vector3 = Geometry::Vector3;
+    using K = DataTriangle::K;
     using Point3 = Geometry::Point3;
+    using Sphere = Geometry::Sphere;
+    using Traits = CGAL::Min_sphere_of_points_d_traits_3<K, K::FT>;
+    using MinSphere = CGAL::Min_sphere_of_spheres_d<Traits>;
 
-    const double pointCount = static_cast<double>(shape.size());
-
-    // Find center
-    Vector3 center(0, 0, 0);
-    for(const Point3 &pt : shape) {
-        center += Vector3(pt.x() / pointCount, pt.y() / pointCount, pt.z() / pointCount);
+    std::vector<Point3> spheres;
+    for(const Point3 &point : shape) {
+        spheres.emplace_back(point);
     }
 
-    const Point3 centerPoint(center.x(), center.y(), center.z());
-    // Find max squared distance
-    double maxDistSquared = 0;
-    for(const Point3 &pt : shape) {
-        maxDistSquared = std::max(maxDistSquared, CGAL::squared_distance(pt, centerPoint));
-    }
+    // Using min sphere of spheres is supposedly faster than min sphere
+    MinSphere ms(spheres.begin(), spheres.end());
+    Point3 centerPoint(*ms.center_cartesian_begin(), *(ms.center_cartesian_begin() + 1),
+                       *(ms.center_cartesian_begin() + 2));
 
-    return std::make_pair(centerPoint, CGAL::sqrt(maxDistSquared));
+    return std::make_pair(centerPoint, ms.radius());
 }
 
 std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(
     const std::vector<DataTriangle::Triangle> &triangles) {
-    using Vector3 = Geometry::Vector3;
+    using K = DataTriangle::K;
     using Point3 = Geometry::Point3;
+    using Sphere = Geometry::Sphere;
+    using Traits = CGAL::Min_sphere_of_points_d_traits_3<K, K::FT>;
+    using MinSphere = CGAL::Min_sphere_of_spheres_d<Traits>;
 
-    const double pointCount = static_cast<double>(triangles.size() * 3);
-
-    // Find center
-    Vector3 center(0, 0, 0);
-    for(auto &tri : triangles) {
-        for(int i = 0; i < 3; i++) {
-            auto &pt = tri.vertex(0);
-            center += Vector3(pt.x() / pointCount, pt.y() / pointCount, pt.z() / pointCount);
-        }
+    std::vector<Point3> spheres;
+    for(const DataTriangle::Triangle &tri : triangles) {
+        spheres.emplace_back(tri.vertex(0));
+        spheres.emplace_back(tri.vertex(1));
+        spheres.emplace_back(tri.vertex(2));
     }
 
-    const Point3 centerPoint(center.x(), center.y(), center.z());
+    // Using min sphere of spheres is supposedly faster than min sphere
+    MinSphere ms(spheres.begin(), spheres.end());
+    Point3 centerPoint(*ms.center_cartesian_begin(), *(ms.center_cartesian_begin() + 1),
+                       *(ms.center_cartesian_begin() + 2));
 
-    // Find max squared distance
-    double maxDistSquared = 0;
-    for(auto &tri : triangles) {
-        for(int i = 0; i < 3; i++) {
-            auto &pt = tri.vertex(0);
-            maxDistSquared = std::max(maxDistSquared, CGAL::squared_distance(pt, centerPoint));
-        }
-    }
+    return std::make_pair(centerPoint, ms.radius());
+}
 
-    return std::make_pair(centerPoint, CGAL::sqrt(maxDistSquared));
+std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(const DataTriangle::Triangle &triangle) {
+    using K = DataTriangle::K;
+    using Point3 = Geometry::Point3;
+    using Sphere = Geometry::Sphere;
+    using Traits = CGAL::Min_sphere_of_points_d_traits_3<K, K::FT>;
+    using MinSphere = CGAL::Min_sphere_of_spheres_d<Traits>;
+
+    std::array<Point3, 3> spheres{triangle.vertex(0), triangle.vertex(1), triangle.vertex(2)};
+
+    // Using min sphere of spheres is supposedly faster than min sphere
+    MinSphere ms(spheres.begin(), spheres.end());
+    Point3 centerPoint(*ms.center_cartesian_begin(), *(ms.center_cartesian_begin() + 1),
+                       *(ms.center_cartesian_begin() + 2));
+
+    return std::make_pair(centerPoint, ms.radius());
 }
 
 }  // namespace pepr3d

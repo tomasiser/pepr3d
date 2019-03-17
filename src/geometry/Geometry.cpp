@@ -272,16 +272,8 @@ void Geometry::generateHighlightBuffer() {
 void Geometry::generateTriangleBounds() {
     mTriangleBounds.clear();
     for(const DataTriangle& dataTri : mTriangles) {
-        const auto& tri = dataTri.getTri();
-        const Point3 zeroPt(0, 0, 0);
-        Point3 centerPoint = zeroPt + (Vector3(tri.vertex(0) - zeroPt) + Vector3(tri.vertex(1) - zeroPt) +
-                                       Vector3(tri.vertex(2) - zeroPt) / 3);
-        double maxSquaredDist = 0;
-        for(int i = 0; i < 3; i++) {
-            maxSquaredDist = std::max(CGAL::squared_distance(centerPoint, tri.vertex(i)), maxSquaredDist);
-        }
-
-        mTriangleBounds.push_back(std::make_pair(centerPoint, CGAL::sqrt(maxSquaredDist)));
+        const auto& tri = dataTri.getTri();       
+        mTriangleBounds.push_back(GeometryUtils::getBoundingSphere(tri));
     }
 }
 
@@ -494,18 +486,24 @@ void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<Point3>& sha
 }
 
 void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<DataTriangle::Triangle>& triangles, size_t color) {
+    CI_LOG_I(std::string("Shape of ") + std::to_string(triangles.size()) + std::string(" triangles"));
+
     const std::pair<Point3, double> shapeBounds = GeometryUtils::getBoundingSphere(triangles);
+
+    CI_LOG_I(std::string("Bounds size: ") + std::to_string(shapeBounds.second));
+
     const auto rd = ray.getDirection();
     const Line3 rayLine(shapeBounds.first, Vector3(rd.x, rd.y, rd.z));
 
     std::vector<size_t> trianglesInCylinder = getTrianglesInRadius(rayLine, shapeBounds.second);
+    CI_LOG_I(std::string("Triangles in radius: ") + std::to_string(trianglesInCylinder.size()));
 
     // Gather all the TriangleDetails that we want to update
     std::vector<size_t> detailsToUpdate;
     for(size_t triIdx : trianglesInCylinder) {
         const auto& cgalTri = getTriangle(triIdx).getTri();
 
-        if(glm::dot(rd, getTriangle(triIdx).getNormal()) > 0) {
+        if(glm::dot(rd, getTriangle(triIdx).getNormal()) >= 0) {
             continue;  // Skip triangles facing away
         }
 
@@ -516,7 +514,7 @@ void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<DataTriangle
         detailsToUpdate.emplace_back(triIdx);
         getTriangleDetail(triIdx);  // Make sure triangle detail is created
     }
-
+    CI_LOG_I(std::string("Triangles to paint: ") + std::to_string(detailsToUpdate.size()));
     if(!detailsToUpdate.empty()) {
         invalidateTemporaryDetailedData();
     }
