@@ -171,8 +171,7 @@ void Segmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEven
 }
 
 void Segmentation::reset() {
-    mApplication.getModelView().setColorOverride(false);
-    mApplication.getModelView().getOverrideColorBuffer().clear();
+    mApplication.getModelView().toggleMeshOverride(false);
 
     mNumberOfSegments = 0;
     mPickState = false;
@@ -189,23 +188,24 @@ void Segmentation::reset() {
 void Segmentation::computeSegmentation() {
     cancel();
 
+    Geometry* geometry = mApplication.getCurrentGeometry();
+    assert(geometry);
+
     float smoothingLambda = mSmoothingLambda / 100.0f;
     smoothingLambda = std::min<float>(smoothingLambda, 1.0f);
     smoothingLambda = std::max<float>(smoothingLambda, 0.01f);
 
     int numberOfClusters = static_cast<int>(std::floor(mNumberOfClusters / 100.0f / (1.0f / 14.0f)) + 2.0f);
     numberOfClusters = std::min<int>(numberOfClusters, 15);
-    numberOfClusters =
-        std::min<int>(numberOfClusters, static_cast<int>(mApplication.getCurrentGeometry()->getTriangleCount()) - 2);
+    numberOfClusters = std::min<int>(numberOfClusters, static_cast<int>(geometry->getTriangleCount()) - 2);
     numberOfClusters = std::max<int>(2, numberOfClusters);
 
     assert(0.0f < smoothingLambda && smoothingLambda <= 1.0f);
-    assert(2 <= numberOfClusters && numberOfClusters <= mApplication.getCurrentGeometry()->getTriangleCount() &&
-           numberOfClusters <= 15);
+    assert(2 <= numberOfClusters && numberOfClusters <= geometry->getTriangleCount() && numberOfClusters <= 15);
 
     try {
-        mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(
-            numberOfClusters, smoothingLambda, mSegmentToTriangleIds, mTriangleToSegmentMap);
+        mNumberOfSegments =
+            geometry->segmentation(numberOfClusters, smoothingLambda, mSegmentToTriangleIds, mTriangleToSegmentMap);
     } catch(std::exception& e) {
         const std::string errorCaption = "Error: Failed to compute the segmentation";
         const std::string errorDescription =
@@ -235,7 +235,7 @@ void Segmentation::computeSegmentation() {
 
         // Create an override color buffer based on the segmentation
         std::vector<glm::vec4> newOverrideBuffer;
-        newOverrideBuffer.resize(mApplication.getCurrentGeometry()->getTriangleCount() * 3);
+        newOverrideBuffer.resize(geometry->getTriangleCount() * 3);
         for(const auto& toPaint : mSegmentToTriangleIds) {
             for(const auto& tri : toPaint.second) {
                 newOverrideBuffer[3 * tri] = mSegmentationColors[toPaint.first];
@@ -243,8 +243,9 @@ void Segmentation::computeSegmentation() {
                 newOverrideBuffer[3 * tri + 2] = mSegmentationColors[toPaint.first];
             }
         }
+        mApplication.getModelView().toggleMeshOverride(true);
+        mApplication.getModelView().initOverrideFromBasicGeoemtry();
         mApplication.getModelView().getOverrideColorBuffer() = newOverrideBuffer;
-        mApplication.getModelView().setColorOverride(true);
     }
 }
 
