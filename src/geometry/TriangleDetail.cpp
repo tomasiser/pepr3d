@@ -1,4 +1,4 @@
-#include <assert.h>  //Must be above everything else, or Cinder will eat asserts
+#include "peprassert.h" //Must be above everything else, or Cinder will eat asserts
 
 #include "geometry/GeometryUtils.h"
 #include "geometry/TriangleDetail.h"
@@ -50,7 +50,7 @@ void TriangleDetail::paintSphere(const PeprSphere& peprSphere, int minSegments, 
 }
 TriangleDetail::Polygon TriangleDetail::projectShapeToPolygon(const std::vector<PeprPoint3>& shape,
                                                               const PeprVector3& direction) {
-    assert(shape.size() >= 3);
+    P_ASSERT(shape.size() >= 3);
 
     // Create a polygon of the shape
     Polygon pgn;
@@ -79,7 +79,7 @@ TriangleDetail::Polygon TriangleDetail::projectShapeToPolygon(const std::vector<
         return Polygon();
     }
 
-    assert(pgn.is_counterclockwise_oriented());
+    P_ASSERT(pgn.is_counterclockwise_oriented());
 
     return pgn;
 }
@@ -112,9 +112,9 @@ std::pair<bool, bool> TriangleDetail::correctSharedVertices(TriangleDetail& othe
     }
 
     std::set<Point3> myPoints = findPointsOnEdge(sharedEdge);
-    assert(myPoints.size() >= 2);
+    P_ASSERT(myPoints.size() >= 2);
     std::set<Point3> theirPoints = other.findPointsOnEdge(sharedEdge);
-    assert(theirPoints.size() >= 2);
+    P_ASSERT(theirPoints.size() >= 2);
 
     const bool myPointsAdded = addMissingPoints(myPoints, theirPoints, sharedEdge);
     const bool otherPointsAdded = other.addMissingPoints(theirPoints, myPoints, sharedEdge);
@@ -161,7 +161,7 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
 
         for(PolygonWithHoles& polyWithHoles : polys) {
             Polygon& poly = polyWithHoles.outer_boundary();
-            assert(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
+            P_ASSERT(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
 
             for(size_t vertIdx = 0; vertIdx < poly.size();) {
                 auto vertIt = poly.vertices_circulator() + vertIdx;
@@ -186,7 +186,7 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
                             poly.insert(nextVertIt, *pointIt);
                         }
 
-                        assert(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
+                        P_ASSERT(GeometryUtils::is_valid_polygon_with_holes(polyWithHoles, Traits()));
 
                         std::swap(*pointIt, points2D.back());
                         points2D.pop_back();  // Remove the point from array
@@ -230,7 +230,7 @@ bool TriangleDetail::addMissingPoints(const std::set<Point3>& myPoints, const st
 }
 
 void TriangleDetail::simplifyPolygons() {
-    assert(!mColorChanged);  // Did you forget to updatePolygons first?
+    P_ASSERT(!mColorChanged);  // Did you forget to updatePolygons first?
 
     for(auto& colorSetIt : mColoredPolys) {
         if(colorSetIt.second.is_empty())
@@ -240,9 +240,9 @@ void TriangleDetail::simplifyPolygons() {
         std::vector<PolygonWithHoles> polys(colorSetIt.second.number_of_polygons_with_holes());
         colorSetIt.second.polygons_with_holes(polys.begin());
         for(PolygonWithHoles& poly : polys) {
-            assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+            P_ASSERT(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
             updateNeeded |= GeometryUtils::simplifyPolygon(poly.outer_boundary());
-            assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+            P_ASSERT(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
         }
 
         // Update this polygon set with simplified representation
@@ -283,13 +283,13 @@ TriangleDetail::Polygon pepr3d::TriangleDetail::polygonFromTriangle(const PeprTr
     pgn.push_back(b);
     pgn.push_back(c);
 
-    assert(!pgn.is_empty());
+    P_ASSERT(!pgn.is_empty());
 
     if(pgn.is_clockwise_oriented())
         pgn.reverse_orientation();
 
-    assert(pgn.is_counterclockwise_oriented());
-    assert(CGAL::is_valid_polygon(pgn, Traits()));
+    P_ASSERT(pgn.is_counterclockwise_oriented());
+    P_ASSERT(CGAL::is_valid_polygon(pgn, Traits()));
 
     return pgn;
 }
@@ -300,13 +300,13 @@ TriangleDetail::Polygon TriangleDetail::polygonFromTriangle(const Triangle2& tri
     pgn.push_back(tri.vertex(1));
     pgn.push_back(tri.vertex(2));
 
-    assert(!pgn.is_empty());
+    P_ASSERT(!pgn.is_empty());
 
     if(pgn.is_clockwise_oriented())
         pgn.reverse_orientation();
 
-    assert(pgn.is_counterclockwise_oriented());
-    assert(CGAL::is_valid_polygon(pgn, Traits()));
+    P_ASSERT(pgn.is_counterclockwise_oriented());
+    P_ASSERT(CGAL::is_valid_polygon(pgn, Traits()));
     return pgn;
 }
 
@@ -366,7 +366,7 @@ std::vector<std::pair<TriangleDetail::Point2, double>> TriangleDetail::getCircle
 }
 
 TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle, int minSegments) const {
-    assert(minSegments >= 3);
+    P_ASSERT(minSegments >= 3);
 
     // Scale the vertex count based on the size of the circle
     const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
@@ -374,7 +374,7 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle,
     // Bases for the points of the circle (cannot be exact, because Epeck does not support sqrt)
     const auto xBase = mOriginalPlane.base1() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base1().squared_length()));
     const auto yBase = mOriginalPlane.base2() / CGAL::sqrt(CGAL::to_double(mOriginalPlane.base2().squared_length()));
-    assert(xBase * yBase == 0);
+    P_ASSERT(xBase * yBase == 0);
 
     // We need a shared vertex on the boundary of triangle details
     // This vertex does not need to be exact, but needs to be the same from both triangles
@@ -405,10 +405,10 @@ TriangleDetail::Polygon TriangleDetail::polygonFromCircle(const Circle3& circle,
         sharedPointIt++;
     }
 
-    assert(pgn.is_simple());
-    assert(pgn.is_counterclockwise_oriented());
-    assert(pgn.is_convex());
-    assert(CGAL::is_valid_polygon(pgn, Traits()));
+    P_ASSERT(pgn.is_simple());
+    P_ASSERT(pgn.is_counterclockwise_oriented());
+    P_ASSERT(pgn.is_convex());
+    P_ASSERT(CGAL::is_valid_polygon(pgn, Traits()));
 
     return pgn;
 }
@@ -422,7 +422,7 @@ void TriangleDetail::addPolygon(const Polygon& poly, size_t color) {
         return;
     }
 
-    assert(CGAL::is_valid_polygon(poly, Traits()));
+    P_ASSERT(CGAL::is_valid_polygon(poly, Traits()));
     PolygonSet addedShape(poly);
     addPolygonSet(addedShape, color);
 }
@@ -471,7 +471,7 @@ TriangleDetail::Segment3 TriangleDetail::findSharedEdge(const TriangleDetail& ot
         }
     }
 
-    assert(pointsFound == 2);
+    P_ASSERT(pointsFound == 2);
     return Segment3(toExactK(commonPoints[0]), toExactK(commonPoints[1]));
 }
 
@@ -498,7 +498,7 @@ std::map<size_t, TriangleDetail::PolygonSet> TriangleDetail::createPolygonSetsFr
     for(const auto& it : polygonsByColor) {
         const std::vector<Polygon>& polygons = it.second;
 
-        assert(std::all_of(polygons.begin(), polygons.end(), [](const auto& poly) {
+        P_ASSERT(std::all_of(polygons.begin(), polygons.end(), [](const auto& poly) {
             return CGAL::is_valid_polygon(poly, Traits()) && poly.is_counterclockwise_oriented();
         }));
 
@@ -592,11 +592,11 @@ void TriangleDetail::addTrianglesFromPolygon(const PolygonWithHoles& poly, size_
         mTrianglesExact.emplace_back(std::move(exactTri), color, polygonId);
     }
 
-    assert(mTriangles.size() == mTrianglesToExactIdx.size());
+    P_ASSERT(mTriangles.size() == mTrianglesToExactIdx.size());
 }
 
 std::vector<TriangleDetail::Triangle2> TriangleDetail::triangulatePolygon(const PolygonWithHoles& poly) {
-    assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+    P_ASSERT(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
 
     std::vector<Triangle2> triangles;
 
@@ -649,12 +649,12 @@ void TriangleDetail::updateTrianglesFromPolygons() {
         }
     }
 
-    assert(mTriangles.size() == mTrianglesToExactIdx.size());
+    P_ASSERT(mTriangles.size() == mTrianglesToExactIdx.size());
 }
 
 void TriangleDetail::setColor(size_t detailIdx, size_t color) {
-    assert(detailIdx < mTriangles.size());
-    assert(mTriangles.size() == mTrianglesToExactIdx.size());
+    P_ASSERT(detailIdx < mTriangles.size());
+    P_ASSERT(mTriangles.size() == mTrianglesToExactIdx.size());
 
     if(mTriangles[detailIdx].getColor() != color) {
         // Update the inexact representation
@@ -662,7 +662,7 @@ void TriangleDetail::setColor(size_t detailIdx, size_t color) {
 
         // Update the exact representation
         const size_t exactTriIdx = mTrianglesToExactIdx[detailIdx];
-        assert(exactTriIdx < mTrianglesExact.size());
+        P_ASSERT(exactTriIdx < mTrianglesExact.size());
         mTrianglesExact[exactTriIdx].color = color;
 
         // Also changle all degenerate triangles of this polygon to this colour

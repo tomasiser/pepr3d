@@ -9,6 +9,9 @@
 //---------------------------------------
 
 #include "geometry/Triangle.h"
+#include "FontRasterizer.h"
+#include "GeometryUtils.h"
+#include "geometry/GlmSerialization.h"
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
@@ -32,9 +35,9 @@
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
-#include "FontRasterizer.h"
-#include "GeometryUtils.h"
-#include "geometry/GlmSerialization.h"
+
+#include "peprassert.h"
+
 
 #if defined(PEPR3D_COLLECT_DEBUG_DATA) || defined(_TEST_)
 #include <boost/variant.hpp>
@@ -429,7 +432,7 @@ class TriangleDetail {
         std::vector<PolygonWithHoles> polys(pSet.number_of_polygons_with_holes());
         pSet.polygons_with_holes(polys.begin());
         for(PolygonWithHoles& poly : polys) {
-            assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+            P_ASSERT(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
         }
 #endif
     }

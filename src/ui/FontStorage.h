@@ -15,19 +15,19 @@ class FontStorage {
    public:
     /// Returns ImFont* of the regular font.
     ImFont* getRegularFont() {
-        assert(mRegularFont != nullptr);
+        P_ASSERT(mRegularFont != nullptr);
         return mRegularFont;
     }
 
     /// Returns ImFont* of the regular icon font.
     ImFont* getRegularIconFont() {
-        assert(mRegularIcons != nullptr);
+        P_ASSERT(mRegularIcons != nullptr);
         return mRegularIcons;
     }
 
     /// Returns ImFont* of the small font (without icons).
     ImFont* getSmallFont() {
-        assert(mSmallFont != nullptr);
+        P_ASSERT(mSmallFont != nullptr);
         return mSmallFont;
     }
 };

@@ -24,7 +24,7 @@ void Geometry::loadState(const GeometryState& state) {
     mTriangleDetails = state.triangleDetails;
 
     mColorManager.replaceColors(state.colorMap.begin(), state.colorMap.end());
-    assert(!mColorManager.empty());
+    P_ASSERT(!mColorManager.empty());
 
     // TODO Improve: Can we reuse something?
 
@@ -34,7 +34,7 @@ void Geometry::loadState(const GeometryState& state) {
 
     // Tree needs to be rebuilt to match loaded triangles
     buildTree();
-    assert(mTree->size() == mTriangles.size());
+    P_ASSERT(mTree->size() == mTriangles.size());
 
     invalidateTemporaryDetailedData();
 }
@@ -44,13 +44,13 @@ void Geometry::loadState(const GeometryState& state) {
 void Geometry::recomputeFromData() {
     ::ThreadPool& threadPool = MainApplication::getThreadPool();
     // We already loaded the model
-    assert(mProgress->importRenderPercentage == 1.0f);
-    assert(mProgress->importComputePercentage == 1.0f);
+    P_ASSERT(mProgress->importRenderPercentage == 1.0f);
+    P_ASSERT(mProgress->importComputePercentage == 1.0f);
 
     /// Async build the polyhedron data structure
     auto buildPolyhedronFuture = threadPool.enqueue([this]() {
-        assert(!mPolyhedronData.vertices.empty());
-        assert(!mPolyhedronData.indices.empty());
+        P_ASSERT(!mPolyhedronData.vertices.empty());
+        P_ASSERT(!mPolyhedronData.indices.empty());
         buildPolyhedron();
     });
 
@@ -59,7 +59,7 @@ void Geometry::recomputeFromData() {
         mProgress->aabbTreePercentage = 0.0f;
 
         buildTree();
-        assert(mTree->size() == mTriangles.size());
+        P_ASSERT(mTree->size() == mTriangles.size());
 
         /// Get the new bounding box
         if(!mTree->empty()) {
@@ -123,7 +123,7 @@ void Geometry::loadNewGeometry(const std::string& fileName) {
 
         /// Get the generated color palette of the model, replace the current one
         mColorManager = modelImporter.getColorManager();
-        assert(!mColorManager.empty());
+        P_ASSERT(!mColorManager.empty());
 
         /// Do the computations in parallel
         recomputeFromData();
@@ -197,7 +197,7 @@ void Geometry::generateColorBuffer() {
         }
     }
 
-    assert(mOgl.colorBuffer.size() == mOgl.vertexBuffer.size());
+    P_ASSERT(mOgl.colorBuffer.size() == mOgl.vertexBuffer.size());
 }
 
 void Geometry::generateNormalBuffer() {
@@ -220,7 +220,7 @@ void Geometry::generateNormalBuffer() {
             mOgl.normalBuffer.push_back(normal);
         }
     }
-    assert(mOgl.normalBuffer.size() == mOgl.vertexBuffer.size());
+    P_ASSERT(mOgl.normalBuffer.size() == mOgl.vertexBuffer.size());
 }
 
 void Geometry::generateHighlightBuffer() {
@@ -264,7 +264,7 @@ void Geometry::generateHighlightBuffer() {
         }
     }
 
-    assert(mOgl.highlightMask.size() == mOgl.vertexBuffer.size());
+    P_ASSERT(mOgl.highlightMask.size() == mOgl.vertexBuffer.size());
 
     mOgl.info.didHighlightUpdate = true;
 }
@@ -304,8 +304,8 @@ std::optional<size_t> Geometry::intersectMesh(const ci::Ray& ray) const {
         // The intersected triangle
         const DetailedTriangleId triangleId = boost::get<DataTriangleAABBPrimitive::Id>(intersection->second).second;
 
-        assert(triangleId.getBaseId() < mTriangles.size());
-        assert(!triangleId.getDetailId());  // We are intersecting base mesh, there should be no detail
+        P_ASSERT(triangleId.getBaseId() < mTriangles.size());
+        P_ASSERT(!triangleId.getDetailId());  // We are intersecting base mesh, there should be no detail
 
         return triangleId.getBaseId();
     }
@@ -337,7 +337,7 @@ std::optional<DetailedTriangleId> Geometry::intersectDetailedMesh(const ci::Ray&
 
     if(!isTemporaryDetailedDataValid()) {
         updateTemporaryDetailedData();
-        assert(mTreeDetailed);
+        P_ASSERT(mTreeDetailed);
     }
 
     const glm::vec3 source = ray.getOrigin();
@@ -352,12 +352,12 @@ std::optional<DetailedTriangleId> Geometry::intersectDetailedMesh(const ci::Ray&
         // The intersected triangle
         const DetailedTriangleId triangleId = boost::get<DataTriangleAABBPrimitive::Id>(intersection->second).second;
 
-        assert(triangleId.getBaseId() < mTriangles.size());
-        assert(!(triangleId.getDetailId() && isSimpleTriangle(triangleId.getBaseId())));
+        P_ASSERT(triangleId.getBaseId() < mTriangles.size());
+        P_ASSERT(!(triangleId.getDetailId() && isSimpleTriangle(triangleId.getBaseId())));
 
         if(!isSimpleTriangle(triangleId.getBaseId())) {
-            assert(triangleId.getDetailId());
-            assert(triangleId.getDetailId() < getTriangleDetailCount(triangleId.getBaseId()));
+            P_ASSERT(triangleId.getDetailId());
+            P_ASSERT(triangleId.getDetailId() < getTriangleDetailCount(triangleId.getBaseId()));
         }
 
         return triangleId;
@@ -603,7 +603,7 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
             const size_t vertexPosition = triangleIndex * 3;
 
             // Change all vertices of the triangle to the same new color
-            assert(vertexPosition + 2 < mOgl.colorBuffer.size());
+            P_ASSERT(vertexPosition + 2 < mOgl.colorBuffer.size());
 
             ColorIndex newColorIndex = static_cast<ColorIndex>(newColor);
             mOgl.colorBuffer[vertexPosition] = newColorIndex;
@@ -616,18 +616,18 @@ void Geometry::setTriangleColor(const size_t triangleIndex, const size_t newColo
     }
 
     /// Change it in the triangle soup
-    assert(triangleIndex < mTriangles.size());
+    P_ASSERT(triangleIndex < mTriangles.size());
     mTriangles[triangleIndex].setColor(newColor);
 }
 
 void Geometry::setTriangleColor(const DetailedTriangleId triangleId, const size_t newColor) {
     const size_t baseId = triangleId.getBaseId();
-    assert(baseId < mTriangles.size());
+    P_ASSERT(baseId < mTriangles.size());
 
     if(triangleId.getDetailId()) {
         const size_t detailId = *triangleId.getDetailId();
-        assert(!isSimpleTriangle(baseId));
-        assert(detailId < getTriangleDetailCount(baseId));
+        P_ASSERT(!isSimpleTriangle(baseId));
+        P_ASSERT(detailId < getTriangleDetailCount(baseId));
 
         TriangleDetail* detail = getTriangleDetail(baseId);
         detail->setColor(detailId, newColor);
@@ -677,7 +677,7 @@ void Geometry::buildPolyhedron() {
             meshHasNull = true;
             break;
         } else {
-            assert(f != PolyhedronData::Mesh::null_face());
+            P_ASSERT(f != PolyhedronData::Mesh::null_face());
             mPolyhedronData.mFaceDescs.push_back(f);
         }
     }
@@ -693,7 +693,7 @@ void Geometry::buildPolyhedron() {
     boost::tie(mPolyhedronData.mIdMap, created) =
         mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, size_t>(
             "f:idOfEachTriangle", std::numeric_limits<size_t>::max() - 1);
-    assert(created);
+    P_ASSERT(created);
 
     // Add the IDs
     size_t i = 0;
@@ -717,7 +717,7 @@ void Geometry::buildDetailedTree() {
         } else {
             // Insert all detail triangles for this tri
             const TriangleDetail* detail = getTriangleDetail(triangleIdx);
-            assert(detail);
+            P_ASSERT(detail);
             const auto& detailTriangles = detail->getTriangles();
             for(size_t detailIdx = 0; detailIdx < detailTriangles.size(); detailIdx++) {
                 mTreeDetailed->insert(DataTriangleAABBPrimitive(this, DetailedTriangleId(triangleIdx, detailIdx)));
@@ -753,7 +753,7 @@ void Geometry::buildDetailedMesh() {
     std::unordered_map<glm::vec3, PolyhedronData::vertex_descriptor, decltype(hashFunc)> ptToVertexDesc(
         3 * mTriangles.size(), hashFunc);
 
-    assert(created);
+    P_ASSERT(created);
     std::vector<PolyhedronData::vertex_descriptor> vertDescs;
     vertDescs.reserve(mPolyhedronData.vertices.size());
 
@@ -776,7 +776,7 @@ void Geometry::buildDetailedMesh() {
                 mMeshDetailed.reset();
                 return;
             } else {
-                assert(f != PolyhedronData::Mesh::null_face());
+                P_ASSERT(f != PolyhedronData::Mesh::null_face());
                 mMeshDetailedFaceDescs[DetailedTriangleId(i)] = f;
                 mMeshDetailedIdMap[f] = DetailedTriangleId(i);
             }
@@ -792,7 +792,7 @@ void Geometry::buildDetailedMesh() {
         for(size_t detailTriangleIdx = 0; detailTriangleIdx < detailTriangles.size(); detailTriangleIdx++) {
             const DataTriangle& detail = detailTriangles[detailTriangleIdx];
 
-            assert(!detail.getTri().is_degenerate());
+            P_ASSERT(!detail.getTri().is_degenerate());
 
             // Vertex descriptors of current detail triangle
             std::array<PolyhedronData::vertex_descriptor, 3> vertDescriptors;
@@ -802,7 +802,7 @@ void Geometry::buildDetailedMesh() {
                 auto it = ptToVertexDesc.find(detail.getVertex(i));
                 if(it == ptToVertexDesc.end()) {
                     auto vertexDesc = mMeshDetailed->add_vertex(detail.getTri().vertex(i));
-                    assert(vertexDesc != PolyhedronData::Mesh::null_vertex());
+                    P_ASSERT(vertexDesc != PolyhedronData::Mesh::null_vertex());
                     it = ptToVertexDesc.insert(std::make_pair(detail.getVertex(i), vertexDesc)).first;
                 }
 
@@ -810,7 +810,7 @@ void Geometry::buildDetailedMesh() {
             }
 
             auto faceDesc = mMeshDetailed->add_face(vertDescriptors);
-            assert(faceDesc != PolyhedronData::Mesh::null_face());
+            P_ASSERT(faceDesc != PolyhedronData::Mesh::null_face());
             if(faceDesc != PolyhedronData::Mesh::null_face()) {
                 mMeshDetailedFaceDescs.insert(
                     std::make_pair(DetailedTriangleId(triangleId, detailTriangleIdx), faceDesc));
@@ -914,7 +914,7 @@ void Geometry::invalidateTemporaryDetailedData() {
 std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
     const auto& faceDescriptors = mPolyhedronData.mFaceDescs;
     const auto& mesh = mPolyhedronData.mMesh;
-    assert(triIndex < faceDescriptors.size());
+    P_ASSERT(triIndex < faceDescriptors.size());
     std::array<int, 3> returnValue = {-1, -1, -1};
     const PolyhedronData::face_descriptor face = faceDescriptors[triIndex];
     const auto edge = mesh.halfedge(face);
@@ -925,22 +925,22 @@ std::array<int, 3> Geometry::gatherNeighbours(const size_t triIndex) const {
         if(oppositeEdge.is_valid() && !mesh.is_border(oppositeEdge)) {
             const PolyhedronData::Mesh::Face_index neighbourFace = mesh.face(oppositeEdge);
             const size_t neighbourFaceId = mPolyhedronData.mIdMap[neighbourFace];
-            assert(neighbourFaceId < mTriangles.size());
+            P_ASSERT(neighbourFaceId < mTriangles.size());
             returnValue[i] = static_cast<int>(neighbourFaceId);
         }
 
         itEdge = mesh.next(itEdge);
     }
-    assert(edge == itEdge);
+    P_ASSERT(edge == itEdge);
 
     return returnValue;
 }
 std::array<std::optional<DetailedTriangleId>, 3> Geometry::gatherNeighbours(const DetailedTriangleId triId) const {
-    assert(mMeshDetailed);
+    P_ASSERT(mMeshDetailed);
 
     const auto& faceDescriptors = mMeshDetailedFaceDescs;
     const auto& mesh = *mMeshDetailed;
-    assert(faceDescriptors.find(triId) != faceDescriptors.end());
+    P_ASSERT(faceDescriptors.find(triId) != faceDescriptors.end());
     std::array<std::optional<DetailedTriangleId>, 3> returnValue = {};
     const PolyhedronData::face_descriptor face = faceDescriptors.find(triId)->second;
     const auto edge = mesh.halfedge(face);
@@ -956,7 +956,7 @@ std::array<std::optional<DetailedTriangleId>, 3> Geometry::gatherNeighbours(cons
 
         itEdge = mesh.next(itEdge);
     }
-    assert(edge == itEdge);
+    P_ASSERT(edge == itEdge);
 
     return returnValue;
 }
@@ -969,7 +969,7 @@ void Geometry::computeSdf() {
     bool created;
     boost::tie(mPolyhedronData.sdf_property_map, created) =
         mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, double>("f:sdf");
-    assert(created);
+    P_ASSERT(created);
 
     if(created) {
         std::pair<double, double> minMaxSdf;
@@ -1010,7 +1010,7 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
     boost::tie(segment_property_map, created) =
         mPolyhedronData.mMesh.add_property_map<PolyhedronData::face_descriptor, std::size_t>("f:sid");
 
-    assert(created);
+    P_ASSERT(created);
 
     if(created) {
         std::size_t numberOfSegments = std::numeric_limits<size_t>::min();
@@ -1035,8 +1035,8 @@ size_t Geometry::segment(const int numberOfClusters, const float smoothingLambda
         for(const auto& face : mPolyhedronData.mFaceDescs) {
             const size_t id = mPolyhedronData.mIdMap[face];
             const size_t color = segment_property_map[face];
-            assert(id < mTriangles.size());
-            assert(color < numberOfSegments);
+            P_ASSERT(id < mTriangles.size());
+            P_ASSERT(color < numberOfSegments);
             triangleToSegmentMap.insert({id, color});
             segmentToTriangleIds[color].push_back(id);
         }

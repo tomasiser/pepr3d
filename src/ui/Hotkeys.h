@@ -7,6 +7,7 @@
 #include "cinder/app/KeyEvent.h"
 
 #include <cereal/types/unordered_map.hpp>
+#include "peprassert.h"
 
 namespace pepr3d {
 
@@ -249,7 +250,7 @@ class Hotkeys {
         for(const auto& keyToAction : mKeysToActions) {
             mActionsToKeys.insert({keyToAction.second, keyToAction.first});
         }
-        assert(mActionsToKeys.size() == mKeysToActions.size());
+        P_ASSERT(mActionsToKeys.size() == mKeysToActions.size());
     }
 };
 

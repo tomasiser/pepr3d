@@ -19,6 +19,8 @@
 #include <optional>
 #include <vector>
 
+#include "peprassert.h"
+
 namespace pepr3d {
 class DataTriangle;
 
@@ -70,8 +72,8 @@ class GeometryUtils {
     /// Get equidistant points on circle
     static std::vector<DataTriangle::K::Point_3> pointsOnCircle(const DataTriangle::K::Circle_3& circle, int segments) {
         using Point3 = DataTriangle::K::Point_3;
-        assert(segments >= 3);
-        assert(!circle.is_degenerate());
+        P_ASSERT(segments >= 3);
+        P_ASSERT(!circle.is_degenerate());
 
         auto plane = circle.supporting_plane();
         const double radius = sqrt(CGAL::to_double(circle.squared_radius()));

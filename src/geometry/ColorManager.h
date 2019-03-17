@@ -5,6 +5,7 @@
 #include <random>
 #include <vector>
 #include "cinder/Color.h"
+#include "peprassert.h"
 #include "glm/glm.hpp"
 
 #define PEPR3D_MAX_PALETTE_COLORS 16
@@ -31,7 +32,7 @@ class ColorManager {
         mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0xEB5757)));
         mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0xF2994A)));
         mColorMap.push_back(static_cast<glm::vec4>(ci::ColorA::hex(0x292E33)));
-        assert(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
+        P_ASSERT(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
     }
 
     ColorManager(const ColorMap::const_iterator start, const ColorMap::const_iterator end) {
@@ -44,7 +45,7 @@ class ColorManager {
 
     /// Return the i-th color
     glm::vec4 getColor(const size_t i) const {
-        assert(i < mColorMap.size());
+        P_ASSERT(i < mColorMap.size());
         return mColorMap[i];
     }
 
@@ -68,12 +69,12 @@ class ColorManager {
         if(size() < PEPR3D_MAX_PALETTE_COLORS) {
             mColorMap.push_back(newColor);
         }
-        assert(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
+        P_ASSERT(mColorMap.size() <= PEPR3D_MAX_PALETTE_COLORS);
     }
 
     /// Set the i-th color to a new color
     void setColor(const size_t i, const glm::vec4 newColor) {
-        assert(i < mColorMap.size());
+        P_ASSERT(i < mColorMap.size());
         mColorMap[i] = newColor;
     }
 
