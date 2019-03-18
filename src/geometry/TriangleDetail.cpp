@@ -96,9 +96,12 @@ void TriangleDetail::paintShape(const std::vector<PeprTriangle>& triangles, cons
         std::vector<PeprPoint3> points = {PeprPoint3(tri.vertex(0).x(), tri.vertex(0).y(), tri.vertex(0).z()),
                                           PeprPoint3(tri.vertex(1).x(), tri.vertex(1).y(), tri.vertex(1).z()),
                                           PeprPoint3(tri.vertex(2).x(), tri.vertex(2).y(), tri.vertex(2).z())};
-        polygons.emplace_back(projectShapeToPolygon(points, direction));
+        Polygon pgn = projectShapeToPolygon(points, direction);
+        // Add only if intersects the bounds
+        if(trianglePolygonsDoIntersect(pgn, mBounds)) {
+            polygons.emplace_back(std::move(pgn));
+        }
     }
-
     PolygonSet pSet{};
     pSet.join(polygons.begin(), polygons.end());
 

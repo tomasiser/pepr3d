@@ -376,6 +376,17 @@ class TriangleDetail {
 
     Polygon projectShapeToPolygon(const std::vector<PeprPoint3>& shape, const PeprVector3& direction);
 
+    /// Do two polygons that are triangles intersect
+    /// This is faster than checking an intersection between polygons of any size
+    static bool trianglePolygonsDoIntersect(const Polygon& first, const Polygon& second) {
+        P_ASSERT(first.size() == 3);
+        P_ASSERT(second.size() == 3);
+        const Triangle2 firstTri(first.vertex(0), first.vertex(1), first.vertex(2));
+        const Triangle2 secondTri(second.vertex(0), second.vertex(1), second.vertex(2));
+
+        return CGAL::do_intersect(firstTri, secondTri);
+    }
+
 #ifdef _TEST_
    public:  // Testing requires access to these methods
 #endif
