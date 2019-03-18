@@ -6,10 +6,6 @@
  *  The original assert header sometimes straight up terminated program without any information on what happened.
  */
 
-// Lot of cinder headers include <assert> or its variant
-// By undefining assert here we try to enforce ussage of P_ASSERT in our codebase
-#undef assert
-
 #undef P_ASSERT
 
 #if defined(NDEBUG) && !defined(_TEST_)
