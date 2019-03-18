@@ -3,7 +3,7 @@
 
 namespace pepr3d {
 
-/// Command that paints a stroke with a brush
+/// Command that paints a text using orthogonal projection
 class CmdPaintText : public CommandBase<Geometry> {
    public:
     using Triangle = DataTriangle::Triangle;

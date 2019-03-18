@@ -37,7 +37,11 @@ class TextEditor : public Tool {
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void drawToModelView(ModelView& modelView) override;
 
-    virtual void onToolSelect(ModelView& modelView) override {}
+    virtual void onToolSelect(ModelView& modelView) override {
+        if(!mTriangulatedText.empty() && mSelectedIntersection) {
+            updateTextPreview();
+        }
+    }
 
     virtual void onToolDeselect(ModelView& modelView) override {
         modelView.resetPreview();

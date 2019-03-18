@@ -37,26 +37,30 @@ void TextEditor::createPreviewMesh() const {
 }
 
 std::vector<std::vector<FontRasterizer::Tri>> TextEditor::triangulateText() const {
-    if(mFontPath == "") {
-        throw std::runtime_error("Invalid font specified");
+    try {
+        if(mFontPath == "") {
+            return {};
+        }
+
+        FontRasterizer fontTriangulate(mFontPath);
+        P_ASSERT(fontTriangulate.isValid());
+
+        std::vector<std::vector<pepr3d::FontRasterizer::Tri>> result =
+            fontTriangulate.rasterizeText(mText, mFontSize, mBezierSteps);
+
+        CI_LOG_I("Text triangulated, " + std::to_string(result.size()) + " letters.");
+        return result;
+    } catch(const std::exception& e) {
+        CI_LOG_E(e.what());
+        return {};
     }
-
-    FontRasterizer fontTriangulate(mFontPath);
-    assert(fontTriangulate.isValid());
-
-    std::vector<std::vector<pepr3d::FontRasterizer::Tri>> result =
-        fontTriangulate.rasterizeText(mText, mFontSize, mBezierSteps);
-
-    CI_LOG_I("Text triangulated, " + std::to_string(result.size()) + " letters.");
-
-    return result;
 }
 
 void TextEditor::rotateText(std::vector<std::vector<FontRasterizer::Tri>>& text) {
     if(text.empty())
         return;
 
-    assert(mSelectedIntersection);
+    P_ASSERT(mSelectedIntersection);
     Geometry* geometry = mApplication.getCurrentGeometry();
 
     const glm::vec3 direction = glm::normalize(-geometry->getTriangle(*mSelectedIntersection).getNormal());
@@ -82,6 +86,10 @@ void TextEditor::generateAndUpdate() {
 
 void TextEditor::updateTextPreview() {
     mRenderedText = mTriangulatedText;
+    if(!mSelectedIntersection) {
+        return;
+    }
+
     rescaleText(mRenderedText);
     rotateText(mRenderedText);
     createPreviewMesh();
@@ -145,7 +153,7 @@ void TextEditor::rescaleText(std::vector<std::vector<FontRasterizer::Tri>>& resu
 }
 
 glm::vec3 TextEditor::getPlaneBaseVector(const glm::vec3& direction) const {
-    assert(glm::abs(glm::length(direction) - 1) < 0.01);  // Is normalized
+    P_ASSERT(glm::abs(glm::length(direction) - 1) < 0.01);  // Is normalized
 
     const glm::vec3 upVector(0.f, 0.f, 1.f);
 
@@ -163,7 +171,7 @@ glm::vec3 TextEditor::getPlaneBaseVector(const glm::vec3& direction) const {
 }
 
 glm::vec3 TextEditor::getPreviewOrigin(const glm::vec3& direction) const {
-    assert(mSelectedIntersection);
+    P_ASSERT(mSelectedIntersection);
 
     Geometry* geometry = mApplication.getCurrentGeometry();
     const float distFromModel = TEXT_DISTANCE_SCALE * mApplication.getModelView().getMaxSize();
@@ -176,6 +184,8 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
     sidePane.drawSeparator();
 
     sidePane.drawText("Font: " + mFont);
+    sidePane.drawTooltipOnHover(mFontPath);
+
     if(sidePane.drawButton("Load new font")) {
         std::vector<std::string> extensions = {"ttf"};
 
@@ -191,30 +201,37 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
     if(sidePane.drawIntDragger("Font size", mFontSize, 1, 10, 200, "%i", 50.f)) {
         generateAndUpdate();
     }
+    sidePane.drawTooltipOnHover("Base font size in font-units.");
 
     if(sidePane.drawIntDragger("Bezier steps", mBezierSteps, 1, 1, 8, "%i", 50.f)) {
         generateAndUpdate();
     }
+    sidePane.drawTooltipOnHover("\"Smoothness\" of text curves. High number of steps will increase painting times.");
 
     if(ImGui::InputText("Text", &mText)) {
         if(mSelectedIntersection) {
             generateAndUpdate();
         }
     }
+    sidePane.drawTooltipOnHover("Click to edit");
 
     // -- Preview settings --
 
-    if(sidePane.drawFloatDragger("Font scale", mFontScale, .01f, 0.01f, 1.f, "%.02f", 50.f)) {
+    if(sidePane.drawFloatDragger("Text scale", mFontScale, .01f, 0.01f, 1.f, "%.02f", 50.f)) {
         updateTextPreview();
     }
+    sidePane.drawTooltipOnHover("Text scale.");
 
     if(sidePane.drawFloatDragger("Text rotation", mTextRotation, 1.f, 0.f, 360.f, "%1.f", 50.f)) {
         updateTextPreview();
     }
+    sidePane.drawTooltipOnHover("Text rotation in degrees.");
 
     if(sidePane.drawButton("Paint")) {
         paintText();
     }
+    sidePane.drawTooltipOnHover(
+        "Project the text preview onto the mesh, using orthogonal projection along the normal axis.");
 
     sidePane.drawSeparator();
 
@@ -241,7 +258,7 @@ void TextEditor::paintText() {
         return;
 
     const Geometry* geometry = mApplication.getCurrentGeometry();
-    assert(geometry);
+    P_ASSERT(geometry);
     const size_t color = geometry->getColorManager().getActiveColorIndex();
     ci::Ray ray = mSelectedRay;
     ray.setDirection(-geometry->getTriangle(*mSelectedIntersection).getNormal());
