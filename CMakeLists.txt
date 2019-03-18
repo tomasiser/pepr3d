@@ -150,6 +150,7 @@ target_include_directories(pepr3dtests
                                    ${APP_PATH}/lib/FTGL
                                    ${APP_PATH}/lib/peprimgui
                                    ${APP_PATH}/lib/imgui
+                                   ${APP_PATH}/lib/imgui/misc/cpp
                                    ${APP_PATH}/lib/cinder/include
                                    ${APP_PATH}/lib/googletest/googletest/include)
 target_include_directories(pepr3dtests PRIVATE ${ASSIMP_INCLUDE_DIR})
