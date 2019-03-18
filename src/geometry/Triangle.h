@@ -13,6 +13,9 @@ namespace pepr3d {
 class DataTriangle {
    public:
     // Use spherical kernel otherwise some CGAL operations on spheres will assert fail
+    // IMPORTANT:
+    // Even though this kernel is based on Simple_cartesian, it still uses ref counting
+    // Therefore even making copies of CGAL objects is not safe in multithreaded environment!
     using K = CGAL::Spherical_kernel_3<CGAL::Simple_cartesian<double>, CGAL::Algebraic_kernel_for_spheres_2_3<double>>;
     using Point = K::Point_3;
     using Triangle = K::Triangle_3;

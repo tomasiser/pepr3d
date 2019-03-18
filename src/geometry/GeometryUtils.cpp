@@ -56,7 +56,8 @@ std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(
 
     std::vector<Point3> spheres;
     for(const Point3 &point : shape) {
-        spheres.emplace_back(point);
+        // Explicitly construct by coordinates, to be safe in multithreaded environment
+        spheres.emplace_back(point.x(), point.y(), point.z());
     }
 
     // Using min sphere of spheres is supposedly faster than min sphere
@@ -77,9 +78,10 @@ std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(
 
     std::vector<Point3> spheres;
     for(const DataTriangle::Triangle &tri : triangles) {
-        spheres.emplace_back(tri.vertex(0));
-        spheres.emplace_back(tri.vertex(1));
-        spheres.emplace_back(tri.vertex(2));
+        // Explicitly construct by coordinates, to be safe in multithreaded environment
+        spheres.emplace_back(tri.vertex(0).x(), tri.vertex(0).y(), tri.vertex(0).z());
+        spheres.emplace_back(tri.vertex(1).x(), tri.vertex(1).y(), tri.vertex(1).z());
+        spheres.emplace_back(tri.vertex(2).x(), tri.vertex(2).y(), tri.vertex(2).z());
     }
 
     // Using min sphere of spheres is supposedly faster than min sphere
@@ -97,7 +99,9 @@ std::pair<DataTriangle::K::Point_3, double> GeometryUtils::getBoundingSphere(con
     using Traits = CGAL::Min_sphere_of_points_d_traits_3<K, K::FT>;
     using MinSphere = CGAL::Min_sphere_of_spheres_d<Traits>;
 
-    std::array<Point3, 3> spheres{triangle.vertex(0), triangle.vertex(1), triangle.vertex(2)};
+    std::array<Point3, 3> spheres{Point3(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z()),
+                                  Point3(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z()),
+                                  Point3(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z())};
 
     // Using min sphere of spheres is supposedly faster than min sphere
     MinSphere ms(spheres.begin(), spheres.end());

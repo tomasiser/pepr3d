@@ -47,7 +47,7 @@ void LiveDebug::drawToSidePane(SidePane& sidePane) {
         mIntegerManager.execute(std::make_unique<AddValueCommand>(addedValue));
     }
     sidePane.drawSeparator();
-    sidePane.drawFloatDragger("Radius sq", mSquaredRadius, 0.01, 0.1, 10, "%f", 70.f);
+    sidePane.drawFloatDragger("Radius sq", mSquaredRadius, 0.01f, 0.1f, 10, "%f", 70.f);
 
     ImGui::EndChild();
 }
@@ -68,9 +68,9 @@ void LiveDebug::drawToModelView(ModelView& modelView) {
 
     for(size_t tri : mTrianglesInRadius) {
         const auto& triangle = mApplication.getCurrentGeometry()->getTriangle(tri);
-        modelView.drawLine(triangle.getVertex(0), triangle.getVertex(1), ci::Color(1.0f, 0.f, 0.f), 2);
-        modelView.drawLine(triangle.getVertex(1), triangle.getVertex(2), ci::Color(1.0f, 0.f, 0.f), 2);
-        modelView.drawLine(triangle.getVertex(2), triangle.getVertex(0), ci::Color(1.0f, 0.f, 0.f), 2);
+        modelView.drawLine(triangle.getVertex(0), triangle.getVertex(1), ci::Color(1.0f, 0.f, 0.f), 2.f);
+        modelView.drawLine(triangle.getVertex(1), triangle.getVertex(2), ci::Color(1.0f, 0.f, 0.f), 2.f);
+        modelView.drawLine(triangle.getVertex(2), triangle.getVertex(0), ci::Color(1.0f, 0.f, 0.f), 2.f);
     }
 }
 

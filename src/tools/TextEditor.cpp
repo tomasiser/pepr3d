@@ -59,7 +59,7 @@ void TextEditor::rotateText(std::vector<std::vector<FontRasterizer::Tri>>& text)
     assert(mSelectedIntersection);
     Geometry* geometry = mApplication.getCurrentGeometry();
 
-    const glm::vec3 direction = -geometry->getTriangle(*mSelectedIntersection).getNormal();
+    const glm::vec3 direction = glm::normalize(-geometry->getTriangle(*mSelectedIntersection).getNormal());
     const glm::vec3 origin = getPreviewOrigin(direction);
     const glm::vec3 planeBase1 = getPlaneBaseVector(direction);
     const glm::vec3 planeBase2 = glm::cross(planeBase1, direction);
@@ -159,7 +159,7 @@ glm::vec3 TextEditor::getPlaneBaseVector(const glm::vec3& direction) const {
     }
 
     const auto baseVector = glm::cross(direction, otherDirection);
-    return glm::rotate(baseVector, glm::radians(mTextRotation), direction);
+    return glm::normalize(glm::rotate(baseVector, glm::radians(mTextRotation), direction));
 }
 
 glm::vec3 TextEditor::getPreviewOrigin(const glm::vec3& direction) const {

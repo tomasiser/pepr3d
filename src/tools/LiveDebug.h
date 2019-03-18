@@ -43,7 +43,7 @@ class LiveDebug : public Tool {
 
     std::vector<std::size_t> mTrianglesInRadius;
 
-    float mSquaredRadius = 0.1;
+    float mSquaredRadius = 0.1f;
 };
 
 }  // namespace pepr3d

@@ -520,11 +520,17 @@ void Geometry::paintWithShape(const ci::Ray& ray, const std::vector<DataTriangle
     }
 
     // Update in parallel
-    auto& threadPool = MainApplication::getThreadPool();
-    threadPool.parallel_for(detailsToUpdate.begin(), detailsToUpdate.end(),
-                            [this, &triangles, color, &rayLine](size_t triIdx) {
-                                getTriangleDetail(triIdx)->paintShape(triangles, rayLine.direction().vector(), color);
-                            });
+    try {
+        auto& threadPool = MainApplication::getThreadPool();
+        threadPool.parallel_for(
+            detailsToUpdate.begin(), detailsToUpdate.end(), [this, &triangles, color, &rayLine](size_t triIdx) {
+                getTriangleDetail(triIdx)->paintShape(triangles, rayLine.direction().vector(), color);
+            });
+
+    } catch(const std::exception& e) {
+        CI_LOG_E(e.what());
+        throw;
+    }
 
     mOgl.isDirty = true;
 }
@@ -570,11 +576,16 @@ void Geometry::paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& sett
     const Sphere brushShape(Point3(intersectionPoint.x, intersectionPoint.y, intersectionPoint.z),
                             settings.size * settings.size);
 
-    auto& threadPool = MainApplication::getThreadPool();
-    threadPool.parallel_for(detailsToUpdate.begin(), detailsToUpdate.end(),
-                            [this, &brushShape, &settings](size_t triIdx) {
-                                getTriangleDetail(triIdx)->paintSphere(brushShape, settings.segments, settings.color);
-                            });
+    try {
+        auto& threadPool = MainApplication::getThreadPool();
+        threadPool.parallel_for(
+            detailsToUpdate.begin(), detailsToUpdate.end(), [this, &brushShape, &settings](size_t triIdx) {
+                getTriangleDetail(triIdx)->paintSphere(brushShape, settings.segments, settings.color);
+            });
+    } catch(const std::exception& e) {
+        CI_LOG_E(e.what());
+        throw;
+    }
 
     mOgl.isDirty = true;
 }

@@ -70,16 +70,16 @@ TriangleDetail::Polygon TriangleDetail::projectShapeToPolygon(const std::vector<
         return {};
     }
 
+    if(!pgn.is_simple()) {
+        CI_LOG_E("Polygon not simple!");
+        return {};
+    }
+
     if(pgn.is_clockwise_oriented()) {
         pgn.reverse_orientation();
     }
 
-    if(!CGAL::is_valid_polygon(pgn, Traits())) {
-        CI_LOG_E("Attempted to paint with invalid polygon");
-        return Polygon();
-    }
-
-    P_ASSERT(pgn.is_counterclockwise_oriented());
+    P_ASSERT(CGAL::is_valid_polygon(pgn, Traits()));
 
     return pgn;
 }
@@ -92,7 +92,10 @@ void TriangleDetail::paintShape(const std::vector<PeprTriangle>& triangles, cons
     std::vector<Polygon> polygons;
     polygons.reserve(triangles.size());
     for(const auto& tri : triangles) {
-        std::vector<PeprPoint3> points = {tri.vertex(0), tri.vertex(1), tri.vertex(2)};
+        // Construct new points instead of a copy (to be safe in multithreaded environment)
+        std::vector<PeprPoint3> points = {PeprPoint3(tri.vertex(0).x(), tri.vertex(0).y(), tri.vertex(0).z()),
+                                          PeprPoint3(tri.vertex(1).x(), tri.vertex(1).y(), tri.vertex(1).z()),
+                                          PeprPoint3(tri.vertex(2).x(), tri.vertex(2).y(), tri.vertex(2).z())};
         polygons.emplace_back(projectShapeToPolygon(points, direction));
     }
 
