@@ -108,6 +108,8 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
             cancel();
         }
         sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
+
+        sidePane.drawSeparator();
     }
 }
 

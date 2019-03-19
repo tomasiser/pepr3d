@@ -460,7 +460,14 @@ void PeprImGui::render() {
 
     mTimer.start();
     ImGui::Render();
+    if(mFramebuffer != nullptr) {
+        mFramebuffer->bindFramebuffer();
+    }
     mRenderer->render(ImGui::GetDrawData());
+    if(mFramebuffer != nullptr) {
+        mFramebuffer->unbindFramebuffer();
+        ci::gl::draw(mFramebuffer->getTexture2d(GL_COLOR_ATTACHMENT0));
+    }
     mNewFrame = false;
     App::get()->dispatchAsync([this]() { newFrameGuard(); });
 }

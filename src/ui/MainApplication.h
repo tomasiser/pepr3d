@@ -250,20 +250,22 @@ class MainApplication : public cinder::app::App {
         return loadAsset(relativePath);
     }
 
-    // Schedules `operation` to be executed in a separate thread in a thread pool.
-    // If `showIndicator` is true, displays a progress indicator, which disables user interaction with the application.
-    // After the `operation` is finished, `postOperation` is executed in the main thread of the application.
-    // Finally, the progress indicator is hidden.
+    /// Schedules `operation` to be executed in a separate thread in a thread pool.
+    /// If `showIndicator` is true, displays a progress indicator, which disables user interaction with the application.
+    /// After the `operation` is finished, `postOperation` is executed in the main thread of the application.
+    /// Finally, the progress indicator is hidden.
     template <typename OperationFunc, typename PostOperationFunc>
     void enqueueSlowOperation(OperationFunc operation, PostOperationFunc postOperation, bool showIndicator = true) {
         if(showIndicator) {
             mProgressIndicator.setGeometryInProgress(mGeometry);
         }
-        sThreadPool.enqueue([operation, postOperation, this]() {
-            operation();
-            dispatchAsync([postOperation, this]() {
-                postOperation();
-                mProgressIndicator.setGeometryInProgress(nullptr);
+        dispatchAsync([operation, postOperation, this]() {
+            sThreadPool.enqueue([operation, postOperation, this]() {
+                operation();
+                dispatchAsync([postOperation, this]() {
+                    postOperation();
+                    mProgressIndicator.setGeometryInProgress(nullptr);
+                });
             });
         });
     }
@@ -307,6 +309,9 @@ class MainApplication : public cinder::app::App {
 
     bool mShouldSkipDraw = false;
     bool mIsFocused = true;
+
+    ci::gl::FboRef mFramebuffer;  // we render Toolbar, ModelView, and SidePane to a framebuffer so that we can use it
+                                  // in multithreading
 
     Hotkeys mHotkeys;
 

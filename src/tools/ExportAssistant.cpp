@@ -183,6 +183,8 @@ void ExportAssistant::drawToSidePane(SidePane& sidePane) {
         sidePane.drawTooltipOnHover("Save the exported model in separate files using the options above.");
     }
 
+    sidePane.drawSeparator();
+
     mIsFirstFrame = false;
 }
 

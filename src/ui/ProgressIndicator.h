@@ -22,6 +22,10 @@ class ProgressIndicator {
         mGeometry = geometry;
     }
 
+    bool isInProgress() {
+        return mGeometry != nullptr;
+    }
+
     /// Renders the progress indicator.
     void draw();
 

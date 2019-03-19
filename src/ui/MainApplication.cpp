@@ -52,7 +52,9 @@ MainApplication::MainApplication() : mFontStorage{}, mToolbar(*this), mSidePane(
 void MainApplication::setup() {
     setupLogging();
 
-    setWindowSize(1024, 614);
+    const glm::ivec2 initialResolution(1024, 614);
+
+    setWindowSize(initialResolution.x, initialResolution.y);
     getWindow()->setTitle("Untitled - Pepr3D");
     setupIcon();
     gl::enableVerticalSync(true);
@@ -62,6 +64,8 @@ void MainApplication::setup() {
     getSignalDidBecomeActive().connect(bind(&MainApplication::didBecomeActive, this));
 
     mImGui.setup(this, getWindow());
+    mFramebuffer = ci::gl::Fbo::create(initialResolution.x, initialResolution.y);
+    mImGui.useFramebuffer(mFramebuffer);
 
     applyLightTheme(ImGui::GetStyle());
 
@@ -144,6 +148,12 @@ void MainApplication::setupLogging() {
 }
 
 void MainApplication::resize() {
+    auto size = getWindowSize();
+    if(size.x <= 0 || size.y <= 0) {
+        // ignore 0 size, this happens when the window is minimized
+        return;
+    }
+    mFramebuffer = ci::gl::Fbo::create(size.x, size.y);
     mSidePane.resize();   // side pane has to be resized first (it modifies its width if necessary)
     mModelView.resize();  // model view uses the width of the side pane, so it has to be second
 }
@@ -186,8 +196,8 @@ void MainApplication::keyDown(KeyEvent event) {
     case HotkeyAction::Save: saveProject(); break;
     case HotkeyAction::Import: showImportDialog(supportedImportExtensions); break;
     case HotkeyAction::Export: setCurrentTool<ExportAssistant>(); break;
-    case HotkeyAction::Undo: mCommandManager->undo(); break;
-    case HotkeyAction::Redo: mCommandManager->redo(); break;
+    case HotkeyAction::Undo: enqueueSlowOperation([this]() { mCommandManager->undo(); }, []() {}); break;
+    case HotkeyAction::Redo: enqueueSlowOperation([this]() { mCommandManager->redo(); }, []() {}); break;
     case HotkeyAction::SelectTrianglePainter: setCurrentTool<TrianglePainter>(); break;
     case HotkeyAction::SelectPaintBucket: setCurrentTool<PaintBucket>(); break;
     case HotkeyAction::SelectBrush: setCurrentTool<Brush>(); break;
@@ -402,8 +412,6 @@ void MainApplication::draw() {
         return;
     }
 
-    gl::clear(ColorA::hex(0xFCFCFC));
-
     // draw highest priority dialog:
     if(!mDialogQueue.empty()) {
         const bool shouldClose = mDialogQueue.top().draw();
@@ -426,10 +434,24 @@ void MainApplication::draw() {
         ImGui::ShowDemoWindow();
     }
 
-    mToolbar.draw();
-    mSidePane.draw();
-    mModelView.draw();
-    mProgressIndicator.draw();
+    if(mGeometryInProgress == nullptr && !mProgressIndicator.isInProgress()) {
+        // if there is no operation in progress, we simply draw everything to a framebuffer:
+        mImGui.useFramebuffer(mFramebuffer);  // force ImGui to draw to this framebuffer
+        mFramebuffer->bindFramebuffer();
+        gl::clear(ColorA::hex(0xFCFCFC));
+        mToolbar.draw();
+        mSidePane.draw();
+        mModelView.draw();
+        mFramebuffer->unbindFramebuffer();
+        // and the framebuffer is then drawn by PeprImGui after this draw() is finished
+    } else {
+        // if there is an operation in progress, we use the cached rendering from the framebuffer (except
+        // ProgressIndicator):
+        gl::clear(ColorA::hex(0xFCFCFC));
+        ci::gl::draw(mFramebuffer->getTexture2d(GL_COLOR_ATTACHMENT0));  // draw the cached framebuffer
+        mImGui.useFramebuffer(nullptr);                                  // force ImGui to draw directly to screen
+        mProgressIndicator.draw();  // draw animated ProgressIndicator via ImGui directly to screen (as an overlay)
+    }
 }
 
 void MainApplication::setupFonts() {

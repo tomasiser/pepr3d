@@ -36,12 +36,19 @@ class CmdPaintText : public CommandBase<Geometry> {
     void run(Geometry& target) const override {
         const auto start = std::chrono::high_resolution_clock::now();
 
+        const size_t textLength = mText.size();
+        size_t progress = 0;
+
         for(const std::vector<Triangle>& letter : mText) {
+            target.getProgress().paintTextPercentage = static_cast<float>(progress) / textLength;
             target.paintWithShape(mRay, letter, mColor);
+            ++progress;
         }
 
         const auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> timeMs = end - start;
+
+        target.getProgress().paintTextPercentage = 1.0f;
 
         CI_LOG_I("Text paint took " + std::to_string(timeMs.count()) + " ms");
     }
