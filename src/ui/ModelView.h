@@ -219,7 +219,7 @@ class ModelView {
     float mMaxSize = 1.f;
     glm::vec2 mPreviewMinMaxHeight = glm::vec2(0.0f, 1.0f);
 
-    /// Override currently displayed mesh data, making it possibly to æhange displayed mesh
+    /// Override currently displayed mesh data, making it possibly to change displayed mesh
     /// without chaning the geometry itself
     struct MeshDataOverride {
         bool isOverriden = false;

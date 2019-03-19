@@ -70,7 +70,7 @@ class TextEditor : public Tool {
 
     std::string mFont;
     std::string mFontPath;
-    std::string mText = "Pepr";
+    std::string mText = "Pepr3D";
     int mFontSize = 12;
     int mBezierSteps = 3;
     float mFontScale = 0.2f;

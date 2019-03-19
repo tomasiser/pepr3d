@@ -33,6 +33,12 @@ struct GeometryProgress {
     void resetSdf() {
         sdfPercentage = -1.0f;
     }
+
+    std::atomic<float> paintTextPercentage{-1.0f};
+
+    void resetPaintText() {
+        paintTextPercentage = -1.0f;
+    }
 };
 
 }  // namespace pepr3d

@@ -114,7 +114,9 @@ void Toolbar::drawUndoRedo() {
     props.isEnabled = commandManager && commandManager->canUndo();
     glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
-    drawButton(props, [&]() { commandManager->undo(); });
+    drawButton(props, [this]() {
+        mApplication.enqueueSlowOperation([this]() { mApplication.getCommandManager()->undo(); }, []() {});
+    });
     const auto undoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Undo);
     mApplication.drawTooltipOnHover("Undo", undoOptionalHotkey ? undoOptionalHotkey->getString() : "",
                                     "Undo last action.", props.isEnabled ? "" : "No action to undo.",
@@ -123,7 +125,9 @@ void Toolbar::drawUndoRedo() {
     props.label = ICON_MD_REDO;
     props.isEnabled = commandManager && commandManager->canRedo();
     buttonPos = ImGui::GetCursorScreenPos();
-    drawButton(props, [&]() { commandManager->redo(); });
+    drawButton(props, [this]() {
+        mApplication.enqueueSlowOperation([this]() { mApplication.getCommandManager()->redo(); }, []() {});
+    });
     ImGui::PopFont();
     const auto redoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Redo);
     mApplication.drawTooltipOnHover("Redo", redoOptionalHotkey ? redoOptionalHotkey->getString() : "",

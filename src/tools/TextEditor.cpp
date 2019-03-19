@@ -191,10 +191,14 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
 
         mApplication.dispatchAsync([extensions, this]() {
             auto path = cinder::app::getOpenFilePath("", {"ttf"});
+            if(path.empty()) {
+                path = cinder::app::getAssetPath("fonts/OpenSans-Regular.ttf");  // fallback
+            }
             mFontPath = path.string();
             mFont = path.filename().string();
         });
     }
+    sidePane.drawTooltipOnHover("Select a new font (.ttf file) to be used for painting.");
 
     // -- Text settings --
 
@@ -213,7 +217,7 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
             generateAndUpdate();
         }
     }
-    sidePane.drawTooltipOnHover("Click to edit");
+    sidePane.drawTooltipOnHover("Text to paint.", "", "Click to edit.");
 
     // -- Preview settings --
 
@@ -222,7 +226,7 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
     }
     sidePane.drawTooltipOnHover("Text scale.");
 
-    if(sidePane.drawFloatDragger("Text rotation", mTextRotation, 1.f, 0.f, 360.f, "%1.f", 50.f)) {
+    if(sidePane.drawFloatDragger("Text rotation", mTextRotation, 1.f, -180.f, 180.f, "%.0f°", 50.f)) {
         updateTextPreview();
     }
     sidePane.drawTooltipOnHover("Text rotation in degrees.");
@@ -234,9 +238,6 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
         "Project the text preview onto the mesh, using orthogonal projection along the normal axis.");
 
     sidePane.drawSeparator();
-
-    sidePane.drawText(mText);
-    sidePane.drawText(mFontPath);
 }
 
 void TextEditor::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
@@ -262,10 +263,15 @@ void TextEditor::paintText() {
     const size_t color = geometry->getColorManager().getActiveColorIndex();
     ci::Ray ray = mSelectedRay;
     ray.setDirection(-geometry->getTriangle(*mSelectedIntersection).getNormal());
-    mApplication.getCommandManager()->execute(std::make_unique<CmdPaintText>(ray, mRenderedText, color));
-
-    mRenderedText.clear();  // Hide the preview
-    mApplication.getModelView().resetPreview();
+    mApplication.enqueueSlowOperation(
+        [ray, color, this]() {
+            mApplication.getCommandManager()->execute(std::make_unique<CmdPaintText>(ray, mRenderedText, color));
+        },
+        [this]() {
+            mRenderedText.clear();  // Hide the preview
+            mApplication.getModelView().resetPreview();
+        },
+        true);
 }
 
 void TextEditor::onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) {

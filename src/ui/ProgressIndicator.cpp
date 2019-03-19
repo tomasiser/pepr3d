@@ -47,6 +47,8 @@ void ProgressIndicator::draw() {
 
         drawStatus("Computing SDF...", progress.sdfPercentage, true);
 
+        drawStatus("Painting text...", progress.paintTextPercentage, false);
+
         ImGui::EndPopup();
     }
     ImGui::PopStyleVar(3);

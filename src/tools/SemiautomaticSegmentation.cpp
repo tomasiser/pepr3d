@@ -30,6 +30,7 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
         if(mStartingTriangles.empty()) {
             sidePane.drawText("Draw with several colors to enable segmentation.");
+            sidePane.drawSeparator();
         } else {
             sidePane.drawFloatDragger("Spread", mBucketSpread, 0.25f, 0.0f, 100.0f, "%.0f %%", 70.f);
             sidePane.drawTooltipOnHover(
@@ -93,6 +94,8 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 reset();
             }
             sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
+
+            sidePane.drawSeparator();
         }
     }
 }

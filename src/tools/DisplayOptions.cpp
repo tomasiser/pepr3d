@@ -53,6 +53,8 @@ void DisplayOptions::drawToSidePane(SidePane& sidePane) {
     sidePane.drawTooltipOnHover(
         "When enabled, all triangles on the model will have their edges highlighted. Allows for checking the geometry "
         "in Pepr3D.");
+
+    sidePane.drawSeparator();
 }
 
 }  // namespace pepr3d
