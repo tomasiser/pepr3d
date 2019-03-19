@@ -50,6 +50,8 @@
 #include "cinder/gl/Vao.h"
 #include "cinder/gl/Vbo.h"
 
+#include "peprassert.h"
+
 // Custom implicit cast operators
 #ifndef CINDER_IMGUI_NO_IMPLICIT_CASTS
 #define IM_VEC2_CLASS_EXTRA          \

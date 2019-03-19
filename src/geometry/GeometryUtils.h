@@ -19,6 +19,8 @@
 #include <optional>
 #include <vector>
 
+#include "peprassert.h"
+
 namespace pepr3d {
 class DataTriangle;
 
@@ -70,8 +72,8 @@ class GeometryUtils {
     /// Get equidistant points on circle
     static std::vector<DataTriangle::K::Point_3> pointsOnCircle(const DataTriangle::K::Circle_3& circle, int segments) {
         using Point3 = DataTriangle::K::Point_3;
-        assert(segments >= 3);
-        assert(!circle.is_degenerate());
+        P_ASSERT(segments >= 3);
+        P_ASSERT(!circle.is_degenerate());
 
         auto plane = circle.supporting_plane();
         const double radius = sqrt(CGAL::to_double(circle.squared_radius()));
@@ -163,10 +165,19 @@ class GeometryUtils {
         return true;
     }
 
-    /// Get bounding sphere of a shape
+    /// Get min bounding sphere of a point shape
     /// @param shape Polygonal shape represented by a set of points
-    static std::pair<DataTriangle::K::Point_3, double> getShapeBoundingSphere(
+    static std::pair<DataTriangle::K::Point_3, double> getBoundingSphere(
         const std::vector<DataTriangle::K::Point_3>& shape);
+
+    /// Get min bounding sphere of a set of triangles
+    /// @param shape Polygonal shape represented by a set of points
+    static std::pair<DataTriangle::K::Point_3, double> getBoundingSphere(
+        const std::vector<DataTriangle::Triangle>& triangles);
+
+    /// Get min bounding sphere of a triangle
+    /// @param shape Polygonal shape represented by a set of points
+    static std::pair<DataTriangle::K::Point_3, double> getBoundingSphere(const DataTriangle::Triangle& triangle);
 
     /// Find squared distance between a line segment and a point in 3D space
     static float segmentPointDistanceSquared(const glm::vec3& start, const glm::vec3& end, const glm::vec3& point);

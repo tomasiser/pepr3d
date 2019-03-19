@@ -40,7 +40,7 @@ class ModelExporter {
         case ExportType::NonPolyExtrusion: return createNonPolyScenes(); break;
         case ExportType::PolyExtrusion: return createPolyScenes(false); break;
         case ExportType::PolyExtrusionWithSDF: return createPolyScenes(true); break;
-        default: assert(false); return createNonPolySurfaceScenes();
+        default: P_ASSERT(false); return createNonPolySurfaceScenes();
         }
     }
 
@@ -613,7 +613,7 @@ class ModelExporter {
             face.mNumIndices = 3;
 
             const auto polyFaceIterator = detailedFaceDescs.find(triangleIndices[i]);
-            assert(polyFaceIterator != detailedFaceDescs.cend());
+            P_ASSERT(polyFaceIterator != detailedFaceDescs.cend());
             const PolyhedronData::face_descriptor polyFace = polyFaceIterator->second;
 
             const auto halfedge = mGeometry->getMeshDetailed()->halfedge(polyFace);
@@ -644,7 +644,7 @@ class ModelExporter {
 
                 itHalfedge = mGeometry->getMeshDetailed()->next(itHalfedge);
             }
-            assert(halfedge == itHalfedge);
+            P_ASSERT(halfedge == itHalfedge);
         }
 
         size_t i = 0;

@@ -494,7 +494,7 @@ void PeprImGui::resetKeys() {
 }
 
 void PeprImGui::setup(cinder::app::AppBase* application, WindowRef window) {
-    assert(window);
+    P_ASSERT(window);
 
     ImGuiContext* context = ImGui::CreateContext();
 

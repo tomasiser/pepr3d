@@ -8,6 +8,9 @@
 #include "CGAL-patched/Boolean_set_operations_2/Gps_traits_adaptor.h"
 //---------------------------------------
 
+#include "FontRasterizer.h"
+#include "GeometryUtils.h"
+#include "geometry/GlmSerialization.h"
 #include "geometry/Triangle.h"
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -32,8 +35,8 @@
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
-#include "GeometryUtils.h"
-#include "geometry/GlmSerialization.h"
+
+#include "peprassert.h"
 
 #if defined(PEPR3D_COLLECT_DEBUG_DATA) || defined(_TEST_)
 #include <boost/variant.hpp>
@@ -120,6 +123,16 @@ class TriangleDetail {
         }
     };
 
+    struct PolygonSetEntry {
+        PolygonSet polygonSet;
+        size_t color;
+
+        template <typename Archive>
+        void serialize(Archive& archive) {
+            archive(cereal::make_nvp("polygonSet", polygonSet), cereal::make_nvp("color", color));
+        }
+    };
+
     struct PointEntry {
         std::set<Point3> myPoints;
         std::set<Point3> theirPoints;
@@ -174,6 +187,12 @@ class TriangleDetail {
     /// @param direction Direction vector of the projection
     void paintShape(const std::vector<PeprPoint3>& shape, const PeprVector3& direction, size_t color);
 
+    /// Paint a shape to triangle detail
+    /// @param triangles Collection of triangles that form a shape, that is going to be projected onto the
+    /// TriangleDetail
+    /// @param direction Direction vector of the projection
+    void paintShape(const std::vector<PeprTriangle>& triangles, const PeprVector3& direction, size_t color);
+
     /// Makes sure all vertices on the common edge between these two triangles are matched
     /// Creates new vertices for both triangles if there are missing
     /// You will need to updateTrianglesFromPolygons() after calling this method!
@@ -198,6 +217,10 @@ class TriangleDetail {
     /// Add polygon to the detail
     /// @param poly Polygon in the plane-space of this detail
     void addPolygon(const Polygon& poly, size_t color);
+
+    /// Add polygon set to the detail
+    /// @param poly PolygonSet in the plane-space of this detail
+    void addPolygonSet(PolygonSet& polySet, size_t color);
 
     /// Find all points of polygons that are on the edge
     std::set<Point3> findPointsOnEdge(const Segment3& edge);
@@ -353,6 +376,17 @@ class TriangleDetail {
 
     Polygon projectShapeToPolygon(const std::vector<PeprPoint3>& shape, const PeprVector3& direction);
 
+    /// Do two polygons that are triangles intersect
+    /// This is faster than checking an intersection between polygons of any size
+    static bool trianglePolygonsDoIntersect(const Polygon& first, const Polygon& second) {
+        P_ASSERT(first.size() == 3);
+        P_ASSERT(second.size() == 3);
+        const Triangle2 firstTri(first.vertex(0), first.vertex(1), first.vertex(2));
+        const Triangle2 secondTri(second.vertex(0), second.vertex(1), second.vertex(2));
+
+        return CGAL::do_intersect(firstTri, secondTri);
+    }
+
 #ifdef _TEST_
    public:  // Testing requires access to these methods
 #endif
@@ -408,7 +442,7 @@ class TriangleDetail {
         std::vector<PolygonWithHoles> polys(pSet.number_of_polygons_with_holes());
         pSet.polygons_with_holes(polys.begin());
         for(PolygonWithHoles& poly : polys) {
-            assert(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
+            P_ASSERT(GeometryUtils::is_valid_polygon_with_holes(poly, Traits()));
         }
 #endif
     }

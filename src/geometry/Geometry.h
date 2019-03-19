@@ -12,7 +12,6 @@
 #include <cereal/types/vector.hpp>
 #include "cinder/Log.h"
 
-#include <cassert>
 #include <map>
 #include <optional>
 #include <unordered_map>
@@ -26,6 +25,7 @@
 #include "geometry/Triangle.h"
 #include "geometry/TriangleDetail.h"
 #include "geometry/TrianglePrimitive.h"
+#include "peprassert.h"
 #include "tools/Brush.h"
 
 namespace pepr3d {
@@ -173,11 +173,11 @@ class Geometry {
         generateIndexBuffer();
         generateColorBuffer();
         generateNormalBuffer();
-        assert(mOgl.indexBuffer.size() == mOgl.vertexBuffer.size());
+        P_ASSERT(mOgl.indexBuffer.size() == mOgl.vertexBuffer.size());
         buildTree();
         buildDetailedTree();
 
-        assert(mTree->size() == mTriangles.size());
+        P_ASSERT(mTree->size() == mTriangles.size());
         if(!mTree->empty()) {
             mBoundingBox = std::make_unique<BoundingBox>(mTree->bbox());
         }
@@ -197,17 +197,17 @@ class Geometry {
 
     const OpenGlData& getOpenGlData() const {
         // Since we use a new vertex for each triangle, we should have vertices == triangles
-        assert(mOgl.indexBuffer.size() == mOgl.vertexBuffer.size());
-        assert(mOgl.vertexBuffer.size() == mOgl.normalBuffer.size());
-        assert(!mAreaHighlight.enabled || (mOgl.highlightMask.size() == mOgl.vertexBuffer.size()));
-        assert(mOgl.colorBuffer.size() == mOgl.vertexBuffer.size());
+        P_ASSERT(mOgl.indexBuffer.size() == mOgl.vertexBuffer.size());
+        P_ASSERT(mOgl.vertexBuffer.size() == mOgl.normalBuffer.size());
+        P_ASSERT(!mAreaHighlight.enabled || (mOgl.highlightMask.size() == mOgl.vertexBuffer.size()));
+        P_ASSERT(mOgl.colorBuffer.size() == mOgl.vertexBuffer.size());
 
         return mOgl;
     }
 
     /// Update buffers used by openGl. Should only be called when they are dirty
     void updateOpenGlBuffers() {
-        assert(mOgl.isDirty);  // Called unnecessarily. Most likely by error.
+        P_ASSERT(mOgl.isDirty);  // Called unnecessarily. Most likely by error.
 
         const auto start = std::chrono::high_resolution_clock::now();
 
@@ -258,7 +258,7 @@ class Geometry {
     }
 
     const DataTriangle& getTriangle(const size_t triangleIndex) const {
-        assert(triangleIndex < mTriangles.size());
+        P_ASSERT(triangleIndex < mTriangles.size());
         return mTriangles[triangleIndex];
     }
 
@@ -266,10 +266,10 @@ class Geometry {
         const size_t baseId = triangleId.getBaseId();
         const std::optional<size_t> detailId = triangleId.getDetailId();
 
-        assert(baseId < mTriangles.size());
+        P_ASSERT(baseId < mTriangles.size());
         if(detailId) {
-            assert(!isSimpleTriangle(baseId));
-            assert(*detailId < getTriangleDetailCount(baseId));
+            P_ASSERT(!isSimpleTriangle(baseId));
+            P_ASSERT(*detailId < getTriangleDetailCount(baseId));
             return mTriangleDetails.at(baseId).getTriangles()[*detailId];
         } else {
             return mTriangles[baseId];
@@ -304,12 +304,12 @@ class Geometry {
     }
 
     const GeometryProgress& getProgress() const {
-        assert(mProgress != nullptr);
+        P_ASSERT(mProgress != nullptr);
         return *mProgress;
     }
 
     GeometryProgress& getProgress() {
-        assert(mProgress != nullptr);
+        P_ASSERT(mProgress != nullptr);
         return *mProgress;
     }
 
@@ -351,11 +351,16 @@ class Geometry {
     /// highlighted.
     void highlightArea(const ci::Ray& ray, const struct BrushSettings& settings);
 
-    /// Paint continuous area with a brush of specified size
+    /// Paint area with a shaped brush
     /// @param ray Ray along which to project the shape, using orthogonal projection
     /// @param shape Points in world space representing a polygonal shape
     void paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color,
                         bool paintBackfaces = false);
+
+    /// Paint area with a shaped brush
+    /// @param ray Ray along which to project the shape, using orthogonal projection
+    /// @param triangles Triangles in world space representing the shape
+    void paintWithShape(const ci::Ray& ray, const std::vector<DataTriangle::Triangle>& triangles, size_t color);
 
     /// Paint continuous spherical area with a brush of specified size
     void paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& settings);
@@ -405,7 +410,7 @@ class Geometry {
     /// @param object CGAL Object - point, line, etc
     template <typename Object>
     std::vector<size_t> getTrianglesInRadius(const Object& object, double radius) const {
-        assert(mTriangleBounds.size() == mTriangles.size());
+        P_ASSERT(mTriangleBounds.size() == mTriangles.size());
         std::vector<size_t> result;
 
         for(size_t triIdx = 0; triIdx < mTriangleBounds.size(); ++triIdx) {
@@ -421,8 +426,8 @@ class Geometry {
     /// @return true, object is closer than radius to the triangle bound shpere
     template <typename Object>
     bool isTriangleInRadius(const Object& object, double radius, size_t triangleIdx) const {
-        assert(triangleIdx < mTriangleBounds.size());
-        assert(mTriangleBounds.size() == mTriangles.size());
+        P_ASSERT(triangleIdx < mTriangleBounds.size());
+        P_ASSERT(mTriangleBounds.size() == mTriangles.size());
 
         const Point3& sphereCenter = mTriangleBounds[triangleIdx].first;
         const double sphereRadius = mTriangleBounds[triangleIdx].second;
@@ -448,8 +453,8 @@ class Geometry {
         if(mPolyhedronData.sdf_property_map == nullptr) {
             return false;
         } else {
-            assert(mPolyhedronData.indices.size() == static_cast<size_t>(mPolyhedronData.sdf_property_map.end() -
-                                                                         mPolyhedronData.sdf_property_map.begin()));
+            P_ASSERT(mPolyhedronData.indices.size() == static_cast<size_t>(mPolyhedronData.sdf_property_map.end() -
+                                                                           mPolyhedronData.sdf_property_map.begin()));
             return mPolyhedronData.isSdfComputed;
         }
     }
@@ -462,8 +467,8 @@ class Geometry {
     }
 
     double getSdfValue(const size_t triangleIndex) const {
-        assert(triangleIndex < mPolyhedronData.mFaceDescs.size());
-        assert(triangleIndex < mTriangles.size());
+        P_ASSERT(triangleIndex < mPolyhedronData.mFaceDescs.size());
+        P_ASSERT(triangleIndex < mTriangles.size());
         PolyhedronData::face_descriptor faceDescForTri = mPolyhedronData.mFaceDescs[triangleIndex];
         return mPolyhedronData.sdf_property_map[faceDescForTri];
     }
@@ -589,15 +594,15 @@ template <typename StoppingCondition>
 std::vector<size_t> Geometry::bucketSpread(const StoppingCondition& stopFunctor, std::deque<size_t>& toVisit,
                                            std::unordered_set<size_t>& alreadyVisited) {
     std::vector<size_t> trianglesToColor;
-    assert(mPolyhedronData.indices.size() == mTriangles.size());
+    P_ASSERT(mPolyhedronData.indices.size() == mTriangles.size());
 
     while(!toVisit.empty()) {
         // Remove yourself from queue and mark visited
         const size_t currentVertex = toVisit.front();
         toVisit.pop_front();
-        assert(alreadyVisited.find(currentVertex) != alreadyVisited.end());
-        assert(currentVertex < mTriangles.size());
-        assert(toVisit.size() < mTriangles.size());
+        P_ASSERT(alreadyVisited.find(currentVertex) != alreadyVisited.end());
+        P_ASSERT(currentVertex < mTriangles.size());
+        P_ASSERT(toVisit.size() < mTriangles.size());
 
         // Catching because of unpredictable CGAL errors
         try {
@@ -618,16 +623,16 @@ template <typename StoppingCondition>
 std::vector<DetailedTriangleId> Geometry::bucketSpread(const StoppingCondition& stopFunctor,
                                                        std::deque<DetailedTriangleId>& toVisit,
                                                        std::unordered_set<DetailedTriangleId>& alreadyVisited) {
-    assert(mMeshDetailed);
+    P_ASSERT(mMeshDetailed);
     std::vector<DetailedTriangleId> trianglesToColor;
 
     while(!toVisit.empty()) {
         // Remove yourself from queue and mark visited
         const DetailedTriangleId currentVertex = toVisit.front();
         toVisit.pop_front();
-        assert(alreadyVisited.find(currentVertex) != alreadyVisited.end());
-        assert(currentVertex.getBaseId() < mTriangles.size());
-        assert(currentVertex.getDetailId() < getTriangleDetailCount(currentVertex));
+        P_ASSERT(alreadyVisited.find(currentVertex) != alreadyVisited.end());
+        P_ASSERT(currentVertex.getBaseId() < mTriangles.size());
+        P_ASSERT(currentVertex.getDetailId() < getTriangleDetailCount(currentVertex));
 
         // Catching because of unpredictable CGAL errors
         try {
@@ -653,7 +658,7 @@ std::vector<DetailedTriangleId> Geometry::bucket(const DetailedTriangleId startT
 
     if(!isTemporaryDetailedDataValid()) {
         updateTemporaryDetailedData();
-        assert(mMeshDetailed);
+        P_ASSERT(mMeshDetailed);
     }
 
     std::deque<DetailedTriangleId> toVisit;
@@ -768,10 +773,10 @@ void Geometry::load(Archive& loadArchive) {
 
     updateTemporaryDetailedData();
 
-    assert(!mTriangles.empty());
-    assert(!mColorManager.empty());
-    assert(!mPolyhedronData.vertices.empty());
-    assert(!mPolyhedronData.indices.empty());
+    P_ASSERT(!mTriangles.empty());
+    P_ASSERT(!mColorManager.empty());
+    P_ASSERT(!mPolyhedronData.vertices.empty());
+    P_ASSERT(!mPolyhedronData.indices.empty());
 }
 
 }  // namespace pepr3d

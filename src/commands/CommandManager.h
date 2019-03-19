@@ -1,10 +1,10 @@
 #pragma once
-#include <cassert>
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
 #include "commands/Command.h"
+#include "peprassert.h"
 
 namespace pepr3d {
 
@@ -92,7 +92,7 @@ class CommandManager {
 template <typename Target>
 auto CommandManager<Target>::getPrevSnapshotIterator() const
     -> decltype(std::declval<const std::vector<SnapshotPair>>().begin()) {
-    assert(mPosFromEnd <= mCommandHistory.size());
+    P_ASSERT(mPosFromEnd <= mCommandHistory.size());
 
     const size_t nextCommandIdx = mCommandHistory.size() - mPosFromEnd;
 

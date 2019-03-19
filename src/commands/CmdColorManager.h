@@ -113,11 +113,11 @@ class CmdColorManagerRemoveColor : public CommandBase<Geometry> {
    protected:
     void run(Geometry& target) const override {
         ColorManager& colorManager = target.getColorManager();
-        assert(mColorIdx + 1 <= colorManager.size());
+        P_ASSERT(mColorIdx + 1 <= colorManager.size());
         ColorManager::ColorMap& colorMap = colorManager.getColorMap();
         colorMap.erase(colorMap.cbegin() + mColorIdx);
         // replace the erased color in the model and shift remaining colors:
-        assert(colorManager.size() > 0);
+        P_ASSERT(colorManager.size() > 0);
         const size_t colorIdx = mColorIdx;  // Local copy for lambda
         target.changeColorIds([colorIdx](size_t originalColor) {
             if(originalColor == colorIdx) {
@@ -150,7 +150,7 @@ class CmdColorManagerAddColor : public CommandBase<Geometry> {
    protected:
     void run(Geometry& target) const override {
         ColorManager& colorManager = target.getColorManager();
-        assert(colorManager.size() > 0);
+        P_ASSERT(colorManager.size() > 0);
         std::random_device rd;   // Will be used to obtain a seed for the random number engine
         std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
         std::uniform_real_distribution<> dis(0.0, 1.0);
