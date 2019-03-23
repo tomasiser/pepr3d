@@ -20,7 +20,7 @@ void SidePane::draw() {
     ImGui::SetNextWindowPos(glm::ivec2(mApplication.getWindowSize().x - size.x, 0));
     ImGui::SetNextWindowSize(glm::ivec2(size.x + 1.0f, mApplication.getToolbar().getHeight()));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
-    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xE5E5E5));
     ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
     ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
@@ -37,7 +37,7 @@ void SidePane::draw() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     drawList->AddLine(cursorPos + glm::ivec2(0, 49), cursorPos + glm::ivec2(size.x, 49),
-                      ImColor(ci::ColorA::hex(0xEDEDED)));
+                      ImColor(ci::ColorA::hex(0xE5E5E5)));
 
     ImGui::SetCursorPos(glm::ivec2(12, 13));
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
@@ -58,11 +58,12 @@ void SidePane::draw() {
     ImGui::SetNextWindowPos(glm::ivec2(mApplication.getWindowSize().x - size.x, 49));
     ImGui::SetNextWindowSize(glm::ivec2(size.x + 1.0f, size.y - mApplication.getToolbar().getHeight() + 1.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
     ImGui::Begin("##sidepane-inside", nullptr, window_flags);
     currentTool.drawToSidePane(*this);
     ImGui::End();
 
-    ImGui::PopStyleVar(5);
+    ImGui::PopStyleVar(6);
     ImGui::PopStyleColor(6);
 }
 
@@ -78,7 +79,7 @@ void SidePane::drawText(std::string text) {
 bool SidePane::drawButton(std::string label) {
     bool ret = ImGui::Button(label.c_str(), glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
     ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
-                                        (ImColor)ci::ColorA::hex(0xEDEDED));
+                                        (ImColor)ci::ColorA::hex(0xE5E5E5));
     return ret;
 }
 
@@ -99,7 +100,7 @@ void SidePane::drawSeparator() {
     drawList->PushClipRectFullScreen();
     drawList->AddLine(glm::vec2(mApplication.getWindowSize().x - mWidth, cursorPos.y),
                       glm::vec2(mApplication.getWindowSize().x - mWidth + width + 2.0f * padding, cursorPos.y),
-                      (ImColor)ci::ColorA::hex(0xEDEDED));
+                      (ImColor)ci::ColorA::hex(0xE5E5E5));
     drawList->PopClipRect();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 }
@@ -153,7 +154,7 @@ void SidePane::drawColorPaletteAddRemoveButtons(ColorManager& colorManager, Comm
     drawTooltipOnHover("Drag & drop color here to delete it entirely.", "",
                        "The removed color on the model will be replaced by the 1st color in the palette.", "");
     ImDrawList* const drawList = ImGui::GetWindowDrawList();
-    drawList->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), (ImColor)ci::ColorA::hex(0xEDEDED));
+    drawList->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), (ImColor)ci::ColorA::hex(0xE5E5E5));
 
     bool isActiveDragDropTarget = false;
 
@@ -272,7 +273,7 @@ void SidePane::drawColorPaletteColorBoxes(ColorManager& colorManager, CommandMan
         drawList->AddRect(
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX), 0),
             cursorPos + glm::ivec2(static_cast<int>(leftCornerX + boxWidth + 2), static_cast<int>(boxHeight + 2)),
-            (ImColor)ci::ColorA::hex(0xEDEDED));
+            (ImColor)ci::ColorA::hex(0xE5E5E5));
 
         glm::vec4 color = colorManager.getColor(i);
         const float boxAlpha = (isHovered || isHeld) ? (isHeld ? 0.8f : 0.9f) : 1.0f;

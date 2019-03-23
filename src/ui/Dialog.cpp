@@ -19,9 +19,9 @@ bool Dialog::draw() const {
     ImGui::SetNextWindowSize(ImVec2(400.0f, -1.0f));
     ImGui::SetNextWindowBgAlpha(1.0f);
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
-    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xE5E5E5));
     ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
-    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xE5E5E5));
     ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ci::ColorA::hex(0xA3B2BF));
@@ -51,7 +51,7 @@ bool Dialog::draw() const {
 
         isAccepted = ImGui::Button(mAcceptButton.c_str(), glm::ivec2(ImGui::GetContentRegionAvailWidth(), 33));
         ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
-                                            (ImColor)ci::ColorA::hex(0xEDEDED));
+                                            (ImColor)ci::ColorA::hex(0xE5E5E5));
 
         if(isAccepted) {
             ImGui::CloseCurrentPopup();
