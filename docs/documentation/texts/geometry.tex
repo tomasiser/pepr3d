@@ -102,7 +102,49 @@ Further information is available in the \textit{doxygen} documentation or direct
 
 \texttt{TriangleDetail}
 
-\textbf{TODO after @ LUIS sends info}
+The \texttt{TriangleDetail} class allows the user to divide a triangle of the original mesh into smaller, differently coloured pieces. The surface of a \texttt{TriangleDetail} can be represented in two formats. We first explain the core concepts of this class before giving a brief overview of its members.
+
+\subsubsection{Internal format}
+
+The \textbf{primary format} is a collection of PolygonSets. For each color in the triangle, a new PolygonSet is created. The union of all polygons from all PolygonSets would exactly fill the surface of the original triangle. These PolygonSets are stored in \texttt{mColoredPolys\_} map. All painting methods on TriangleDetail, with the exception of painting individual triangles, utilize this representation. 
+
+The \textbf{secondary format} is a collection of colored triangles, which are the result of a triangulation of the PolygonSets. Usually, this representation is only temporary, as it gets overwritten each time a new painting operation changes the PolygonSets. These coloured triangles are stored in \texttt{mTrianglesExact} array.
+
+When the user changes the color of one of these detail triangles (from the secondary format), the PolygonSet representation no longer has the correct color stored. This discrepancy is marked via \texttt{mColorChanged} boolean flag. When this flag is set, any method that works with PolygonSets must first update the PolygonSets from the coloured triangles.
+
+This duality of formats allows us to use PolygonSets -- required for CGAL boolean operations, and triangles -- required for rendering and other Pepr3D tools.
+
+\subsubsection{Numerical precision}
+
+To be numerically stable, TriangleDetail uses an exact Kernel type, provided by the CGAL library. The exact kernel is used for all internal ```Polygon``` and exact triangle operations. While an exact kernel is being used internally, all public methods and their results are using an ordinary, limited-precision kernel. To distinguish between different precision types used in TriangleDetail, the following convention is used:
+
+Types defined on exact kernel (\texttt{TriangleDetail::K}) use shorthand CGAL type names:
+- \texttt{Polygon}, \texttt{Point3}, \texttt{Triangle2}, \texttt{Segment2}, etc.
+
+Types defined on inexact kernel (\texttt{DataTriangle::K}) use the "Pepr" prefix before their shorthand CGAL type name:
+- \texttt{PeprPoint2}, \texttt{PeprVector3}, \texttt{PeprTriangle2}, etc.
+
+The "Pepr" prefix signifies the type is the same, as in the rest of the Pepr3D application and can be therefore passed to other methods and tools.
+
+\subsubsection{Class overview}
+
+We now provide a short overview of the \texttt{TriangleDetail} class. Due to the complexity of the class, we will only discuss the public methods of the class (since public members do not exist). We have discussed the private workings of the class in the previous paragraphs. Following, are the most important methods of the class.
+
+\begin{lstlisting}
+void paintSphere(const PeprSphere& sphere, int minSegments, size_t color);
+void paintShape(const std::vector<PeprPoint3>& shape, const PeprVector3& direction, size_t color);
+void paintShape(const std::vector<PeprTriangle>& triangles, const PeprVector3& direction, size_t color);
+
+void addPolygon(const Polygon& poly, size_t color);
+void addPolygonSet(PolygonSet& polySet, size_t color);
+
+void save(Archive& archive) const;
+void load(Archive& archive);
+
+static std::vector<Triangle2> triangulatePolygon(const PolygonWithHoles& poly);
+\end{lstlisting}
+
+There are several groups of methods which work the same way. The \texttt{paint} methods take a input object (a sphere or a arbitrary shape) and paint it into the triangle detail -- creating new polygons when necessary. The \texttt{add} methods can be used to manipulate the internal state of the class, either adding new polygon sets (e.g. if new colours are required) or adding new polygons to increase detail. Since Pepr3D saves objects of this class, there have to be \texttt{save} and \texttt{load} methods present, for the Cereal library. The \texttt{triangulatePolygon} method further highlights this duality of the class, allowing to create triangles from the existing polygons.
 
 \subsection{Detailed Triangle Id}
 
@@ -184,7 +226,7 @@ Once the model is loaded correctly, the object now provides the data it has load
 
 \item \texttt{getTriangles()} is the most important method of the class. This method returns an array of \texttt{DataTriangle} objects. This is the main data Pepr3D works on. These returned triangles are preprocessed using both \textit{Assimp} preprocessing options and our own. Examples of preprocessing include triangulating all non-triangle primitives (like quads), removing duplicated vertices and removing degenerate triangles (with a zero area).
 
-\item The pair of methods \texttt{getVertexBuffer()} and \texttt{getIndexBuffer()} is a secondary means of extracting the same geometry data as in the \texttt{getTriangles} method, but this time in the "OpenGL" format of a vertex buffer and an index buffer. This data is used only during the construction of the polyhedron model for the \textit{CGAL} library. Extracting the secondary data is easier and faster than transforming the \texttt{DataTriangle} array back into this buffer representation just for the polyhedron build.
+\item The pair of methods \texttt{getVertexBuffer()} and \texttt{getIndexBuffer()} is a secondary means of extracting the same geometry data as in the \texttt{get\-Triangles} method, but this time in the "OpenGL" format of a vertex buffer and an index buffer. This data is used only during the construction of the polyhedron model for the \textit{CGAL} library. Extracting the secondary data is easier and faster than transforming the \texttt{DataTriangle} array back into this buffer representation just for the polyhedron build.
 
 \end{itemize}
 
