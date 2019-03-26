@@ -31,13 +31,75 @@ The properties of this tool revolve around the spread of the bucket. This is som
 
 \item \textbf{Stop on sharp edges} -- \textit{On / Off} -- A second \textit{stopping criterion} which can be enabled or disabled. Enabling it expands the user interface to allow the user to modify the criterion. This criterion will not care about the color the user clicked on, and only stops from spreading to the neighbouring triangle, if the neighbouring triangle is at a greater angle than specified. The exact behaviour is specified by the following properties.
 
-\item \textbf{Maximum angle} -- \textit{$0\degree$ -- $180\degree$} -- Specifies the angle which the two neighbouring triangles have to be angled at for the bucket painter to stop spreading. If the angle between the two triangles is greater than this value, the spread will not color the triangle and will stop.
+\item \textbf{Maximum angle} -- \textit{$0\degree$--$180\degree$} -- Specifies the angle which the two neighbouring triangles have to be angled at for the bucket painter to stop spreading. If the angle between the two triangles is greater than this value, the spread will not color the triangle and will stop.
 
-\item \textbf{Angles to compare} -- \textit{With starting triangle / Neighbouring triangles} -- the last choice in the sharp edges \textit{stopping criterion}. If the user selects \textit{With starting triangle}, the angle will be measured between the triangle the user clicked on and the triangle currently being coloured. For example, if this option is chosen, the angle is set to $95\degree$ and a single face of the cube is clicked, all faces of the cube except the opposite one are coloured. This is because the opposite face is at an $180\degree$ angle. If the user selects \textit{Neighbouring triangles} and uses the $95\degree$ setting again, the whole cube will get coloured, because there are no faces on the cube that are at an angle greater than $95\degree$.
+\item \textbf{Angles to compare} -- \textit{With starting triangle / Neighbouring triangles} -- The last choice in the sharp edges \textit{stopping criterion}. If the user selects \textit{With starting triangle}, the angle will be measured between the triangle the user clicked on and the triangle currently being coloured. For example, if this option is chosen, the angle is set to $95\degree$ and a single face of the cube is clicked, all faces of the cube except the opposite one are coloured. This is because the opposite face is at an $180\degree$ angle. If the user selects \textit{Neighbouring triangles} and uses the $95\degree$ setting again, the whole cube will get coloured, because there are no faces on the cube that are at an angle greater than $95\degree$.
 
 \end{itemize}
 
 Both of the \textit{stopping criteria} can be selected together. The spread stops when one of the criteria is not fulfilled -- both of the criteria must be fulfilled for the spread to continue.
+
+\section{Brush}
+
+Brush tool is more complicated tool for coloring the model. User can draw strokes with mouse depending on a brush properties. Just like the \textit{Bucket Painter}, this tool works as a brush in ordinary image editing software when you are drawing on flat side of model. It has different behavior on the edges which depends on set properties.
+
+\subsection{Properties}
+
+There is a list of properties that user can change to customize the tool.
+
+
+\begin{itemize}
+
+\item \textbf{Brush Size} -- \textit{float number} -- Defines the size of the brush. Larger size means larger brush diameter so that the user can paint larger area at once using the brush. The size number is equal to world units.
+
+\item \textbf{Number of Segments} -- \textit{positive integer} -- This setting adjust the shape of the brush. The shape is a polygon and the parameter corresponds to a number of polygon sides. If it is high enough, the shape of the brush looks like a circle. The smallest number can be set to 3, it means that the brush will have triangular shape.
+
+\item \textbf{Paint backfaces} -- \textit{On / Off} -- If the property is set off the brush will paint only visible faces that direct towards the user. If it is set on, it will paints parts of the model even if they are facing away from the camera. The entire area that is within the scope of the tool will be painted.
+
+
+\item \textbf{Spherical brush shape} -- Turns on spherical brush (this is set by default).  Spherical brush paints everything within a radius from a mouse cursor, and will create additional edges to smooth transition over triangle boundaries.
+
+\begin{itemize}
+\item \textbf{Continuous painting} -- \textit{On / Off} -- With this option turned on user can paint only triangles that are connected inside the painting radius. This prevents accidentally painting two parts connected only via  an air-gap.
+
+\item \textbf{Respect original triangles} -- \textit{On / Off} -- Turning this feature on prevents brush from creating new triangles. This makes \textit{Brush} tool behave like a \textit{Triangle Painter} tool with a radius.
+
+\item \textbf{Paint outer ring} -- \textit{On / Off} -- This can be set on only if \textit{Respect original triangles} option is set on. It allows the user to paint the whole original triangle even if it is not fully inside the brush.
+\end{itemize}
+
+\item \textit{Flat brush shape} -- Turns on flat brush shape. Flat brush paints  the shape directly to the surface, ignoring any distance limitation. With the \textbf{Paint backfaces} turned on it will paint the whole cylinder through the model.
+
+\begin{itemize}
+\item \textbf{Flat brush settings} -- \textit{Perspective / Normal} -- With \textit{Perspective} option the brush paints from the direction of the camera. If \textit{Normal} option is set, it will paint area aligned against triangle normal.
+\end{itemize}
+
+\end{itemize}
+
+
+\section{Text Editor}
+Text editor tool allows user to write some text onto the model. User can preset properties of the text and place the text on the model by left mouse button click on a specific location on the model. After that a floating text appears beside this location. Pepr3D also shows a normal vector in the center of the floating text that determines the direction in which the text will be projected onto the model. After showing the floating text, user can still adjust the tool properties to improve the appearance.
+
+\subsection{Properties}
+The properties that user can adjust are following.
+
+\begin{itemize}
+
+\item \textbf{Load new font} -- \textit{button} -- This button opens a file dialog to select and import user's own text font from the computer in \texttt{.ttf} format. However, text tool does not support complicated fancy fonts such as ornamental or picture fonts.
+
+\item \textbf{Font size} -- \textit{10--200} -- By adjusting this property user can change size of the text. It is base font size in font-units.
+
+\item \textbf{Bezier steps} -- \textit{1--8} -- This parameter specifies how much the edges of the letter of the text will be smooth. Higher number of \textit{Bezier steps} will increase painting time.
+
+\item \textbf{Text} -- \textit{text field} -- In this text field user can type custom texts that he or she want to paint on the model. The preview floating text will be changing during typing into this text field.
+
+\item \textbf{Text scale} -- \textit{0.01--1.0} -- Another way to change size of the font is adjusting this parameter. It allows user to make really big or small texts on models.
+
+\item \textbf{Text rotation} -- \textit{$0\degree$--$180\degree$} -- This parameter allows user to rotate the text around the normal vector. With the default value ($0\degree$) the text lays horizontally, no matter what angle the normal vector has.
+
+\item \textbf{Paint} -- \textit{button} -- Finally, the last option paints the prepared floating text onto the model. The text is projected along the normal vector. The computation may take some time.
+
+\end{itemize}
+
 
 \section{Automatic Segmentation}
 
@@ -47,15 +109,15 @@ Automatic segmentation is a powerful tool which allows the user to quickly achie
 
 \begin{itemize}
 
-\item \textbf{Compute SDF values} -- \textit{button} -- before anything can be done in this tool, the user is asked to compute the SDF values. This is the data that is required to perform a successful segmentation. This computation might take a long time to perform, depending on your model size. For low-poly models (e.g. 1000 triangles), this computation is instantaneous. If you already performed the computation in a different tool (like export or the other segmentation), this option will not be visible.
+\item \textbf{Compute SDF values} -- \textit{button} -- Before anything can be done in this tool, the user is asked to compute the SDF values. This is the data that is required to perform a successful segmentation. This computation might take a long time to perform, depending on your model size. For low-poly models (e.g. 1000 triangles), this computation is instantaneous. If you already performed the computation in a different tool (like export or the other segmentation), this option will not be visible.
 
-\item \textbf{Segment!} -- \textit{button} -- this button starts the segmentation process. The default values are set so the segmentation returns viable results in most cases. If you did not set any of the following properties and the segmentation returned an undesirable number of segments (like only one or too many), modify the following properties.
+\item \textbf{Segment!} -- \textit{button} -- This button starts the segmentation process. The default values are set so the segmentation returns viable results in most cases. If you did not set any of the following properties and the segmentation returned an undesirable number of segments (like only one or too many), modify the following properties.
 
-\item \textbf{Robustness} -- $0\%$ -- $100\%$ -- a magic parameter. The meaning of this parameter is somewhat obscured but the best way to imagine this setting is the quality or robustness of the segmentation. Higher values take longer to compute but might give better results -- a higher value might merge two segments that are somewhat related, which the lower values will not recognize. The default setting is the team's best effort to balance the performance and quality.
+\item \textbf{Robustness} -- $0\%$--$100\%$ -- a magic parameter. The meaning of this parameter is somewhat obscured but the best way to imagine this setting is the quality or robustness of the segmentation. Higher values take longer to compute but might give better results -- a higher value might merge two segments that are somewhat related, which the lower values will not recognize. The default setting is the team's best effort to balance the performance and quality.
 
-\item \textbf{Edge tolerance} -- $0\%$ -- $100\%$ -- This parameter specifies how the algorithm should understand "thickness". If you set this value very high, the algorithm will tend to merge more segments together, resulting in a lower amount of segments. If you set this very low, every nook and crease will signal the algorithm to create a new segment, thus resulting in a higher amount of segments. This is the \textbf{primary means} to control this tool and we recommend adjusting this slider over the previous one to change the main behaviour.
+\item \textbf{Edge tolerance} -- $0\%$--$100\%$ -- This parameter specifies how the algorithm should understand "thickness". If you set this value very high, the algorithm will tend to merge more segments together, resulting in a lower amount of segments. If you set this very low, every nook and crease will signal the algorithm to create a new segment, thus resulting in a higher amount of segments. This is the \textbf{primary means} to control this tool and we recommend adjusting this slider over the previous one to change the main behaviour.
 
-\item \textbf{Color Palette} -- same as in the previous tools, this widget allows the user to select a color to assign to each segment.
+\item \textbf{Color Palette} -- Same as in the previous tools, this widget allows the user to select a color to assign to each segment.
 
 
 \end{itemize}
@@ -82,11 +144,11 @@ Manual segmentation is a similar tool to the Automatic segmentation we discussed
 
 \item \textbf{Color palette} -- once SDF values of the object have been computed, the user is presented with a sidepane very similar to the Triangle painter tool. This widget allows the user to select the current color. The color will be used while initializing the segments on the model.
 
-\item \textbf{Spread} -- $0\%$ -- $100\%$ -- once a single triangle is coloured on the model, additional options appear. One of them is the \textit{Spread} slider. This slider is analogous to the \textit{Edge tolerance} slider in Automatic segmentation, since it controls how much each coloured triangle will spread its color among its local neighbourhood. If the spread is $0\%$, only the triangle is coloured. Increasing it to $100\%$ will color all triangles of the model (unless a second segment is competing).
+\item \textbf{Spread} -- $0\%$--$100\%$ -- once a single triangle is coloured on the model, additional options appear. One of them is the \textit{Spread} slider. This slider is analogous to the \textit{Edge tolerance} slider in Automatic segmentation, since it controls how much each coloured triangle will spread its color among its local neighbourhood. If the spread is $0\%$, only the triangle is coloured. Increasing it to $100\%$ will color all triangles of the model (unless a second segment is competing).
 
 \item \textbf{Hard edges} -- \textit{On / Off} -- if this option is turned on, the spread of one color will stop upon meeting a second one's border and will not attempt to color any other triangles. Use this option if the segments you are colouring are well defined and differ in thickness a lot.
 
-\item \textbf{Region overlap} -- \textit{On / Off} --once the user turns this option on, the spreading regions will overlap freely and the last color (rightmost) will always win if \textit{Spread} is turned to $100\%$. Use this option if the borders of the segments converged a little soon or late and you would like one color to expand a little more. This option is not good if the spread is turned to high percentages, since a lot of the segments will overlap and information will be lost.
+\item \textbf{Region overlap} -- \textit{On / Off} -- once the user turns this option on, the spreading regions will overlap freely and the last color (rightmost) will always win if \textit{Spread} is turned to $100\%$. Use this option if the borders of the segments converged a little soon or late and you would like one color to expand a little more. This option is not good if the spread is turned to high percentages, since a lot of the segments will overlap and information will be lost.
 
 \end{itemize}
 
