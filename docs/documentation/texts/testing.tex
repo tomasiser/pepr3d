@@ -114,11 +114,32 @@ With tools that interact with the models by clicking, hovering mouse over triang
 
 \paragraph{Brush}
 
-TODO
+\begin{enumerate}
+\item Run Pepr3D, select Brush. Verify the side pane is populated with a palette and options. All options should have a tooltip.
+\item Default options should be ``Size'' number 2, 12 ``Segments'', and ``Sphere'' brush shape. Everything else should be unchecked.
+\item Select a different color and verify that hovering mouse over a model highlights a sphere (circle) on the model.
+\item Clicking should paint the highlighted shape on the model, but it may not be perfectly circular w.r.t. the number of segments. Try changing this number and verify it also changes the number of segments that are painted.
+\item Verify that ``Size'' changes both the highlight and actual paintings. The maximum size (20) should roughly cover a big part of the model.
+\item Check ``Respect original triangles''. Verify that a new ``Paint outer ring'' option has appeared (unckeched). Increase the size of the brush and verify that whole triangles are indeed painted. By checking ``Paint outer ring'', triangles should be painted also when the brush is smaller than the triangles.
+\item Change shape to ``Flat''. Settings below should change. By rotating the model (cube) sideways, verify that ``Perspective'' and ``Normal'' settings do change the behavior of painting w.r.t. the camera angle or normals.
+\item Verify ``Paint backfaces'' by painting on the back edge of the model (cube).
+\item Change shape back to ``Sphere'', import a test model with holes (e.g., fence), and verify that ``Continuous'' option prevents painting neighboring parts with gaps between them.
+\item Change to Paint Bucket and verify that the tool respects the new details created by Brush.
+\item Change to Triangle Painter and verify that the tool does \emph{not} respect the details created by Brush and instead uses the original triangle topology.
+\end{enumerate}
 
 \paragraph{Text Editor}
 
-TODO
+\begin{enumerate}
+\item Run Pepr3D, select Text Editor. Verify the side pane is populated with a palette and options. All options should have a tooltip.
+\item Default font should be ``OpenSans-Regular.ttf'', size 12, 3 Bezier steps, ``Pepr3D'' text, scale 0.20, zero rotation.
+\item Select a different color and verify that hovering mouse over a model shows a 3D line which corresponds to normal vectors.
+\item Clicking should show a preview of the text (``Pepr3D'') together with the black normal vector and two additional surface vectors.
+\item Clicking multiple times on different positions should update the preview. No text should actually be painted yet!
+\item Only after clicking ``Paint'', the text should actually be painted. Verify a progress indicator is shown, progress corresponding to the individual letters being painted.
+\item Verify that changing the size, scale, and rotation updates the live preview and also changes how the text is painted with ``Paint''.
+\item Try loading a different font and repeat the steps above. If the font is a little bit more complex, try increasing ``Bezier steps'' to see how curves are more detailed.
+\end{enumerate}
 
 \paragraph{Automatic Segmentation}
 
