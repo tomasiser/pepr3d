@@ -9,6 +9,10 @@ using pepr3d::GeometryUtils;
 
 namespace pepr3d {
 TEST(GeometryUtils, segmentPointDistanceSquared) {
+    /**
+     * Test calculating the distance between two segments
+     */
+
     const vec3 start(0, 0, 0);
     const vec3 end(10, 0, 0);
 
@@ -25,6 +29,10 @@ TEST(GeometryUtils, segmentPointDistanceSquared) {
 }
 
 TEST(GeometryUtils, ShoelaceOrientationTest) {
+    /**
+     * Test orienting the vertices in polygons, setting it to either COUNTERCLOCKWISE or CLOCKWISE
+     */
+
     using K = CGAL::Exact_predicates_exact_constructions_kernel;
     using Polygon = CGAL::Polygon_2<K>;
     using Point2 = CGAL::Point_2<K>;
@@ -44,6 +52,10 @@ TEST(GeometryUtils, ShoelaceOrientationTest) {
 }
 
 TEST(GeometryUtils, SimplifyPolygon) {
+    /**
+     * Test simplifying the polygon - should be simple and COUNTERCLOCKWISE oriented.
+     */
+
     using K = CGAL::Simple_cartesian<double>;
     using Polygon = CGAL::Polygon_2<K>;
     using Point2 = CGAL::Point_2<K>;
