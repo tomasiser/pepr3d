@@ -41,12 +41,20 @@ Once the model gets loaded, the user is free to select any available tools and c
 
 \section{Exporting the model}
 
-After we are happy with our colouring, we go to \textbf{File} -- \textbf{Export} and are presented with the user interface seen in Figure \ref{fig:exportui}. Here we select \textbf{TODO PARAMETERS}. We also select the checkbox to create a new folder for the exported files. After that, we select the volumetric export as multiple .STL files. A new folder is created, containing four different .STL files. We can now also save the project as the Pepr3D project file -- \textbf{.p3d}, in case we want to alter our colouring later.
+After we are happy with our colouring, we go to the \textbf{Export Assistant}.
+This is done by either navigating the menu \textit{File} -- \textit{Export} or clicking the icon from the toolbar.
+We are now presented with the user interface seen in Figure \ref{fig:exportui}.
+There is a plethora of options here and all the options are described in detail in chapter \ref{ch:impexp}.
+For our simple model, we can leave the options to their default values, since $2.5\%$ is a good extrusion throughout the whole print. We also select the checkbox to create a new folder for the exported files.
+After that, we select the volumetric export (\textit{depth extrusion}) and select the .STL format for our files.
+A new folder is created, containing four different .STL files.
+We can now also save the project as the Pepr3D project file -- \textbf{.p3d}, in case we want to alter our colouring later.
+We include this coloured model in our attachments.
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{images/export_ui.png}
-	\caption{The demonstration of the Export GUI. Here we select the parameters mentioned in the text.}
+	\includegraphics[scale=0.5]{images/export_ui.png}
+	\caption{The demonstration of the GUI of Export Assistant. Here we select the parameters mentioned in the text and can preview all our export options.}
 	\label{fig:exportui}
 \end{figure}
 
@@ -70,12 +78,20 @@ In this section, we showcase how the parts we exported in the previous section l
 
 \section{Printing the result}
 
-After we are happy with the slicing we got, as shown in Figure \ref{fig:sliced}, we can print the model. We include several pictures of the printed result.
+After we are happy with the slicing we got, as shown in Figure \ref{fig:sliced}, we can print the model. We include a picture finished print of the model in Figure \ref{fig:printed1}, as well as a compilation of other coloured models we printed with our application in Figure \ref{fig:printed2}.
 
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.6]{images/printed_bulba.jpg}
 	\caption{The printed model, with a custom wipe tower next to it.}
 	\label{fig:printed1}
+\end{figure}
+
+\vspace{20pt}
+\begin{figure}[h]
+	\centering
+	\centerline{\includegraphics[scale=0.25]{images/results.png}}
+	\caption{Other printed models, all painted in Pepr3D.}
+	\label{fig:printed2}
 \end{figure}
 
