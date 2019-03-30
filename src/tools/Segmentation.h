@@ -11,6 +11,7 @@
 
 namespace pepr3d {
 
+/// Tool used for automatically separating and coloring the model into regions based on the thickness of the model
 class Segmentation : public Tool {
    public:
     explicit Segmentation(MainApplication& app) : mApplication(app) {}
@@ -42,8 +43,6 @@ class Segmentation : public Tool {
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void drawToModelView(ModelView& modelView) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
-    // virtual void onModelViewMouseUp(ModelView& modelView, ci::app::MouseEvent event) override;
-    // virtual void onModelViewMouseDrag(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onToolDeselect(ModelView& modelView) override;
     virtual void onNewGeometryLoaded(ModelView& modelView) override;
@@ -51,8 +50,8 @@ class Segmentation : public Tool {
    private:
     MainApplication& mApplication;
 
-    int mNumberOfClusters = 5;
-    float mSmoothingLambda = 0.3f;
+    float mNumberOfClusters = 20.0f;  // [0, 100]%, real range {2, .., 15}
+    float mSmoothingLambda = 30.0f;   // [0, 100]%, real range [0.01, 1]
     size_t mNumberOfSegments = 0;
     bool mPickState = false;
     bool mGeometryCorrect = true;

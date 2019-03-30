@@ -12,6 +12,7 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// Tool used for real-time debugging purposes
 class LiveDebug : public Tool {
    public:
     explicit LiveDebug(MainApplication& app) : mApplication(app), mIntegerManager(mIntegerState) {}
@@ -39,6 +40,10 @@ class LiveDebug : public Tool {
     CommandManager<IntegerState> mIntegerManager;
     glm::ivec2 mMousePos;
     std::optional<std::size_t> mTriangleUnderRay{};
+
+    std::vector<std::size_t> mTrianglesInRadius;
+
+    float mSquaredRadius = 0.1f;
 };
 
 }  // namespace pepr3d

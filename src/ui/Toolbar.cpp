@@ -2,6 +2,7 @@
 #include "MainApplication.h"
 #include "geometry/Geometry.h"
 #include "imgui_internal.h"
+#include "tools/ExportAssistant.h"
 
 namespace pepr3d {
 
@@ -39,10 +40,6 @@ void Toolbar::draw() {
     ImGui::SameLine(0.0f, 0.0f);
     drawSeparator();
     drawToolButtons();
-    // ImGui::SameLine(0.0f, 0.0f);
-    // drawSeparator();
-    // ImGui::SameLine(0.0f, 0.0f);
-    // drawDemoWindowToggle();
 
     ImGui::End();
 
@@ -55,25 +52,6 @@ void Toolbar::drawSeparator() {
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
     drawList->AddLine(cursorPos, cursorPos + glm::ivec2(0, mHeight), ImColor(ci::ColorA::hex(0xEDEDED)));
     ImGui::SetCursorScreenPos(cursorPos + glm::ivec2(1, 0));
-}
-
-void Toolbar::drawButton(std::size_t index, const char* text) {
-    std::size_t active = mSelectedButtonIndex;
-    if(index == active) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0xFFFFFF));
-        ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::hex(0x017BDA));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0x017BDA));
-    }
-    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, glm::vec2(0.5f, 0.76f));
-    ImGui::Button(text, glm::ivec2(static_cast<int>(mHeight)));
-    if(ImGui::IsItemActive()) {
-        mSelectedButtonIndex = index;
-    }
-    ImGui::PopStyleVar();
-    ImGui::SameLine(0.f, 0.f);
-    if(index == active) {
-        ImGui::PopStyleColor(3);
-    }
 }
 
 void Toolbar::drawFileDropDown() {
@@ -118,7 +96,7 @@ void Toolbar::drawFileDropDown() {
             }
             if(ImGui::Button("Export", glm::ivec2(175, 50))) {
                 ImGui::CloseCurrentPopup();
-                mApplication.showExportDialog();
+                mApplication.setCurrentTool<ExportAssistant>();
             }
             if(ImGui::Button("Exit", glm::ivec2(175, 50))) {
                 mApplication.quit();
@@ -136,7 +114,9 @@ void Toolbar::drawUndoRedo() {
     props.isEnabled = commandManager && commandManager->canUndo();
     glm::vec2 buttonPos = ImGui::GetCursorScreenPos();
     ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
-    drawButton(props, [&]() { commandManager->undo(); });
+    drawButton(props, [this]() {
+        mApplication.enqueueSlowOperation([this]() { mApplication.getCommandManager()->undo(); }, []() {});
+    });
     const auto undoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Undo);
     mApplication.drawTooltipOnHover("Undo", undoOptionalHotkey ? undoOptionalHotkey->getString() : "",
                                     "Undo last action.", props.isEnabled ? "" : "No action to undo.",
@@ -145,24 +125,14 @@ void Toolbar::drawUndoRedo() {
     props.label = ICON_MD_REDO;
     props.isEnabled = commandManager && commandManager->canRedo();
     buttonPos = ImGui::GetCursorScreenPos();
-    drawButton(props, [&]() { commandManager->redo(); });
+    drawButton(props, [this]() {
+        mApplication.enqueueSlowOperation([this]() { mApplication.getCommandManager()->redo(); }, []() {});
+    });
     ImGui::PopFont();
     const auto redoOptionalHotkey = mApplication.getHotkeys().findHotkey(HotkeyAction::Redo);
     mApplication.drawTooltipOnHover("Redo", redoOptionalHotkey ? redoOptionalHotkey->getString() : "",
                                     "Redo last action.", props.isEnabled ? "" : "No action to redo.",
                                     buttonPos + glm::vec2(0.0f, mHeight + 6.0f));
-}
-
-void Toolbar::drawDemoWindowToggle() {
-    ButtonProperties props;
-    props.label = ICON_MD_CHILD_FRIENDLY;
-    props.isToggled = mApplication.isDemoWindowShown();
-    ImGui::PushFont(mApplication.getFontStorage().getRegularIconFont());
-    drawButton(props, [&]() {
-        props.isToggled = !props.isToggled;
-        mApplication.showDemoWindow(props.isToggled);
-    });
-    ImGui::PopFont();
 }
 
 void Toolbar::drawToolButtons() {

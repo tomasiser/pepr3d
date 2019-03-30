@@ -8,6 +8,7 @@
 
 namespace pepr3d {
 
+/// Tool used for coloring whole regions with a single click
 class PaintBucket : public Tool {
    public:
     explicit PaintBucket(MainApplication& app) : mApplication(app) {}
@@ -53,6 +54,7 @@ class PaintBucket : public Tool {
     NormalAngleCompare mNormalCompare = NormalAngleCompare::NEIGHBOURS;
     glm::ivec2 mLastMousePos;
 
+    /// A paint bucket criterion that never stops, used for coloring the whole model
     struct DoNotStop {
         const Geometry* geo;
 
@@ -63,6 +65,7 @@ class PaintBucket : public Tool {
         }
     };
 
+    /// A paint bucket criterion that stops on a different color
     struct ColorStopping {
         const Geometry* geo;
 
@@ -77,6 +80,7 @@ class PaintBucket : public Tool {
         }
     };
 
+    /// A paint bucket criterion that stops when an angle between normals is too high
     struct NormalStopping {
         const Geometry* geo;
         const double threshold;

@@ -19,9 +19,11 @@
 #include "geometry/ColorManager.h"
 #include "geometry/GeometryProgress.h"
 #include "geometry/Triangle.h"
+#include "peprassert.h"
 
 namespace pepr3d {
 
+/// Imports triangles and color palette from a model via Assimp
 class ModelImporter {
     std::string mPath;
     std::vector<DataTriangle> mTriangles;
@@ -40,29 +42,34 @@ class ModelImporter {
         auto loadedModel = threadPool.enqueue([this]() { return loadModel(this->mPath); });
         bool loadedModelWithJoinedVertices = loadModelWithJoinedVertices(this->mPath);
         this->mModelLoaded = loadedModel.get() & loadedModelWithJoinedVertices;
-        assert(mTriangles.size() == mIndexBuffer.size());
+        P_ASSERT(mTriangles.size() == mIndexBuffer.size());
     }
 
+    /// Returns a vector of all DataTriangle of the imported mesh.
     std::vector<DataTriangle> getTriangles() const {
         return mTriangles;
     }
 
+    /// Returns a ColorManager of the imported mesh.
     ColorManager getColorManager() const {
-        assert(!mPalette.empty());
+        P_ASSERT(!mPalette.empty());
         return mPalette;
     }
 
+    /// Returns true if the mesh was imported successfully.
     bool isModelLoaded() {
         return mModelLoaded;
     }
 
+    /// Returns a vertex buffer of the imported mesh.
     std::vector<glm::vec3> getVertexBuffer() const {
-        assert(!mVertexBuffer.empty());
+        P_ASSERT(!mVertexBuffer.empty());
         return mVertexBuffer;
     }
 
+    /// Returns an index buffer of the imported mesh.
     std::vector<std::array<size_t, 3>> getIndexBuffer() const {
-        assert(!mIndexBuffer.empty());
+        P_ASSERT(!mIndexBuffer.empty());
         return mIndexBuffer;
     }
 
@@ -88,7 +95,7 @@ class ModelImporter {
         for(size_t i = 0; i < mesh->mNumVertices; i++) {
             vertices.emplace_back(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
         }
-        assert(vertices.size() == mesh->mNumVertices);
+        P_ASSERT(vertices.size() == mesh->mNumVertices);
         return vertices;
     }
 
@@ -98,7 +105,7 @@ class ModelImporter {
         indices.reserve(mesh->mNumFaces);
 
         for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
-            assert(mesh->mFaces[i].mNumIndices == 3);
+            P_ASSERT(mesh->mFaces[i].mNumIndices == 3);
 
             std::array<glm::vec3, 3> triangle;
 
@@ -233,7 +240,7 @@ class ModelImporter {
         for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
 
-            assert(face.mNumIndices == 3);
+            P_ASSERT(face.mNumIndices == 3);
 
             std::array<glm::vec3, 3> vertices;
             glm::vec3 normals[3];
@@ -266,14 +273,14 @@ class ModelImporter {
                 const std::array<float, 3> rgbArray = {color.r, color.g, color.b};
                 const auto result = colorLookup.find(rgbArray);
                 if(result != colorLookup.end()) {
-                    assert(result->second < mPalette.size());
-                    assert(result->second >= 0);
+                    P_ASSERT(result->second < mPalette.size());
+                    P_ASSERT(result->second >= 0);
                     returnColor = result->second;
                 } else {
                     mPalette.addColor(color);
                     colorLookup.insert({rgbArray, mPalette.size() - 1});
                     returnColor = mPalette.size() - 1;
-                    assert(colorLookup.find(rgbArray) != colorLookup.end());
+                    P_ASSERT(colorLookup.find(rgbArray) != colorLookup.end());
                 }
             }
 
@@ -283,9 +290,9 @@ class ModelImporter {
             if(!isZeroArea) {
                 /// Do last minute quality checks on the triangle
                 // Normal should be normalized
-                assert(glm::epsilonEqual<double>(glm::length(normal), 1.0, Eps));
+                P_ASSERT(glm::epsilonEqual<double>(glm::length(normal), 1.0, Eps));
                 // ColorPalette should either be empty and return color 0, or returnColor should be within the palette
-                assert(
+                P_ASSERT(
                     (mPalette.size() == 0 && returnColor == 0) ||
                     (mPalette.size() > 0 && returnColor < mPalette.size() && returnColor < PEPR3D_MAX_PALETTE_COLORS));
                 /// Place the constructed triangle

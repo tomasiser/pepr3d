@@ -45,6 +45,10 @@ void ProgressIndicator::draw() {
         drawStatus("Creating scene...", progress.createScenePercentage, true);
         drawStatus("Exporting geometry...", progress.exportFilePercentage, false);
 
+        drawStatus("Computing SDF...", progress.sdfPercentage, true);
+
+        drawStatus("Painting text...", progress.paintTextPercentage, false);
+
         ImGui::EndPopup();
     }
     ImGui::PopStyleVar(3);

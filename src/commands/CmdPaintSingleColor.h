@@ -7,6 +7,7 @@
 
 namespace pepr3d {
 
+/// Command that sets a (same) color to a batch of triangles
 class CmdPaintSingleColor : public CommandBase<Geometry> {
    public:
     std::string_view getDescription() const override {

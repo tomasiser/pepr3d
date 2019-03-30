@@ -4,6 +4,7 @@
 
 namespace pepr3d {
 
+/// Cinder logger which only logs events with ci::log::Level::LEVEL_FATAL
 class FatalLogger : public ci::log::LoggerFile {
    public:
     FatalLogger(const ci::fs::path& filePath, bool appendToExisting) : LoggerFile(filePath, appendToExisting) {}

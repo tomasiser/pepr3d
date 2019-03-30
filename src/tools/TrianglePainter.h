@@ -10,6 +10,7 @@ namespace pepr3d {
 
 class MainApplication;
 
+/// Tool used for coloring individual triangles by clicking or dragging the mouse
 class TrianglePainter : public Tool {
    public:
     explicit TrianglePainter(MainApplication& app) : mApplication(app) {}

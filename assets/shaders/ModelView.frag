@@ -20,7 +20,9 @@ uniform float uAreaHighlightSize;
 uniform bool uShowWireframe;
 uniform bool uAreaHighlightEnabled;
 uniform bool uOverridePalette;
-
+uniform float uGridOffset;
+uniform vec2 uPreviewMinMaxHeight;
+uniform mat4 ciModelMatrix;
 
 // From Florian Boesch post on barycentric coordinates
 // http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
@@ -47,7 +49,7 @@ float getAreaHighlightAlpha() {
         float distLimitSquared = uAreaHighlightSize*uAreaHighlightSize;
     
         if(distToOriginSquared < distLimitSquared) {
-        return 1;
+            return 1;
         }
     }
     
@@ -55,9 +57,30 @@ float getAreaHighlightAlpha() {
 }
 
 void main() {
+    // discard pixels that are below / above the preview height limits:
+    float minRelativeHeight = uPreviewMinMaxHeight.x;
+    float maxRelativeHeight = uPreviewMinMaxHeight.y;
+    if (minRelativeHeight > 0.0f || maxRelativeHeight < 1.0f) {
+        // we need relativeHeight == 0 for the lowest part of the model:
+        // (uGridOffset is half-height of the model)
+        float relativeHeight = (ciModelMatrix * vec4(ModelCoordinates, 1.0)).y - uGridOffset;
+        // additionally, we need relativeHeight == 1 for the highest part of the model:
+        relativeHeight /= 2.0f * abs(uGridOffset);
+
+        if (minRelativeHeight > 0.0f && relativeHeight < minRelativeHeight) {
+            discard;
+            return;
+        }
+
+        if (maxRelativeHeight < 1.0f && relativeHeight > maxRelativeHeight) {
+            discard;
+            return;
+        }
+    }
+
     const vec3 L = vec3(0, 0, 1);
     vec3 N = normalize(Normal);
-    float lambert = max(0.0, dot(N, L));
+    float lambert = abs(dot(N, L)); // shade back faces as well
     float ambient = 0.2;
     float lightIntensity = lambert + ambient;
 

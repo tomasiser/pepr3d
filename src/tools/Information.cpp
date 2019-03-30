@@ -14,5 +14,7 @@ void Information::drawToSidePane(SidePane& sidePane) {
     sidePane.drawText("This software was made to complete the course NPRG023 - Software Project.");
 
     sidePane.drawText("See and contribute to the code:\nhttps://github.com/tomasiser/pepr3d");
+
+    sidePane.drawSeparator();
 }
 }  // namespace pepr3d

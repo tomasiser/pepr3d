@@ -20,26 +20,7 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
     if(!isSdfComputed) {
         sidePane.drawText("Warning: This computation may take a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            try {
-                currentGeometry->computeSdfValues();
-            } catch(SdfValuesException& e) {
-                const std::string errorCaption = "Error: Failed to compute SDF";
-                const std::string errorDescription =
-                    "The SDF values returned by the computation were not valid. This can happen when you use the "
-                    "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
-                    "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
-                    "cannot be segmented.\n\nThe full description of the problem is:\n";
-                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
-                return;
-            } catch(std::exception& e) {
-                const std::string errorCaption = "Error: Failed to compute SDF";
-                const std::string errorDescription =
-                    "An internal error occured while computing the SDF values. If the problem persists, try re-loading "
-                    "the mesh.\n\n"
-                    "Please report this bug to the developers. The full description of the problem is:\n";
-                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
-                return;
-            }
+            mApplication.enqueueSlowOperation([this]() { safeComputeSdf(mApplication); }, []() {}, true);
         }
         sidePane.drawTooltipOnHover("Compute the shape diameter function of the model to enable the segmentation.");
         sidePane.drawSeparator();
@@ -49,8 +30,9 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
 
         if(mStartingTriangles.empty()) {
             sidePane.drawText("Draw with several colors to enable segmentation.");
+            sidePane.drawSeparator();
         } else {
-            sidePane.drawFloatDragger("Spread", mBucketSpread, .01f, 0.0f, 1.f, "%.02f", 70.f);
+            sidePane.drawFloatDragger("Spread", mBucketSpread, 0.25f, 0.0f, 100.0f, "%.0f %%", 70.f);
             sidePane.drawTooltipOnHover(
                 "The amount of growth each region will do. If your regions are small, increase this number.");
 
@@ -112,6 +94,8 @@ void SemiautomaticSegmentation::drawToSidePane(SidePane& sidePane) {
                 reset();
             }
             sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
+
+            sidePane.drawSeparator();
         }
     }
 }
@@ -212,7 +196,7 @@ void SemiautomaticSegmentation::spreadColors() {
 
     /// Normal stopping init, uncomment in case we want to include it as a feature
     const Geometry* const p = const_cast<const Geometry*>(currentGeometry);
-    const double angleRads = (1 - mBucketSpread) * 180.f * glm::pi<double>() / 180.0;
+    const double angleRads = (100.0f - mBucketSpread) / 100.0f * 180.f * glm::pi<double>() / 180.0;
     NormalStopping stoppingFtor(p, angleRads);
 
     // Precompute data - gather all starting triangle SDF data into sdfValuesPerColor
@@ -256,7 +240,8 @@ void SemiautomaticSegmentation::spreadColors() {
         std::vector<double>& initialValues = sdfValuesPerColor.find(currentColor)->second;
         std::vector<size_t> ret;
         if(mCriterionUsed == Criteria::SDF) {
-            SDFStopping SDFStopping(currentGeometry, initialValues, mBucketSpread, triangleToBestRegion, mHardEdges);
+            SDFStopping SDFStopping(currentGeometry, initialValues, mBucketSpread / 100.0f, triangleToBestRegion,
+                                    mHardEdges);
             ret = currentGeometry->bucket(startingTriangles, SDFStopping);
         } else {
             assert(mCriterionUsed == Criteria::NORMAL);
@@ -283,7 +268,7 @@ void SemiautomaticSegmentation::spreadColors() {
 
     // Render all new colorings
     for(const auto& coloring : mCurrentColoring) {
-        if(mApplication.getModelView().isColorOverride()) {
+        if(mApplication.getModelView().isMeshOverriden()) {
             for(const size_t tri : coloring.second) {
                 const auto rgbTriangleColor = currentGeometry->getColorManager().getColor(coloring.first);
                 overrideBuffer[3 * tri] = rgbTriangleColor;
@@ -343,9 +328,10 @@ void SemiautomaticSegmentation::setupOverride() {
         newOverrideBuffer[3 * triIndex + 2] = rgbTriangleColor;
     }
 
+    mApplication.getModelView().toggleMeshOverride(true);
+    mApplication.getModelView().initOverrideFromBasicGeoemtry();
     mBackupColorBuffer = newOverrideBuffer;
     mApplication.getModelView().getOverrideColorBuffer() = newOverrideBuffer;
-    mApplication.getModelView().setColorOverride(true);
 }
 
 void SemiautomaticSegmentation::setTriangleColor() {
@@ -363,7 +349,7 @@ void SemiautomaticSegmentation::setTriangleColor() {
             findSameColorList->second = activeColor;
         }
 
-        if(mApplication.getModelView().isColorOverride()) {
+        if(mApplication.getModelView().isMeshOverriden()) {
             const auto rgbTriangleColor = mApplication.getCurrentGeometry()->getColorManager().getColor(activeColor);
             auto& overrideBuffer = mApplication.getModelView().getOverrideColorBuffer();
             overrideBuffer[3 * triIndex] = rgbTriangleColor;
@@ -485,7 +471,7 @@ void SemiautomaticSegmentation::reset() {
     mCurrentColoring.clear();
 
     mApplication.getModelView().getOverrideColorBuffer().clear();
-    mApplication.getModelView().setColorOverride(false);
+    mApplication.getModelView().toggleMeshOverride(false);
 }
 
 }  // namespace pepr3d

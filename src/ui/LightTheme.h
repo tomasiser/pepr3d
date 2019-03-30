@@ -4,6 +4,7 @@
 
 namespace {
 
+/// Applies our light ImGui colors.
 inline void applyColors(ImVec4* colors) {
     colors[ImGuiCol_Text] = ci::ColorA::hex(0x1C2A35);
     colors[ImGuiCol_TextDisabled] = ImVec4(0.00f, 0.00f, 0.00f, 0.50f);
@@ -32,7 +33,7 @@ inline void applyColors(ImVec4* colors) {
     colors[ImGuiCol_Header] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_HeaderHovered] = ImVec4(0.92f, 0.92f, 0.92f, 1.00f);
     colors[ImGuiCol_HeaderActive] = ImVec4(0.84f, 0.84f, 0.84f, 1.00f);
-    colors[ImGuiCol_Separator] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+    colors[ImGuiCol_Separator] = ci::ColorA::hex(0xEDEDED);
     colors[ImGuiCol_SeparatorHovered] = ImVec4(0.70f, 0.60f, 0.60f, 1.00f);
     colors[ImGuiCol_SeparatorActive] = ImVec4(0.90f, 0.70f, 0.70f, 1.00f);
     colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
@@ -52,23 +53,9 @@ inline void applyColors(ImVec4* colors) {
 
 namespace pepr3d {
 
+/// Applies our light ImGui theme.
 inline void applyLightTheme(ImGuiStyle& style) {
     applyColors(style.Colors);
 }
-
-// enum class StyleColor: std::size_t {
-//     Front,
-//     Back
-// };
-
-// std::vector<ImVec4> styleColors;
-
-// ImVec4 getStyleColor(StyleColor selector) {
-//     return styleColors[static_cast<std::size_t>(selector)];
-// }
-
-// void drawblah() {
-//     getStyleColor(StyleColor::Front);
-// }
 
 }  // namespace pepr3d

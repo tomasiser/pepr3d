@@ -95,7 +95,7 @@ set(PEPR3D_TEST_MAIN_FILE ${PEPR3D_SRC_PATH}/main.test.cpp)
 set(PEPR3D_MAIN_FILE ${PEPR3D_SRC_PATH}/main.cpp)
 
 file(GLOB SRC_FILES_IMGUI ${APP_PATH}/lib/peprimgui/peprimgui.cpp
-          ${APP_PATH}/lib/imgui/*)
+          ${APP_PATH}/lib/imgui/* ${APP_PATH}/lib/imgui/misc/cpp/*)
 
 file(GLOB_RECURSE SRC_FILES_PEPR3D LIST_DIRECTORES false "${PEPR3D_SRC_PATH}/*.cpp"
                   "${PEPR3D_SRC_PATH}/*.h")
@@ -114,7 +114,7 @@ list(REMOVE_ITEM SRC_FILES_PEPR3D ${PEPR3D_MAIN_FILE})
 ci_make_app(APP_NAME "pepr3d"
             CINDER_PATH ${CINDER_PATH}
             SOURCES     ${SRC_FILES_IMGUI} ${APP_PATH}/resources/Resources.rc ${SRC_FILES_PEPR3D} ${PEPR3D_MAIN_FILE} ${SRC_FILES_FTGL} ${SRC_FILES_POLY2TRI}
-            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cereal/include ${APP_PATH}/lib/poly2tri ${APP_PATH}/lib/FTGL ${APP_PATH}/lib/threadpool ${APP_PATH}/lib/peprimgui ${APP_PATH}/lib/imgui ${FREETYPE_INCLUDE_DIRS}
+            INCLUDES    ${APP_PATH}/src ${APP_PATH}/lib/cereal/include ${APP_PATH}/lib/imgui/misc/cpp ${APP_PATH}/lib/poly2tri ${APP_PATH}/lib/FTGL ${APP_PATH}/lib/threadpool ${APP_PATH}/lib/peprimgui ${APP_PATH}/lib/imgui ${FREETYPE_INCLUDE_DIRS}
             RESOURCES   ${APP_PATH}/resources/icon.ico
             # ASSETS_PATH
             # BLOCKS
@@ -150,6 +150,7 @@ target_include_directories(pepr3dtests
                                    ${APP_PATH}/lib/FTGL
                                    ${APP_PATH}/lib/peprimgui
                                    ${APP_PATH}/lib/imgui
+                                   ${APP_PATH}/lib/imgui/misc/cpp
                                    ${APP_PATH}/lib/cinder/include
                                    ${APP_PATH}/lib/googletest/googletest/include)
 target_include_directories(pepr3dtests PRIVATE ${ASSIMP_INCLUDE_DIR})
@@ -165,6 +166,9 @@ if(WIN32)
   endif()
 endif()
 
+# copy test files to binary dir
+file(COPY ${APP_PATH}/tests DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 # ------------------------------------------------------------------------
 # --------------------------- COMPILER FLAGS -----------------------------
 # ------------------------------------------------------------------------
@@ -173,7 +177,7 @@ target_compile_definitions(pepr3d PRIVATE $<$<CONFIG:RELEASE>:CI_MIN_LOG_LEVEL=3
 
 if(MSVC)
   target_compile_options(pepr3d PRIVATE /W3 /std:c++17 /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
-  target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_ /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
+  target_compile_options(pepr3dtests PRIVATE /W3 /std:c++17 /D_TEST_ /D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING /DPEPR3D_EDGE_CONSISTENCY_CHECK)
   target_compile_options(cinder PRIVATE /W0)
 
   # Note: /std:c++14 flag is not present in cinder INTERFACE_COMPILE_OPTIONS for some reason for
@@ -186,7 +190,7 @@ if(MSVC)
   file(COPY ${APP_PATH}/pepr3d.sln.DotSettings DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 else()
   target_compile_options(pepr3d PRIVATE -Wall -Wextra -pedantic -std=c++17)
-  target_compile_options(pepr3dtests PRIVATE -Wall -Wextra -pedantic -std=c++17 -D_TEST_)
+  target_compile_options(pepr3dtests PRIVATE -Wall -Wextra -pedantic -std=c++17 -D_TEST_ -DPEPR3D_EDGE_CONSISTENCY_CHECK)
 
   # Replace c++14 flag forced by Cinder with c++17
   get_target_property(CINDER_COMPILE_FLAGS cinder INTERFACE_COMPILE_OPTIONS)

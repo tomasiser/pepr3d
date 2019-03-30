@@ -16,26 +16,7 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
     if(!isSdfComputed) {
         sidePane.drawText("Warning: This computation may take a long time to perform.");
         if(sidePane.drawButton("Compute SDF")) {
-            try {
-                mApplication.getCurrentGeometry()->computeSdfValues();
-            } catch(SdfValuesException& e) {
-                const std::string errorCaption = "Error: Failed to compute SDF";
-                const std::string errorDescription =
-                    "The SDF values returned by the computation were not valid. This can happen when you use the "
-                    "segmentation on a flat surface. The segmentation tools will now get disabled for this model. "
-                    "Remember that the segmentation works based on the thickness of the object and thus a flat surface "
-                    "cannot be segmented.\n\nThe full description of the problem is:\n";
-                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
-                return;
-            } catch(std::exception& e) {
-                const std::string errorCaption = "Error: Failed to compute SDF";
-                const std::string errorDescription =
-                    "An internal error occured while computing the SDF values. If the problem persists, try re-loading "
-                    "the mesh.\n\n"
-                    "Please report this bug to the developers. The full description of the problem is:\n";
-                mApplication.pushDialog(Dialog(DialogType::Error, errorCaption, errorDescription + e.what(), "OK"));
-                return;
-            }
+            mApplication.enqueueSlowOperation([this]() { safeComputeSdf(mApplication); }, []() {}, true);
         }
         sidePane.drawTooltipOnHover("Compute the shape diameter function of the model to enable the segmentation.");
     } else {
@@ -43,11 +24,11 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
             computeSegmentation();
         }
         sidePane.drawTooltipOnHover("Start segmentation on the model.");
-        sidePane.drawIntDragger("Robustness [2,15]", mNumberOfClusters, 0.25f, 2, 15, "%.0f", 40.0f);
+        sidePane.drawFloatDragger("Robustness", mNumberOfClusters, 0.25f, 0.0f, 100.0f, "%.0f %%", 70.0f);
         sidePane.drawTooltipOnHover(
             "Higher values increase the computation time and might result in better region grouping. The default value "
             "should be good for most use cases.");
-        sidePane.drawFloatDragger("Edge tolerance [0,1]", mSmoothingLambda, .01f, 0.01f, 1.f, "%.02f", 70.f);
+        sidePane.drawFloatDragger("Edge tolerance", mSmoothingLambda, 0.25f, 0.0f, 100.0f, "%.0f %%", 70.0f);
         sidePane.drawTooltipOnHover(
             "The higher the number, the more the segmentation will tolerate sharp edges and thus make less segments. "
             "If you have more segments than you wanted, increase this value. If you have less, decrease.");
@@ -116,8 +97,10 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
                 reset();
                 CI_LOG_I("Segmentation applied.");
             } else {  // Else report the error to the user and continue.
-                /// \todo Popup for the user
-                CI_LOG_W("Please assign all segments to a color from the palette first.");
+                mApplication.pushDialog(Dialog(
+                    DialogType::Error, "Please assign a color to all segments",
+                    "The segmentation was not accepted. Please assign all segments a color from the palette first!"));
+                CI_LOG_W("Please assign all segments a color from the palette first.");
             }
         }
         sidePane.drawTooltipOnHover("Apply the results to the model.");
@@ -125,6 +108,8 @@ void Segmentation::drawToSidePane(SidePane& sidePane) {
             cancel();
         }
         sidePane.drawTooltipOnHover("Revert the model back to the previous coloring.");
+
+        sidePane.drawSeparator();
     }
 }
 
@@ -188,8 +173,7 @@ void Segmentation::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEven
 }
 
 void Segmentation::reset() {
-    mApplication.getModelView().setColorOverride(false);
-    mApplication.getModelView().getOverrideColorBuffer().clear();
+    mApplication.getModelView().toggleMeshOverride(false);
 
     mNumberOfSegments = 0;
     mPickState = false;
@@ -206,20 +190,24 @@ void Segmentation::reset() {
 void Segmentation::computeSegmentation() {
     cancel();
 
-    mSmoothingLambda = std::min<float>(mSmoothingLambda, 1.0f);
-    mSmoothingLambda = std::max<float>(mSmoothingLambda, 0.01f);
+    Geometry* geometry = mApplication.getCurrentGeometry();
+    assert(geometry);
 
-    mNumberOfClusters =
-        std::min<int>(mNumberOfClusters, static_cast<int>(mApplication.getCurrentGeometry()->getTriangleCount()) - 2);
-    mNumberOfClusters = std::max<int>(2, mNumberOfClusters);
+    float smoothingLambda = mSmoothingLambda / 100.0f;
+    smoothingLambda = std::min<float>(smoothingLambda, 1.0f);
+    smoothingLambda = std::max<float>(smoothingLambda, 0.01f);
 
-    assert(0.0f < mSmoothingLambda && mSmoothingLambda <= 1.0f);
-    assert(2 <= mNumberOfClusters && mNumberOfClusters <= mApplication.getCurrentGeometry()->getTriangleCount() &&
-           mNumberOfClusters <= 15);
+    int numberOfClusters = static_cast<int>(std::floor(mNumberOfClusters / 100.0f / (1.0f / 14.0f)) + 2.0f);
+    numberOfClusters = std::min<int>(numberOfClusters, 15);
+    numberOfClusters = std::min<int>(numberOfClusters, static_cast<int>(geometry->getTriangleCount()) - 2);
+    numberOfClusters = std::max<int>(2, numberOfClusters);
+
+    assert(0.0f < smoothingLambda && smoothingLambda <= 1.0f);
+    assert(2 <= numberOfClusters && numberOfClusters <= geometry->getTriangleCount() && numberOfClusters <= 15);
 
     try {
-        mNumberOfSegments = mApplication.getCurrentGeometry()->segmentation(
-            mNumberOfClusters, mSmoothingLambda, mSegmentToTriangleIds, mTriangleToSegmentMap);
+        mNumberOfSegments =
+            geometry->segmentation(numberOfClusters, smoothingLambda, mSegmentToTriangleIds, mTriangleToSegmentMap);
     } catch(std::exception& e) {
         const std::string errorCaption = "Error: Failed to compute the segmentation";
         const std::string errorDescription =
@@ -249,7 +237,7 @@ void Segmentation::computeSegmentation() {
 
         // Create an override color buffer based on the segmentation
         std::vector<glm::vec4> newOverrideBuffer;
-        newOverrideBuffer.resize(mApplication.getCurrentGeometry()->getTriangleCount() * 3);
+        newOverrideBuffer.resize(geometry->getTriangleCount() * 3);
         for(const auto& toPaint : mSegmentToTriangleIds) {
             for(const auto& tri : toPaint.second) {
                 newOverrideBuffer[3 * tri] = mSegmentationColors[toPaint.first];
@@ -257,8 +245,9 @@ void Segmentation::computeSegmentation() {
                 newOverrideBuffer[3 * tri + 2] = mSegmentationColors[toPaint.first];
             }
         }
+        mApplication.getModelView().toggleMeshOverride(true);
+        mApplication.getModelView().initOverrideFromBasicGeoemtry();
         mApplication.getModelView().getOverrideColorBuffer() = newOverrideBuffer;
-        mApplication.getModelView().setColorOverride(true);
     }
 }
 

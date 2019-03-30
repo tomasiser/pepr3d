@@ -49,6 +49,9 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Vao.h"
 #include "cinder/gl/Vbo.h"
+#include "cinder/gl/Fbo.h"
+
+#include "peprassert.h"
 
 // Custom implicit cast operators
 #ifndef CINDER_IMGUI_NO_IMPLICIT_CASTS
@@ -152,6 +155,7 @@ class PeprImGui {
     std::vector<int> mAccelKeys;
     ci::Timer mTimer;
     std::string mIniFilename;
+    ci::gl::FboRef mFramebuffer;
 
    public:
     void setup(cinder::app::AppBase* application, WindowRef window);
@@ -159,6 +163,10 @@ class PeprImGui {
     void disconnectWindow(WindowRef window);
 
     void refreshFontTexture();
+
+    void useFramebuffer(ci::gl::FboRef framebuffer) {
+        mFramebuffer = framebuffer;
+    }
 
    private:
     void mouseDown(ci::app::MouseEvent& event);

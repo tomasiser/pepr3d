@@ -1,12 +1,14 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
+#include "peprassert.h"
 
 namespace pepr3d {
 
 typedef CGAL::Polyhedron_3<pepr3d::DataTriangle::K, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 typedef Polyhedron::HalfedgeDS HalfedgeDS;
 
+/// Builds a CGAL Polyhedron from triangles
 template <class HDS>
 class PolyhedronBuilder : public CGAL::Modifier_base<HDS> {
    private:
@@ -20,7 +22,7 @@ class PolyhedronBuilder : public CGAL::Modifier_base<HDS> {
         : mTriangles(tris), mVertices(verts) {}
 
     std::vector<typename CGAL::Polyhedron_incremental_builder_3<HDS>::Face_handle> getFacetArray() {
-        assert(mFacetsCreated.size() > 0 && mFacetsCreated.size() == mTriangles.size());
+        P_ASSERT(mFacetsCreated.size() > 0 && mFacetsCreated.size() == mTriangles.size());
         return mFacetsCreated;
     }
 
@@ -53,7 +55,7 @@ class PolyhedronBuilder : public CGAL::Modifier_base<HDS> {
 
         B.end_surface();
 
-        assert(mFacetsCreated.size() == mTriangles.size());
+        P_ASSERT(mFacetsCreated.size() == mTriangles.size());
     }
 };
 }  // namespace pepr3d
