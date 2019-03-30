@@ -1,0 +1,36 @@
+\hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data}{}\section{pepr3d\+::Geometry\+::Open\+Gl\+Data Struct Reference}
+\label{structpepr3d_1_1_geometry_1_1_open_gl_data}\index{pepr3d::Geometry::OpenGlData@{pepr3d::Geometry::OpenGlData}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data_1_1_info}{Info}}
+\begin{DoxyCompactList}\small\item\em Always editable struct that keeps track of changes since last frame Updates to color/highlight buffer set this flag to true \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} resets the flag to false when it updates Open\+Gl data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data_ae087e1484346b1ef7af7f04e6d745745}\label{structpepr3d_1_1_geometry_1_1_open_gl_data_ae087e1484346b1ef7af7f04e6d745745}} 
+std\+::vector$<$ glm\+::vec3 $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data_ae087e1484346b1ef7af7f04e6d745745}{vertex\+Buffer}}
+\begin{DoxyCompactList}\small\item\em Vertex buffer with the same data as m\+Triangles for Open\+GL to render the mesh. Contains position and color data for each vertex. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data_a5741e251aec5d181e48fbf2d9e56112d}\label{structpepr3d_1_1_geometry_1_1_open_gl_data_a5741e251aec5d181e48fbf2d9e56112d}} 
+std\+::vector$<$ Color\+Index $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data_a5741e251aec5d181e48fbf2d9e56112d}{color\+Buffer}}
+\begin{DoxyCompactList}\small\item\em Color buffer, keeping the invariant that every triangle has only one color -\/ all three vertices have to have the same color. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data_ab1e3327043c8d4e8924495db62eb2ad9}\label{structpepr3d_1_1_geometry_1_1_open_gl_data_ab1e3327043c8d4e8924495db62eb2ad9}} 
+std\+::vector$<$ glm\+::vec3 $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data_ab1e3327043c8d4e8924495db62eb2ad9}{normal\+Buffer}}
+\begin{DoxyCompactList}\small\item\em Normal buffer, the triangle has same normal for its every vertex. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data_ad66b73ae688939f518a57411a9f02671}\label{structpepr3d_1_1_geometry_1_1_open_gl_data_ad66b73ae688939f518a57411a9f02671}} 
+std\+::vector$<$ uint32\+\_\+t $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data_ad66b73ae688939f518a57411a9f02671}{index\+Buffer}}
+\begin{DoxyCompactList}\small\item\em Index buffer for Open\+GL frontend., specifying the same triangles as in m\+Triangles. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data_a8c61b7f1139d0a7fa632ab221546e81b}\label{structpepr3d_1_1_geometry_1_1_open_gl_data_a8c61b7f1139d0a7fa632ab221546e81b}} 
+std\+::vector$<$ G\+Lint $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data_a8c61b7f1139d0a7fa632ab221546e81b}{highlight\+Mask}}
+\begin{DoxyCompactList}\small\item\em boolen for each triangle that indicates if the triangle should display cursor highlight Used to limit the highlight to continuous surface \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data_ab219bc2425e6580d0667d3165b9c660b}\label{structpepr3d_1_1_geometry_1_1_open_gl_data_ab219bc2425e6580d0667d3165b9c660b}} 
+bool {\bfseries is\+Dirty} \{true\}
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_open_gl_data_a1960dd95c0c38dda4a26422de4c981b4}\label{structpepr3d_1_1_geometry_1_1_open_gl_data_a1960dd95c0c38dda4a26422de4c981b4}} 
+struct \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data_1_1_info}{pepr3d\+::\+Geometry\+::\+Open\+Gl\+Data\+::\+Info}} {\bfseries info}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Geometry.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,159 @@
+\hypertarget{classpepr3d_1_1_model_importer}{}\section{pepr3d\+::Model\+Importer Class Reference}
+\label{classpepr3d_1_1_model_importer}\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_ae34f94fa256e598818039431f49f8709}\label{classpepr3d_1_1_model_importer_ae34f94fa256e598818039431f49f8709}} 
+{\bfseries Model\+Importer} (const std\+::string p, \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$progress, \+::Thread\+Pool \&thread\+Pool)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_aca674c511db529638e83ade8aad83e24}\label{classpepr3d_1_1_model_importer_aca674c511db529638e83ade8aad83e24}} 
+std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ {\bfseries get\+Triangles} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_aa3ba28412e9317aff4850ccd251e721e}\label{classpepr3d_1_1_model_importer_aa3ba28412e9317aff4850ccd251e721e}} 
+\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} {\bfseries get\+Color\+Manager} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a49b8a0fd779eedce1cf24a910fcce833}\label{classpepr3d_1_1_model_importer_a49b8a0fd779eedce1cf24a910fcce833}} 
+bool {\bfseries is\+Model\+Loaded} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a8b27edc2cd72882c9144ff870ee26a6b}\label{classpepr3d_1_1_model_importer_a8b27edc2cd72882c9144ff870ee26a6b}} 
+std\+::vector$<$ glm\+::vec3 $>$ {\bfseries get\+Vertex\+Buffer} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a0d21b9019f26f672414ad0bb40bb946c}\label{classpepr3d_1_1_model_importer_a0d21b9019f26f672414ad0bb40bb946c}} 
+std\+::vector$<$ std\+::array$<$ size\+\_\+t, 3 $>$ $>$ {\bfseries get\+Index\+Buffer} () const
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_model_importer_aa9220087658f958e335ed87632c364be}{load\+Model\+With\+Joined\+Vertices}} (const std\+::string \&path)
+\begin{DoxyCompactList}\small\item\em A method which loads the model with A\+LL vertex information apart from position removed. This is done to correctly merge all vertices and receive a closed mesh, which can\textquotesingle{}t be done if more than one vertex per position exists. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_model_importer_aa3ee5189df6ae1d8530915fe8cc964e7}{load\+Model}} (const std\+::string \&path)
+\begin{DoxyCompactList}\small\item\em A method which loads the model we will use for rendering -\/ with duplicated vertices for normals, colors, etc. \end{DoxyCompactList}\item 
+std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \mbox{\hyperlink{classpepr3d_1_1_model_importer_acf84e4d461505e722c827812418ef0d1}{process\+First\+Mesh}} (ai\+Mesh $\ast$mesh)
+\begin{DoxyCompactList}\small\item\em Obtains model information only from first of the meshes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{classpepr3d_1_1_model_importer_a4d252ce45c2cf7a093d8b067b55ba2ca}{zero\+Area\+Check}} (const std\+::array$<$ glm\+::vec3, 3 $>$ \&triangle, const double Eps=0.\+000001)
+\begin{DoxyCompactList}\small\item\em Returns true if the given triangle has a zero area either due to rounding or vertices. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a8632c7f0d773fd50da714ef177a3b9f2}\label{classpepr3d_1_1_model_importer_a8632c7f0d773fd50da714ef177a3b9f2}} 
+static std\+::vector$<$ glm\+::vec3 $>$ \mbox{\hyperlink{classpepr3d_1_1_model_importer_a8632c7f0d773fd50da714ef177a3b9f2}{calculate\+Vertex\+Buffer}} (ai\+Mesh $\ast$mesh)
+\begin{DoxyCompactList}\small\item\em Pull the correct Vertex buffer (correct as in vertices are re-\/used for multiple triangles) from the mesh. \end{DoxyCompactList}\item 
+static std\+::vector$<$ std\+::array$<$ size\+\_\+t, 3 $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_model_importer_aa537966d73404c3f4c463799030a1d2b}{calculate\+Index\+Buffer}} (ai\+Mesh $\ast$mesh)
+\begin{DoxyCompactList}\small\item\em Pull the correct index buffer (correct as in different than 0-\/N) from the mesh. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{classpepr3d_1_1_model_importer_a4594f67b4aa8b90ac1a21e52e1871494}{process\+Node}} (ai\+Node $\ast$node, const ai\+Scene $\ast$scene, std\+::vector$<$ ai\+Mesh $\ast$ $>$ \&meshes)
+\begin{DoxyCompactList}\small\item\em Processes scene tree recursively. Retrieving meshes from file. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a9f88ce7372a94ac4682d2918f879ea05}\label{classpepr3d_1_1_model_importer_a9f88ce7372a94ac4682d2918f879ea05}} 
+static glm\+::vec3 \mbox{\hyperlink{classpepr3d_1_1_model_importer_a9f88ce7372a94ac4682d2918f879ea05}{calculate\+Normal}} (const std\+::array$<$ glm\+::vec3, 3 $>$ vertices, const glm\+::vec3 normals\mbox{[}3\mbox{]})
+\begin{DoxyCompactList}\small\item\em Calculates triangle normal from its vertices with orientation of original vertex normals. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a246ce191de19d1ab72551c935012405c}\label{classpepr3d_1_1_model_importer_a246ce191de19d1ab72551c935012405c}} 
+std\+::string {\bfseries m\+Path}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a4e1963a18c5ac3d49837b37198fb1f07}\label{classpepr3d_1_1_model_importer_a4e1963a18c5ac3d49837b37198fb1f07}} 
+std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ {\bfseries m\+Triangles}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a0c75d881e5a8995f9d868d3648f99fed}\label{classpepr3d_1_1_model_importer_a0c75d881e5a8995f9d868d3648f99fed}} 
+\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} {\bfseries m\+Palette}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a4b325d259c20fa610a3c37505e07ed9b}\label{classpepr3d_1_1_model_importer_a4b325d259c20fa610a3c37505e07ed9b}} 
+bool {\bfseries m\+Model\+Loaded} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a783426cd94762a3c47b208bd93131056}\label{classpepr3d_1_1_model_importer_a783426cd94762a3c47b208bd93131056}} 
+std\+::vector$<$ glm\+::vec3 $>$ {\bfseries m\+Vertex\+Buffer}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a1f8ebea24ac6768d0aa19e35b9378511}\label{classpepr3d_1_1_model_importer_a1f8ebea24ac6768d0aa19e35b9378511}} 
+std\+::vector$<$ std\+::array$<$ size\+\_\+t, 3 $>$ $>$ {\bfseries m\+Index\+Buffer}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_a15f30eb03ee6489b372b4ca2ca2dc9de}\label{classpepr3d_1_1_model_importer_a15f30eb03ee6489b372b4ca2ca2dc9de}} 
+\mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$ {\bfseries m\+Progress}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classpepr3d_1_1_model_importer_aa537966d73404c3f4c463799030a1d2b}\label{classpepr3d_1_1_model_importer_aa537966d73404c3f4c463799030a1d2b}} 
+\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}!calculateIndexBuffer@{calculateIndexBuffer}}
+\index{calculateIndexBuffer@{calculateIndexBuffer}!pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+\subsubsection{\texorpdfstring{calculateIndexBuffer()}{calculateIndexBuffer()}}
+{\footnotesize\ttfamily static std\+::vector$<$std\+::array$<$size\+\_\+t, 3$>$ $>$ pepr3d\+::\+Model\+Importer\+::calculate\+Index\+Buffer (\begin{DoxyParamCaption}\item[{ai\+Mesh $\ast$}]{mesh }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Pull the correct index buffer (correct as in different than 0-\/N) from the mesh. 
+
+Check for degenerate triangles which we do not want in the representation \mbox{\Hypertarget{classpepr3d_1_1_model_importer_aa3ee5189df6ae1d8530915fe8cc964e7}\label{classpepr3d_1_1_model_importer_aa3ee5189df6ae1d8530915fe8cc964e7}} 
+\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}!loadModel@{loadModel}}
+\index{loadModel@{loadModel}!pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+\subsubsection{\texorpdfstring{loadModel()}{loadModel()}}
+{\footnotesize\ttfamily bool pepr3d\+::\+Model\+Importer\+::load\+Model (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+A method which loads the model we will use for rendering -\/ with duplicated vertices for normals, colors, etc. 
+
+Creates an instance of the Importer class
+
+Scene with some postprocessing
+
+Access the file\textquotesingle{}s contents \mbox{\Hypertarget{classpepr3d_1_1_model_importer_aa9220087658f958e335ed87632c364be}\label{classpepr3d_1_1_model_importer_aa9220087658f958e335ed87632c364be}} 
+\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}!loadModelWithJoinedVertices@{loadModelWithJoinedVertices}}
+\index{loadModelWithJoinedVertices@{loadModelWithJoinedVertices}!pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+\subsubsection{\texorpdfstring{loadModelWithJoinedVertices()}{loadModelWithJoinedVertices()}}
+{\footnotesize\ttfamily bool pepr3d\+::\+Model\+Importer\+::load\+Model\+With\+Joined\+Vertices (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+A method which loads the model with A\+LL vertex information apart from position removed. This is done to correctly merge all vertices and receive a closed mesh, which can\textquotesingle{}t be done if more than one vertex per position exists. 
+
+Creates an instance of the Importer class
+
+Scene with some postprocessing
+
+Access the file\textquotesingle{}s contents \mbox{\Hypertarget{classpepr3d_1_1_model_importer_acf84e4d461505e722c827812418ef0d1}\label{classpepr3d_1_1_model_importer_acf84e4d461505e722c827812418ef0d1}} 
+\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}!processFirstMesh@{processFirstMesh}}
+\index{processFirstMesh@{processFirstMesh}!pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+\subsubsection{\texorpdfstring{processFirstMesh()}{processFirstMesh()}}
+{\footnotesize\ttfamily std\+::vector$<$\mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}}$>$ pepr3d\+::\+Model\+Importer\+::process\+First\+Mesh (\begin{DoxyParamCaption}\item[{ai\+Mesh $\ast$}]{mesh }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Obtains model information only from first of the meshes. 
+
+Obtaining triangle color. Default color is set if there is no color information
+
+Loading triangle vertices and normals (if it has them)
+
+Calculation of surface normals from vertices and vertex normals or only from vertices.
+
+Check for degenerate triangles which we do not want in the representation
+
+Do last minute quality checks on the triangle
+
+Place the constructed triangle \mbox{\Hypertarget{classpepr3d_1_1_model_importer_a4594f67b4aa8b90ac1a21e52e1871494}\label{classpepr3d_1_1_model_importer_a4594f67b4aa8b90ac1a21e52e1871494}} 
+\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}!processNode@{processNode}}
+\index{processNode@{processNode}!pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+\subsubsection{\texorpdfstring{processNode()}{processNode()}}
+{\footnotesize\ttfamily static void pepr3d\+::\+Model\+Importer\+::process\+Node (\begin{DoxyParamCaption}\item[{ai\+Node $\ast$}]{node,  }\item[{const ai\+Scene $\ast$}]{scene,  }\item[{std\+::vector$<$ ai\+Mesh $\ast$ $>$ \&}]{meshes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Processes scene tree recursively. Retrieving meshes from file. 
+
+Process all the node\textquotesingle{}s meshes (if any).
+
+Recursively do the same for each of its children. \mbox{\Hypertarget{classpepr3d_1_1_model_importer_a4d252ce45c2cf7a093d8b067b55ba2ca}\label{classpepr3d_1_1_model_importer_a4d252ce45c2cf7a093d8b067b55ba2ca}} 
+\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}!zeroAreaCheck@{zeroAreaCheck}}
+\index{zeroAreaCheck@{zeroAreaCheck}!pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+\subsubsection{\texorpdfstring{zeroAreaCheck()}{zeroAreaCheck()}}
+{\footnotesize\ttfamily static bool pepr3d\+::\+Model\+Importer\+::zero\+Area\+Check (\begin{DoxyParamCaption}\item[{const std\+::array$<$ glm\+::vec3, 3 $>$ \&}]{triangle,  }\item[{const double}]{Eps = {\ttfamily 0.000001} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Returns true if the given triangle has a zero area either due to rounding or vertices. 
+
+Check for degenerate triangles which we do not want in the representation 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Model\+Importer.\+h\end{DoxyCompactItemize}

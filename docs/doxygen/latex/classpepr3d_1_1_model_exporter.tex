@@ -1,0 +1,37 @@
+\hypertarget{classpepr3d_1_1_model_exporter}{}\section{pepr3d\+::Model\+Exporter Class Reference}
+\label{classpepr3d_1_1_model_exporter}\index{pepr3d::ModelExporter@{pepr3d::ModelExporter}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a4ae3dd170d168c2aaaa1a10fa67186e5}\label{classpepr3d_1_1_model_exporter_a4ae3dd170d168c2aaaa1a10fa67186e5}} 
+{\bfseries Model\+Exporter} (const std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \&triangles, const std\+::string file\+Path, const std\+::string file\+Name, const std\+::string file\+Type, \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$progress)
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a04954ea018cc315c2c110fbbf6b83b56}\label{classpepr3d_1_1_model_exporter_a04954ea018cc315c2c110fbbf6b83b56}} 
+bool {\bfseries save\+Model} (const std\+::string file\+Path, const std\+::string file\+Name, const std\+::string file\+Type)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a5bc63538b453a63f8c8ebf61334c9b43}\label{classpepr3d_1_1_model_exporter_a5bc63538b453a63f8c8ebf61334c9b43}} 
+std\+::vector$<$ ai\+Scene $\ast$ $>$ {\bfseries create\+Scenes} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a070fbac0efed0e6c99f03b35f4f14a2b}\label{classpepr3d_1_1_model_exporter_a070fbac0efed0e6c99f03b35f4f14a2b}} 
+ai\+Scene $\ast$ {\bfseries new\+Scene} (std\+::vector$<$ unsigned int $>$ \&indices)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_acb68efa3b6583d810be4c2e8f0a20c83}\label{classpepr3d_1_1_model_exporter_acb68efa3b6583d810be4c2e8f0a20c83}} 
+const std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \& {\bfseries m\+Triangles}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_abba8610307219c1fa23f2061846925a3}\label{classpepr3d_1_1_model_exporter_abba8610307219c1fa23f2061846925a3}} 
+bool {\bfseries m\+Model\+Saved} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a618a0accacf4026df647364d4843049f}\label{classpepr3d_1_1_model_exporter_a618a0accacf4026df647364d4843049f}} 
+\mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$ {\bfseries m\+Progress}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Model\+Exporter.\+h\end{DoxyCompactItemize}

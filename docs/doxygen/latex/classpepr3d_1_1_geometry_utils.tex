@@ -1,0 +1,31 @@
+\hypertarget{classpepr3d_1_1_geometry_utils}{}\section{pepr3d\+::Geometry\+Utils Class Reference}
+\label{classpepr3d_1_1_geometry_utils}\index{pepr3d::GeometryUtils@{pepr3d::GeometryUtils}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classpepr3d_1_1_geometry_utils_1_1_tri_ray_int_visitor}{Tri\+Ray\+Int\+Visitor}}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_utils_a7839bba988d139bc20f9bcb72386cda7}\label{classpepr3d_1_1_geometry_utils_a7839bba988d139bc20f9bcb72386cda7}} 
+static glm\+::vec3 \mbox{\hyperlink{classpepr3d_1_1_geometry_utils_a7839bba988d139bc20f9bcb72386cda7}{to\+Glm}} (const Data\+Triangle\+::\+Point \&point)
+\begin{DoxyCompactList}\small\item\em Convert C\+G\+AL point to G\+LM point. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_utils_a3c0957732e9c372ca63b5271cf91d98d}\label{classpepr3d_1_1_geometry_utils_a3c0957732e9c372ca63b5271cf91d98d}} 
+static float \mbox{\hyperlink{classpepr3d_1_1_geometry_utils_a3c0957732e9c372ca63b5271cf91d98d}{segment\+Point\+Distance\+Squared}} (const glm\+::vec3 \&start, const glm\+::vec3 \&end, const glm\+::vec3 \&point)
+\begin{DoxyCompactList}\small\item\em Find squared distance between a line segment and a point in 3D space. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_utils_afee093fc93f94d5d7552611a34931ea2}\label{classpepr3d_1_1_geometry_utils_afee093fc93f94d5d7552611a34931ea2}} 
+static std\+::optional$<$ glm\+::vec3 $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_utils_afee093fc93f94d5d7552611a34931ea2}{triangle\+Ray\+Intersection}} (const class \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} \&tri, ci\+::\+Ray ray)
+\begin{DoxyCompactList}\small\item\em Find intersection point of a ray and a single triangle If the intersection is a segment return one of the edge points. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_utils_a1c82cbd47ad61dbf93685a3daf47c49a}\label{classpepr3d_1_1_geometry_utils_a1c82cbd47ad61dbf93685a3daf47c49a}} 
+static bool {\bfseries is\+Fully\+Inside\+A\+Sphere} (const Data\+Triangle\+::\+K\+::\+Triangle\+\_\+3 \&tri, const Data\+Triangle\+::\+K\+::\+Point\+\_\+3 \&origin, double radius)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_utils_a7ee493c277ad6aa4e87b2508a0f6c2c9}\label{classpepr3d_1_1_geometry_utils_a7ee493c277ad6aa4e87b2508a0f6c2c9}} 
+static bool {\bfseries is\+Fully\+Inside\+A\+Sphere} (const Data\+Triangle\+::\+K\+::\+Triangle\+\_\+3 \&tri, const glm\+::vec3 \&origin, double radius)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Geometry\+Utils.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Geometry\+Utils.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,56 @@
+\hypertarget{classpepr3d_1_1_live_debug}{}\section{pepr3d\+::Live\+Debug Class Reference}
+\label{classpepr3d_1_1_live_debug}\index{pepr3d::LiveDebug@{pepr3d::LiveDebug}}
+Inheritance diagram for pepr3d\+::Live\+Debug\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpepr3d_1_1_live_debug}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_af68bd72aabefe4593946204855ed0f1d}\label{classpepr3d_1_1_live_debug_af68bd72aabefe4593946204855ed0f1d}} 
+{\bfseries Live\+Debug} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a420f10c060c4c5eb9bcef32353938809}\label{classpepr3d_1_1_live_debug_a420f10c060c4c5eb9bcef32353938809}} 
+virtual std\+::string {\bfseries get\+Name} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_acf1c75d3b573f28aef50e9073fa482da}\label{classpepr3d_1_1_live_debug_acf1c75d3b573f28aef50e9073fa482da}} 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_ab2ea7bc2137e9b18f3f138d47b793ebb}\label{classpepr3d_1_1_live_debug_ab2ea7bc2137e9b18f3f138d47b793ebb}} 
+virtual std\+::string {\bfseries get\+Icon} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a310f31d348b9437ff1c04e9ca830054d}\label{classpepr3d_1_1_live_debug_a310f31d348b9437ff1c04e9ca830054d}} 
+virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a52a05193e6b6a9d4f112af81be3d6683}\label{classpepr3d_1_1_live_debug_a52a05193e6b6a9d4f112af81be3d6683}} 
+virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_aaef30c7f133d6d4c9400add728cacbe5}\label{classpepr3d_1_1_live_debug_aaef30c7f133d6d4c9400add728cacbe5}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a3ab9949aee36a0011886d7024d667608}\label{classpepr3d_1_1_live_debug_a3ab9949aee36a0011886d7024d667608}} 
+\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a90845ed0b4390f47e4136d2ff173f740}\label{classpepr3d_1_1_live_debug_a90845ed0b4390f47e4136d2ff173f740}} 
+\mbox{\hyperlink{structpepr3d_1_1_integer_state}{Integer\+State}} {\bfseries m\+Integer\+State}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_abd1c63025b81a3ecb4d261ae9ad74690}\label{classpepr3d_1_1_live_debug_abd1c63025b81a3ecb4d261ae9ad74690}} 
+\mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}}$<$ \mbox{\hyperlink{structpepr3d_1_1_integer_state}{Integer\+State}} $>$ {\bfseries m\+Integer\+Manager}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a6066097404396581853e888df170969f}\label{classpepr3d_1_1_live_debug_a6066097404396581853e888df170969f}} 
+glm\+::ivec2 {\bfseries m\+Mouse\+Pos}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a2e9c2ebd4834ed6d6ee27a30ea6216b7}\label{classpepr3d_1_1_live_debug_a2e9c2ebd4834ed6d6ee27a30ea6216b7}} 
+std\+::optional$<$ std\+::size\+\_\+t $>$ {\bfseries m\+Triangle\+Under\+Ray} \{\}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Live\+Debug.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Live\+Debug.\+cpp\end{DoxyCompactItemize}

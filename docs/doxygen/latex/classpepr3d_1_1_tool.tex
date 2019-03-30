@@ -1,0 +1,68 @@
+\hypertarget{classpepr3d_1_1_tool}{}\section{pepr3d\+::Tool Class Reference}
+\label{classpepr3d_1_1_tool}\index{pepr3d::Tool@{pepr3d::Tool}}
+Inheritance diagram for pepr3d\+::Tool\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=11.000000cm]{classpepr3d_1_1_tool}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a5706faac1c122203317c60b3eb231d1a}\label{classpepr3d_1_1_tool_a5706faac1c122203317c60b3eb231d1a}} 
+virtual std\+::string {\bfseries get\+Name} () const =0
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a331bbb48707ea07c472b7634b02e1a18}\label{classpepr3d_1_1_tool_a331bbb48707ea07c472b7634b02e1a18}} 
+virtual std\+::string {\bfseries get\+Description} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a2b3b7279f6a942a99c11c9495b3a3d84}\label{classpepr3d_1_1_tool_a2b3b7279f6a942a99c11c9495b3a3d84}} 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a068b3420aff7edd507e3348c6d83c383}\label{classpepr3d_1_1_tool_a068b3420aff7edd507e3348c6d83c383}} 
+virtual std\+::string {\bfseries get\+Icon} () const =0
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_aae323508b6d824047abc981e10a42c0f}\label{classpepr3d_1_1_tool_aae323508b6d824047abc981e10a42c0f}} 
+virtual bool {\bfseries is\+Enabled} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a07eac1be4dee577eec8c865390e8277d}\label{classpepr3d_1_1_tool_a07eac1be4dee577eec8c865390e8277d}} 
+virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a7278925cff7d0da94e54f9bca201bda7}\label{classpepr3d_1_1_tool_a7278925cff7d0da94e54f9bca201bda7}} 
+virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_aaa49ecd05152b869571601c7741fc5ca}\label{classpepr3d_1_1_tool_aaa49ecd05152b869571601c7741fc5ca}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a56cc05810dfb90d78b0c1388f710a445}\label{classpepr3d_1_1_tool_a56cc05810dfb90d78b0c1388f710a445}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Drag} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a3d6d4e593753eba998b2a6d6fb49c5af}\label{classpepr3d_1_1_tool_a3d6d4e593753eba998b2a6d6fb49c5af}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Up} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_aa1aae7ecebb6d2e63dfa61d08ff022ae}\label{classpepr3d_1_1_tool_aa1aae7ecebb6d2e63dfa61d08ff022ae}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Wheel} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a25a3db1cbb37241f473e009ac702d867}\label{classpepr3d_1_1_tool_a25a3db1cbb37241f473e009ac702d867}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a139c1e72bd9eada36ce660e1fbf10c6b}\label{classpepr3d_1_1_tool_a139c1e72bd9eada36ce660e1fbf10c6b}} 
+virtual void {\bfseries on\+Tool\+Select} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_aafba698d859abbc2b1dc48a38ca24d36}\label{classpepr3d_1_1_tool_aafba698d859abbc2b1dc48a38ca24d36}} 
+virtual void {\bfseries on\+Tool\+Deselect} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_ac94e48ba121b7f4e4bf897de871ad479}\label{classpepr3d_1_1_tool_ac94e48ba121b7f4e4bf897de871ad479}} 
+virtual void {\bfseries on\+New\+Geometry\+Loaded} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a2420df1e8a95c66a882a923158084020}\label{classpepr3d_1_1_tool_a2420df1e8a95c66a882a923158084020}} 
+virtual std\+::optional$<$ std\+::size\+\_\+t $>$ {\bfseries safe\+Intersect\+Mesh} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application, const ci\+::\+Ray ray) final
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_a2645ac765f26cbda2ab9c818a362912f}\label{classpepr3d_1_1_tool_a2645ac765f26cbda2ab9c818a362912f}} 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$ {\bfseries safe\+Intersect\+Detailed\+Mesh} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application, const ci\+::\+Ray ray) final
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Tool.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Tool.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,59 @@
+\hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive}{}\section{pepr3d\+::Data\+Triangle\+A\+A\+B\+B\+Primitive Struct Reference}
+\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive}\index{pepr3d::DataTriangleAABBPrimitive@{pepr3d::DataTriangleAABBPrimitive}}
+
+
+Provides the conversion facilities between the custom triangle \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} and the C\+G\+AL Triangle\+\_\+3 class. Taken from C\+G\+A\+L/examples/\+A\+A\+B\+B\+\_\+tree/custom\+\_\+example.\+cpp, modified.  
+
+
+
+
+{\ttfamily \#include $<$Triangle\+Primitive.\+h$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a43fbba8b479b4508f52b69e8bb5836ac}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a43fbba8b479b4508f52b69e8bb5836ac}} 
+using {\bfseries Id} = std\+::pair$<$ const class \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $\ast$, \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_ad5e320270958d6054c0128bd803dc6da}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_ad5e320270958d6054c0128bd803dc6da}} 
+using {\bfseries Point} = Data\+Triangle\+::\+K\+::\+Point\+\_\+3
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_ae1cb31e643a04da18a42a869625f249b}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_ae1cb31e643a04da18a42a869625f249b}} 
+using {\bfseries Datum} = Data\+Triangle\+::\+K\+::\+Triangle\+\_\+3
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a94e6b53c64384b020566cd57a5a7ba21}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a94e6b53c64384b020566cd57a5a7ba21}} 
+using {\bfseries Datum\+\_\+reference} = const Data\+Triangle\+::\+K\+::\+Triangle\+\_\+3 \&
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_ac15769289a1f00edca2755ef957c32ce}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_ac15769289a1f00edca2755ef957c32ce}} 
+{\bfseries Data\+Triangle\+A\+A\+B\+B\+Primitive} (const class \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $\ast$geometry, \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} triangle\+Id)
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a1859d36669fbe329932f428f3ecee85f}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a1859d36669fbe329932f428f3ecee85f}} 
+{\bfseries Data\+Triangle\+A\+A\+B\+B\+Primitive} (Id id)
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a8a808ea38f341eea53d9ee7b8ec75a5e}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a8a808ea38f341eea53d9ee7b8ec75a5e}} 
+const Id \& {\bfseries id} () const
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_adc3319330dc4c5cbaa4c5fa04e6da337}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_adc3319330dc4c5cbaa4c5fa04e6da337}} 
+Datum\+\_\+reference {\bfseries datum} () const
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a2ea734c391b726dd56db7c8933f7dd0e}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a2ea734c391b726dd56db7c8933f7dd0e}} 
+Point {\bfseries reference\+\_\+point} () const
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a6de025ee40eb24d625f08d227e575aa7}\label{structpepr3d_1_1_data_triangle_a_a_b_b_primitive_a6de025ee40eb24d625f08d227e575aa7}} 
+Id {\bfseries id\+Pair}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Provides the conversion facilities between the custom triangle \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} and the C\+G\+AL Triangle\+\_\+3 class. Taken from C\+G\+A\+L/examples/\+A\+A\+B\+B\+\_\+tree/custom\+\_\+example.\+cpp, modified. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Triangle\+Primitive.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Triangle\+Primitive.\+cpp\end{DoxyCompactItemize}

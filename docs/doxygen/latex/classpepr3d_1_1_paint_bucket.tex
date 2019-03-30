@@ -1,0 +1,103 @@
+\hypertarget{classpepr3d_1_1_paint_bucket}{}\section{pepr3d\+::Paint\+Bucket Class Reference}
+\label{classpepr3d_1_1_paint_bucket}\index{pepr3d::PaintBucket@{pepr3d::PaintBucket}}
+Inheritance diagram for pepr3d\+::Paint\+Bucket\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpepr3d_1_1_paint_bucket}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_paint_bucket_1_1_color_stopping}{Color\+Stopping}}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_paint_bucket_1_1_do_not_stop}{Do\+Not\+Stop}}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_paint_bucket_1_1_normal_stopping}{Normal\+Stopping}}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a9e31fe563fd8e90416c17e18ab58b8a3}\label{classpepr3d_1_1_paint_bucket_a9e31fe563fd8e90416c17e18ab58b8a3}} 
+enum {\bfseries Normal\+Angle\+Compare} \{ {\bfseries N\+E\+I\+G\+H\+B\+O\+U\+RS} = 1, 
+{\bfseries A\+B\+S\+O\+L\+U\+TE} = 2
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a48ecf4d542b2ada2c2a9b51669f75bcb}\label{classpepr3d_1_1_paint_bucket_a48ecf4d542b2ada2c2a9b51669f75bcb}} 
+{\bfseries Paint\+Bucket} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_ab714ccf52a91777feb38d1149bda8451}\label{classpepr3d_1_1_paint_bucket_ab714ccf52a91777feb38d1149bda8451}} 
+virtual std\+::string {\bfseries get\+Name} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_af756844e2801c8da35fffb900fc2d831}\label{classpepr3d_1_1_paint_bucket_af756844e2801c8da35fffb900fc2d831}} 
+virtual std\+::string {\bfseries get\+Description} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a5707861e941cb4b2337a6b8b8da9c739}\label{classpepr3d_1_1_paint_bucket_a5707861e941cb4b2337a6b8b8da9c739}} 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a81f945468a9ddcca09bd3bd1fa4e156c}\label{classpepr3d_1_1_paint_bucket_a81f945468a9ddcca09bd3bd1fa4e156c}} 
+virtual std\+::string {\bfseries get\+Icon} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a493abf6741118fc98fefa50adc266a6d}\label{classpepr3d_1_1_paint_bucket_a493abf6741118fc98fefa50adc266a6d}} 
+virtual bool {\bfseries is\+Enabled} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a1e4d61353e4c1a2bf4e911690cc45e64}\label{classpepr3d_1_1_paint_bucket_a1e4d61353e4c1a2bf4e911690cc45e64}} 
+virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a166b6b6bd0caef117635aec4489cce66}\label{classpepr3d_1_1_paint_bucket_a166b6b6bd0caef117635aec4489cce66}} 
+virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_af0204c28c5e9f6ec4a244ab0e9105ef6}\label{classpepr3d_1_1_paint_bucket_af0204c28c5e9f6ec4a244ab0e9105ef6}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a64f3acef2f66ba3c5b323267aeadd98d}\label{classpepr3d_1_1_paint_bucket_a64f3acef2f66ba3c5b323267aeadd98d}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Drag} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a4e667f3a895759cd6807241a378a6615}\label{classpepr3d_1_1_paint_bucket_a4e667f3a895759cd6807241a378a6615}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a3460bee5bb24684edcdeca08b76b4cc4}\label{classpepr3d_1_1_paint_bucket_a3460bee5bb24684edcdeca08b76b4cc4}} 
+virtual void {\bfseries on\+New\+Geometry\+Loaded} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a5756508c517dbec4bb4aeb17fc8acac8}\label{classpepr3d_1_1_paint_bucket_a5756508c517dbec4bb4aeb17fc8acac8}} 
+\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a2d44e37110a6d39bacc8789ad0d2fd6f}\label{classpepr3d_1_1_paint_bucket_a2d44e37110a6d39bacc8789ad0d2fd6f}} 
+bool {\bfseries m\+Stop\+On\+Normal} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_afc22a30f5702c5b06afe5f0e6d3124a2}\label{classpepr3d_1_1_paint_bucket_afc22a30f5702c5b06afe5f0e6d3124a2}} 
+int {\bfseries m\+Stop\+On\+Normal\+Degrees} = 30
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a7fefc0ec504e248fb0f5ef49687edc6e}\label{classpepr3d_1_1_paint_bucket_a7fefc0ec504e248fb0f5ef49687edc6e}} 
+bool {\bfseries m\+Stop\+On\+Color} = true
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_ad28c149c77707dab895d7a2cc29ae713}\label{classpepr3d_1_1_paint_bucket_ad28c149c77707dab895d7a2cc29ae713}} 
+bool {\bfseries m\+Do\+Not\+Stop} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a1797fee17fba3e0f11e977fe9a8fe0a6}\label{classpepr3d_1_1_paint_bucket_a1797fee17fba3e0f11e977fe9a8fe0a6}} 
+bool {\bfseries m\+Should\+Paint\+While\+Drag} = true
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_ad90734d28f1841f9510908343042d49a}\label{classpepr3d_1_1_paint_bucket_ad90734d28f1841f9510908343042d49a}} 
+bool {\bfseries m\+Dragging} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a0841aa42b8a40150ae4ef8c8620ff837}\label{classpepr3d_1_1_paint_bucket_a0841aa42b8a40150ae4ef8c8620ff837}} 
+bool {\bfseries m\+Geometry\+Correct} = true
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a25e2b7aabc00a4c0c92e2e113de3298d}\label{classpepr3d_1_1_paint_bucket_a25e2b7aabc00a4c0c92e2e113de3298d}} 
+Normal\+Angle\+Compare {\bfseries m\+Normal\+Compare} = Normal\+Angle\+Compare\+::\+N\+E\+I\+G\+H\+B\+O\+U\+RS
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a76a19ec31e54b1325acdf8290c7e6682}\label{classpepr3d_1_1_paint_bucket_a76a19ec31e54b1325acdf8290c7e6682}} 
+glm\+::ivec2 {\bfseries m\+Last\+Mouse\+Pos}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Paint\+Bucket.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Paint\+Bucket.\+cpp\end{DoxyCompactItemize}

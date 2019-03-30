@@ -1,0 +1,98 @@
+\hypertarget{classpepr3d_1_1_brush}{}\section{pepr3d\+::Brush Class Reference}
+\label{classpepr3d_1_1_brush}\index{pepr3d::Brush@{pepr3d::Brush}}
+Inheritance diagram for pepr3d\+::Brush\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpepr3d_1_1_brush}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a2407e6159f4d5798f62763bf53190419}\label{classpepr3d_1_1_brush_a2407e6159f4d5798f62763bf53190419}} 
+{\bfseries Brush} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a8a5bfb009a6c666bf0cfdd6afe55812a}\label{classpepr3d_1_1_brush_a8a5bfb009a6c666bf0cfdd6afe55812a}} 
+virtual std\+::string {\bfseries get\+Name} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_aabba5037acc73348535a471b1e8a4979}\label{classpepr3d_1_1_brush_aabba5037acc73348535a471b1e8a4979}} 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a19ed1135e2c4cc603f001c6af4b2f58f}\label{classpepr3d_1_1_brush_a19ed1135e2c4cc603f001c6af4b2f58f}} 
+virtual std\+::string {\bfseries get\+Icon} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a0f0e98b2326e88fa5b6a3cbeaeb9b3b1}\label{classpepr3d_1_1_brush_a0f0e98b2326e88fa5b6a3cbeaeb9b3b1}} 
+virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a88cb183b963bd9e4e5082fcbe50bdcd1}\label{classpepr3d_1_1_brush_a88cb183b963bd9e4e5082fcbe50bdcd1}} 
+virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a9222fa4ba78b38f7b37767dfe8d26b67}\label{classpepr3d_1_1_brush_a9222fa4ba78b38f7b37767dfe8d26b67}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_acf9efe6c3b3b8bed2ed8b06c68f5f0f9}\label{classpepr3d_1_1_brush_acf9efe6c3b3b8bed2ed8b06c68f5f0f9}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Up} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_abfe0a46814dcd751d3801a8dfacd07cb}\label{classpepr3d_1_1_brush_abfe0a46814dcd751d3801a8dfacd07cb}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Drag} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a5708ed96781b524410ac440ead73507f}\label{classpepr3d_1_1_brush_a5708ed96781b524410ac440ead73507f}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_ae73bad242cb367db774983ba3bd9022f}\label{classpepr3d_1_1_brush_ae73bad242cb367db774983ba3bd9022f}} 
+virtual void {\bfseries on\+Tool\+Select} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a6c6e2fb6715017a34ac7269b871cbf6d}\label{classpepr3d_1_1_brush_a6c6e2fb6715017a34ac7269b871cbf6d}} 
+virtual void {\bfseries on\+Tool\+Deselect} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_af5e005149a8d975bcdeebc3432388572}\label{classpepr3d_1_1_brush_af5e005149a8d975bcdeebc3432388572}} 
+void \mbox{\hyperlink{classpepr3d_1_1_brush_af5e005149a8d975bcdeebc3432388572}{paint}} ()
+\begin{DoxyCompactList}\small\item\em Do painting tick on the model. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_af329ad67cb6de39d79e50b6ad61d5de6}\label{classpepr3d_1_1_brush_af329ad67cb6de39d79e50b6ad61d5de6}} 
+void \mbox{\hyperlink{classpepr3d_1_1_brush_af329ad67cb6de39d79e50b6ad61d5de6}{stop\+Paint}} ()
+\begin{DoxyCompactList}\small\item\em Stop painting. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a3aad03f4f6bef63974c10c35d2ca9903}\label{classpepr3d_1_1_brush_a3aad03f4f6bef63974c10c35d2ca9903}} 
+void {\bfseries update\+Highlight} () const
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a14e8b45a6cab895de81f98d316764fd8}\label{classpepr3d_1_1_brush_a14e8b45a6cab895de81f98d316764fd8}} 
+ci\+::\+Ray {\bfseries m\+Last\+Ray}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_aa3ae79e358a25a2b2c0991bb279867fa}\label{classpepr3d_1_1_brush_aa3ae79e358a25a2b2c0991bb279867fa}} 
+\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a3128cd83946b4f78252d85a782b9930c}\label{classpepr3d_1_1_brush_a3128cd83946b4f78252d85a782b9930c}} 
+\mbox{\hyperlink{structpepr3d_1_1_brush_settings}{Brush\+Settings}} {\bfseries m\+Brush\+Settings}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_ac4988a483a10b304b2334d40cf3c6439}\label{classpepr3d_1_1_brush_ac4988a483a10b304b2334d40cf3c6439}} 
+float {\bfseries m\+Max\+Size} = 1.f
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a04835f1e155d63adc659650cf372a6aa}\label{classpepr3d_1_1_brush_a04835f1e155d63adc659650cf372a6aa}} 
+bool {\bfseries m\+Group\+Commands} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a3b228cb4c9e5e7bf60904ab74e2fc6df}\label{classpepr3d_1_1_brush_a3b228cb4c9e5e7bf60904ab74e2fc6df}} 
+bool \mbox{\hyperlink{classpepr3d_1_1_brush_a3b228cb4c9e5e7bf60904ab74e2fc6df}{m\+Painted\+Anything}} = false
+\begin{DoxyCompactList}\small\item\em Did we paint anything since selecting this tool. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a0d333fbd43343ebb6d2cafa60d7220f0}\label{classpepr3d_1_1_brush_a0d333fbd43343ebb6d2cafa60d7220f0}} 
+int \mbox{\hyperlink{classpepr3d_1_1_brush_a0d333fbd43343ebb6d2cafa60d7220f0}{m\+Paints\+Since\+Draw}} = 0
+\begin{DoxyCompactList}\small\item\em How many times can we run this tool without updating the screen. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a5df405cb3c238fac2e0b036a52ca59e7}\label{classpepr3d_1_1_brush_a5df405cb3c238fac2e0b036a52ca59e7}} 
+const int {\bfseries M\+A\+X\+\_\+\+P\+A\+I\+N\+T\+S\+\_\+\+W\+I\+T\+H\+O\+U\+T\+\_\+\+D\+R\+AW} = 1
+\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_brush_a5972a5bd5dfabb665294af0a1e3fc2e3}\label{classpepr3d_1_1_brush_a5972a5bd5dfabb665294af0a1e3fc2e3}} 
+static const int {\bfseries S\+I\+Z\+E\+\_\+\+S\+L\+I\+D\+E\+R\+\_\+\+S\+T\+E\+PS} = 100
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Brush.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Brush.\+cpp\end{DoxyCompactItemize}

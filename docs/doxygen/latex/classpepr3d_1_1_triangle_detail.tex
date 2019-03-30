@@ -1,0 +1,303 @@
+\hypertarget{classpepr3d_1_1_triangle_detail}{}\section{pepr3d\+::Triangle\+Detail Class Reference}
+\label{classpepr3d_1_1_triangle_detail}\index{pepr3d::TriangleDetail@{pepr3d::TriangleDetail}}
+
+
+Represents additional triangles that replace the original one.  
+
+
+
+
+{\ttfamily \#include $<$Triangle\+Detail.\+h$>$}
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_triangle_detail_1_1_face_info}{Face\+Info}}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_triangle_detail_1_1_sphere_intersection_visitor}{Sphere\+Intersection\+Visitor}}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ac8aeea781673db9a1310d3754ae88162}\label{classpepr3d_1_1_triangle_detail_ac8aeea781673db9a1310d3754ae88162}} 
+using {\bfseries K} = C\+G\+A\+L\+::\+Exact\+\_\+spherical\+\_\+kernel\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a5859c7791d50841feed809f364e9d7db}\label{classpepr3d_1_1_triangle_detail_a5859c7791d50841feed809f364e9d7db}} 
+using {\bfseries Polygon} = C\+G\+A\+L\+::\+Polygon\+\_\+2$<$ K $>$
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a039d2236b4e8aad6a2e38561632de058}\label{classpepr3d_1_1_triangle_detail_a039d2236b4e8aad6a2e38561632de058}} 
+using {\bfseries Polygon\+With\+Holes} = C\+G\+A\+L\+::\+Polygon\+\_\+with\+\_\+holes\+\_\+2$<$ K $>$
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ab3714e9fe2715a106d89ef9db6fe1773}\label{classpepr3d_1_1_triangle_detail_ab3714e9fe2715a106d89ef9db6fe1773}} 
+using {\bfseries General\+Polygon} = C\+G\+A\+L\+::\+General\+\_\+polygon\+\_\+2$<$ K $>$
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a6db5a16950df85449f31b2942a594ee4}\label{classpepr3d_1_1_triangle_detail_a6db5a16950df85449f31b2942a594ee4}} 
+using {\bfseries Circle} = Triangle\+Detail\+::\+K\+::\+Circle\+\_\+2
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a219a64553d6903e53c2a0e554c085be3}\label{classpepr3d_1_1_triangle_detail_a219a64553d6903e53c2a0e554c085be3}} 
+using {\bfseries Circle3} = Triangle\+Detail\+::\+K\+::\+Circle\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_aa5ad5f3d5e27f70a1f5308103fb49fae}\label{classpepr3d_1_1_triangle_detail_aa5ad5f3d5e27f70a1f5308103fb49fae}} 
+using {\bfseries Sphere} = Triangle\+Detail\+::\+K\+::\+Sphere\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a433097027b9cb64c5cc1773ea3362b24}\label{classpepr3d_1_1_triangle_detail_a433097027b9cb64c5cc1773ea3362b24}} 
+using {\bfseries Triangle2} = Triangle\+Detail\+::\+K\+::\+Triangle\+\_\+2
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_add21fa0f5067429e5214ad6b71dfe0cc}\label{classpepr3d_1_1_triangle_detail_add21fa0f5067429e5214ad6b71dfe0cc}} 
+using {\bfseries Polygon\+Set} = C\+G\+A\+L\+::\+Polygon\+\_\+set\+\_\+2$<$ K $>$
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_afd25e5b8b0ca3a320f8de2f1233e60bd}\label{classpepr3d_1_1_triangle_detail_afd25e5b8b0ca3a320f8de2f1233e60bd}} 
+using {\bfseries Pepr\+Point2} = Data\+Triangle\+::\+K\+::\+Point\+\_\+2
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ab41625f7067e442f5840dc1ab8bcf2c4}\label{classpepr3d_1_1_triangle_detail_ab41625f7067e442f5840dc1ab8bcf2c4}} 
+using {\bfseries Pepr\+Point3} = Data\+Triangle\+::\+K\+::\+Point\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ab85cd57fea1decf01a3afe6fbe3ee135}\label{classpepr3d_1_1_triangle_detail_ab85cd57fea1decf01a3afe6fbe3ee135}} 
+using {\bfseries Point2} = Triangle\+Detail\+::\+K\+::\+Point\+\_\+2
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a575c3b3f3196a6f23b1944eeb628813a}\label{classpepr3d_1_1_triangle_detail_a575c3b3f3196a6f23b1944eeb628813a}} 
+using {\bfseries Point3} = Triangle\+Detail\+::\+K\+::\+Point\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_afe6926469de5e0dec620a0b640b1968a}\label{classpepr3d_1_1_triangle_detail_afe6926469de5e0dec620a0b640b1968a}} 
+using {\bfseries Vector2} = Triangle\+Detail\+::\+K\+::\+Vector\+\_\+2
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a61a5b3b8f778b46b50f6d01d62de8a49}\label{classpepr3d_1_1_triangle_detail_a61a5b3b8f778b46b50f6d01d62de8a49}} 
+using {\bfseries Vector3} = Triangle\+Detail\+::\+K\+::\+Vector\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ac51978cae21325ae859138c55c9b1f24}\label{classpepr3d_1_1_triangle_detail_ac51978cae21325ae859138c55c9b1f24}} 
+using {\bfseries Plane} = Triangle\+Detail\+::\+K\+::\+Plane\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_abedc3bea984b7db652cb05453bec6ee8}\label{classpepr3d_1_1_triangle_detail_abedc3bea984b7db652cb05453bec6ee8}} 
+using {\bfseries Line3} = Triangle\+Detail\+::\+K\+::\+Line\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a6b06b451a0da04ecbc856b7f47fbeb25}\label{classpepr3d_1_1_triangle_detail_a6b06b451a0da04ecbc856b7f47fbeb25}} 
+using {\bfseries Line2} = Triangle\+Detail\+::\+K\+::\+Line\+\_\+2
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ab0d804fda63bc0e77791140b7aa0f5b8}\label{classpepr3d_1_1_triangle_detail_ab0d804fda63bc0e77791140b7aa0f5b8}} 
+using {\bfseries Segment3} = Triangle\+Detail\+::\+K\+::\+Segment\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a198d39df083f914a5885befc81ae9220}\label{classpepr3d_1_1_triangle_detail_a198d39df083f914a5885befc81ae9220}} 
+using {\bfseries Segment2} = Triangle\+Detail\+::\+K\+::\+Segment\+\_\+2
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_aca7cfbf857504802dd7e5de02c107565}\label{classpepr3d_1_1_triangle_detail_aca7cfbf857504802dd7e5de02c107565}} 
+using {\bfseries Pepr\+Triangle} = Data\+Triangle\+::\+Triangle
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a09abf37409b283619fb5448bbdd08e7d}\label{classpepr3d_1_1_triangle_detail_a09abf37409b283619fb5448bbdd08e7d}} 
+using {\bfseries Pepr\+Plane} = Data\+Triangle\+::\+K\+::\+Plane\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a19cdbad7a9cc454e6d4a0b9573793278}\label{classpepr3d_1_1_triangle_detail_a19cdbad7a9cc454e6d4a0b9573793278}} 
+using {\bfseries Pepr\+Sphere} = Data\+Triangle\+::\+K\+::\+Sphere\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a4966cf22583406b8fe0f171b09ff7fd5}\label{classpepr3d_1_1_triangle_detail_a4966cf22583406b8fe0f171b09ff7fd5}} 
+using {\bfseries Fbb} = C\+G\+A\+L\+::\+Triangulation\+\_\+face\+\_\+base\+\_\+with\+\_\+info\+\_\+2$<$ \mbox{\hyperlink{structpepr3d_1_1_triangle_detail_1_1_face_info}{Face\+Info}}, K $>$
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a3bfe107a55791ce912d291832f1c3c5f}\label{classpepr3d_1_1_triangle_detail_a3bfe107a55791ce912d291832f1c3c5f}} 
+using {\bfseries Fb} = C\+G\+A\+L\+::\+Constrained\+\_\+triangulation\+\_\+face\+\_\+base\+\_\+2$<$ K, Fbb $>$
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a7ea6f709dd9bead683d75616fde6657f}\label{classpepr3d_1_1_triangle_detail_a7ea6f709dd9bead683d75616fde6657f}} 
+using {\bfseries Tds} = C\+G\+A\+L\+::\+Triangulation\+\_\+data\+\_\+structure\+\_\+2$<$ C\+G\+A\+L\+::\+Triangulation\+\_\+vertex\+\_\+base\+\_\+2$<$ K $>$, Fb $>$
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a68c7fa9d0ed3fd567a38f771f69b48b6}\label{classpepr3d_1_1_triangle_detail_a68c7fa9d0ed3fd567a38f771f69b48b6}} 
+using {\bfseries Constrained\+Triangulation} = C\+G\+A\+L\+::\+Constrained\+\_\+triangulation\+\_\+2$<$ K, Tds, C\+G\+A\+L\+::\+No\+\_\+intersection\+\_\+tag $>$
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a33380ae8d2798829b809316ceb653b4c}\label{classpepr3d_1_1_triangle_detail_a33380ae8d2798829b809316ceb653b4c}} 
+{\bfseries Triangle\+Detail} (const \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} \&original)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a6ee0775d745d0ec5d0a256dc6c320674}\label{classpepr3d_1_1_triangle_detail_a6ee0775d745d0ec5d0a256dc6c320674}} 
+{\bfseries Triangle\+Detail} (const \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} \&original, std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \&\&detail\+Triangles)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ab026253f9eed3d2752baf31e8eef6ef3}\label{classpepr3d_1_1_triangle_detail_ab026253f9eed3d2752baf31e8eef6ef3}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_ab026253f9eed3d2752baf31e8eef6ef3}{paint\+Sphere}} (const Pepr\+Sphere \&sphere, size\+\_\+t color)
+\begin{DoxyCompactList}\small\item\em Paint sphere onto this detail. \end{DoxyCompactList}\item 
+std\+::pair$<$ bool, bool $>$ \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a30215d8b668385e1f6c145545d9366f2}{correct\+Shared\+Vertices}} (\mbox{\hyperlink{classpepr3d_1_1_triangle_detail}{Triangle\+Detail}} \&other)
+\begin{DoxyCompactList}\small\item\em Makes sure all vertices on the common edge between these two triangles are matched Creates new vertices for both triangles if there are missing You will need to \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a55836364f8bca5dce29da4a7320adf65}{update\+Triangles\+From\+Polygons()}} after calling this method! \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_af71efedfe287618fc844fbd2b68b0082}\label{classpepr3d_1_1_triangle_detail_af71efedfe287618fc844fbd2b68b0082}} 
+const std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \& {\bfseries get\+Triangles} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ac206277a3049356735f0f8f3294ad3a8}\label{classpepr3d_1_1_triangle_detail_ac206277a3049356735f0f8f3294ad3a8}} 
+const \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} \& {\bfseries get\+Original} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a55836364f8bca5dce29da4a7320adf65}\label{classpepr3d_1_1_triangle_detail_a55836364f8bca5dce29da4a7320adf65}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a55836364f8bca5dce29da4a7320adf65}{update\+Triangles\+From\+Polygons}} ()
+\begin{DoxyCompactList}\small\item\em Create new triangles from a set of colored polygons Tries to simplify the polygons in the process. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ab27f8b435c7c88f80eb35caac5ae9d34}\label{classpepr3d_1_1_triangle_detail_ab27f8b435c7c88f80eb35caac5ae9d34}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_ab27f8b435c7c88f80eb35caac5ae9d34}{set\+Color}} (size\+\_\+t detail\+Idx, size\+\_\+t color)
+\begin{DoxyCompactList}\small\item\em Set color of a detail triangle. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_af671c482070226f504855f702e1cf9ac}\label{classpepr3d_1_1_triangle_detail_af671c482070226f504855f702e1cf9ac}} 
+{\footnotesize template$<$class Archive $>$ }\\void {\bfseries save} (Archive \&archive) const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_acad2f44169bb8872522e60d11f54fe86}\label{classpepr3d_1_1_triangle_detail_acad2f44169bb8872522e60d11f54fe86}} 
+{\footnotesize template$<$class Archive $>$ }\\void {\bfseries load} (Archive \&archive)
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a01d113a2666085931fc5d6ff28ae57df}\label{classpepr3d_1_1_triangle_detail_a01d113a2666085931fc5d6ff28ae57df}} 
+Polygon \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a01d113a2666085931fc5d6ff28ae57df}{polygon\+From\+Triangle}} (const Pepr\+Triangle \&tri) const
+\begin{DoxyCompactList}\small\item\em Create a polygon from a Pepr\+Triangle. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a9d1864037cba26a387c162d5c6eb3a66}\label{classpepr3d_1_1_triangle_detail_a9d1864037cba26a387c162d5c6eb3a66}} 
+Polygon \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a9d1864037cba26a387c162d5c6eb3a66}{polygon\+From\+Triangle}} (const Triangle2 \&tri) const
+\begin{DoxyCompactList}\small\item\em Create a polygon from 2D triangle in plane coordinates. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a9bac9b98002a9f45f43f35e3cb912d9d}\label{classpepr3d_1_1_triangle_detail_a9bac9b98002a9f45f43f35e3cb912d9d}} 
+std\+::vector$<$ std\+::pair$<$ Point2, double $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a9bac9b98002a9f45f43f35e3cb912d9d}{get\+Circle\+Shared\+Points}} (const Circle3 \&circle, const Vector3 \&x\+Base, const Vector3 \&y\+Base)
+\begin{DoxyCompactList}\small\item\em Get points of a circle that are shared with border triangles. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a71e840d63e0acc00cb7316e07ab9942c}\label{classpepr3d_1_1_triangle_detail_a71e840d63e0acc00cb7316e07ab9942c}} 
+Polygon {\bfseries polygon\+From\+Circle} (const Circle3 \&circle)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a5a7bf09704143a299bb2d6261d540729}\label{classpepr3d_1_1_triangle_detail_a5a7bf09704143a299bb2d6261d540729}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a5a7bf09704143a299bb2d6261d540729}{add\+Polygon}} (const Polygon \&poly, size\+\_\+t color)
+\begin{DoxyCompactList}\small\item\em Add polygon to the detail. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_aaa392bd7784c8509a4ba0e1ab162c589}\label{classpepr3d_1_1_triangle_detail_aaa392bd7784c8509a4ba0e1ab162c589}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_aaa392bd7784c8509a4ba0e1ab162c589}{add\+Circle}} (const Circle3 \&circle, size\+\_\+t color)
+\begin{DoxyCompactList}\small\item\em Paint a circle shape onto the plane of the triangle. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a81abca51b11ad6aa0664053c8e427e56}{simplify\+Polygon}} (Polygon\+With\+Holes \&poly)
+\begin{DoxyCompactList}\small\item\em Simplify polygon, removing unnecessary vertices. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a4e04c9ef44eb6d48dacce49e547ba190}\label{classpepr3d_1_1_triangle_detail_a4e04c9ef44eb6d48dacce49e547ba190}} 
+Segment3 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a4e04c9ef44eb6d48dacce49e547ba190}{find\+Shared\+Edge}} (const \mbox{\hyperlink{classpepr3d_1_1_triangle_detail}{Triangle\+Detail}} \&other)
+\begin{DoxyCompactList}\small\item\em Find shared edge between triangles. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a3d8d23f8835e264356b503cc495c71e4}\label{classpepr3d_1_1_triangle_detail_a3d8d23f8835e264356b503cc495c71e4}} 
+std\+::set$<$ Point3 $>$ \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a3d8d23f8835e264356b503cc495c71e4}{find\+Points\+On\+Edge}} (const Segment3 \&edge)
+\begin{DoxyCompactList}\small\item\em Find all points of polygons that are on the edge. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a9d193b7c01d33c650b58738aed37e0e6}{add\+Missing\+Points}} (const std\+::set$<$ Point3 $>$ \&my\+Points, const std\+::set$<$ Point3 $>$ \&their\+Points, const Segment3 \&shared\+Edge)
+\begin{DoxyCompactList}\small\item\em Add points that are missing to our polygons. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a8b6a41c7c881886bde6d1543beac68c8}\label{classpepr3d_1_1_triangle_detail_a8b6a41c7c881886bde6d1543beac68c8}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a8b6a41c7c881886bde6d1543beac68c8}{simplify\+Polygons}} ()
+\begin{DoxyCompactList}\small\item\em Simplify polygons, removing any unnecessary vertices. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a3a0599a7b678c981256cfc1a2a720dd4}\label{classpepr3d_1_1_triangle_detail_a3a0599a7b678c981256cfc1a2a720dd4}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a3a0599a7b678c981256cfc1a2a720dd4}{update\+Polys\+From\+Triangles}} ()
+\begin{DoxyCompactList}\small\item\em Generate one colored polygon set for each color inside the triangle This is a slow operation. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a9e9541120fb03635e37a298df6a60dc3}\label{classpepr3d_1_1_triangle_detail_a9e9541120fb03635e37a298df6a60dc3}} 
+void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a9e9541120fb03635e37a298df6a60dc3}{add\+Triangles\+From\+Polygon}} (const Polygon\+With\+Holes \&poly, size\+\_\+t color)
+\begin{DoxyCompactList}\small\item\em Add triangles from this polygon to our triangles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_adeb9f4f75d811ad26309a4638bced4b0}\label{classpepr3d_1_1_triangle_detail_adeb9f4f75d811ad26309a4638bced4b0}} 
+static K\+::\+Point\+\_\+2 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_adeb9f4f75d811ad26309a4638bced4b0}{to\+ExactK}} (const Pepr\+Point2 \&point)
+\begin{DoxyCompactList}\small\item\em Convert Point\+\_\+2 from Pepr3d kernel to Exact kernel. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_afa092868a47bbadc6e4d48f4d985bfab}\label{classpepr3d_1_1_triangle_detail_afa092868a47bbadc6e4d48f4d985bfab}} 
+static K\+::\+Point\+\_\+3 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_afa092868a47bbadc6e4d48f4d985bfab}{to\+ExactK}} (const Pepr\+Point3 \&point)
+\begin{DoxyCompactList}\small\item\em Convert Point\+\_\+3 from Pepr3d kernel to Exact kernel. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a1bab79b6e5843936aef0c47620a888ec}\label{classpepr3d_1_1_triangle_detail_a1bab79b6e5843936aef0c47620a888ec}} 
+static K\+::\+Point\+\_\+3 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a1bab79b6e5843936aef0c47620a888ec}{to\+ExactK}} (const glm\+::vec3 \&vec)
+\begin{DoxyCompactList}\small\item\em Convert glm\+::vec3 to Exact kernel. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ac85fa082aaa6c3f8cddca396516857d5}\label{classpepr3d_1_1_triangle_detail_ac85fa082aaa6c3f8cddca396516857d5}} 
+static Pepr\+Point2 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_ac85fa082aaa6c3f8cddca396516857d5}{to\+NormalK}} (const K\+::\+Point\+\_\+2 \&point)
+\begin{DoxyCompactList}\small\item\em Convert Exact kernel Point\+\_\+2 to normal Pepr3d kernel. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a49ed4eb7b270a5173db8257e822cac14}\label{classpepr3d_1_1_triangle_detail_a49ed4eb7b270a5173db8257e822cac14}} 
+static Pepr\+Point3 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a49ed4eb7b270a5173db8257e822cac14}{to\+NormalK}} (const K\+::\+Point\+\_\+3 \&point)
+\begin{DoxyCompactList}\small\item\em Convert Exact kernel Point\+\_\+3 to normal Pepr3d kernel. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a013e7b3a720d433ce10ea3eed3438fc4}\label{classpepr3d_1_1_triangle_detail_a013e7b3a720d433ce10ea3eed3438fc4}} 
+static glm\+::vec3 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a013e7b3a720d433ce10ea3eed3438fc4}{to\+Glm\+Vec}} (const Pepr\+Point3 \&pt)
+\begin{DoxyCompactList}\small\item\em Convert Pepr Point\+\_\+3 to vec3. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a19a7cded9a34b708ac7e909d47c3b0a6}\label{classpepr3d_1_1_triangle_detail_a19a7cded9a34b708ac7e909d47c3b0a6}} 
+static glm\+::vec3 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a19a7cded9a34b708ac7e909d47c3b0a6}{to\+Glm\+Vec}} (const K\+::\+Point\+\_\+3 \&point)
+\begin{DoxyCompactList}\small\item\em Convert Exact kernel Point\+\_\+3 to vec3. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a3a270f31457d95be3039509a36f1559c}\label{classpepr3d_1_1_triangle_detail_a3a270f31457d95be3039509a36f1559c}} 
+static double {\bfseries exact\+To\+Dbl} (const C\+G\+A\+L\+::\+Gmpq \&num)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a0ca54d4a96e232c5ed34095e2133c99e}\label{classpepr3d_1_1_triangle_detail_a0ca54d4a96e232c5ed34095e2133c99e}} 
+static double {\bfseries exact\+To\+Dbl} (const C\+G\+A\+L\+::\+Gmpz \&num)
+\item 
+static void \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a0b2324c84ed90dc0e4ad7d14cdd5aa75}{mark\+Domains}} (Constrained\+Triangulation \&ct)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a42d9d3fc7908f325cf64118061c6dea5}\label{classpepr3d_1_1_triangle_detail_a42d9d3fc7908f325cf64118061c6dea5}} 
+static void {\bfseries mark\+Domains} (Constrained\+Triangulation \&ct, Constrained\+Triangulation\+::\+Face\+\_\+handle start, int index, std\+::deque$<$ Constrained\+Triangulation\+::\+Edge $>$ \&border)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a4739e317a83230e718680cabf62a4e59}\label{classpepr3d_1_1_triangle_detail_a4739e317a83230e718680cabf62a4e59}} 
+std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a4739e317a83230e718680cabf62a4e59}{m\+Triangles}}
+\begin{DoxyCompactList}\small\item\em Temporary storage for Data\+Triangles. This gets overwritten on every paint operation! \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a54dc3ac5cbda466f72e444360625cd83}\label{classpepr3d_1_1_triangle_detail_a54dc3ac5cbda466f72e444360625cd83}} 
+std\+::vector$<$ Triangle2 $>$ \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a54dc3ac5cbda466f72e444360625cd83}{m\+Triangles\+Exact}}
+\begin{DoxyCompactList}\small\item\em Temporary storage for exact triangles. This gets overwritten on every paint operation! This is used for saving andpolygonset reconstruction. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a93dde966f3762bad3f47b0932bbcc70a}\label{classpepr3d_1_1_triangle_detail_a93dde966f3762bad3f47b0932bbcc70a}} 
+std\+::map$<$ size\+\_\+t, Polygon\+Set $>$ {\bfseries m\+Colored\+Polys}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a4c6c24850c358f6a553b78b1460338fe}\label{classpepr3d_1_1_triangle_detail_a4c6c24850c358f6a553b78b1460338fe}} 
+\mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} {\bfseries m\+Original}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a80df9f3e1d10aafc8d6136490f332c5f}\label{classpepr3d_1_1_triangle_detail_a80df9f3e1d10aafc8d6136490f332c5f}} 
+Polygon \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a80df9f3e1d10aafc8d6136490f332c5f}{m\+Bounds}}
+\begin{DoxyCompactList}\small\item\em Bounds of the original triangle. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a1f21de29cd698369a8a8bf9f357cdcb2}\label{classpepr3d_1_1_triangle_detail_a1f21de29cd698369a8a8bf9f357cdcb2}} 
+Plane {\bfseries m\+Original\+Plane}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_af49e18248a04af06f958001518b73db0}\label{classpepr3d_1_1_triangle_detail_af49e18248a04af06f958001518b73db0}} 
+bool \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_af49e18248a04af06f958001518b73db0}{m\+Color\+Changed}} = false
+\begin{DoxyCompactList}\small\item\em Did color of any detail triangle change since last triangulation? \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_af3b751ca10e1e87e63d49d58f1e6d142}\label{classpepr3d_1_1_triangle_detail_af3b751ca10e1e87e63d49d58f1e6d142}} 
+static const int {\bfseries V\+E\+R\+T\+I\+C\+E\+S\+\_\+\+P\+E\+R\+\_\+\+U\+N\+I\+T\+\_\+\+C\+I\+R\+C\+LE} = 100
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_ac9259653e0e58901b931ef725df2eb49}\label{classpepr3d_1_1_triangle_detail_ac9259653e0e58901b931ef725df2eb49}} 
+static const int {\bfseries M\+I\+N\+\_\+\+V\+E\+R\+T\+I\+C\+E\+S\+\_\+\+I\+N\+\_\+\+C\+I\+R\+C\+LE} = 24
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Represents additional triangles that replace the original one. 
+
+Allows \char`\"{}painting\char`\"{} over the original triangle by creating a polygonal representation of the new shapes, which is then converted back to triangles. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a9d193b7c01d33c650b58738aed37e0e6}\label{classpepr3d_1_1_triangle_detail_a9d193b7c01d33c650b58738aed37e0e6}} 
+\index{pepr3d::TriangleDetail@{pepr3d::TriangleDetail}!addMissingPoints@{addMissingPoints}}
+\index{addMissingPoints@{addMissingPoints}!pepr3d::TriangleDetail@{pepr3d::TriangleDetail}}
+\subsubsection{\texorpdfstring{addMissingPoints()}{addMissingPoints()}}
+{\footnotesize\ttfamily bool pepr3d\+::\+Triangle\+Detail\+::add\+Missing\+Points (\begin{DoxyParamCaption}\item[{const std\+::set$<$ Point3 $>$ \&}]{my\+Points,  }\item[{const std\+::set$<$ Point3 $>$ \&}]{their\+Points,  }\item[{const Segment3 \&}]{shared\+Edge }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Add points that are missing to our polygons. 
+
+\begin{DoxyReturn}{Returns}
+true if any points were added 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a30215d8b668385e1f6c145545d9366f2}\label{classpepr3d_1_1_triangle_detail_a30215d8b668385e1f6c145545d9366f2}} 
+\index{pepr3d::TriangleDetail@{pepr3d::TriangleDetail}!correctSharedVertices@{correctSharedVertices}}
+\index{correctSharedVertices@{correctSharedVertices}!pepr3d::TriangleDetail@{pepr3d::TriangleDetail}}
+\subsubsection{\texorpdfstring{correctSharedVertices()}{correctSharedVertices()}}
+{\footnotesize\ttfamily std\+::pair$<$ bool, bool $>$ pepr3d\+::\+Triangle\+Detail\+::correct\+Shared\+Vertices (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classpepr3d_1_1_triangle_detail}{Triangle\+Detail}} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Makes sure all vertices on the common edge between these two triangles are matched Creates new vertices for both triangles if there are missing You will need to \mbox{\hyperlink{classpepr3d_1_1_triangle_detail_a55836364f8bca5dce29da4a7320adf65}{update\+Triangles\+From\+Polygons()}} after calling this method! 
+
+\begin{DoxyReturn}{Returns}
+$<$bool,bool$>$ true if points were added to a triangle 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a0b2324c84ed90dc0e4ad7d14cdd5aa75}\label{classpepr3d_1_1_triangle_detail_a0b2324c84ed90dc0e4ad7d14cdd5aa75}} 
+\index{pepr3d::TriangleDetail@{pepr3d::TriangleDetail}!markDomains@{markDomains}}
+\index{markDomains@{markDomains}!pepr3d::TriangleDetail@{pepr3d::TriangleDetail}}
+\subsubsection{\texorpdfstring{markDomains()}{markDomains()}}
+{\footnotesize\ttfamily void pepr3d\+::\+Triangle\+Detail\+::mark\+Domains (\begin{DoxyParamCaption}\item[{Constrained\+Triangulation \&}]{ct }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+\subsubsection*{( From C\+G\+AL User Manual ) }
+
+explore set of facets connected with non constrained edges, and attribute to each such set a nesting level. \mbox{\Hypertarget{classpepr3d_1_1_triangle_detail_a81abca51b11ad6aa0664053c8e427e56}\label{classpepr3d_1_1_triangle_detail_a81abca51b11ad6aa0664053c8e427e56}} 
+\index{pepr3d::TriangleDetail@{pepr3d::TriangleDetail}!simplifyPolygon@{simplifyPolygon}}
+\index{simplifyPolygon@{simplifyPolygon}!pepr3d::TriangleDetail@{pepr3d::TriangleDetail}}
+\subsubsection{\texorpdfstring{simplifyPolygon()}{simplifyPolygon()}}
+{\footnotesize\ttfamily bool pepr3d\+::\+Triangle\+Detail\+::simplify\+Polygon (\begin{DoxyParamCaption}\item[{Polygon\+With\+Holes \&}]{poly }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Simplify polygon, removing unnecessary vertices. 
+
+\begin{DoxyReturn}{Returns}
+was simplified 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Triangle\+Detail.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Triangle\+Detail.\+cpp\end{DoxyCompactItemize}

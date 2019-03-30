@@ -1,0 +1,162 @@
+\hypertarget{classpepr3d_1_1_model_view}{}\section{pepr3d\+::Model\+View Class Reference}
+\label{classpepr3d_1_1_model_view}\index{pepr3d::ModelView@{pepr3d::ModelView}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_model_view_1_1_attributes}{Attributes}}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_model_view_1_1_color_override_data}{Color\+Override\+Data}}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a599453dcbeead48f23193e0305f24e75}\label{classpepr3d_1_1_model_view_a599453dcbeead48f23193e0305f24e75}} 
+{\bfseries Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a76ad73738050d3aabb681b53e5ea8398}\label{classpepr3d_1_1_model_view_a76ad73738050d3aabb681b53e5ea8398}} 
+void {\bfseries setup} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_ab25e5abfcab1d8869e2ef78b44c98721}\label{classpepr3d_1_1_model_view_ab25e5abfcab1d8869e2ef78b44c98721}} 
+void {\bfseries resize} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a3336add9f3f59fb474713d4552590a5c}\label{classpepr3d_1_1_model_view_a3336add9f3f59fb474713d4552590a5c}} 
+void {\bfseries draw} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_ab428e44311e1ada48f4224f1cfd32915}\label{classpepr3d_1_1_model_view_ab428e44311e1ada48f4224f1cfd32915}} 
+void {\bfseries draw\+Geometry} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_aa8dcae17a2801bbc3f6f26d919f12224}\label{classpepr3d_1_1_model_view_aa8dcae17a2801bbc3f6f26d919f12224}} 
+void {\bfseries on\+Mouse\+Down} (ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a661a9c2b434be28bee4b2f30052031f2}\label{classpepr3d_1_1_model_view_a661a9c2b434be28bee4b2f30052031f2}} 
+void {\bfseries on\+Mouse\+Drag} (ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a872e02f519f6737a69b427271f6e6c96}\label{classpepr3d_1_1_model_view_a872e02f519f6737a69b427271f6e6c96}} 
+void {\bfseries on\+Mouse\+Up} (ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a90934c651648861138d6d754be15c140}\label{classpepr3d_1_1_model_view_a90934c651648861138d6d754be15c140}} 
+void {\bfseries on\+Mouse\+Wheel} (ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a7223e1c00bbf6401b11b55d49bed71c5}\label{classpepr3d_1_1_model_view_a7223e1c00bbf6401b11b55d49bed71c5}} 
+void {\bfseries on\+Mouse\+Move} (ci\+::app\+::\+Mouse\+Event event)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_add99723c6e0ac1041b29b9a54902b157}\label{classpepr3d_1_1_model_view_add99723c6e0ac1041b29b9a54902b157}} 
+ci\+::\+Ray {\bfseries get\+Ray\+From\+Window\+Coordinates} (glm\+::ivec2 window\+Coords) const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_ab31d990c6c32a93af35258ce2e512db2}\label{classpepr3d_1_1_model_view_ab31d990c6c32a93af35258ce2e512db2}} 
+void {\bfseries draw\+Triangle\+Highlight} (const \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} triangle\+Id)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a82f24b5d17a8352e76a69d87f4359d39}\label{classpepr3d_1_1_model_view_a82f24b5d17a8352e76a69d87f4359d39}} 
+void {\bfseries draw\+Triangle\+Highlight} (const size\+\_\+t triangle\+Idx)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_ae13bed5785ac370ecc80211dc5896f34}\label{classpepr3d_1_1_model_view_ae13bed5785ac370ecc80211dc5896f34}} 
+void {\bfseries draw\+Line} (const glm\+::vec3 \&from, const glm\+::vec3 \&to, const ci\+::\+Color \&color=ci\+::\+Color\+::white())
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_af9463d814c0df630235f7f7ac212eb54}\label{classpepr3d_1_1_model_view_af9463d814c0df630235f7f7ac212eb54}} 
+bool {\bfseries is\+Wireframe\+Enabled} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_ad6af1ab71ae31eb1a1e9290a1e5e45e3}\label{classpepr3d_1_1_model_view_ad6af1ab71ae31eb1a1e9290a1e5e45e3}} 
+void {\bfseries enable\+Wireframe} (bool enable=true)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_af233e744e89acdc27258033377f9f14e}\label{classpepr3d_1_1_model_view_af233e744e89acdc27258033377f9f14e}} 
+bool {\bfseries is\+Grid\+Enabled} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a43a0d49736a4f8b204b93594d964f308}\label{classpepr3d_1_1_model_view_a43a0d49736a4f8b204b93594d964f308}} 
+void {\bfseries enable\+Grid} (bool enable=true)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a359a106369373c8e669649fac95e8cf4}\label{classpepr3d_1_1_model_view_a359a106369373c8e669649fac95e8cf4}} 
+float {\bfseries get\+Model\+Roll} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a91d166d8c1ff522ed0b37ba9e4a16501}\label{classpepr3d_1_1_model_view_a91d166d8c1ff522ed0b37ba9e4a16501}} 
+void {\bfseries set\+Model\+Roll} (float roll)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_aa02348736ac32b98423eb091c74ee0a2}\label{classpepr3d_1_1_model_view_aa02348736ac32b98423eb091c74ee0a2}} 
+glm\+::vec3 {\bfseries get\+Model\+Translate} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a746d83e4e97ca487e3c78c4576b808d9}\label{classpepr3d_1_1_model_view_a746d83e4e97ca487e3c78c4576b808d9}} 
+void {\bfseries set\+Model\+Translate} (glm\+::vec3 translate)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a2fc846e84bbc088d430d65d29dabb663}\label{classpepr3d_1_1_model_view_a2fc846e84bbc088d430d65d29dabb663}} 
+void {\bfseries reset\+Camera} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_afc02d10fd1a5a0607a6a494475139993}\label{classpepr3d_1_1_model_view_afc02d10fd1a5a0607a6a494475139993}} 
+void {\bfseries set\+Fov\+Zoom\+Enabled} (bool enabled)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a9d6337d9cc434235ed959b6efb22ca83}\label{classpepr3d_1_1_model_view_a9d6337d9cc434235ed959b6efb22ca83}} 
+bool {\bfseries is\+Fov\+Zoom\+Enabled} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_aa55de542cc8588d1fca8398f588602db}\label{classpepr3d_1_1_model_view_aa55de542cc8588d1fca8398f588602db}} 
+void {\bfseries set\+Color\+Override} (bool val)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a55cf0ef14fc43eda6567ac6b33b786f4}\label{classpepr3d_1_1_model_view_a55cf0ef14fc43eda6567ac6b33b786f4}} 
+bool {\bfseries is\+Color\+Override} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a27cbaf51762a74685b86a58103b5a1e8}\label{classpepr3d_1_1_model_view_a27cbaf51762a74685b86a58103b5a1e8}} 
+std\+::vector$<$ glm\+::vec4 $>$ \& {\bfseries get\+Override\+Color\+Buffer} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_af9f8bb7d19cca89bc4cdfc8f958c0eaa}\label{classpepr3d_1_1_model_view_af9f8bb7d19cca89bc4cdfc8f958c0eaa}} 
+float {\bfseries get\+Max\+Size} () const
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a13a0075d890659252e739cb212f5ce1a}\label{classpepr3d_1_1_model_view_a13a0075d890659252e739cb212f5ce1a}} 
+void {\bfseries update\+Model\+Matrix} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_acd9a0fe559b6443aa3baeae23fd21809}\label{classpepr3d_1_1_model_view_acd9a0fe559b6443aa3baeae23fd21809}} 
+void {\bfseries update\+Vbo\+And\+Batch} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a1ea0d3df781900d19374f7622b309e0f}\label{classpepr3d_1_1_model_view_a1ea0d3df781900d19374f7622b309e0f}} 
+\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a6466c60a76a03d6717e39bdf5f3cdb61}\label{classpepr3d_1_1_model_view_a6466c60a76a03d6717e39bdf5f3cdb61}} 
+ci\+::gl\+::\+Vbo\+Mesh\+Ref {\bfseries m\+Vbo\+Mesh}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_ae0b4cc550b89d678a9bb873797e0a5fd}\label{classpepr3d_1_1_model_view_ae0b4cc550b89d678a9bb873797e0a5fd}} 
+ci\+::gl\+::\+Batch\+Ref {\bfseries m\+Batch}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a25fcb8f18603b1eca917afddc22bd53d}\label{classpepr3d_1_1_model_view_a25fcb8f18603b1eca917afddc22bd53d}} 
+std\+::pair$<$ glm\+::ivec2, glm\+::ivec2 $>$ {\bfseries m\+Viewport}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a5ad014f86cfcd51a23e42b1f8d0b43ba}\label{classpepr3d_1_1_model_view_a5ad014f86cfcd51a23e42b1f8d0b43ba}} 
+ci\+::\+Camera\+Persp {\bfseries m\+Camera}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a5fddad8a7098bb3b7a2ce8fe8c8fbbae}\label{classpepr3d_1_1_model_view_a5fddad8a7098bb3b7a2ce8fe8c8fbbae}} 
+\mbox{\hyperlink{classpepr3d_1_1_camera_ui}{pepr3d\+::\+Camera\+Ui}} {\bfseries m\+Camera\+Ui}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a1118d31ff0cbcffd8849fe2618dd0b76}\label{classpepr3d_1_1_model_view_a1118d31ff0cbcffd8849fe2618dd0b76}} 
+ci\+::gl\+::\+Glsl\+Prog\+Ref {\bfseries m\+Model\+Shader}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a2782075113978240a27c5dc96d6b5ced}\label{classpepr3d_1_1_model_view_a2782075113978240a27c5dc96d6b5ced}} 
+bool {\bfseries m\+Is\+Wireframe\+Enabled} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_af775fd52d68eba85cf50d5ef814acbcc}\label{classpepr3d_1_1_model_view_af775fd52d68eba85cf50d5ef814acbcc}} 
+bool {\bfseries m\+Is\+Grid\+Enabled} = true
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_aaad7b91e2a946b38bd930d108d07111e}\label{classpepr3d_1_1_model_view_aaad7b91e2a946b38bd930d108d07111e}} 
+float {\bfseries m\+Grid\+Offset} = 0.\+0f
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a9fd29e6f6da7b236ee720c831d2d761a}\label{classpepr3d_1_1_model_view_a9fd29e6f6da7b236ee720c831d2d761a}} 
+glm\+::mat4 {\bfseries m\+Model\+Matrix}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_ab76d51db2a07baaffd576603b68ce123}\label{classpepr3d_1_1_model_view_ab76d51db2a07baaffd576603b68ce123}} 
+float {\bfseries m\+Model\+Roll} = 0.\+0f
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a2435a4fd900c17ab27bbe82f58864614}\label{classpepr3d_1_1_model_view_a2435a4fd900c17ab27bbe82f58864614}} 
+glm\+::vec3 {\bfseries m\+Model\+Translate} = glm\+::vec3(0)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_adf575a92a3398753c447f0f15e4ad79f}\label{classpepr3d_1_1_model_view_adf575a92a3398753c447f0f15e4ad79f}} 
+float {\bfseries m\+Max\+Size} = 1.f
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_view_a8f76b4e84b17567332ac41564b9b70d8}\label{classpepr3d_1_1_model_view_a8f76b4e84b17567332ac41564b9b70d8}} 
+struct \mbox{\hyperlink{structpepr3d_1_1_model_view_1_1_color_override_data}{pepr3d\+::\+Model\+View\+::\+Color\+Override\+Data}} {\bfseries m\+Color\+Override}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/ui/Model\+View.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/ui/Model\+View.\+cpp\end{DoxyCompactItemize}

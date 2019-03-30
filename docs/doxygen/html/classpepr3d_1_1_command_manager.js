@@ -1,0 +1,27 @@
+var classpepr3d_1_1_command_manager =
+[
+    [ "SnapshotPair", "structpepr3d_1_1_command_manager_1_1_snapshot_pair.html", "structpepr3d_1_1_command_manager_1_1_snapshot_pair" ],
+    [ "CommandBaseType", "classpepr3d_1_1_command_manager.html#ae3090192cabdd49b5bc0b8f983a6681a", null ],
+    [ "StateType", "classpepr3d_1_1_command_manager.html#aff7ffff59dcc764edce1bb4cbbe18704", null ],
+    [ "CommandManager", "classpepr3d_1_1_command_manager.html#aa4545583769603c741a2dab3e876a5fb", null ],
+    [ "canRedo", "classpepr3d_1_1_command_manager.html#a2ae3625cc0baac8bb27f659ee0182eff", null ],
+    [ "canUndo", "classpepr3d_1_1_command_manager.html#a2d53a763697329e206e72ddeef1ce75b", null ],
+    [ "clearFutureState", "classpepr3d_1_1_command_manager.html#a9813d0996dc75f8a5f95ea6bb5627348", null ],
+    [ "execute", "classpepr3d_1_1_command_manager.html#a0aae9681640f09da9c908154b805273e", null ],
+    [ "getLastCommand", "classpepr3d_1_1_command_manager.html#a1dc9b90a3f5a6f14502999187a9d45ef", null ],
+    [ "getLastCommand", "classpepr3d_1_1_command_manager.html#abc272c27fa76a577f4af8fd863d70368", null ],
+    [ "getNextCommand", "classpepr3d_1_1_command_manager.html#ab5767a90a4f309d166210a8e43dec560", null ],
+    [ "getNumOfCommandsSinceSnapshot", "classpepr3d_1_1_command_manager.html#a9a231ac7e910086a522676323b69b9c4", null ],
+    [ "getPrevSnapshotIterator", "classpepr3d_1_1_command_manager.html#a5f8002ebe6e7f1beb7f6176d424bae50", null ],
+    [ "getVersionNumber", "classpepr3d_1_1_command_manager.html#a95e84353863839ebded5131aef0c06b9", null ],
+    [ "joinWithLastCommand", "classpepr3d_1_1_command_manager.html#a40345eec97e82997c3e3a0f231185e30", null ],
+    [ "redo", "classpepr3d_1_1_command_manager.html#acb90e67e6e97c0d143ddb9e67ccbebb2", null ],
+    [ "shouldSaveState", "classpepr3d_1_1_command_manager.html#a96a37fef29ecd232b90da0612b402310", null ],
+    [ "undo", "classpepr3d_1_1_command_manager.html#af71406e4f6aee85b1cb9fe02b9a8b13e", null ],
+    [ "mCommandHistory", "classpepr3d_1_1_command_manager.html#a55847061c90eb00139370aa16d88a52a", null ],
+    [ "mPosFromEnd", "classpepr3d_1_1_command_manager.html#ae1b91a069626a707e392bdb92772a487", null ],
+    [ "mTarget", "classpepr3d_1_1_command_manager.html#a9a6320349ad160fa9ca7a6c83fa2802a", null ],
+    [ "mTargetSnapshots", "classpepr3d_1_1_command_manager.html#a13e29779a7f1d4464306c952b96f0e94", null ],
+    [ "mVersion", "classpepr3d_1_1_command_manager.html#a4c73b4cacd523878dbef2cb7ed4805fa", null ],
+    [ "SNAPSHOT_FREQUENCY", "classpepr3d_1_1_command_manager.html#ae889dad593d812deb65c56c07a32bfdb", null ]
+];

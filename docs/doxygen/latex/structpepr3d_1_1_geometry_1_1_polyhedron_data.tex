@@ -1,0 +1,52 @@
+\hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data}{}\section{pepr3d\+::Geometry\+::Polyhedron\+Data Struct Reference}
+\label{structpepr3d_1_1_geometry_1_1_polyhedron_data}\index{pepr3d::Geometry::PolyhedronData@{pepr3d::Geometry::PolyhedronData}}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_ac9456ec155e3448f149854a0ccf42423}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_ac9456ec155e3448f149854a0ccf42423}} 
+using {\bfseries Mesh} = C\+G\+A\+L\+::\+Surface\+\_\+mesh$<$ Data\+Triangle\+::\+K\+::\+Point\+\_\+3 $>$
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_a332607b6de7afe616d6be95555906136}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_a332607b6de7afe616d6be95555906136}} 
+using {\bfseries vertex\+\_\+descriptor} = Mesh\+::\+Vertex\+\_\+index
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_a787ae091f4045e28a069b5e43954fe9b}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_a787ae091f4045e28a069b5e43954fe9b}} 
+using {\bfseries face\+\_\+descriptor} = Mesh\+::\+Face\+\_\+index
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_a2deaa69a734496b6de287059583f1020}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_a2deaa69a734496b6de287059583f1020}} 
+using {\bfseries edge\+\_\+descriptor} = Mesh\+::\+Edge\+\_\+index
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_a0e592b47afdf450ed044c67fd71ff696}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_a0e592b47afdf450ed044c67fd71ff696}} 
+std\+::vector$<$ glm\+::vec3 $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data_a0e592b47afdf450ed044c67fd71ff696}{vertices}}
+\begin{DoxyCompactList}\small\item\em Vertex positions after joining all identical vertices. This is after removing all other componens and as such based only on the position property. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_aa05912ff343efe66a5aca55708d4a420}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_aa05912ff343efe66a5aca55708d4a420}} 
+std\+::vector$<$ std\+::array$<$ size\+\_\+t, 3 $>$ $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data_aa05912ff343efe66a5aca55708d4a420}{indices}}
+\begin{DoxyCompactList}\small\item\em Indices to triangles of the polyhedron. Indices are stored in a C\+CW order, as imported from Assimp. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad4680fd063a9bc8f2ba2d3f173345efc}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad4680fd063a9bc8f2ba2d3f173345efc}} 
+bool {\bfseries is\+Sdf\+Computed} = false
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_a93a482395c128564bf52ec26e42c852b}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_a93a482395c128564bf52ec26e42c852b}} 
+bool {\bfseries valid} = false
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_a24369f74b696f8b86c8962e2d2541b64}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_a24369f74b696f8b86c8962e2d2541b64}} 
+bool {\bfseries sdf\+Values\+Valid} = true
+\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_af684234a6d2f2525012d436991b2c737}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_af684234a6d2f2525012d436991b2c737}} 
+Polyhedron\+Data\+::\+Mesh\+::\+Property\+\_\+map$<$ Polyhedron\+Data\+::face\+\_\+descriptor, size\+\_\+t $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data_af684234a6d2f2525012d436991b2c737}{m\+Id\+Map}}
+\begin{DoxyCompactList}\small\item\em Map converting a face\+\_\+descriptor into an ID, that corresponds to the m\+Triangles vector. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad52df8d125ee13a46b4eb3ee8ea4b3d0}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad52df8d125ee13a46b4eb3ee8ea4b3d0}} 
+Polyhedron\+Data\+::\+Mesh\+::\+Property\+\_\+map$<$ Polyhedron\+Data\+::face\+\_\+descriptor, double $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad52df8d125ee13a46b4eb3ee8ea4b3d0}{sdf\+\_\+property\+\_\+map}}
+\begin{DoxyCompactList}\small\item\em Map converting a face\+\_\+descriptor into the S\+DF value of the given face. Note\+: the S\+DF values are linearly normalized so min=0, max=1. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_aec825a36439f1a496bf2c2c33fd49dfd}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_aec825a36439f1a496bf2c2c33fd49dfd}} 
+std\+::vector$<$ Polyhedron\+Data\+::face\+\_\+descriptor $>$ \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data_aec825a36439f1a496bf2c2c33fd49dfd}{m\+Face\+Descs}}
+\begin{DoxyCompactList}\small\item\em A \char`\"{}map\char`\"{} converting the ID of each triangle (from m\+Triangles) into a face\+\_\+descriptor. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad9a9922e7583365b50f5e5cb1c546539}\label{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad9a9922e7583365b50f5e5cb1c546539}} 
+Mesh \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data_ad9a9922e7583365b50f5e5cb1c546539}{m\+Mesh}}
+\begin{DoxyCompactList}\small\item\em The data-\/structure itself. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/geometry/Geometry.\+h\end{DoxyCompactItemize}

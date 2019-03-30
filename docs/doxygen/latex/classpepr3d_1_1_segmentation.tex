@@ -1,0 +1,121 @@
+\hypertarget{classpepr3d_1_1_segmentation}{}\section{pepr3d\+::Segmentation Class Reference}
+\label{classpepr3d_1_1_segmentation}\index{pepr3d::Segmentation@{pepr3d::Segmentation}}
+Inheritance diagram for pepr3d\+::Segmentation\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpepr3d_1_1_segmentation}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a5717e5e9983faa1e33b9008a97aae787}\label{classpepr3d_1_1_segmentation_a5717e5e9983faa1e33b9008a97aae787}} 
+{\bfseries Segmentation} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a992852fd1abddc360051ec6af862c75f}\label{classpepr3d_1_1_segmentation_a992852fd1abddc360051ec6af862c75f}} 
+virtual std\+::string {\bfseries get\+Name} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_af2c28c0bff05165c8283e3727e09f726}\label{classpepr3d_1_1_segmentation_af2c28c0bff05165c8283e3727e09f726}} 
+virtual std\+::string {\bfseries get\+Description} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a6e48ed1de1808a831027cea1bb3c4332}\label{classpepr3d_1_1_segmentation_a6e48ed1de1808a831027cea1bb3c4332}} 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_af67898a59f818d71a97069b2fe62bd25}\label{classpepr3d_1_1_segmentation_af67898a59f818d71a97069b2fe62bd25}} 
+virtual std\+::string {\bfseries get\+Icon} () const override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_acd5aff018741e43604441d50701492fa}\label{classpepr3d_1_1_segmentation_acd5aff018741e43604441d50701492fa}} 
+virtual bool {\bfseries is\+Enabled} () const override
+\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_aba217ddc3fefb9f9a253bcaee39df3b2}\label{classpepr3d_1_1_segmentation_aba217ddc3fefb9f9a253bcaee39df3b2}} 
+virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a7c9ae1b970f2b19f7c8cc6d7009b106d}\label{classpepr3d_1_1_segmentation_a7c9ae1b970f2b19f7c8cc6d7009b106d}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a42edd9ea2cb784c82804d3e84dcde864}\label{classpepr3d_1_1_segmentation_a42edd9ea2cb784c82804d3e84dcde864}} 
+virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_abe22494520721c3d078daca8abbfd4ae}\label{classpepr3d_1_1_segmentation_abe22494520721c3d078daca8abbfd4ae}} 
+virtual void {\bfseries on\+Tool\+Deselect} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac8b133f64246862034299f64b38cd080}\label{classpepr3d_1_1_segmentation_ac8b133f64246862034299f64b38cd080}} 
+virtual void {\bfseries on\+New\+Geometry\+Loaded} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a753243eb08623cc0e4e742b9b80d6fe1}\label{classpepr3d_1_1_segmentation_a753243eb08623cc0e4e742b9b80d6fe1}} 
+void {\bfseries reset} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ad2c81addb59679af3aad6753bfb3e187}\label{classpepr3d_1_1_segmentation_ad2c81addb59679af3aad6753bfb3e187}} 
+void {\bfseries compute\+Segmentation} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a2ee801c12891b63645c44460692351f4}\label{classpepr3d_1_1_segmentation_a2ee801c12891b63645c44460692351f4}} 
+void {\bfseries cancel} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_aeed45ad861dcf859e90b9b5d317655f1}\label{classpepr3d_1_1_segmentation_aeed45ad861dcf859e90b9b5d317655f1}} 
+void {\bfseries set\+Segment\+Color} (const size\+\_\+t segment\+Id, const glm\+::vec4 new\+Color)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac2717aba7269a3eb01e1ec3c03331c17}\label{classpepr3d_1_1_segmentation_ac2717aba7269a3eb01e1ec3c03331c17}} 
+\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_aeae786bdab94aea8ffa0fb73390294dc}\label{classpepr3d_1_1_segmentation_aeae786bdab94aea8ffa0fb73390294dc}} 
+int {\bfseries m\+Number\+Of\+Clusters} = 5
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a9b58e2e5f005ec47eb16cb65033b81ae}\label{classpepr3d_1_1_segmentation_a9b58e2e5f005ec47eb16cb65033b81ae}} 
+float {\bfseries m\+Smoothing\+Lambda} = 0.\+3f
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac28116b16a089414c90acaa13e1b767d}\label{classpepr3d_1_1_segmentation_ac28116b16a089414c90acaa13e1b767d}} 
+size\+\_\+t {\bfseries m\+Number\+Of\+Segments} = 0
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a29b4f82176495128f046c4f5556b0ed0}\label{classpepr3d_1_1_segmentation_a29b4f82176495128f046c4f5556b0ed0}} 
+bool {\bfseries m\+Pick\+State} = false
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_af42e20289921819f50fcbc36d6e058f5}\label{classpepr3d_1_1_segmentation_af42e20289921819f50fcbc36d6e058f5}} 
+bool {\bfseries m\+Geometry\+Correct} = true
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ab119390cf1e8b5f5ba33d112a3a1806c}\label{classpepr3d_1_1_segmentation_ab119390cf1e8b5f5ba33d112a3a1806c}} 
+const bool $\ast$ {\bfseries m\+Sdf\+Enabled} = nullptr
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a4ce747a53afd47abaeff6f98070c8071}\label{classpepr3d_1_1_segmentation_a4ce747a53afd47abaeff6f98070c8071}} 
+std\+::vector$<$ size\+\_\+t $>$ {\bfseries m\+New\+Colors}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a4b71215638c39a9381fbd8980e65986c}\label{classpepr3d_1_1_segmentation_a4b71215638c39a9381fbd8980e65986c}} 
+std\+::vector$<$ glm\+::vec4 $>$ {\bfseries m\+Segmentation\+Colors}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a6a213a470006808d715976b1d3ecf6de}\label{classpepr3d_1_1_segmentation_a6a213a470006808d715976b1d3ecf6de}} 
+std\+::optional$<$ std\+::size\+\_\+t $>$ {\bfseries m\+Hovered\+Triangle\+Id} = \{\}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ad3344f323ffce78be2eaf73fca05be96}\label{classpepr3d_1_1_segmentation_ad3344f323ffce78be2eaf73fca05be96}} 
+std\+::map$<$ size\+\_\+t, std\+::vector$<$ size\+\_\+t $>$ $>$ {\bfseries m\+Segment\+To\+Triangle\+Ids}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a3282ce65f09dbdf09eac1e83bec117d6}\label{classpepr3d_1_1_segmentation_a3282ce65f09dbdf09eac1e83bec117d6}} 
+std\+::unordered\+\_\+map$<$ size\+\_\+t, size\+\_\+t $>$ {\bfseries m\+Triangle\+To\+Segment\+Map}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}\label{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}} 
+\index{pepr3d::Segmentation@{pepr3d::Segmentation}!drawToSidePane@{drawToSidePane}}
+\index{drawToSidePane@{drawToSidePane}!pepr3d::Segmentation@{pepr3d::Segmentation}}
+\subsubsection{\texorpdfstring{drawToSidePane()}{drawToSidePane()}}
+{\footnotesize\ttfamily void pepr3d\+::\+Segmentation\+::draw\+To\+Side\+Pane (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&}]{side\+Pane }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000001}{Todo}}]Popup for the user \end{DoxyRefDesc}
+
+
+Reimplemented from \mbox{\hyperlink{classpepr3d_1_1_tool}{pepr3d\+::\+Tool}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Segmentation.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Segmentation.\+cpp\end{DoxyCompactItemize}
