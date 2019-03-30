@@ -100,16 +100,21 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_geometry.html','');});
 <div class="title">pepr3d::Geometry Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The whole geometry of a model that the user is painting.  
+ <a href="classpepr3d_1_1_geometry.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_geometry_8h_source.html">Geometry.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_geometry_1_1_area_highlight.html">AreaHighlight</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A highlight of a part of the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a>.  <a href="structpepr3d_1_1_geometry_1_1_area_highlight.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_geometry_1_1_geometry_state.html">GeometryState</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_geometry_1_1_open_gl_data.html">OpenGlData</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_geometry_1_1_polyhedron_data.html">PolyhedronData</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">All OpenGL buffers of the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a>.  <a href="structpepr3d_1_1_geometry_1_1_open_gl_data.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -117,6 +122,21 @@ Public Types</h2></td></tr>
 <tr class="memitem:a6077ec326305ac7fe4c3f6819b53c2fb"><td class="memItemLeft" align="right" valign="top"><a id="a6077ec326305ac7fe4c3f6819b53c2fb"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>Direction</b> = pepr3d::DataTriangle::K::Direction_3</td></tr>
 <tr class="separator:a6077ec326305ac7fe4c3f6819b53c2fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44e4ffb13740677b37412b9863c8aedc"><td class="memItemLeft" align="right" valign="top"><a id="a44e4ffb13740677b37412b9863c8aedc"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Circle</b> = DataTriangle::K::Circle_3</td></tr>
+<tr class="separator:a44e4ffb13740677b37412b9863c8aedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fe4812fe3bdb9f9bf29b2a9ed9664ad"><td class="memItemLeft" align="right" valign="top"><a id="a7fe4812fe3bdb9f9bf29b2a9ed9664ad"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Sphere</b> = DataTriangle::K::Sphere_3</td></tr>
+<tr class="separator:a7fe4812fe3bdb9f9bf29b2a9ed9664ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71ec638da1019894f11c1ca6a3b42e38"><td class="memItemLeft" align="right" valign="top"><a id="a71ec638da1019894f11c1ca6a3b42e38"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Line3</b> = DataTriangle::K::Line_3</td></tr>
+<tr class="separator:a71ec638da1019894f11c1ca6a3b42e38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aeff66de9a33a389c3de9d0b836819b"><td class="memItemLeft" align="right" valign="top"><a id="a9aeff66de9a33a389c3de9d0b836819b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Vector3</b> = pepr3d::DataTriangle::K::Vector_3</td></tr>
+<tr class="separator:a9aeff66de9a33a389c3de9d0b836819b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8e951387d775d43de2581a925f89e7b"><td class="memItemLeft" align="right" valign="top"><a id="ab8e951387d775d43de2581a925f89e7b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Point3</b> = pepr3d::DataTriangle::K::Point_3</td></tr>
+<tr class="separator:ab8e951387d775d43de2581a925f89e7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2902716bce3c243a990d3b89b1e3e62b"><td class="memItemLeft" align="right" valign="top"><a id="a2902716bce3c243a990d3b89b1e3e62b"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>Ft</b> = pepr3d::DataTriangle::K::FT</td></tr>
 <tr class="separator:a2902716bce3c243a990d3b89b1e3e62b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,8 +184,9 @@ const <a class="el" href="structpepr3d_1_1_geometry_1_1_open_gl_data.html">OpenG
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a1550192711eb10ddb685c08d15ef9922">updateOpenGlBuffers</a> ()</td></tr>
 <tr class="memdesc:a1550192711eb10ddb685c08d15ef9922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update buffers used by openGl. Should only be called when they are dirty. <br /></td></tr>
 <tr class="separator:a1550192711eb10ddb685c08d15ef9922"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad25fda5afe4c73c0fd9dbd4bf77952b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#ad25fda5afe4c73c0fd9dbd4bf77952b1">updateTemporaryDetailedData</a> ()</td></tr>
-<tr class="memdesc:ad25fda5afe4c73c0fd9dbd4bf77952b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update temporary detailed data like detailed AABB tree and detailed Mesh This is a slow operation.  <a href="#ad25fda5afe4c73c0fd9dbd4bf77952b1">More...</a><br /></td></tr>
+<tr class="memitem:ad25fda5afe4c73c0fd9dbd4bf77952b1"><td class="memItemLeft" align="right" valign="top"><a id="ad25fda5afe4c73c0fd9dbd4bf77952b1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#ad25fda5afe4c73c0fd9dbd4bf77952b1">updateTemporaryDetailedData</a> ()</td></tr>
+<tr class="memdesc:ad25fda5afe4c73c0fd9dbd4bf77952b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update temporary detailed data like detailed AABB tree and detailed Mesh This is a slow operation. <br /></td></tr>
 <tr class="separator:ad25fda5afe4c73c0fd9dbd4bf77952b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a995a46878723dd2108960ad3163097b5"><td class="memItemLeft" align="right" valign="top"><a id="a995a46878723dd2108960ad3163097b5"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isTemporaryDetailedDataValid</b> () const</td></tr>
@@ -210,13 +231,21 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isSimpleTriangle</b> 
 <tr class="memitem:ae0e251c83044d0cd06c50ded6cee21cb"><td class="memItemLeft" align="right" valign="top"><a id="ae0e251c83044d0cd06c50ded6cee21cb"></a>
 const <a class="el" href="structpepr3d_1_1_geometry_progress.html">GeometryProgress</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getProgress</b> () const</td></tr>
 <tr class="separator:ae0e251c83044d0cd06c50ded6cee21cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b33233684966de8e2f4ba4fa3d6f02d"><td class="memItemLeft" align="right" valign="top"><a id="a3b33233684966de8e2f4ba4fa3d6f02d"></a>
+<a class="el" href="structpepr3d_1_1_geometry_progress.html">GeometryProgress</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getProgress</b> ()</td></tr>
+<tr class="separator:a3b33233684966de8e2f4ba4fa3d6f02d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81c9e23b272c99b9e1692ce1900c2b15"><td class="memItemLeft" align="right" valign="top"><a id="a81c9e23b272c99b9e1692ce1900c2b15"></a>
+PolyhedronData::Mesh *&#160;</td><td class="memItemRight" valign="bottom"><b>getMeshDetailed</b> () const</td></tr>
+<tr class="separator:a81c9e23b272c99b9e1692ce1900c2b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90455dda02cab7e2affdda58966a831b"><td class="memItemLeft" align="right" valign="top"><a id="a90455dda02cab7e2affdda58966a831b"></a>
+const std::unordered_map&lt; <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a>, PolyhedronData::face_descriptor &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getMeshDetailedFaceDescs</b> () const</td></tr>
+<tr class="separator:a90455dda02cab7e2affdda58966a831b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a586922a1b2662d6455bce899af40b6b2"><td class="memItemLeft" align="right" valign="top"><a id="a586922a1b2662d6455bce899af40b6b2"></a>
+const PolyhedronData::Mesh::Property_map&lt; PolyhedronData::face_descriptor, <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getMeshDetailedIdMap</b> () const</td></tr>
+<tr class="separator:a586922a1b2662d6455bce899af40b6b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a027715ec109b060ffc8b420947c4fde0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a027715ec109b060ffc8b420947c4fde0">loadNewGeometry</a> (const std::string &amp;fileName)</td></tr>
 <tr class="memdesc:a027715ec109b060ffc8b420947c4fde0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads new geometry into the private data, rebuilds the buffers and other data structures automatically.  <a href="#a027715ec109b060ffc8b420947c4fde0">More...</a><br /></td></tr>
 <tr class="separator:a027715ec109b060ffc8b420947c4fde0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8106be97900d3fa8a39d0dfb4603ae0"><td class="memItemLeft" align="right" valign="top"><a id="af8106be97900d3fa8a39d0dfb4603ae0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#af8106be97900d3fa8a39d0dfb4603ae0">exportGeometry</a> (const std::string filePath, const std::string fileName, const std::string fileType)</td></tr>
-<tr class="memdesc:af8106be97900d3fa8a39d0dfb4603ae0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports the modified geometry to the file specified by a path, file name and file type. <br /></td></tr>
-<tr class="separator:af8106be97900d3fa8a39d0dfb4603ae0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa473f80280346656024fc494994c065e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#aa473f80280346656024fc494994c065e">setTriangleColor</a> (const size_t triangleIndex, const size_t newColor)</td></tr>
 <tr class="memdesc:aa473f80280346656024fc494994c065e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set new triangle color.  <a href="#aa473f80280346656024fc494994c065e">More...</a><br /></td></tr>
 <tr class="separator:aa473f80280346656024fc494994c065e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -238,10 +267,20 @@ std::optional&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a69f784973726ce83893d8ec3fcdf9ff1">highlightArea</a> (const ci::Ray &amp;ray, const struct <a class="el" href="structpepr3d_1_1_brush_settings.html">BrushSettings</a> &amp;settings)</td></tr>
 <tr class="memdesc:a69f784973726ce83893d8ec3fcdf9ff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Highlight an area around the intersection point. All points on a continuous surface closer than the size are highlighted. <br /></td></tr>
 <tr class="separator:a69f784973726ce83893d8ec3fcdf9ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7aed460807700001c27788aaf90ad17e"><td class="memItemLeft" align="right" valign="top"><a id="a7aed460807700001c27788aaf90ad17e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a7aed460807700001c27788aaf90ad17e">paintArea</a> (const ci::Ray &amp;ray, const struct <a class="el" href="structpepr3d_1_1_brush_settings.html">BrushSettings</a> &amp;settings)</td></tr>
-<tr class="memdesc:a7aed460807700001c27788aaf90ad17e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paint continuous area with a brush of specified size. <br /></td></tr>
-<tr class="separator:a7aed460807700001c27788aaf90ad17e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c6b8ef6f157f8bb818e38f6e2e49b37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a6c6b8ef6f157f8bb818e38f6e2e49b37">paintWithShape</a> (const ci::Ray &amp;ray, const std::vector&lt; Point3 &gt; &amp;shape, size_t color, bool paintBackfaces=false)</td></tr>
+<tr class="memdesc:a6c6b8ef6f157f8bb818e38f6e2e49b37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paint area with a shaped brush.  <a href="#a6c6b8ef6f157f8bb818e38f6e2e49b37">More...</a><br /></td></tr>
+<tr class="separator:a6c6b8ef6f157f8bb818e38f6e2e49b37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a152673dacbe299a55ee9dc6a2403d6a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a152673dacbe299a55ee9dc6a2403d6a5">paintWithShape</a> (const ci::Ray &amp;ray, const std::vector&lt; DataTriangle::Triangle &gt; &amp;triangles, size_t color)</td></tr>
+<tr class="memdesc:a152673dacbe299a55ee9dc6a2403d6a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paint area with a shaped brush.  <a href="#a152673dacbe299a55ee9dc6a2403d6a5">More...</a><br /></td></tr>
+<tr class="separator:a152673dacbe299a55ee9dc6a2403d6a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4593a2aa8017add96d6cd7e177a0cf1"><td class="memItemLeft" align="right" valign="top"><a id="ab4593a2aa8017add96d6cd7e177a0cf1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#ab4593a2aa8017add96d6cd7e177a0cf1">paintAreaWithSphere</a> (const ci::Ray &amp;ray, const <a class="el" href="structpepr3d_1_1_brush_settings.html">BrushSettings</a> &amp;settings)</td></tr>
+<tr class="memdesc:ab4593a2aa8017add96d6cd7e177a0cf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paint continuous spherical area with a brush of specified size. <br /></td></tr>
+<tr class="separator:ab4593a2aa8017add96d6cd7e177a0cf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6d2ae86fca37592a5dbb93784ca4ef0"><td class="memTemplParams" colspan="2">template&lt;typename ColorFunc &gt; </td></tr>
+<tr class="memitem:ae6d2ae86fca37592a5dbb93784ca4ef0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#ae6d2ae86fca37592a5dbb93784ca4ef0">changeColorIds</a> (const ColorFunc &amp;colorFunc)</td></tr>
+<tr class="memdesc:ae6d2ae86fca37592a5dbb93784ca4ef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change all color ID's from one to another.  <a href="#ae6d2ae86fca37592a5dbb93784ca4ef0">More...</a><br /></td></tr>
+<tr class="separator:ae6d2ae86fca37592a5dbb93784ca4ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80198ecc7f17d1db360ab2bf50b7f594"><td class="memItemLeft" align="right" valign="top"><a id="a80198ecc7f17d1db360ab2bf50b7f594"></a>
 <a class="el" href="structpepr3d_1_1_geometry_1_1_geometry_state.html">GeometryState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a80198ecc7f17d1db360ab2bf50b7f594">saveState</a> () const</td></tr>
 <tr class="memdesc:a80198ecc7f17d1db360ab2bf50b7f594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save current state into a struct so that it can be restored later (<a class="el" href="classpepr3d_1_1_command_manager.html" title="CommandManager handles all undoable operations on target in the form of commands See.">CommandManager</a> target requirement) <br /></td></tr>
@@ -266,13 +305,21 @@ template&lt;typename StoppingCondition &gt; </td></tr>
 <tr class="memitem:a1d420e96bc8c92c620b5473677173d81"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a1d420e96bc8c92c620b5473677173d81">getTrianglesUnderBrush</a> (const glm::vec3 &amp;originPoint, const glm::vec3 &amp;insideDirection, size_t startTriangle, const struct <a class="el" href="structpepr3d_1_1_brush_settings.html">BrushSettings</a> &amp;settings)</td></tr>
 <tr class="memdesc:a1d420e96bc8c92c620b5473677173d81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spread as BFS from starting triangle, until the limits of brush settings are reached.  <a href="#a1d420e96bc8c92c620b5473677173d81">More...</a><br /></td></tr>
 <tr class="separator:a1d420e96bc8c92c620b5473677173d81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4907bc6f193156a3d68956b2ce622120"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
+<tr class="memitem:a4907bc6f193156a3d68956b2ce622120"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a4907bc6f193156a3d68956b2ce622120">getTrianglesInRadius</a> (const Object &amp;object, double radius) const</td></tr>
+<tr class="memdesc:a4907bc6f193156a3d68956b2ce622120"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all triangles that are closer to the object than radius This function operates on spherical bounds of triangles and may therefore return false positives.  <a href="#a4907bc6f193156a3d68956b2ce622120">More...</a><br /></td></tr>
+<tr class="separator:a4907bc6f193156a3d68956b2ce622120"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a993a7383980e9c4aa955ae156d714f15"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
+<tr class="memitem:a993a7383980e9c4aa955ae156d714f15"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a993a7383980e9c4aa955ae156d714f15">isTriangleInRadius</a> (const Object &amp;object, double radius, size_t triangleIdx) const</td></tr>
+<tr class="memdesc:a993a7383980e9c4aa955ae156d714f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if distance from object to spherical boundary of a triangle is closer than radius.  <a href="#a993a7383980e9c4aa955ae156d714f15">More...</a><br /></td></tr>
+<tr class="separator:a993a7383980e9c4aa955ae156d714f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abba4d7a86b23f0d1a5aef9739d087f7d"><td class="memItemLeft" align="right" valign="top"><a id="abba4d7a86b23f0d1a5aef9739d087f7d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#abba4d7a86b23f0d1a5aef9739d087f7d">computeSdfValues</a> ()</td></tr>
-<tr class="memdesc:abba4d7a86b23f0d1a5aef9739d087f7d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpepr3d_1_1_segmentation.html">Segmentation</a> is CPU heavy because it needs to calculate a lot of data. This method allows to pre-compute the heaviest calculation. <br /></td></tr>
+<tr class="memdesc:abba4d7a86b23f0d1a5aef9739d087f7d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpepr3d_1_1_segmentation.html" title="Tool used for automatically separating and coloring the model into regions based on the thickness of ...">Segmentation</a> is CPU heavy because it needs to calculate a lot of data. This method allows to pre-compute the heaviest calculation. <br /></td></tr>
 <tr class="separator:abba4d7a86b23f0d1a5aef9739d087f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4acf91e1482adf0a1a77d03c23c108b3"><td class="memItemLeft" align="right" valign="top"><a id="a4acf91e1482adf0a1a77d03c23c108b3"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a4acf91e1482adf0a1a77d03c23c108b3">isSdfComputed</a> () const</td></tr>
-<tr class="memdesc:a4acf91e1482adf0a1a77d03c23c108b3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpepr3d_1_1_segmentation.html">Segmentation</a> algorithms will not work if SDF values are not pre-computed. <br /></td></tr>
+<tr class="memdesc:a4acf91e1482adf0a1a77d03c23c108b3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpepr3d_1_1_segmentation.html" title="Tool used for automatically separating and coloring the model into regions based on the thickness of ...">Segmentation</a> algorithms will not work if SDF values are not pre-computed. <br /></td></tr>
 <tr class="separator:a4acf91e1482adf0a1a77d03c23c108b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4ef6e071146e7fd4e06c26dac3ffb43"><td class="memItemLeft" align="right" valign="top"><a id="ab4ef6e071146e7fd4e06c26dac3ffb43"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#ab4ef6e071146e7fd4e06c26dac3ffb43">segmentation</a> (const int numberOfClusters, const float smoothingLambda, std::map&lt; size_t, std::vector&lt; size_t &gt;&gt; &amp;segmentToTriangleIds, std::unordered_map&lt; size_t, size_t &gt; &amp;triangleToSegmentMap)</td></tr>
@@ -317,9 +364,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a36740d72ad8b50c81f39ad506fa0281e">generateHighlightBuffer</a> ()</td></tr>
 <tr class="memdesc:a36740d72ad8b50c81f39ad506fa0281e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a buffer of highlight information. Saves per-triangle data to each vertex. <br /></td></tr>
 <tr class="separator:a36740d72ad8b50c81f39ad506fa0281e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f4435ad35840859cbb4dd949af46845"><td class="memItemLeft" align="right" valign="top"><a id="a1f4435ad35840859cbb4dd949af46845"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a1f4435ad35840859cbb4dd949af46845">generateTriangleBounds</a> ()</td></tr>
+<tr class="memdesc:a1f4435ad35840859cbb4dd949af46845"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate spherical bounds for each original triangle. Used to speed up capsule querries. <br /></td></tr>
+<tr class="separator:a1f4435ad35840859cbb4dd949af46845"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ffaaaa3702f7505206f4e45aebfd4a9"><td class="memItemLeft" align="right" valign="top"><a id="a9ffaaaa3702f7505206f4e45aebfd4a9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a9ffaaaa3702f7505206f4e45aebfd4a9">buildPolyhedron</a> ()</td></tr>
-<tr class="memdesc:a9ffaaaa3702f7505206f4e45aebfd4a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the CGAL Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild. <br /></td></tr>
+<tr class="memdesc:a9ffaaaa3702f7505206f4e45aebfd4a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild. <br /></td></tr>
 <tr class="separator:a9ffaaaa3702f7505206f4e45aebfd4a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff6b12b0be4f64925e3a9aa88b85bb09"><td class="memItemLeft" align="right" valign="top"><a id="aff6b12b0be4f64925e3a9aa88b85bb09"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#aff6b12b0be4f64925e3a9aa88b85bb09">buildTree</a> ()</td></tr>
@@ -330,7 +381,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a11091a0db475dc20b6635f17afb07b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build AABB Tree over all triangles including details. <br /></td></tr>
 <tr class="separator:a11091a0db475dc20b6635f17afb07b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f0594ebe7f3a779dc9cf18f943f1c56"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a5f0594ebe7f3a779dc9cf18f943f1c56">buildDetailedMesh</a> ()</td></tr>
-<tr class="memdesc:a5f0594ebe7f3a779dc9cf18f943f1c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a CGAL mesh over detailed triangles.  <a href="#a5f0594ebe7f3a779dc9cf18f943f1c56">More...</a><br /></td></tr>
+<tr class="memdesc:a5f0594ebe7f3a779dc9cf18f943f1c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> mesh over detailed triangles.  <a href="#a5f0594ebe7f3a779dc9cf18f943f1c56">More...</a><br /></td></tr>
 <tr class="separator:a5f0594ebe7f3a779dc9cf18f943f1c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa981414573779195fbfb7a64cfcbc1f1"><td class="memItemLeft" align="right" valign="top"><a id="aa981414573779195fbfb7a64cfcbc1f1"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#aa981414573779195fbfb7a64cfcbc1f1">correctSharedVertices</a> ()</td></tr>
@@ -340,25 +391,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a69f341b26bd3ebd9158648b7d35ffa10">invalidateTemporaryDetailedData</a> ()</td></tr>
 <tr class="memdesc:a69f341b26bd3ebd9158648b7d35ffa10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invalidate temporary detailed data like detailed AABB tree and mesh. <br /></td></tr>
 <tr class="separator:a69f341b26bd3ebd9158648b7d35ffa10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb0af51a49fc2c3086fc519afe6b913b"><td class="memItemLeft" align="right" valign="top"><a id="adb0af51a49fc2c3086fc519afe6b913b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>updateTriangleDetail</b> (size_t triangleIdx, const glm::vec3 &amp;brushOrigin, const struct <a class="el" href="structpepr3d_1_1_brush_settings.html">BrushSettings</a> &amp;settings)</td></tr>
-<tr class="separator:adb0af51a49fc2c3086fc519afe6b913b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c14c117f916e93e9578087dd85fe3ef"><td class="memItemLeft" align="right" valign="top"><a id="a8c14c117f916e93e9578087dd85fe3ef"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>removeTriangleDetail</b> (size_t triangleIndex)</td></tr>
-<tr class="separator:a8c14c117f916e93e9578087dd85fe3ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f3506ff18e87cd35469c89a7d7a71f3"><td class="memItemLeft" align="right" valign="top"><a id="a3f3506ff18e87cd35469c89a7d7a71f3"></a>
 <a class="el" href="classpepr3d_1_1_triangle_detail.html">TriangleDetail</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>createTriangleDetail</b> (size_t triangleIdx)</td></tr>
 <tr class="separator:a3f3506ff18e87cd35469c89a7d7a71f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b287e4fe195a2b1d74690ca4c387b95"><td class="memItemLeft" align="right" valign="top"><a id="a6b287e4fe195a2b1d74690ca4c387b95"></a>
 <a class="el" href="classpepr3d_1_1_triangle_detail.html">TriangleDetail</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>getTriangleDetail</b> (const size_t triangleIndex)</td></tr>
 <tr class="separator:a6b287e4fe195a2b1d74690ca4c387b95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c14c117f916e93e9578087dd85fe3ef"><td class="memItemLeft" align="right" valign="top"><a id="a8c14c117f916e93e9578087dd85fe3ef"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>removeTriangleDetail</b> (size_t triangleIndex)</td></tr>
+<tr class="separator:a8c14c117f916e93e9578087dd85fe3ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeabf9a91453ddd3d744ccbc862583874"><td class="memItemLeft" align="right" valign="top"><a id="aeabf9a91453ddd3d744ccbc862583874"></a>
 std::array&lt; int, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#aeabf9a91453ddd3d744ccbc862583874">gatherNeighbours</a> (const size_t triIndex) const</td></tr>
-<tr class="memdesc:aeabf9a91453ddd3d744ccbc862583874"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL Polyhedron construct. <br /></td></tr>
+<tr class="memdesc:aeabf9a91453ddd3d744ccbc862583874"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> Polyhedron construct. <br /></td></tr>
 <tr class="separator:aeabf9a91453ddd3d744ccbc862583874"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1638b74697c69d6dfb5125092130a9a0"><td class="memItemLeft" align="right" valign="top"><a id="a1638b74697c69d6dfb5125092130a9a0"></a>
 std::array&lt; std::optional&lt; <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a> &gt;, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a1638b74697c69d6dfb5125092130a9a0">gatherNeighbours</a> (const <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a> triIndex) const</td></tr>
-<tr class="memdesc:a1638b74697c69d6dfb5125092130a9a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the CGAL Polyhedron construct. <br /></td></tr>
+<tr class="memdesc:a1638b74697c69d6dfb5125092130a9a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> Polyhedron construct. <br /></td></tr>
 <tr class="separator:a1638b74697c69d6dfb5125092130a9a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae361aadf7f7b305ec57f7d0c3f5ec076"><td class="memTemplParams" colspan="2"><a id="ae361aadf7f7b305ec57f7d0c3f5ec076"></a>
 template&lt;typename StoppingCondition &gt; </td></tr>
@@ -401,6 +449,10 @@ Private Attributes</h2></td></tr>
 std::vector&lt; <a class="el" href="classpepr3d_1_1_data_triangle.html">DataTriangle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#ae72aa9945025d6609ef0fe5beab238f9">mTriangles</a></td></tr>
 <tr class="memdesc:ae72aa9945025d6609ef0fe5beab238f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Triangle soup of the original model mesh, containing CGAL::Triangle_3 data for AABB tree. <br /></td></tr>
 <tr class="separator:ae72aa9945025d6609ef0fe5beab238f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ab785869db636d7dc75d192cbd34c30"><td class="memItemLeft" align="right" valign="top"><a id="a2ab785869db636d7dc75d192cbd34c30"></a>
+std::vector&lt; std::pair&lt; Point3, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a2ab785869db636d7dc75d192cbd34c30">mTriangleBounds</a></td></tr>
+<tr class="memdesc:a2ab785869db636d7dc75d192cbd34c30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores a rough collision sphere for each triangle in a form of a center point + radius. Used to speed up capsule/cylinder querries on original triangles. <br /></td></tr>
+<tr class="separator:a2ab785869db636d7dc75d192cbd34c30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a899b65a3e64dc086f6275e4a5b616b62"><td class="memItemLeft" align="right" valign="top"><a id="a899b65a3e64dc086f6275e4a5b616b62"></a>
 std::map&lt; size_t, <a class="el" href="classpepr3d_1_1_triangle_detail.html">TriangleDetail</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a899b65a3e64dc086f6275e4a5b616b62">mTriangleDetails</a></td></tr>
 <tr class="memdesc:a899b65a3e64dc086f6275e4a5b616b62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map of triangle details. (Detailed triangles that replace the original) <br /></td></tr>
@@ -413,12 +465,13 @@ std::map&lt; size_t, size_t &gt;&#160;</td><td class="memItemRight" valign="bott
 <a class="el" href="structpepr3d_1_1_geometry_1_1_open_gl_data.html">OpenGlData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#addf4b4de09e100d6e4279d21e01a05eb">mOgl</a></td></tr>
 <tr class="memdesc:addf4b4de09e100d6e4279d21e01a05eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">All open GL buffers. <br /></td></tr>
 <tr class="separator:addf4b4de09e100d6e4279d21e01a05eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4c82bc662d7178d9a79ae47a513c790"><td class="memItemLeft" align="right" valign="top"><a id="aa4c82bc662d7178d9a79ae47a513c790"></a>
-struct <a class="el" href="structpepr3d_1_1_geometry_1_1_polyhedron_data.html">pepr3d::Geometry::PolyhedronData</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mPolyhedronData</b></td></tr>
-<tr class="separator:aa4c82bc662d7178d9a79ae47a513c790"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a040e500c0481caafb88141d8e42128bb"><td class="memItemLeft" align="right" valign="top"><a id="a040e500c0481caafb88141d8e42128bb"></a>
+<a class="el" href="structpepr3d_1_1_polyhedron_data.html">PolyhedronData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a040e500c0481caafb88141d8e42128bb">mPolyhedronData</a></td></tr>
+<tr class="memdesc:a040e500c0481caafb88141d8e42128bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Polyhedron structure. <br /></td></tr>
+<tr class="separator:a040e500c0481caafb88141d8e42128bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9f70b2e8bbd7a9baa001b981c6215aa"><td class="memItemLeft" align="right" valign="top"><a id="ab9f70b2e8bbd7a9baa001b981c6215aa"></a>
 std::unique_ptr&lt; Tree &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#ab9f70b2e8bbd7a9baa001b981c6215aa">mTree</a></td></tr>
-<tr class="memdesc:ab9f70b2e8bbd7a9baa001b981c6215aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">AABB tree from the CGAL library, to find intersections with rays generated by user mouse clicks and the mesh. <br /></td></tr>
+<tr class="memdesc:ab9f70b2e8bbd7a9baa001b981c6215aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">AABB tree from the <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> library, to find intersections with rays generated by user mouse clicks and the mesh. <br /></td></tr>
 <tr class="separator:ab9f70b2e8bbd7a9baa001b981c6215aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1108d0993ef23fb246ae10244a0c2240"><td class="memItemLeft" align="right" valign="top"><a id="a1108d0993ef23fb246ae10244a0c2240"></a>
 std::unique_ptr&lt; Tree &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_geometry.html#a1108d0993ef23fb246ae10244a0c2240">mTreeDetailed</a></td></tr>
@@ -458,7 +511,9 @@ Friends</h2></td></tr>
 class&#160;</td><td class="memItemRight" valign="bottom"><b>cereal::access</b></td></tr>
 <tr class="separator:ab2f44cbb59a08132f4c843e5225bba0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The whole geometry of a model that the user is painting. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a5f0594ebe7f3a779dc9cf18f943f1c56"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5f0594ebe7f3a779dc9cf18f943f1c56">&#9670;&nbsp;</a></span>buildDetailedMesh()</h2>
 
@@ -482,8 +537,90 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>cereal::access</b></
 </table>
 </div><div class="memdoc">
 
-<p>Build a CGAL mesh over detailed triangles. </p>
-<p>Yes, we are about to hash floating point values. These values come from CGAL exact kernel, so they should be bit-equal and safe to hash. There is no betters way to get indices before this, as different color parts are stored in different polygons.</p>
+<p>Build a <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> mesh over detailed triangles. </p>
+<p>Yes, we are about to hash floating point values. These values come from <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> exact kernel, so they should be bit-equal and safe to hash. There is no betters way to get indices before this, as different color parts are stored in different polygons.</p>
+
+</div>
+</div>
+<a id="ae6d2ae86fca37592a5dbb93784ca4ef0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6d2ae86fca37592a5dbb93784ca4ef0">&#9670;&nbsp;</a></span>changeColorIds()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ColorFunc &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pepr3d::Geometry::changeColorIds </td>
+          <td>(</td>
+          <td class="paramtype">const ColorFunc &amp;&#160;</td>
+          <td class="paramname"><em>colorFunc</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Change all color ID's from one to another. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ColorFunc</td><td>functor of type size_t func(size_t originalColor), that returns the new color ID </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4907bc6f193156a3d68956b2ce622120"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4907bc6f193156a3d68956b2ce622120">&#9670;&nbsp;</a></span>getTrianglesInRadius()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Object &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;size_t&gt; pepr3d::Geometry::getTrianglesInRadius </td>
+          <td>(</td>
+          <td class="paramtype">const Object &amp;&#160;</td>
+          <td class="paramname"><em>object</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>radius</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get all triangles that are closer to the object than radius This function operates on spherical bounds of triangles and may therefore return false positives. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">object</td><td><a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> Object - point, line, etc </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -572,6 +709,59 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>cereal::access</b></
 
 </div>
 </div>
+<a id="a993a7383980e9c4aa955ae156d714f15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a993a7383980e9c4aa955ae156d714f15">&#9670;&nbsp;</a></span>isTriangleInRadius()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Object &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool pepr3d::Geometry::isTriangleInRadius </td>
+          <td>(</td>
+          <td class="paramtype">const Object &amp;&#160;</td>
+          <td class="paramname"><em>object</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>radius</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>triangleIdx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Test if distance from object to spherical boundary of a triangle is closer than radius. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">object</td><td><a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> Object - point, line, etc </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true, object is closer than radius to the triangle bound shpere </dd></dl>
+
+</div>
+</div>
 <a id="a027715ec109b060ffc8b420947c4fde0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a027715ec109b060ffc8b420947c4fde0">&#9670;&nbsp;</a></span>loadNewGeometry()</h2>
 
@@ -594,6 +784,98 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>cereal::access</b></
 <p>Fill Polyhedron data to compute SurfaceMesh</p>
 <p>Get the generated color palette of the model, replace the current one</p>
 <p>Do the computations in parallel </p>
+
+</div>
+</div>
+<a id="a6c6b8ef6f157f8bb818e38f6e2e49b37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c6b8ef6f157f8bb818e38f6e2e49b37">&#9670;&nbsp;</a></span>paintWithShape() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pepr3d::Geometry::paintWithShape </td>
+          <td>(</td>
+          <td class="paramtype">const ci::Ray &amp;&#160;</td>
+          <td class="paramname"><em>ray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Point3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>shape</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>color</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>paintBackfaces</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Paint area with a shaped brush. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ray</td><td>Ray along which to project the shape, using orthogonal projection </td></tr>
+    <tr><td class="paramname">shape</td><td>Points in world space representing a polygonal shape </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a152673dacbe299a55ee9dc6a2403d6a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a152673dacbe299a55ee9dc6a2403d6a5">&#9670;&nbsp;</a></span>paintWithShape() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pepr3d::Geometry::paintWithShape </td>
+          <td>(</td>
+          <td class="paramtype">const ci::Ray &amp;&#160;</td>
+          <td class="paramname"><em>ray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; DataTriangle::Triangle &gt; &amp;&#160;</td>
+          <td class="paramname"><em>triangles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Paint area with a shaped brush. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ray</td><td>Ray along which to project the shape, using orthogonal projection </td></tr>
+    <tr><td class="paramname">triangles</td><td>Triangles in world space representing the shape </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -650,26 +932,6 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>cereal::access</b></
 
 <p>Set new triangle color. </p>
 <p>Change it in the triangle soup </p>
-
-</div>
-</div>
-<a id="ad25fda5afe4c73c0fd9dbd4bf77952b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad25fda5afe4c73c0fd9dbd4bf77952b1">&#9670;&nbsp;</a></span>updateTemporaryDetailedData()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void pepr3d::Geometry::updateTemporaryDetailedData </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Update temporary detailed data like detailed AABB tree and detailed Mesh This is a slow operation. </p>
-<p>Async build the data </p>
 
 </div>
 </div>

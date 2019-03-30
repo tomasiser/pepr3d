@@ -1,10 +1,19 @@
 \hypertarget{classpepr3d_1_1_side_pane}{}\section{pepr3d\+::Side\+Pane Class Reference}
 \label{classpepr3d_1_1_side_pane}\index{pepr3d::SidePane@{pepr3d::SidePane}}
+
+
+Right side of the user interface that displays options of the currently selected tool.  
+
+
+
+
+{\ttfamily \#include $<$Side\+Pane.\+h$>$}
+
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category}{Category}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em A category of a \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} that can be opened and closed by a user. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -12,59 +21,59 @@ class \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category}{Category}}
 {\bfseries Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a0d9965d55d1b631ec97a98698bbcd67b}\label{classpepr3d_1_1_side_pane_a0d9965d55d1b631ec97a98698bbcd67b}} 
-float {\bfseries get\+Width} () const
-\item 
+float \mbox{\hyperlink{classpepr3d_1_1_side_pane_a0d9965d55d1b631ec97a98698bbcd67b}{get\+Width}} () const
+\begin{DoxyCompactList}\small\item\em Returns the width. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a4418b3cd4e7c4e584d91f826d1e944b9}\label{classpepr3d_1_1_side_pane_a4418b3cd4e7c4e584d91f826d1e944b9}} 
-void {\bfseries set\+Width} (float width)
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_a4418b3cd4e7c4e584d91f826d1e944b9}{set\+Width}} (float width)
+\begin{DoxyCompactList}\small\item\em Sets the width. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a1ff5531d18ef9a1ad2149e59661c8d77}\label{classpepr3d_1_1_side_pane_a1ff5531d18ef9a1ad2149e59661c8d77}} 
-void {\bfseries draw} ()
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_a1ff5531d18ef9a1ad2149e59661c8d77}{draw}} ()
+\begin{DoxyCompactList}\small\item\em Draws the pane using Im\+Gui. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a41774f95d968169688441c34a7b0e21b}\label{classpepr3d_1_1_side_pane_a41774f95d968169688441c34a7b0e21b}} 
-void {\bfseries resize} ()
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_a41774f95d968169688441c34a7b0e21b}{resize}} ()
+\begin{DoxyCompactList}\small\item\em Called when the \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} should recalculate its size. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_ad52b2636cb54b25ed796ad8bae54a535}\label{classpepr3d_1_1_side_pane_ad52b2636cb54b25ed796ad8bae54a535}} 
-void {\bfseries draw\+Text} (std\+::string text)
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_ad52b2636cb54b25ed796ad8bae54a535}{draw\+Text}} (std\+::string text)
+\begin{DoxyCompactList}\small\item\em Draws a (multi-\/line) text label. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a28107c4c4448600ef6f07b5c22928b22}\label{classpepr3d_1_1_side_pane_a28107c4c4448600ef6f07b5c22928b22}} 
-bool {\bfseries draw\+Button} (std\+::string label)
-\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_side_pane_a28107c4c4448600ef6f07b5c22928b22}{draw\+Button}} (std\+::string label)
+\begin{DoxyCompactList}\small\item\em Draws a button with a maximum available width. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a6fcb108b3358ec5b16e08359440d2e83}\label{classpepr3d_1_1_side_pane_a6fcb108b3358ec5b16e08359440d2e83}} 
-bool {\bfseries draw\+Colored\+Button} (std\+::string label, const ci\+::\+ColorA color, const float border\+Thickness=3.\+0f)
-\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_side_pane_a6fcb108b3358ec5b16e08359440d2e83}{draw\+Colored\+Button}} (std\+::string label, const ci\+::\+ColorA color, const float border\+Thickness=3.\+0f)
+\begin{DoxyCompactList}\small\item\em Draws a button with a colored highlight. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_ac9c2d073fb25be1145899accd17813fa}\label{classpepr3d_1_1_side_pane_ac9c2d073fb25be1145899accd17813fa}} 
-void {\bfseries draw\+Separator} ()
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_ac9c2d073fb25be1145899accd17813fa}{draw\+Separator}} ()
+\begin{DoxyCompactList}\small\item\em Draws a horizontal separator. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a33641b0bade39edf124bc6c23a6271a0}\label{classpepr3d_1_1_side_pane_a33641b0bade39edf124bc6c23a6271a0}} 
-void {\bfseries draw\+Color\+Palette} (const std\+::string \&label=\char`\"{}Color Palette\char`\"{}, bool is\+Editable=false)
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_a33641b0bade39edf124bc6c23a6271a0}{draw\+Color\+Palette}} (const std\+::string \&label=\char`\"{}Color Palette\char`\"{}, bool is\+Editable=false)
+\begin{DoxyCompactList}\small\item\em Draws a color palette of the current \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} and its \mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}}. If is\+Editable is true, a full editable user interface will be drawn. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_aa585367929e09354f49e0740571f475b}\label{classpepr3d_1_1_side_pane_aa585367929e09354f49e0740571f475b}} 
-{\footnotesize template$<$typename Callback $>$ }\\void {\bfseries draw\+Checkbox} (std\+::string label, bool is\+Checked, Callback on\+Changed)
-\item 
+{\footnotesize template$<$typename Callback $>$ }\\void \mbox{\hyperlink{classpepr3d_1_1_side_pane_aa585367929e09354f49e0740571f475b}{draw\+Checkbox}} (std\+::string label, bool is\+Checked, Callback on\+Changed)
+\begin{DoxyCompactList}\small\item\em Draws a checkbox with a callback called when the value is changed. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a65b9063ac82c6249eef2c1a7586a0cfb}\label{classpepr3d_1_1_side_pane_a65b9063ac82c6249eef2c1a7586a0cfb}} 
-void {\bfseries draw\+Checkbox} (std\+::string label, bool \&is\+Checked)
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_a65b9063ac82c6249eef2c1a7586a0cfb}{draw\+Checkbox}} (std\+::string label, bool \&is\+Checked)
+\begin{DoxyCompactList}\small\item\em Draws a checkbox with a read-\/write reference to the current value. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_ae31dbf3dc9f11c3a4a2721c59ca043df}\label{classpepr3d_1_1_side_pane_ae31dbf3dc9f11c3a4a2721c59ca043df}} 
-bool {\bfseries draw\+Int\+Dragger} (std\+::string label, int \&value, float drag\+Speed, int min\+Value, int max\+Value, std\+::string display\+Format, float width)
-\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_side_pane_ae31dbf3dc9f11c3a4a2721c59ca043df}{draw\+Int\+Dragger}} (std\+::string label, int \&value, float drag\+Speed, int min\+Value, int max\+Value, std\+::string display\+Format, float width)
+\begin{DoxyCompactList}\small\item\em Draws an Im\+Gui dragger (slider) for an integer value. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a284ec9b8a323a0b4bf01fddb8551d4b2}\label{classpepr3d_1_1_side_pane_a284ec9b8a323a0b4bf01fddb8551d4b2}} 
-bool {\bfseries draw\+Vec3\+Dragger} (std\+::string label, glm\+::vec3 \&value, float drag\+Speed, float min\+Value, float max\+Value, std\+::string display\+Format, float width)
-\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_side_pane_a284ec9b8a323a0b4bf01fddb8551d4b2}{draw\+Vec3\+Dragger}} (std\+::string label, glm\+::vec3 \&value, float drag\+Speed, float min\+Value, float max\+Value, std\+::string display\+Format, float width)
+\begin{DoxyCompactList}\small\item\em Draws an Im\+Gui dragger (slider) for an glm\+::vec3 value. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a67b9ac3cbdcbae622df47cf7fa7fe0d0}\label{classpepr3d_1_1_side_pane_a67b9ac3cbdcbae622df47cf7fa7fe0d0}} 
-bool {\bfseries draw\+Float\+Dragger} (std\+::string label, float \&value, float drag\+Speed, float min\+Value, float max\+Value, std\+::string display\+Format, float width)
-\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_side_pane_a67b9ac3cbdcbae622df47cf7fa7fe0d0}{draw\+Float\+Dragger}} (std\+::string label, float \&value, float drag\+Speed, float min\+Value, float max\+Value, std\+::string display\+Format, float width)
+\begin{DoxyCompactList}\small\item\em Draws an Im\+Gui dragger (slider) for an float value. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_ad2aec2dd5fb2b89689af2478547c58c5}\label{classpepr3d_1_1_side_pane_ad2aec2dd5fb2b89689af2478547c58c5}} 
-void {\bfseries draw\+Tooltip\+On\+Hover} (const std\+::string \&label, const std\+::string \&shortcut=\char`\"{}\char`\"{}, const std\+::string \&description=\char`\"{}\char`\"{}, const std\+::string \&disabled=\char`\"{}\char`\"{})
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_ad2aec2dd5fb2b89689af2478547c58c5}{draw\+Tooltip\+On\+Hover}} (const std\+::string \&label, const std\+::string \&shortcut=\char`\"{}\char`\"{}, const std\+::string \&description=\char`\"{}\char`\"{}, const std\+::string \&disabled=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Draws a tooltip if the previous Im\+Gui element is hovered. The tooltip is drawn on the left of the \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a661999aa5735d68c9ac36fa07722ed5b}\label{classpepr3d_1_1_side_pane_a661999aa5735d68c9ac36fa07722ed5b}} 
-void {\bfseries draw\+Color\+Palette\+Add\+Remove\+Buttons} (\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} \&color\+Manager, \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}}$<$ \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $>$ \&command\+Manager)
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_a661999aa5735d68c9ac36fa07722ed5b}{draw\+Color\+Palette\+Add\+Remove\+Buttons}} (\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} \&color\+Manager, \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}}$<$ \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $>$ \&command\+Manager)
+\begin{DoxyCompactList}\small\item\em Draws add \& remove buttons of an editable color palette. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_a38039d44d10317e493730141b058d193}\label{classpepr3d_1_1_side_pane_a38039d44d10317e493730141b058d193}} 
-void {\bfseries draw\+Color\+Palette\+Color\+Boxes} (\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} \&color\+Manager, \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}}$<$ \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $>$ \&command\+Manager, bool is\+Editable)
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_a38039d44d10317e493730141b058d193}{draw\+Color\+Palette\+Color\+Boxes}} (\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} \&color\+Manager, \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}}$<$ \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $>$ \&command\+Manager, bool is\+Editable)
+\begin{DoxyCompactList}\small\item\em Draws the color boxes of a color palette. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -75,6 +84,9 @@ void {\bfseries draw\+Color\+Palette\+Color\+Boxes} (\mbox{\hyperlink{classpepr3
 float {\bfseries m\+Width} = 250.\+0f
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Right side of the user interface that displays options of the currently selected tool. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

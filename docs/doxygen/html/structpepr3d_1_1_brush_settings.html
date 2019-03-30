@@ -96,6 +96,11 @@ $(document).ready(function(){initNavTree('structpepr3d_1_1_brush_settings.html',
 <div class="title">pepr3d::BrushSettings Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Current settings of the <a class="el" href="classpepr3d_1_1_brush.html" title="Tool used for painting a model while not being limited by the original triangles.">Brush</a> tool.  
+ <a href="structpepr3d_1_1_brush_settings.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_brush_8h_source.html">Brush.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -113,14 +118,22 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#a01300f710ecd757b8f532a1da1f3bc4c">size</a> = 0.2f</td></tr>
 <tr class="memdesc:a01300f710ecd757b8f532a1da1f3bc4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of a brush in model space units. <br /></td></tr>
 <tr class="separator:a01300f710ecd757b8f532a1da1f3bc4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45ac5bb04d5a502b31811ecd94d6fe2b"><td class="memItemLeft" align="right" valign="top"><a id="a45ac5bb04d5a502b31811ecd94d6fe2b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#a45ac5bb04d5a502b31811ecd94d6fe2b">continuous</a> = false</td></tr>
-<tr class="memdesc:a45ac5bb04d5a502b31811ecd94d6fe2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paint only to triangles connected to the origin. <br /></td></tr>
-<tr class="separator:a45ac5bb04d5a502b31811ecd94d6fe2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a297b93063de058754d95730263c48a59"><td class="memItemLeft" align="right" valign="top"><a id="a297b93063de058754d95730263c48a59"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#a297b93063de058754d95730263c48a59">segments</a> = 12</td></tr>
+<tr class="memdesc:a297b93063de058754d95730263c48a59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of segments of the brush. <br /></td></tr>
+<tr class="separator:a297b93063de058754d95730263c48a59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab509aa6a59f8a36b9de2ae9d579a47f7"><td class="memItemLeft" align="right" valign="top"><a id="ab509aa6a59f8a36b9de2ae9d579a47f7"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#ab509aa6a59f8a36b9de2ae9d579a47f7">paintBackfaces</a> = false</td></tr>
 <tr class="memdesc:ab509aa6a59f8a36b9de2ae9d579a47f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paint onto backward facing triangles. <br /></td></tr>
 <tr class="separator:ab509aa6a59f8a36b9de2ae9d579a47f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6988634902d2ebb5e10e4ed2ed9e74dc"><td class="memItemLeft" align="right" valign="top"><a id="a6988634902d2ebb5e10e4ed2ed9e74dc"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#a6988634902d2ebb5e10e4ed2ed9e74dc">spherical</a> = true</td></tr>
+<tr class="memdesc:a6988634902d2ebb5e10e4ed2ed9e74dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use spherical brush (otherwise shape brush will be used. <br /></td></tr>
+<tr class="separator:a6988634902d2ebb5e10e4ed2ed9e74dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45ac5bb04d5a502b31811ecd94d6fe2b"><td class="memItemLeft" align="right" valign="top"><a id="a45ac5bb04d5a502b31811ecd94d6fe2b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#a45ac5bb04d5a502b31811ecd94d6fe2b">continuous</a> = false</td></tr>
+<tr class="memdesc:a45ac5bb04d5a502b31811ecd94d6fe2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paint only to triangles connected to the origin. <br /></td></tr>
+<tr class="separator:a45ac5bb04d5a502b31811ecd94d6fe2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adddaabb9e5cd0271e781423eb77765db"><td class="memItemLeft" align="right" valign="top"><a id="adddaabb9e5cd0271e781423eb77765db"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#adddaabb9e5cd0271e781423eb77765db">respectOriginalTriangles</a> = false</td></tr>
 <tr class="memdesc:adddaabb9e5cd0271e781423eb77765db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Will not create new triangles to match brush shape. <br /></td></tr>
@@ -129,8 +142,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#abe64fa6555c4a22a17cdf58779b0288e">paintOuterRing</a> = false</td></tr>
 <tr class="memdesc:abe64fa6555c4a22a17cdf58779b0288e"><td class="mdescLeft">&#160;</td><td class="mdescRight">When respecting original triangles should we paint triangles that are not fully inside the brush? <br /></td></tr>
 <tr class="separator:abe64fa6555c4a22a17cdf58779b0288e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4949a6501a1ac9525c0b8ef4219bfdec"><td class="memItemLeft" align="right" valign="top"><a id="a4949a6501a1ac9525c0b8ef4219bfdec"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_brush_settings.html#a4949a6501a1ac9525c0b8ef4219bfdec">alignToNormal</a> = false</td></tr>
+<tr class="memdesc:a4949a6501a1ac9525c0b8ef4219bfdec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use local normal for direction of shape brush. <br /></td></tr>
+<tr class="separator:a4949a6501a1ac9525c0b8ef4219bfdec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Current settings of the <a class="el" href="classpepr3d_1_1_brush.html" title="Tool used for painting a model while not being limited by the original triangles.">Brush</a> tool. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/<a class="el" href="_brush_8h_source.html">Brush.h</a></li>
 </ul>
 </div><!-- contents -->

@@ -1,10 +1,19 @@
 \hypertarget{classpepr3d_1_1_toolbar}{}\section{pepr3d\+::Toolbar Class Reference}
 \label{classpepr3d_1_1_toolbar}\index{pepr3d::Toolbar@{pepr3d::Toolbar}}
+
+
+A top part of the user interface that shows a File menu, Undo, Redo, and all tools.  
+
+
+
+
+{\ttfamily \#include $<$Toolbar.\+h$>$}
+
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{structpepr3d_1_1_toolbar_1_1_button_properties}{Button\+Properties}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Properties of a clickable and selectable button in the \mbox{\hyperlink{classpepr3d_1_1_toolbar}{Toolbar}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -12,11 +21,11 @@ struct \mbox{\hyperlink{structpepr3d_1_1_toolbar_1_1_button_properties}{Button\+
 {\bfseries Toolbar} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_a05d027cd466b54792502653043a8db60}\label{classpepr3d_1_1_toolbar_a05d027cd466b54792502653043a8db60}} 
-float {\bfseries get\+Height} ()
-\item 
+float \mbox{\hyperlink{classpepr3d_1_1_toolbar_a05d027cd466b54792502653043a8db60}{get\+Height}} ()
+\begin{DoxyCompactList}\small\item\em Returns the height. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_ab84f478320ce74f523bede52c0966271}\label{classpepr3d_1_1_toolbar_ab84f478320ce74f523bede52c0966271}} 
-void {\bfseries draw} ()
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classpepr3d_1_1_toolbar_ab84f478320ce74f523bede52c0966271}{draw}} ()
+\begin{DoxyCompactList}\small\item\em Draws the \mbox{\hyperlink{classpepr3d_1_1_toolbar}{Toolbar}} using Im\+Gui. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Types}
 \begin{DoxyCompactItemize}
 \item 
@@ -27,29 +36,23 @@ using {\bfseries Tools\+Vector} = std\+::vector$<$ std\+::unique\+\_\+ptr$<$ \mb
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_a1d55b21ed7022216756d4d156c8f1e52}\label{classpepr3d_1_1_toolbar_a1d55b21ed7022216756d4d156c8f1e52}} 
-void {\bfseries draw\+Separator} ()
-\item 
-\mbox{\Hypertarget{classpepr3d_1_1_toolbar_a34bebb48d1670eca31d68b998a088e70}\label{classpepr3d_1_1_toolbar_a34bebb48d1670eca31d68b998a088e70}} 
-void {\bfseries draw\+Button} (std\+::size\+\_\+t index, const char $\ast$text)
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_toolbar_a1d55b21ed7022216756d4d156c8f1e52}{draw\+Separator}} ()
+\begin{DoxyCompactList}\small\item\em Draws a vertical separator. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_a8ec26251465c349def3cb032370bdf25}\label{classpepr3d_1_1_toolbar_a8ec26251465c349def3cb032370bdf25}} 
-{\footnotesize template$<$typename Callback $>$ }\\void {\bfseries draw\+Button} (\mbox{\hyperlink{structpepr3d_1_1_toolbar_1_1_button_properties}{Button\+Properties}} \&props, Callback on\+Pressed)
-\item 
+{\footnotesize template$<$typename Callback $>$ }\\void \mbox{\hyperlink{classpepr3d_1_1_toolbar_a8ec26251465c349def3cb032370bdf25}{draw\+Button}} (\mbox{\hyperlink{structpepr3d_1_1_toolbar_1_1_button_properties}{Button\+Properties}} \&props, Callback on\+Pressed)
+\begin{DoxyCompactList}\small\item\em Draws a clickable and selectable button in the \mbox{\hyperlink{classpepr3d_1_1_toolbar}{Toolbar}} according to the \mbox{\hyperlink{structpepr3d_1_1_toolbar_1_1_button_properties}{Button\+Properties}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_aceb99e5459d3b1ba1d557caeec2e57d1}\label{classpepr3d_1_1_toolbar_aceb99e5459d3b1ba1d557caeec2e57d1}} 
-void {\bfseries draw\+File\+Drop\+Down} ()
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_toolbar_aceb99e5459d3b1ba1d557caeec2e57d1}{draw\+File\+Drop\+Down}} ()
+\begin{DoxyCompactList}\small\item\em Draws a File drop down menu. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_afd2e255728e6b0962da017f3ee1822bc}\label{classpepr3d_1_1_toolbar_afd2e255728e6b0962da017f3ee1822bc}} 
-void {\bfseries draw\+Undo\+Redo} ()
-\item 
-\mbox{\Hypertarget{classpepr3d_1_1_toolbar_afde0b64ad68c0203195fa59327f57c02}\label{classpepr3d_1_1_toolbar_afde0b64ad68c0203195fa59327f57c02}} 
-void {\bfseries draw\+Demo\+Window\+Toggle} ()
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_toolbar_afd2e255728e6b0962da017f3ee1822bc}{draw\+Undo\+Redo}} ()
+\begin{DoxyCompactList}\small\item\em Draws the Undo and Redo buttons. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_a88b084de711b74735348315189c01fe7}\label{classpepr3d_1_1_toolbar_a88b084de711b74735348315189c01fe7}} 
-void {\bfseries draw\+Tool\+Buttons} ()
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_toolbar_a88b084de711b74735348315189c01fe7}{draw\+Tool\+Buttons}} ()
+\begin{DoxyCompactList}\small\item\em Draws buttons of all \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} instances. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_toolbar_a9366ee163dfe041a2661fe5eb664a325}\label{classpepr3d_1_1_toolbar_a9366ee163dfe041a2661fe5eb664a325}} 
-void {\bfseries draw\+Tool\+Button} (Tools\+Vector\+::iterator tool)
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classpepr3d_1_1_toolbar_a9366ee163dfe041a2661fe5eb664a325}{draw\+Tool\+Button}} (Tools\+Vector\+::iterator tool)
+\begin{DoxyCompactList}\small\item\em Draws a single button for a specified \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} (an iterator to the \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}). \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -63,6 +66,9 @@ std\+::size\+\_\+t {\bfseries m\+Selected\+Button\+Index} = 3
 float {\bfseries m\+Height} = 50.\+0f
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+A top part of the user interface that shows a File menu, Undo, Redo, and all tools. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

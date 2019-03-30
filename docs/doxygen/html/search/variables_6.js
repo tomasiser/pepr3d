@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['paintbackfaces',['paintBackfaces',['../structpepr3d_1_1_brush_settings.html#ab509aa6a59f8a36b9de2ae9d579a47f7',1,'pepr3d::BrushSettings']]],
-  ['paintouterring',['paintOuterRing',['../structpepr3d_1_1_brush_settings.html#abe64fa6555c4a22a17cdf58779b0288e',1,'pepr3d::BrushSettings']]]
+  ['normalbuffer',['normalBuffer',['../structpepr3d_1_1_geometry_1_1_open_gl_data.html#ab1e3327043c8d4e8924495db62eb2ad9',1,'pepr3d::Geometry::OpenGlData']]]
 ];

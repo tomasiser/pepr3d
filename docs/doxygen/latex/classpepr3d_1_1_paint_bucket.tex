@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_paint_bucket}{}\section{pepr3d\+::Paint\+Bucket Class Reference}
 \label{classpepr3d_1_1_paint_bucket}\index{pepr3d::PaintBucket@{pepr3d::PaintBucket}}
+
+
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for coloring whole regions with a single click.  
+
+
+
+
+{\ttfamily \#include $<$Paint\+Bucket.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Paint\+Bucket\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -10,11 +19,11 @@ Inheritance diagram for pepr3d\+::Paint\+Bucket\+:\begin{figure}[H]
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{structpepr3d_1_1_paint_bucket_1_1_color_stopping}{Color\+Stopping}}
-\item 
+\begin{DoxyCompactList}\small\item\em A paint bucket criterion that stops on a different color. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_paint_bucket_1_1_do_not_stop}{Do\+Not\+Stop}}
-\item 
+\begin{DoxyCompactList}\small\item\em A paint bucket criterion that never stops, used for coloring the whole model. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_paint_bucket_1_1_normal_stopping}{Normal\+Stopping}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em A paint bucket criterion that stops when an angle between normals is too high. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
@@ -30,38 +39,38 @@ enum {\bfseries Normal\+Angle\+Compare} \{ {\bfseries N\+E\+I\+G\+H\+B\+O\+U\+RS
 {\bfseries Paint\+Bucket} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_ab714ccf52a91777feb38d1149bda8451}\label{classpepr3d_1_1_paint_bucket_ab714ccf52a91777feb38d1149bda8451}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_ab714ccf52a91777feb38d1149bda8451}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_af756844e2801c8da35fffb900fc2d831}\label{classpepr3d_1_1_paint_bucket_af756844e2801c8da35fffb900fc2d831}} 
-virtual std\+::string {\bfseries get\+Description} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_af756844e2801c8da35fffb900fc2d831}{get\+Description}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a description, displayed e.\+g., in a tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a5707861e941cb4b2337a6b8b8da9c739}\label{classpepr3d_1_1_paint_bucket_a5707861e941cb4b2337a6b8b8da9c739}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a5707861e941cb4b2337a6b8b8da9c739}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a81f945468a9ddcca09bd3bd1fa4e156c}\label{classpepr3d_1_1_paint_bucket_a81f945468a9ddcca09bd3bd1fa4e156c}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a81f945468a9ddcca09bd3bd1fa4e156c}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a493abf6741118fc98fefa50adc266a6d}\label{classpepr3d_1_1_paint_bucket_a493abf6741118fc98fefa50adc266a6d}} 
-virtual bool {\bfseries is\+Enabled} () const override
-\item 
+virtual bool \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a493abf6741118fc98fefa50adc266a6d}{is\+Enabled}} () const override
+\begin{DoxyCompactList}\small\item\em Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a1e4d61353e4c1a2bf4e911690cc45e64}\label{classpepr3d_1_1_paint_bucket_a1e4d61353e4c1a2bf4e911690cc45e64}} 
-virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a1e4d61353e4c1a2bf4e911690cc45e64}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a166b6b6bd0caef117635aec4489cce66}\label{classpepr3d_1_1_paint_bucket_a166b6b6bd0caef117635aec4489cce66}} 
-virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a166b6b6bd0caef117635aec4489cce66}{draw\+To\+Model\+View}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_af0204c28c5e9f6ec4a244ab0e9105ef6}\label{classpepr3d_1_1_paint_bucket_af0204c28c5e9f6ec4a244ab0e9105ef6}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_af0204c28c5e9f6ec4a244ab0e9105ef6}{on\+Model\+View\+Mouse\+Down}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users presses a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a64f3acef2f66ba3c5b323267aeadd98d}\label{classpepr3d_1_1_paint_bucket_a64f3acef2f66ba3c5b323267aeadd98d}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Drag} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a64f3acef2f66ba3c5b323267aeadd98d}{on\+Model\+View\+Mouse\+Drag}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users drags a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a4e667f3a895759cd6807241a378a6615}\label{classpepr3d_1_1_paint_bucket_a4e667f3a895759cd6807241a378a6615}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a4e667f3a895759cd6807241a378a6615}{on\+Model\+View\+Mouse\+Move}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users moves mouse cursor over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. Note\+: This method is not called when the user is dragging the mouse! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_paint_bucket_a3460bee5bb24684edcdeca08b76b4cc4}\label{classpepr3d_1_1_paint_bucket_a3460bee5bb24684edcdeca08b76b4cc4}} 
-virtual void {\bfseries on\+New\+Geometry\+Loaded} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\end{DoxyCompactItemize}
+virtual void \mbox{\hyperlink{classpepr3d_1_1_paint_bucket_a3460bee5bb24684edcdeca08b76b4cc4}{on\+New\+Geometry\+Loaded}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on E\+V\+E\+RY \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after a new \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} is loaded or imported. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -96,6 +105,9 @@ Normal\+Angle\+Compare {\bfseries m\+Normal\+Compare} = Normal\+Angle\+Compare\+
 glm\+::ivec2 {\bfseries m\+Last\+Mouse\+Pos}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for coloring whole regions with a single click. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

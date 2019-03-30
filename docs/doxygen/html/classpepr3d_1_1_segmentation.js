@@ -20,7 +20,7 @@ var classpepr3d_1_1_segmentation =
     [ "mGeometryCorrect", "classpepr3d_1_1_segmentation.html#af42e20289921819f50fcbc36d6e058f5", null ],
     [ "mHoveredTriangleId", "classpepr3d_1_1_segmentation.html#a6a213a470006808d715976b1d3ecf6de", null ],
     [ "mNewColors", "classpepr3d_1_1_segmentation.html#a4ce747a53afd47abaeff6f98070c8071", null ],
-    [ "mNumberOfClusters", "classpepr3d_1_1_segmentation.html#aeae786bdab94aea8ffa0fb73390294dc", null ],
+    [ "mNumberOfClusters", "classpepr3d_1_1_segmentation.html#a7097b3a93fea80b798e8e0117d4ab2a0", null ],
     [ "mNumberOfSegments", "classpepr3d_1_1_segmentation.html#ac28116b16a089414c90acaa13e1b767d", null ],
     [ "mPickState", "classpepr3d_1_1_segmentation.html#a29b4f82176495128f046c4f5556b0ed0", null ],
     [ "mSdfEnabled", "classpepr3d_1_1_segmentation.html#ab119390cf1e8b5f5ba33d112a3a1806c", null ],

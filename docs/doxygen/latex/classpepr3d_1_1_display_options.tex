@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_display_options}{}\section{pepr3d\+::Display\+Options Class Reference}
 \label{classpepr3d_1_1_display_options}\index{pepr3d::DisplayOptions@{pepr3d::DisplayOptions}}
+
+
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used to adjust how the model is displayed.  
+
+
+
+
+{\ttfamily \#include $<$Display\+Options.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Display\+Options\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -13,20 +22,20 @@ Inheritance diagram for pepr3d\+::Display\+Options\+:\begin{figure}[H]
 {\bfseries Display\+Options} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_display_options_aa743b8c99fcabb4603c1d8c3357020f6}\label{classpepr3d_1_1_display_options_aa743b8c99fcabb4603c1d8c3357020f6}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_display_options_aa743b8c99fcabb4603c1d8c3357020f6}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_display_options_aa68e8ddd00436caf8f3b5d4cab81f4cd}\label{classpepr3d_1_1_display_options_aa68e8ddd00436caf8f3b5d4cab81f4cd}} 
-virtual std\+::string {\bfseries get\+Description} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_display_options_aa68e8ddd00436caf8f3b5d4cab81f4cd}{get\+Description}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a description, displayed e.\+g., in a tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_display_options_ad81f1aa914b4b7f513d4d01995c4d60e}\label{classpepr3d_1_1_display_options_ad81f1aa914b4b7f513d4d01995c4d60e}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_display_options_ad81f1aa914b4b7f513d4d01995c4d60e}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_display_options_a8f1a481272d7ebcc96c32937027be68c}\label{classpepr3d_1_1_display_options_a8f1a481272d7ebcc96c32937027be68c}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_display_options_a8f1a481272d7ebcc96c32937027be68c}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_display_options_a403d402fdd5fdfcdcc24a206b9f1ef66}\label{classpepr3d_1_1_display_options_a403d402fdd5fdfcdcc24a206b9f1ef66}} 
-virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
-\end{DoxyCompactItemize}
+virtual void \mbox{\hyperlink{classpepr3d_1_1_display_options_a403d402fdd5fdfcdcc24a206b9f1ef66}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -34,6 +43,9 @@ virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_
 \mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used to adjust how the model is displayed. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

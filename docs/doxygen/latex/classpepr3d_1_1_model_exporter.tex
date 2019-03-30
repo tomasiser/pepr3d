@@ -1,36 +1,92 @@
 \hypertarget{classpepr3d_1_1_model_exporter}{}\section{pepr3d\+::Model\+Exporter Class Reference}
 \label{classpepr3d_1_1_model_exporter}\index{pepr3d::ModelExporter@{pepr3d::ModelExporter}}
+
+
+Exports \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} to separate files via Assimp, supports surface export and depth extrusions.  
+
+
+
+
+{\ttfamily \#include $<$Model\+Exporter.\+h$>$}
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_model_exporter_1_1_indexed_edge}{Indexed\+Edge}}
+\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a4ae3dd170d168c2aaaa1a10fa67186e5}\label{classpepr3d_1_1_model_exporter_a4ae3dd170d168c2aaaa1a10fa67186e5}} 
-{\bfseries Model\+Exporter} (const std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \&triangles, const std\+::string file\+Path, const std\+::string file\+Name, const std\+::string file\+Type, \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$progress)
-\end{DoxyCompactItemize}
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a90cdfb31200413255c75cc2af4c55952}\label{classpepr3d_1_1_model_exporter_a90cdfb31200413255c75cc2af4c55952}} 
+{\bfseries Model\+Exporter} (const \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $\ast$geometry, \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$progress)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a4fd1351a4fb5634b761f1693206e0a1d}\label{classpepr3d_1_1_model_exporter_a4fd1351a4fb5634b761f1693206e0a1d}} 
+std\+::map$<$ color\+Index, std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a4fd1351a4fb5634b761f1693206e0a1d}{create\+Scenes}} (Export\+Type export\+Type)
+\begin{DoxyCompactList}\small\item\em Returns a map where each color index has a corresponding exported Assimp scene. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a0521b274720d0ad6beeaae466718fa45}\label{classpepr3d_1_1_model_exporter_a0521b274720d0ad6beeaae466718fa45}} 
+void \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a0521b274720d0ad6beeaae466718fa45}{save\+Model}} (const std\+::string file\+Path, const std\+::string file\+Name, const std\+::string file\+Type, Export\+Type export\+Type)
+\begin{DoxyCompactList}\small\item\em Saves the exported \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} to files, may throw an exception on error. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a395f37149485a267944542b378546f6e}\label{classpepr3d_1_1_model_exporter_a395f37149485a267944542b378546f6e}} 
+void \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a395f37149485a267944542b378546f6e}{set\+Extrusion\+Coef}} (std\+::vector$<$ float $>$ extrusion\+Coef)
+\begin{DoxyCompactList}\small\item\em Sets extrusion coefficients between 0 and 1 indexed by the color index. The vector has to be as long as the number of colors in the \mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} of the current \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a04954ea018cc315c2c110fbbf6b83b56}\label{classpepr3d_1_1_model_exporter_a04954ea018cc315c2c110fbbf6b83b56}} 
-bool {\bfseries save\+Model} (const std\+::string file\+Path, const std\+::string file\+Name, const std\+::string file\+Type)
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a31cfba9f522ed35f2f25e1d88f5c0291}\label{classpepr3d_1_1_model_exporter_a31cfba9f522ed35f2f25e1d88f5c0291}} 
+std\+::map$<$ color\+Index, std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a31cfba9f522ed35f2f25e1d88f5c0291}{create\+Non\+Poly\+Surface\+Scenes}} ()
+\begin{DoxyCompactList}\small\item\em Creates surface only exported scenes without the need for a \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron. Returns a map where each color index has a corresponding exported Assimp scene. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_aebf51f53d44f88e180a63900aedd386c}\label{classpepr3d_1_1_model_exporter_aebf51f53d44f88e180a63900aedd386c}} 
+std\+::map$<$ color\+Index, std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_model_exporter_aebf51f53d44f88e180a63900aedd386c}{create\+Poly\+Surface\+Scenes}} ()
+\begin{DoxyCompactList}\small\item\em Creates surface only exported scenes with the need for a \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron. Returns a map where each color index has a corresponding exported Assimp scene. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_aaf14c84e428fce47a5aefd330218e0c8}\label{classpepr3d_1_1_model_exporter_aaf14c84e428fce47a5aefd330218e0c8}} 
+std\+::map$<$ color\+Index, std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_model_exporter_aaf14c84e428fce47a5aefd330218e0c8}{create\+Non\+Poly\+Scenes}} ()
+\begin{DoxyCompactList}\small\item\em Creates extruded scenes without the need for a \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron. Returns a map where each color index has a corresponding exported Assimp scene. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a653be5616accde4e5dbb5c82bb260932}\label{classpepr3d_1_1_model_exporter_a653be5616accde4e5dbb5c82bb260932}} 
+void \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a653be5616accde4e5dbb5c82bb260932}{normalize\+Summed\+Normals}} (std\+::map$<$ std\+::array$<$ float, 3 $>$, glm\+::vec3 $>$ \&summed\+Vertex\+Normals)
+\begin{DoxyCompactList}\small\item\em Normalize summed vertex normals. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_ab278eb54afeced3be63e4e5eccdf3802}\label{classpepr3d_1_1_model_exporter_ab278eb54afeced3be63e4e5eccdf3802}} 
+void \mbox{\hyperlink{classpepr3d_1_1_model_exporter_ab278eb54afeced3be63e4e5eccdf3802}{compute\+Boundary\+Edges}} (std\+::map$<$ std\+::array$<$ std\+::array$<$ float, 3 $>$, 2 $>$, \mbox{\hyperlink{structpepr3d_1_1_model_exporter_1_1_indexed_edge}{Indexed\+Edge}} $>$ \&edge\+Lookup)
+\begin{DoxyCompactList}\small\item\em Decide if the edge is between two colors. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a0ae56b6392c9db26a14ddd7a365a40fc}\label{classpepr3d_1_1_model_exporter_a0ae56b6392c9db26a14ddd7a365a40fc}} 
+std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_model_exporter_1_1_indexed_edge}{Indexed\+Edge}} $>$ \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a0ae56b6392c9db26a14ddd7a365a40fc}{select\+Boundary\+Edges\+By\+Color}} (std\+::map$<$ std\+::array$<$ std\+::array$<$ float, 3 $>$, 2 $>$, \mbox{\hyperlink{structpepr3d_1_1_model_exporter_1_1_indexed_edge}{Indexed\+Edge}} $>$ \&edge\+Lookup, color\+Index color)
+\begin{DoxyCompactList}\small\item\em Returns a vector of \mbox{\hyperlink{structpepr3d_1_1_model_exporter_1_1_indexed_edge}{Indexed\+Edge}} that were boundary and with the specified color. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a1e9c64e2f9dd0482f3216ff9cfd016f3}\label{classpepr3d_1_1_model_exporter_a1e9c64e2f9dd0482f3216ff9cfd016f3}} 
+std\+::map$<$ color\+Index, std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a1e9c64e2f9dd0482f3216ff9cfd016f3}{create\+Poly\+Scenes}} (bool with\+S\+DF)
+\begin{DoxyCompactList}\small\item\em Creates extruded scenes with the need for a \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron. Optionally extrudes relative to S\+DF values. Returns a map where each color index has a corresponding exported Assimp scene. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a007a46e5169890fa8ea5f87f2429e954}\label{classpepr3d_1_1_model_exporter_a007a46e5169890fa8ea5f87f2429e954}} 
+std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ {\bfseries create\+New\+Non\+Poly\+Surface\+Scene} (std\+::vector$<$ unsigned int $>$ \&triangle\+Indices)
 \item 
-\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a5bc63538b453a63f8c8ebf61334c9b43}\label{classpepr3d_1_1_model_exporter_a5bc63538b453a63f8c8ebf61334c9b43}} 
-std\+::vector$<$ ai\+Scene $\ast$ $>$ {\bfseries create\+Scenes} ()
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a33f988ccc16525698739ef2a84a4e215}\label{classpepr3d_1_1_model_exporter_a33f988ccc16525698739ef2a84a4e215}} 
+std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ {\bfseries create\+New\+Poly\+Surface\+Scene} (std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$ \&triangle\+Indices)
 \item 
-\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a070fbac0efed0e6c99f03b35f4f14a2b}\label{classpepr3d_1_1_model_exporter_a070fbac0efed0e6c99f03b35f4f14a2b}} 
-ai\+Scene $\ast$ {\bfseries new\+Scene} (std\+::vector$<$ unsigned int $>$ \&indices)
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a17c20f94f6f130c249b6ab8aa7d36ea6}\label{classpepr3d_1_1_model_exporter_a17c20f94f6f130c249b6ab8aa7d36ea6}} 
+std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ {\bfseries create\+New\+Non\+Poly\+Scene} (std\+::vector$<$ unsigned int $>$ \&triangle\+Indices, std\+::map$<$ std\+::array$<$ float, 3 $>$, glm\+::vec3 $>$ \&vertex\+Normal\+Lookup, std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_model_exporter_1_1_indexed_edge}{Indexed\+Edge}} $>$ \&border\+Edges, float user\+Coef)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_ad79e95cf891b25f4b8b2e21451a3f321}\label{classpepr3d_1_1_model_exporter_ad79e95cf891b25f4b8b2e21451a3f321}} 
+std\+::unique\+\_\+ptr$<$ ai\+Scene $>$ {\bfseries create\+New\+Poly\+Scene} (std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$ \&triangle\+Indices, std\+::unordered\+\_\+map$<$ Polyhedron\+Data\+::vertex\+\_\+descriptor, glm\+::vec3 $>$ \&vertex\+Normals, std\+::set$<$ Polyhedron\+Data\+::halfedge\+\_\+descriptor $>$ \&border\+Edges, std\+::map$<$ Polyhedron\+Data\+::vertex\+\_\+descriptor, float $>$ \&vertex\+S\+DF, float user\+Coef)
 \end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a0ac9e0564adb8d2a8d3283b19aa033de}\label{classpepr3d_1_1_model_exporter_a0ac9e0564adb8d2a8d3283b19aa033de}} 
+static ai\+Vector3D \mbox{\hyperlink{classpepr3d_1_1_model_exporter_a0ac9e0564adb8d2a8d3283b19aa033de}{calculate\+Normal}} (const std\+::array$<$ glm\+::vec3, 3 $>$ vertices)
+\begin{DoxyCompactList}\small\item\em Returns a normal vector of a triangle. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_acb68efa3b6583d810be4c2e8f0a20c83}\label{classpepr3d_1_1_model_exporter_acb68efa3b6583d810be4c2e8f0a20c83}} 
-const std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \& {\bfseries m\+Triangles}
-\item 
-\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_abba8610307219c1fa23f2061846925a3}\label{classpepr3d_1_1_model_exporter_abba8610307219c1fa23f2061846925a3}} 
-bool {\bfseries m\+Model\+Saved} = false
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a76a48fd072cfd132b2d9130d915d5fc7}\label{classpepr3d_1_1_model_exporter_a76a48fd072cfd132b2d9130d915d5fc7}} 
+const \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $\ast$ {\bfseries m\+Geometry}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a618a0accacf4026df647364d4843049f}\label{classpepr3d_1_1_model_exporter_a618a0accacf4026df647364d4843049f}} 
 \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$ {\bfseries m\+Progress}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_model_exporter_a795c2ac3c88bd58f8d3972b7e5a17dc5}\label{classpepr3d_1_1_model_exporter_a795c2ac3c88bd58f8d3972b7e5a17dc5}} 
+std\+::vector$<$ float $>$ {\bfseries m\+Extrusion\+Coef}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Exports \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} to separate files via Assimp, supports surface export and depth extrusions. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

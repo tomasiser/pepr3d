@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_color_manager}{}\section{pepr3d\+::Color\+Manager Class Reference}
 \label{classpepr3d_1_1_color_manager}\index{pepr3d::ColorManager@{pepr3d::ColorManager}}
+
+
+Represents a color palette, i.\+e., all colors and a selected active color.  
+
+
+
+
+{\ttfamily \#include $<$Color\+Manager.\+h$>$}
+
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
@@ -45,6 +54,9 @@ size\+\_\+t \mbox{\hyperlink{classpepr3d_1_1_color_manager_a3532df102b706a03bc0e
 \mbox{\Hypertarget{classpepr3d_1_1_color_manager_a81d621c28e948d1b3159dde1bcb73aea}\label{classpepr3d_1_1_color_manager_a81d621c28e948d1b3159dde1bcb73aea}} 
 void \mbox{\hyperlink{classpepr3d_1_1_color_manager_a81d621c28e948d1b3159dde1bcb73aea}{set\+Active\+Color\+Index}} (size\+\_\+t index)
 \begin{DoxyCompactList}\small\item\em Sets index of the currently selected / active color, safely checks boundaries. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_color_manager_a928abdce32ef88875b11a370924a4fb4}\label{classpepr3d_1_1_color_manager_a928abdce32ef88875b11a370924a4fb4}} 
+glm\+::vec4 {\bfseries get\+Active\+Color} () const
+\item 
 \mbox{\Hypertarget{classpepr3d_1_1_color_manager_a7c86d46f583135d81ffe2842a8a2f8d1}\label{classpepr3d_1_1_color_manager_a7c86d46f583135d81ffe2842a8a2f8d1}} 
 Color\+Map \& {\bfseries get\+Color\+Map} ()
 \item 
@@ -79,6 +91,9 @@ size\+\_\+t \mbox{\hyperlink{classpepr3d_1_1_color_manager_a29706f2b1a4d4870f4d9
 class {\bfseries cereal\+::access}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Represents a color palette, i.\+e., all colors and a selected active color. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

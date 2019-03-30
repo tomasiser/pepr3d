@@ -2,116 +2,120 @@
 \label{namespacepepr3d}\index{pepr3d@{pepr3d}}
 
 
-Modified for Pepr3D to prevent flipping of camera.  
+Fix for \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} bugs in polygon with holes verification Contained in \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} PR \#3688, likely to be in 4.\+14 version of \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}}.  
 
 
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classpepr3d_1_1_add_value_command}{Add\+Value\+Command}}
-\item 
+\begin{DoxyCompactList}\small\item\em Example command used for debugging purposes of the \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}} system, adds an integer to \mbox{\hyperlink{structpepr3d_1_1_integer_state}{Integer\+State}}. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_asset_not_found_exception}{Asset\+Not\+Found\+Exception}}
-\item 
+\begin{DoxyCompactList}\small\item\em Exception thrown when a required asset is not found in the assets/ directory. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_assimp_progress}{Assimp\+Progress}}
-\item 
+\begin{DoxyCompactList}\small\item\em Represents a progress of importing/exporting a model via Assimp. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_brush}{Brush}}
-\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for painting a model while not being limited by the original triangles. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_brush_settings}{Brush\+Settings}}
-\item 
+\begin{DoxyCompactList}\small\item\em Current settings of the \mbox{\hyperlink{classpepr3d_1_1_brush}{Brush}} tool. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_camera_ui}{Camera\+Ui}}
 \begin{DoxyCompactList}\small\item\em Enables user interaction with a Camera\+Persp via the mouse. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_add_color}{Cmd\+Color\+Manager\+Add\+Color}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that adds a new color to the palette. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_change_color}{Cmd\+Color\+Manager\+Change\+Color}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that changes a color in the palette. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_remove_color}{Cmd\+Color\+Manager\+Remove\+Color}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that removes a color from the palette, which replaces it in the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} with the first color in the palette. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_reorder_colors}{Cmd\+Color\+Manager\+Reorder\+Colors}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that reorders 2 colors in the palette, which does not change the colors in the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_reset_colors}{Cmd\+Color\+Manager\+Reset\+Colors}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that resets all colors of the palette to the default 4 colors. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_swap_colors}{Cmd\+Color\+Manager\+Swap\+Colors}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that swaps 2 colors in the palette, which also swaps the colors in the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_paint_brush}{Cmd\+Paint\+Brush}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that paints a stroke with a brush. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_cmd_paint_single_color}{Cmd\+Paint\+Single\+Color}}
-\item 
+\begin{DoxyCompactList}\small\item\em Command that sets a (same) color to a batch of triangles. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classpepr3d_1_1_cmd_paint_text}{Cmd\+Paint\+Text}}
+\begin{DoxyCompactList}\small\item\em Command that paints a text using orthogonal projection. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}}
-\item 
+\begin{DoxyCompactList}\small\item\em Represents a color palette, i.\+e., all colors and a selected active color. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_command_base}{Command\+Base}}
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_command_base}{Command\+Base}} is a base class for commands representing a single undoable operation. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_command_base}{Command\+Base}} is a base class for commands representing a single undoable operation. The command itself should be an immutable entity, containing only the necessary data to perform the action. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}}
 \begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}} handles all undoable operations on target in the form of commands See. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}}
 \begin{DoxyCompactList}\small\item\em Custom Triangle type holding the C\+G\+A\+L\+::\+Triangle\+\_\+3 and additional data. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_data_triangle_a_a_b_b_primitive}{Data\+Triangle\+A\+A\+B\+B\+Primitive}}
-\begin{DoxyCompactList}\small\item\em Provides the conversion facilities between the custom triangle \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} and the C\+G\+AL Triangle\+\_\+3 class. Taken from C\+G\+A\+L/examples/\+A\+A\+B\+B\+\_\+tree/custom\+\_\+example.\+cpp, modified. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Provides the conversion facilities between the custom triangle \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} and the \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Triangle\+\_\+3 class. Taken from C\+G\+A\+L/examples/\+A\+A\+B\+B\+\_\+tree/custom\+\_\+example.\+cpp, modified. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}}
 \begin{DoxyCompactList}\small\item\em Triangle ID in all detailed triangles Face index in m\+Mesh\+Detailed faces;. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_dialog}{Dialog}}
-\item 
+\begin{DoxyCompactList}\small\item\em Represents a modal dialog shown to a user in the user interface in front of everything else. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_display_options}{Display\+Options}}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used to adjust how the model is displayed. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classpepr3d_1_1_export_assistant}{Export\+Assistant}}
 \item 
 class \mbox{\hyperlink{classpepr3d_1_1_fatal_logger}{Fatal\+Logger}}
-\item 
+\begin{DoxyCompactList}\small\item\em Cinder logger which only logs events with ci\+::log\+::\+Level\+::\+L\+E\+V\+E\+L\+\_\+\+F\+A\+T\+AL. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_font_rasterizer}{Font\+Rasterizer}}
-\item 
+\begin{DoxyCompactList}\small\item\em Used for triangulating a font outline. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_font_storage}{Font\+Storage}}
-\item 
+\begin{DoxyCompactList}\small\item\em Keeps pointers to all fonts used in the user interface (regular, small, and icons) \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}
-\item 
+\begin{DoxyCompactList}\small\item\em The whole geometry of a model that the user is painting. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}}
-\item 
+\begin{DoxyCompactList}\small\item\em Atomic values representing percentage progress of geometry import, export, and S\+DF computation. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_geometry_utils}{Geometry\+Utils}}
-\item 
-class \mbox{\hyperlink{classpepr3d_1_1_gnuplot_debug}{Gnuplot\+Debug}}
-\item 
+\begin{DoxyCompactList}\small\item\em Static utility functions that are not closely tied to \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}}
-\item 
+\begin{DoxyCompactList}\small\item\em A hotkey, i.\+e., a keycode and modifiers (Ctrl) \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_hotkey_hasher}{Hotkey\+Hasher}}
-\item 
+\begin{DoxyCompactList}\small\item\em Used for hashing a hotkey so it can be put in std\+::unordered\+\_\+map. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}}
-\item 
+\begin{DoxyCompactList}\small\item\em All hotkeys and their corresponding actions. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_information}{Information}}
-\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for getting details about the application. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_integer_state}{Integer\+State}}
-\item 
+\begin{DoxyCompactList}\small\item\em Example state used for debugging purposes of the \mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}} system, contains a single integer. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_live_debug}{Live\+Debug}}
-\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for real-\/time debugging purposes. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}}
-\item 
+\begin{DoxyCompactList}\small\item\em The main Cinder-\/based application, represents a window, handles events, thread pool, active tools, geometry, etc. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_model_exporter}{Model\+Exporter}}
-\item 
+\begin{DoxyCompactList}\small\item\em Exports \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} to separate files via Assimp, supports surface export and depth extrusions. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_model_importer}{Model\+Importer}}
-\item 
+\begin{DoxyCompactList}\small\item\em Imports triangles and color palette from a model via Assimp. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}
-\item 
+\begin{DoxyCompactList}\small\item\em The main part of the user interface, shows the geometry to the user. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_paint_bucket}{Paint\+Bucket}}
-\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for coloring whole regions with a single click. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_polyhedron_builder}{Polyhedron\+Builder}}
-\item 
+\begin{DoxyCompactList}\small\item\em Builds a \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron from triangles. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structpepr3d_1_1_polyhedron_data}{Polyhedron\+Data}}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron data of the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_progress_indicator}{Progress\+Indicator}}
-\item 
+\begin{DoxyCompactList}\small\item\em User interface for showing a current progress, contains a spinner and progress bars. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_sdf_values_exception}{Sdf\+Values\+Exception}}
-\item 
+\begin{DoxyCompactList}\small\item\em Exception thrown when S\+DF values cannot be computed. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_segmentation}{Segmentation}}
-\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for automatically separating and coloring the model into regions based on the thickness of the model. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation}{Semiautomatic\+Segmentation}}
-\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for manually expanding specified regions to create a segmentation of the model. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_settings}{Settings}}
-\item 
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for configuring the color palette and application. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}}
-\item 
+\begin{DoxyCompactList}\small\item\em Right side of the user interface that displays options of the currently selected tool. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_text_editor}{Text\+Editor}}
-\item 
+\begin{DoxyCompactList}\small\item\em A tool used for painting texts on a model. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}
-\item 
+\begin{DoxyCompactList}\small\item\em A base class of all tools that the user can select and manipulate the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} and application with them. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_toolbar}{Toolbar}}
-\item 
+\begin{DoxyCompactList}\small\item\em A top part of the user interface that shows a File menu, Undo, Redo, and all tools. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_triangle_detail}{Triangle\+Detail}}
 \begin{DoxyCompactList}\small\item\em Represents additional triangles that replace the original one. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classpepr3d_1_1_triangle_painter}{Triangle\+Painter}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for coloring individual triangles by clicking or dragging the mouse. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
@@ -127,6 +131,16 @@ using {\bfseries Key\+Code} = int
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
+\mbox{\Hypertarget{namespacepepr3d_a18ee6a20105f475c0c1e8622f98fc161}\label{namespacepepr3d_a18ee6a20105f475c0c1e8622f98fc161}} 
+enum {\bfseries Export\+Type} \{ \newline
+{\bfseries Surface}, 
+{\bfseries Non\+Poly\+Surface}, 
+{\bfseries Non\+Poly\+Extrusion}, 
+{\bfseries Poly\+Extrusion}, 
+\newline
+{\bfseries Poly\+Extrusion\+With\+S\+DF}
+ \}
+\item 
 \mbox{\Hypertarget{namespacepepr3d_ab78be750c70b46ae3d2dd03e440d4acc}\label{namespacepepr3d_ab78be750c70b46ae3d2dd03e440d4acc}} 
 enum {\bfseries Dialog\+Type} \+: std\+::size\+\_\+t \{ {\bfseries Information} = 0, 
 {\bfseries Warning}, 
@@ -135,7 +149,7 @@ enum {\bfseries Dialog\+Type} \+: std\+::size\+\_\+t \{ {\bfseries Information} 
  \}
 \item 
 \mbox{\Hypertarget{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}\label{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}} 
-enum {\bfseries Hotkey\+Action} \+: std\+::size\+\_\+t \{ \newline
+enum \mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}} \+: std\+::size\+\_\+t \{ \newline
 {\bfseries Open}, 
 {\bfseries Save}, 
 {\bfseries Import}, 
@@ -170,7 +184,7 @@ enum {\bfseries Hotkey\+Action} \+: std\+::size\+\_\+t \{ \newline
 {\bfseries Select\+Color10}, 
 {\bfseries Invalid\+Action}
  \}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Enumeration of all actions that can happen via a hotkey. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -178,15 +192,19 @@ enum {\bfseries Hotkey\+Action} \+: std\+::size\+\_\+t \{ \newline
 void {\bfseries push\+Error\+Dialog\+Corrupted\+File} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application)
 \item 
 \mbox{\Hypertarget{namespacepepr3d_af6830e663c861adee937b0b975df163b}\label{namespacepepr3d_af6830e663c861adee937b0b975df163b}} 
-{\footnotesize template$<$class Archive $>$ }\\std\+::string {\bfseries save\+\_\+minimal} (const Archive \&, const Hotkey\+Action \&action)
+{\footnotesize template$<$class Archive $>$ }\\std\+::string {\bfseries save\+\_\+minimal} (const Archive \&, const \mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}} \&action)
 \item 
 \mbox{\Hypertarget{namespacepepr3d_a26eb8960b289e1666eb80f021e4fa885}\label{namespacepepr3d_a26eb8960b289e1666eb80f021e4fa885}} 
-{\footnotesize template$<$class Archive $>$ }\\void {\bfseries load\+\_\+minimal} (const Archive \&, Hotkey\+Action \&action, const std\+::string \&value)
+{\footnotesize template$<$class Archive $>$ }\\void {\bfseries load\+\_\+minimal} (const Archive \&, \mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}} \&action, const std\+::string \&value)
 \item 
 \mbox{\Hypertarget{namespacepepr3d_a16036d11b930e7d9e9a4d7d285ad7b14}\label{namespacepepr3d_a16036d11b930e7d9e9a4d7d285ad7b14}} 
-void {\bfseries apply\+Light\+Theme} (Im\+Gui\+Style \&style)
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{namespacepepr3d_a16036d11b930e7d9e9a4d7d285ad7b14}{apply\+Light\+Theme}} (Im\+Gui\+Style \&style)
+\begin{DoxyCompactList}\small\item\em Applies our light Im\+Gui theme. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Modified for Pepr3D to prevent flipping of camera. 
+Fix for \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} bugs in polygon with holes verification Contained in \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} PR \#3688, likely to be in 4.\+14 version of \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}}. 
+
+Modified for Pepr3D to prevent flipping of camera.
+
+For now, just keep this custom patched include file first, to avoid using \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}}\textquotesingle{}s version 

@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_model_importer}{}\section{pepr3d\+::Model\+Importer Class Reference}
 \label{classpepr3d_1_1_model_importer}\index{pepr3d::ModelImporter@{pepr3d::ModelImporter}}
+
+
+Imports triangles and color palette from a model via Assimp.  
+
+
+
+
+{\ttfamily \#include $<$Model\+Importer.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -7,20 +16,20 @@
 {\bfseries Model\+Importer} (const std\+::string p, \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$progress, \+::Thread\+Pool \&thread\+Pool)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_model_importer_aca674c511db529638e83ade8aad83e24}\label{classpepr3d_1_1_model_importer_aca674c511db529638e83ade8aad83e24}} 
-std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ {\bfseries get\+Triangles} () const
-\item 
+std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \mbox{\hyperlink{classpepr3d_1_1_model_importer_aca674c511db529638e83ade8aad83e24}{get\+Triangles}} () const
+\begin{DoxyCompactList}\small\item\em Returns a vector of all \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} of the imported mesh. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_model_importer_aa3ba28412e9317aff4850ccd251e721e}\label{classpepr3d_1_1_model_importer_aa3ba28412e9317aff4850ccd251e721e}} 
-\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} {\bfseries get\+Color\+Manager} () const
-\item 
+\mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} \mbox{\hyperlink{classpepr3d_1_1_model_importer_aa3ba28412e9317aff4850ccd251e721e}{get\+Color\+Manager}} () const
+\begin{DoxyCompactList}\small\item\em Returns a \mbox{\hyperlink{classpepr3d_1_1_color_manager}{Color\+Manager}} of the imported mesh. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_model_importer_a49b8a0fd779eedce1cf24a910fcce833}\label{classpepr3d_1_1_model_importer_a49b8a0fd779eedce1cf24a910fcce833}} 
-bool {\bfseries is\+Model\+Loaded} ()
-\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_model_importer_a49b8a0fd779eedce1cf24a910fcce833}{is\+Model\+Loaded}} ()
+\begin{DoxyCompactList}\small\item\em Returns true if the mesh was imported successfully. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_model_importer_a8b27edc2cd72882c9144ff870ee26a6b}\label{classpepr3d_1_1_model_importer_a8b27edc2cd72882c9144ff870ee26a6b}} 
-std\+::vector$<$ glm\+::vec3 $>$ {\bfseries get\+Vertex\+Buffer} () const
-\item 
+std\+::vector$<$ glm\+::vec3 $>$ \mbox{\hyperlink{classpepr3d_1_1_model_importer_a8b27edc2cd72882c9144ff870ee26a6b}{get\+Vertex\+Buffer}} () const
+\begin{DoxyCompactList}\small\item\em Returns a vertex buffer of the imported mesh. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_model_importer_a0d21b9019f26f672414ad0bb40bb946c}\label{classpepr3d_1_1_model_importer_a0d21b9019f26f672414ad0bb40bb946c}} 
-std\+::vector$<$ std\+::array$<$ size\+\_\+t, 3 $>$ $>$ {\bfseries get\+Index\+Buffer} () const
-\end{DoxyCompactItemize}
+std\+::vector$<$ std\+::array$<$ size\+\_\+t, 3 $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_model_importer_a0d21b9019f26f672414ad0bb40bb946c}{get\+Index\+Buffer}} () const
+\begin{DoxyCompactList}\small\item\em Returns an index buffer of the imported mesh. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -70,6 +79,9 @@ std\+::vector$<$ std\+::array$<$ size\+\_\+t, 3 $>$ $>$ {\bfseries m\+Index\+Buf
 \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} $\ast$ {\bfseries m\+Progress}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Imports triangles and color palette from a model via Assimp. 
 
 \subsection{Member Function Documentation}
 \mbox{\Hypertarget{classpepr3d_1_1_model_importer_aa537966d73404c3f4c463799030a1d2b}\label{classpepr3d_1_1_model_importer_aa537966d73404c3f4c463799030a1d2b}} 

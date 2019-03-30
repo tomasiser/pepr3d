@@ -17,6 +17,7 @@ var classpepr3d_1_1_tool =
     [ "onNewGeometryLoaded", "classpepr3d_1_1_tool.html#ac94e48ba121b7f4e4bf897de871ad479", null ],
     [ "onToolDeselect", "classpepr3d_1_1_tool.html#aafba698d859abbc2b1dc48a38ca24d36", null ],
     [ "onToolSelect", "classpepr3d_1_1_tool.html#a139c1e72bd9eada36ce660e1fbf10c6b", null ],
+    [ "safeComputeSdf", "classpepr3d_1_1_tool.html#aff4584fe20f552ae3b7814ecab423768", null ],
     [ "safeIntersectDetailedMesh", "classpepr3d_1_1_tool.html#a2645ac765f26cbda2ab9c818a362912f", null ],
     [ "safeIntersectMesh", "classpepr3d_1_1_tool.html#a2420df1e8a95c66a882a923158084020", null ]
 ];

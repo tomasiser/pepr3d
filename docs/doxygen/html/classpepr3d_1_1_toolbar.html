@@ -99,10 +99,16 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_toolbar.html','');});
 <div class="title">pepr3d::Toolbar Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A top part of the user interface that shows a File menu, Undo, Redo, and all tools.  
+ <a href="classpepr3d_1_1_toolbar.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_toolbar_8h_source.html">Toolbar.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_toolbar_1_1_button_properties.html">ButtonProperties</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Properties of a clickable and selectable button in the <a class="el" href="classpepr3d_1_1_toolbar.html" title="A top part of the user interface that shows a File menu, Undo, Redo, and all tools.">Toolbar</a>.  <a href="structpepr3d_1_1_toolbar_1_1_button_properties.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -111,10 +117,12 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Toolbar</b> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;app)</td></tr>
 <tr class="separator:a84600ac501c165a06e775e70e5414a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05d027cd466b54792502653043a8db60"><td class="memItemLeft" align="right" valign="top"><a id="a05d027cd466b54792502653043a8db60"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>getHeight</b> ()</td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#a05d027cd466b54792502653043a8db60">getHeight</a> ()</td></tr>
+<tr class="memdesc:a05d027cd466b54792502653043a8db60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the height. <br /></td></tr>
 <tr class="separator:a05d027cd466b54792502653043a8db60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab84f478320ce74f523bede52c0966271"><td class="memItemLeft" align="right" valign="top"><a id="ab84f478320ce74f523bede52c0966271"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>draw</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#ab84f478320ce74f523bede52c0966271">draw</a> ()</td></tr>
+<tr class="memdesc:ab84f478320ce74f523bede52c0966271"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the <a class="el" href="classpepr3d_1_1_toolbar.html" title="A top part of the user interface that shows a File menu, Undo, Redo, and all tools.">Toolbar</a> using ImGui. <br /></td></tr>
 <tr class="separator:ab84f478320ce74f523bede52c0966271"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
@@ -126,29 +134,29 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>ToolsVector</b> = st
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a1d55b21ed7022216756d4d156c8f1e52"><td class="memItemLeft" align="right" valign="top"><a id="a1d55b21ed7022216756d4d156c8f1e52"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawSeparator</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#a1d55b21ed7022216756d4d156c8f1e52">drawSeparator</a> ()</td></tr>
+<tr class="memdesc:a1d55b21ed7022216756d4d156c8f1e52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a vertical separator. <br /></td></tr>
 <tr class="separator:a1d55b21ed7022216756d4d156c8f1e52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34bebb48d1670eca31d68b998a088e70"><td class="memItemLeft" align="right" valign="top"><a id="a34bebb48d1670eca31d68b998a088e70"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawButton</b> (std::size_t index, const char *text)</td></tr>
-<tr class="separator:a34bebb48d1670eca31d68b998a088e70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ec26251465c349def3cb032370bdf25"><td class="memTemplParams" colspan="2"><a id="a8ec26251465c349def3cb032370bdf25"></a>
 template&lt;typename Callback &gt; </td></tr>
-<tr class="memitem:a8ec26251465c349def3cb032370bdf25"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>drawButton</b> (<a class="el" href="structpepr3d_1_1_toolbar_1_1_button_properties.html">ButtonProperties</a> &amp;props, Callback onPressed)</td></tr>
+<tr class="memitem:a8ec26251465c349def3cb032370bdf25"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#a8ec26251465c349def3cb032370bdf25">drawButton</a> (<a class="el" href="structpepr3d_1_1_toolbar_1_1_button_properties.html">ButtonProperties</a> &amp;props, Callback onPressed)</td></tr>
+<tr class="memdesc:a8ec26251465c349def3cb032370bdf25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a clickable and selectable button in the <a class="el" href="classpepr3d_1_1_toolbar.html" title="A top part of the user interface that shows a File menu, Undo, Redo, and all tools.">Toolbar</a> according to the <a class="el" href="structpepr3d_1_1_toolbar_1_1_button_properties.html" title="Properties of a clickable and selectable button in the Toolbar.">ButtonProperties</a>. <br /></td></tr>
 <tr class="separator:a8ec26251465c349def3cb032370bdf25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aceb99e5459d3b1ba1d557caeec2e57d1"><td class="memItemLeft" align="right" valign="top"><a id="aceb99e5459d3b1ba1d557caeec2e57d1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawFileDropDown</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#aceb99e5459d3b1ba1d557caeec2e57d1">drawFileDropDown</a> ()</td></tr>
+<tr class="memdesc:aceb99e5459d3b1ba1d557caeec2e57d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a File drop down menu. <br /></td></tr>
 <tr class="separator:aceb99e5459d3b1ba1d557caeec2e57d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd2e255728e6b0962da017f3ee1822bc"><td class="memItemLeft" align="right" valign="top"><a id="afd2e255728e6b0962da017f3ee1822bc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawUndoRedo</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#afd2e255728e6b0962da017f3ee1822bc">drawUndoRedo</a> ()</td></tr>
+<tr class="memdesc:afd2e255728e6b0962da017f3ee1822bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the Undo and Redo buttons. <br /></td></tr>
 <tr class="separator:afd2e255728e6b0962da017f3ee1822bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afde0b64ad68c0203195fa59327f57c02"><td class="memItemLeft" align="right" valign="top"><a id="afde0b64ad68c0203195fa59327f57c02"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawDemoWindowToggle</b> ()</td></tr>
-<tr class="separator:afde0b64ad68c0203195fa59327f57c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88b084de711b74735348315189c01fe7"><td class="memItemLeft" align="right" valign="top"><a id="a88b084de711b74735348315189c01fe7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawToolButtons</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#a88b084de711b74735348315189c01fe7">drawToolButtons</a> ()</td></tr>
+<tr class="memdesc:a88b084de711b74735348315189c01fe7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws buttons of all <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> instances. <br /></td></tr>
 <tr class="separator:a88b084de711b74735348315189c01fe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9366ee163dfe041a2661fe5eb664a325"><td class="memItemLeft" align="right" valign="top"><a id="a9366ee163dfe041a2661fe5eb664a325"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawToolButton</b> (ToolsVector::iterator tool)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_toolbar.html#a9366ee163dfe041a2661fe5eb664a325">drawToolButton</a> (ToolsVector::iterator tool)</td></tr>
+<tr class="memdesc:a9366ee163dfe041a2661fe5eb664a325"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a single button for a specified <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> (an iterator to the <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a>). <br /></td></tr>
 <tr class="separator:a9366ee163dfe041a2661fe5eb664a325"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -163,7 +171,9 @@ std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mSelectedButto
 float&#160;</td><td class="memItemRight" valign="bottom"><b>mHeight</b> = 50.0f</td></tr>
 <tr class="separator:aea711be10561a98a3736e87570463b02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A top part of the user interface that shows a File menu, Undo, Redo, and all tools. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/<a class="el" href="_toolbar_8h_source.html">Toolbar.h</a></li>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/Toolbar.cpp</li>
 </ul>

@@ -24,17 +24,21 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "Pepr3D", "index.html", [
-    [ "Todo List", "todo.html", null ],
     [ "Namespaces", "namespaces.html", [
-      [ "Namespace List", "namespaces.html", "namespaces_dup" ]
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
+      ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ],
+        [ "All", "functions.html", "functions_dup" ],
+        [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
@@ -47,10 +51,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"classpepr3d_1_1_data_triangle.html#adf8c461f0a38c6878bf33fd634bb664a",
-"classpepr3d_1_1_main_application.html#abaccd25f162b70a1d56eef7dfa5f6d35",
-"classpepr3d_1_1_tool.html#a2420df1e8a95c66a882a923158084020",
-"structpepr3d_1_1_paint_bucket_1_1_normal_stopping.html#a432e44cb675c28037b7a045ed547669d"
+"classpepr3d_1_1_color_manager.html#a439df566020a7f10221a4e4c3fd36e7d",
+"classpepr3d_1_1_geometry.html#af361ddfbc36e637fe8c46b7f916c07a8",
+"classpepr3d_1_1_paint_bucket.html#a9e31fe563fd8e90416c17e18ab58b8a3a08bc22c94b80f2690da4e70fb127d95a",
+"classpepr3d_1_1_triangle_detail.html#a8409d1df8edf713beaf1743c0399c6d4",
+"structpepr3d_1_1_polyhedron_data.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

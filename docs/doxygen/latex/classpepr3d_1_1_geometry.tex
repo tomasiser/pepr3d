@@ -1,21 +1,43 @@
 \hypertarget{classpepr3d_1_1_geometry}{}\section{pepr3d\+::Geometry Class Reference}
 \label{classpepr3d_1_1_geometry}\index{pepr3d::Geometry@{pepr3d::Geometry}}
+
+
+The whole geometry of a model that the user is painting.  
+
+
+
+
+{\ttfamily \#include $<$Geometry.\+h$>$}
+
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_area_highlight}{Area\+Highlight}}
-\item 
+\begin{DoxyCompactList}\small\item\em A highlight of a part of the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_geometry_state}{Geometry\+State}}
 \item 
 struct \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data}{Open\+Gl\+Data}}
-\item 
-struct \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data}{Polyhedron\+Data}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em All Open\+GL buffers of the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a6077ec326305ac7fe4c3f6819b53c2fb}\label{classpepr3d_1_1_geometry_a6077ec326305ac7fe4c3f6819b53c2fb}} 
 using {\bfseries Direction} = pepr3d\+::\+Data\+Triangle\+::\+K\+::\+Direction\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a44e4ffb13740677b37412b9863c8aedc}\label{classpepr3d_1_1_geometry_a44e4ffb13740677b37412b9863c8aedc}} 
+using {\bfseries Circle} = Data\+Triangle\+::\+K\+::\+Circle\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a7fe4812fe3bdb9f9bf29b2a9ed9664ad}\label{classpepr3d_1_1_geometry_a7fe4812fe3bdb9f9bf29b2a9ed9664ad}} 
+using {\bfseries Sphere} = Data\+Triangle\+::\+K\+::\+Sphere\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a71ec638da1019894f11c1ca6a3b42e38}\label{classpepr3d_1_1_geometry_a71ec638da1019894f11c1ca6a3b42e38}} 
+using {\bfseries Line3} = Data\+Triangle\+::\+K\+::\+Line\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a9aeff66de9a33a389c3de9d0b836819b}\label{classpepr3d_1_1_geometry_a9aeff66de9a33a389c3de9d0b836819b}} 
+using {\bfseries Vector3} = pepr3d\+::\+Data\+Triangle\+::\+K\+::\+Vector\+\_\+3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_ab8e951387d775d43de2581a925f89e7b}\label{classpepr3d_1_1_geometry_ab8e951387d775d43de2581a925f89e7b}} 
+using {\bfseries Point3} = pepr3d\+::\+Data\+Triangle\+::\+K\+::\+Point\+\_\+3
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a2902716bce3c243a990d3b89b1e3e62b}\label{classpepr3d_1_1_geometry_a2902716bce3c243a990d3b89b1e3e62b}} 
 using {\bfseries Ft} = pepr3d\+::\+Data\+Triangle\+::\+K\+::\+FT
@@ -62,6 +84,7 @@ const \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data}{Open\+Gl\+Dat
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a1550192711eb10ddb685c08d15ef9922}\label{classpepr3d_1_1_geometry_a1550192711eb10ddb685c08d15ef9922}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a1550192711eb10ddb685c08d15ef9922}{update\+Open\+Gl\+Buffers}} ()
 \begin{DoxyCompactList}\small\item\em Update buffers used by open\+Gl. Should only be called when they are dirty. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_ad25fda5afe4c73c0fd9dbd4bf77952b1}\label{classpepr3d_1_1_geometry_ad25fda5afe4c73c0fd9dbd4bf77952b1}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_ad25fda5afe4c73c0fd9dbd4bf77952b1}{update\+Temporary\+Detailed\+Data}} ()
 \begin{DoxyCompactList}\small\item\em Update temporary detailed data like detailed A\+A\+BB tree and detailed Mesh This is a slow operation. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a995a46878723dd2108960ad3163097b5}\label{classpepr3d_1_1_geometry_a995a46878723dd2108960ad3163097b5}} 
@@ -106,11 +129,20 @@ bool {\bfseries is\+Simple\+Triangle} (size\+\_\+t triangle\+Idx) const
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_ae0e251c83044d0cd06c50ded6cee21cb}\label{classpepr3d_1_1_geometry_ae0e251c83044d0cd06c50ded6cee21cb}} 
 const \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} \& {\bfseries get\+Progress} () const
 \item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a3b33233684966de8e2f4ba4fa3d6f02d}\label{classpepr3d_1_1_geometry_a3b33233684966de8e2f4ba4fa3d6f02d}} 
+\mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} \& {\bfseries get\+Progress} ()
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a81c9e23b272c99b9e1692ce1900c2b15}\label{classpepr3d_1_1_geometry_a81c9e23b272c99b9e1692ce1900c2b15}} 
+Polyhedron\+Data\+::\+Mesh $\ast$ {\bfseries get\+Mesh\+Detailed} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a90455dda02cab7e2affdda58966a831b}\label{classpepr3d_1_1_geometry_a90455dda02cab7e2affdda58966a831b}} 
+const std\+::unordered\+\_\+map$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}}, Polyhedron\+Data\+::face\+\_\+descriptor $>$ \& {\bfseries get\+Mesh\+Detailed\+Face\+Descs} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a586922a1b2662d6455bce899af40b6b2}\label{classpepr3d_1_1_geometry_a586922a1b2662d6455bce899af40b6b2}} 
+const Polyhedron\+Data\+::\+Mesh\+::\+Property\+\_\+map$<$ Polyhedron\+Data\+::face\+\_\+descriptor, \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$ \& {\bfseries get\+Mesh\+Detailed\+Id\+Map} () const
+\item 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a027715ec109b060ffc8b420947c4fde0}{load\+New\+Geometry}} (const std\+::string \&file\+Name)
 \begin{DoxyCompactList}\small\item\em Loads new geometry into the private data, rebuilds the buffers and other data structures automatically. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classpepr3d_1_1_geometry_af8106be97900d3fa8a39d0dfb4603ae0}\label{classpepr3d_1_1_geometry_af8106be97900d3fa8a39d0dfb4603ae0}} 
-void \mbox{\hyperlink{classpepr3d_1_1_geometry_af8106be97900d3fa8a39d0dfb4603ae0}{export\+Geometry}} (const std\+::string file\+Path, const std\+::string file\+Name, const std\+::string file\+Type)
-\begin{DoxyCompactList}\small\item\em Exports the modified geometry to the file specified by a path, file name and file type. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_aa473f80280346656024fc494994c065e}{set\+Triangle\+Color}} (const size\+\_\+t triangle\+Index, const size\+\_\+t new\+Color)
 \begin{DoxyCompactList}\small\item\em Set new triangle color. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a0a8c000a3009ae4372ce223b27765ae6}\label{classpepr3d_1_1_geometry_a0a8c000a3009ae4372ce223b27765ae6}} 
@@ -126,9 +158,15 @@ std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detai
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a69f784973726ce83893d8ec3fcdf9ff1}\label{classpepr3d_1_1_geometry_a69f784973726ce83893d8ec3fcdf9ff1}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a69f784973726ce83893d8ec3fcdf9ff1}{highlight\+Area}} (const ci\+::\+Ray \&ray, const struct \mbox{\hyperlink{structpepr3d_1_1_brush_settings}{Brush\+Settings}} \&settings)
 \begin{DoxyCompactList}\small\item\em Highlight an area around the intersection point. All points on a continuous surface closer than the size are highlighted. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classpepr3d_1_1_geometry_a7aed460807700001c27788aaf90ad17e}\label{classpepr3d_1_1_geometry_a7aed460807700001c27788aaf90ad17e}} 
-void \mbox{\hyperlink{classpepr3d_1_1_geometry_a7aed460807700001c27788aaf90ad17e}{paint\+Area}} (const ci\+::\+Ray \&ray, const struct \mbox{\hyperlink{structpepr3d_1_1_brush_settings}{Brush\+Settings}} \&settings)
-\begin{DoxyCompactList}\small\item\em Paint continuous area with a brush of specified size. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpepr3d_1_1_geometry_a6c6b8ef6f157f8bb818e38f6e2e49b37}{paint\+With\+Shape}} (const ci\+::\+Ray \&ray, const std\+::vector$<$ Point3 $>$ \&shape, size\+\_\+t color, bool paint\+Backfaces=false)
+\begin{DoxyCompactList}\small\item\em Paint area with a shaped brush. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpepr3d_1_1_geometry_a152673dacbe299a55ee9dc6a2403d6a5}{paint\+With\+Shape}} (const ci\+::\+Ray \&ray, const std\+::vector$<$ Data\+Triangle\+::\+Triangle $>$ \&triangles, size\+\_\+t color)
+\begin{DoxyCompactList}\small\item\em Paint area with a shaped brush. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_ab4593a2aa8017add96d6cd7e177a0cf1}\label{classpepr3d_1_1_geometry_ab4593a2aa8017add96d6cd7e177a0cf1}} 
+void \mbox{\hyperlink{classpepr3d_1_1_geometry_ab4593a2aa8017add96d6cd7e177a0cf1}{paint\+Area\+With\+Sphere}} (const ci\+::\+Ray \&ray, const \mbox{\hyperlink{structpepr3d_1_1_brush_settings}{Brush\+Settings}} \&settings)
+\begin{DoxyCompactList}\small\item\em Paint continuous spherical area with a brush of specified size. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Color\+Func $>$ }\\void \mbox{\hyperlink{classpepr3d_1_1_geometry_ae6d2ae86fca37592a5dbb93784ca4ef0}{change\+Color\+Ids}} (const Color\+Func \&color\+Func)
+\begin{DoxyCompactList}\small\item\em Change all color ID\textquotesingle{}s from one to another. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a80198ecc7f17d1db360ab2bf50b7f594}\label{classpepr3d_1_1_geometry_a80198ecc7f17d1db360ab2bf50b7f594}} 
 \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_geometry_state}{Geometry\+State}} \mbox{\hyperlink{classpepr3d_1_1_geometry_a80198ecc7f17d1db360ab2bf50b7f594}{save\+State}} () const
 \begin{DoxyCompactList}\small\item\em Save current state into a struct so that it can be restored later (\mbox{\hyperlink{classpepr3d_1_1_command_manager}{Command\+Manager}} target requirement) \end{DoxyCompactList}\item 
@@ -146,6 +184,10 @@ void \mbox{\hyperlink{classpepr3d_1_1_geometry_aebe9b03fabcd1d3fca4108eaf34c6e70
 \item 
 std\+::vector$<$ size\+\_\+t $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_a1d420e96bc8c92c620b5473677173d81}{get\+Triangles\+Under\+Brush}} (const glm\+::vec3 \&origin\+Point, const glm\+::vec3 \&inside\+Direction, size\+\_\+t start\+Triangle, const struct \mbox{\hyperlink{structpepr3d_1_1_brush_settings}{Brush\+Settings}} \&settings)
 \begin{DoxyCompactList}\small\item\em Spread as B\+FS from starting triangle, until the limits of brush settings are reached. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Object $>$ }\\std\+::vector$<$ size\+\_\+t $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_a4907bc6f193156a3d68956b2ce622120}{get\+Triangles\+In\+Radius}} (const Object \&object, double radius) const
+\begin{DoxyCompactList}\small\item\em Get all triangles that are closer to the object than radius This function operates on spherical bounds of triangles and may therefore return false positives. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Object $>$ }\\bool \mbox{\hyperlink{classpepr3d_1_1_geometry_a993a7383980e9c4aa955ae156d714f15}{is\+Triangle\+In\+Radius}} (const Object \&object, double radius, size\+\_\+t triangle\+Idx) const
+\begin{DoxyCompactList}\small\item\em Test if distance from object to spherical boundary of a triangle is closer than radius. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_abba4d7a86b23f0d1a5aef9739d087f7d}\label{classpepr3d_1_1_geometry_abba4d7a86b23f0d1a5aef9739d087f7d}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_abba4d7a86b23f0d1a5aef9739d087f7d}{compute\+Sdf\+Values}} ()
 \begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classpepr3d_1_1_segmentation}{Segmentation}} is C\+PU heavy because it needs to calculate a lot of data. This method allows to pre-\/compute the heaviest calculation. \end{DoxyCompactList}\item 
@@ -187,9 +229,12 @@ void \mbox{\hyperlink{classpepr3d_1_1_geometry_a7d69aae6b0c09c7727d170af8b8b99b2
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a36740d72ad8b50c81f39ad506fa0281e}\label{classpepr3d_1_1_geometry_a36740d72ad8b50c81f39ad506fa0281e}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a36740d72ad8b50c81f39ad506fa0281e}{generate\+Highlight\+Buffer}} ()
 \begin{DoxyCompactList}\small\item\em Generate a buffer of highlight information. Saves per-\/triangle data to each vertex. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a1f4435ad35840859cbb4dd949af46845}\label{classpepr3d_1_1_geometry_a1f4435ad35840859cbb4dd949af46845}} 
+void \mbox{\hyperlink{classpepr3d_1_1_geometry_a1f4435ad35840859cbb4dd949af46845}{generate\+Triangle\+Bounds}} ()
+\begin{DoxyCompactList}\small\item\em Generate spherical bounds for each original triangle. Used to speed up capsule querries. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a9ffaaaa3702f7505206f4e45aebfd4a9}\label{classpepr3d_1_1_geometry_a9ffaaaa3702f7505206f4e45aebfd4a9}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a9ffaaaa3702f7505206f4e45aebfd4a9}{build\+Polyhedron}} ()
-\begin{DoxyCompactList}\small\item\em Build the C\+G\+AL Polyhedron construct in m\+Polyhedron\+Data. Takes a bit of time to rebuild. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Build the \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron construct in m\+Polyhedron\+Data. Takes a bit of time to rebuild. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_aff6b12b0be4f64925e3a9aa88b85bb09}\label{classpepr3d_1_1_geometry_aff6b12b0be4f64925e3a9aa88b85bb09}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_aff6b12b0be4f64925e3a9aa88b85bb09}{build\+Tree}} ()
 \begin{DoxyCompactList}\small\item\em Builds A\+A\+BB tree over the original mesh. \end{DoxyCompactList}\item 
@@ -197,31 +242,28 @@ void \mbox{\hyperlink{classpepr3d_1_1_geometry_aff6b12b0be4f64925e3a9aa88b85bb09
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a11091a0db475dc20b6635f17afb07b23}{build\+Detailed\+Tree}} ()
 \begin{DoxyCompactList}\small\item\em Build A\+A\+BB Tree over all triangles including details. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a5f0594ebe7f3a779dc9cf18f943f1c56}{build\+Detailed\+Mesh}} ()
-\begin{DoxyCompactList}\small\item\em Build a C\+G\+AL mesh over detailed triangles. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Build a \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} mesh over detailed triangles. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_aa981414573779195fbfb7a64cfcbc1f1}\label{classpepr3d_1_1_geometry_aa981414573779195fbfb7a64cfcbc1f1}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_aa981414573779195fbfb7a64cfcbc1f1}{correct\+Shared\+Vertices}} ()
 \begin{DoxyCompactList}\small\item\em Fixes T-\/junctions and unmatched vertices on edges of Triangle\+Details by creating a matching vertex on the neighbouring triangle. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a69f341b26bd3ebd9158648b7d35ffa10}\label{classpepr3d_1_1_geometry_a69f341b26bd3ebd9158648b7d35ffa10}} 
 void \mbox{\hyperlink{classpepr3d_1_1_geometry_a69f341b26bd3ebd9158648b7d35ffa10}{invalidate\+Temporary\+Detailed\+Data}} ()
 \begin{DoxyCompactList}\small\item\em Invalidate temporary detailed data like detailed A\+A\+BB tree and mesh. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classpepr3d_1_1_geometry_adb0af51a49fc2c3086fc519afe6b913b}\label{classpepr3d_1_1_geometry_adb0af51a49fc2c3086fc519afe6b913b}} 
-void {\bfseries update\+Triangle\+Detail} (size\+\_\+t triangle\+Idx, const glm\+::vec3 \&brush\+Origin, const struct \mbox{\hyperlink{structpepr3d_1_1_brush_settings}{Brush\+Settings}} \&settings)
-\item 
-\mbox{\Hypertarget{classpepr3d_1_1_geometry_a8c14c117f916e93e9578087dd85fe3ef}\label{classpepr3d_1_1_geometry_a8c14c117f916e93e9578087dd85fe3ef}} 
-void {\bfseries remove\+Triangle\+Detail} (size\+\_\+t triangle\+Index)
-\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a3f3506ff18e87cd35469c89a7d7a71f3}\label{classpepr3d_1_1_geometry_a3f3506ff18e87cd35469c89a7d7a71f3}} 
 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail}{Triangle\+Detail}} $\ast$ {\bfseries create\+Triangle\+Detail} (size\+\_\+t triangle\+Idx)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a6b287e4fe195a2b1d74690ca4c387b95}\label{classpepr3d_1_1_geometry_a6b287e4fe195a2b1d74690ca4c387b95}} 
 \mbox{\hyperlink{classpepr3d_1_1_triangle_detail}{Triangle\+Detail}} $\ast$ {\bfseries get\+Triangle\+Detail} (const size\+\_\+t triangle\+Index)
 \item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a8c14c117f916e93e9578087dd85fe3ef}\label{classpepr3d_1_1_geometry_a8c14c117f916e93e9578087dd85fe3ef}} 
+void {\bfseries remove\+Triangle\+Detail} (size\+\_\+t triangle\+Index)
+\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_aeabf9a91453ddd3d744ccbc862583874}\label{classpepr3d_1_1_geometry_aeabf9a91453ddd3d744ccbc862583874}} 
 std\+::array$<$ int, 3 $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_aeabf9a91453ddd3d744ccbc862583874}{gather\+Neighbours}} (const size\+\_\+t tri\+Index) const
-\begin{DoxyCompactList}\small\item\em Used by B\+FS in bucket painting. Aggregates the neighbours of the triangle at tri\+Index by looking into the C\+G\+AL Polyhedron construct. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Used by B\+FS in bucket painting. Aggregates the neighbours of the triangle at tri\+Index by looking into the \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron construct. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a1638b74697c69d6dfb5125092130a9a0}\label{classpepr3d_1_1_geometry_a1638b74697c69d6dfb5125092130a9a0}} 
 std\+::array$<$ std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$, 3 $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_a1638b74697c69d6dfb5125092130a9a0}{gather\+Neighbours}} (const \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} tri\+Index) const
-\begin{DoxyCompactList}\small\item\em Used by B\+FS in bucket painting. Aggregates the neighbours of the triangle at tri\+Index by looking into the C\+G\+AL Polyhedron construct. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Used by B\+FS in bucket painting. Aggregates the neighbours of the triangle at tri\+Index by looking into the \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Polyhedron construct. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_ae361aadf7f7b305ec57f7d0c3f5ec076}\label{classpepr3d_1_1_geometry_ae361aadf7f7b305ec57f7d0c3f5ec076}} 
 {\footnotesize template$<$typename Stopping\+Condition $>$ }\\void \mbox{\hyperlink{classpepr3d_1_1_geometry_ae361aadf7f7b305ec57f7d0c3f5ec076}{add\+Neighbours\+To\+Queue}} (const size\+\_\+t current\+Vertex, std\+::unordered\+\_\+set$<$ size\+\_\+t $>$ \&already\+Visited, std\+::deque$<$ size\+\_\+t $>$ \&to\+Visit, const Stopping\+Condition \&stop\+Functor) const
 \begin{DoxyCompactList}\small\item\em Used by B\+FS in bucket painting. Manages the queue used to search through the graph. \end{DoxyCompactList}\item 
@@ -252,6 +294,9 @@ size\+\_\+t {\bfseries segment} (const int number\+Of\+Clusters, const float smo
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_ae72aa9945025d6609ef0fe5beab238f9}\label{classpepr3d_1_1_geometry_ae72aa9945025d6609ef0fe5beab238f9}} 
 std\+::vector$<$ \mbox{\hyperlink{classpepr3d_1_1_data_triangle}{Data\+Triangle}} $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_ae72aa9945025d6609ef0fe5beab238f9}{m\+Triangles}}
 \begin{DoxyCompactList}\small\item\em Triangle soup of the original model mesh, containing C\+G\+A\+L\+::\+Triangle\+\_\+3 data for A\+A\+BB tree. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a2ab785869db636d7dc75d192cbd34c30}\label{classpepr3d_1_1_geometry_a2ab785869db636d7dc75d192cbd34c30}} 
+std\+::vector$<$ std\+::pair$<$ Point3, double $>$ $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_a2ab785869db636d7dc75d192cbd34c30}{m\+Triangle\+Bounds}}
+\begin{DoxyCompactList}\small\item\em Stores a rough collision sphere for each triangle in a form of a center point + radius. Used to speed up capsule/cylinder querries on original triangles. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a899b65a3e64dc086f6275e4a5b616b62}\label{classpepr3d_1_1_geometry_a899b65a3e64dc086f6275e4a5b616b62}} 
 std\+::map$<$ size\+\_\+t, \mbox{\hyperlink{classpepr3d_1_1_triangle_detail}{Triangle\+Detail}} $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_a899b65a3e64dc086f6275e4a5b616b62}{m\+Triangle\+Details}}
 \begin{DoxyCompactList}\small\item\em Map of triangle details. (Detailed triangles that replace the original) \end{DoxyCompactList}\item 
@@ -261,12 +306,12 @@ std\+::map$<$ size\+\_\+t, size\+\_\+t $>$ \mbox{\hyperlink{classpepr3d_1_1_geom
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_addf4b4de09e100d6e4279d21e01a05eb}\label{classpepr3d_1_1_geometry_addf4b4de09e100d6e4279d21e01a05eb}} 
 \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_open_gl_data}{Open\+Gl\+Data}} \mbox{\hyperlink{classpepr3d_1_1_geometry_addf4b4de09e100d6e4279d21e01a05eb}{m\+Ogl}}
 \begin{DoxyCompactList}\small\item\em All open GL buffers. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classpepr3d_1_1_geometry_aa4c82bc662d7178d9a79ae47a513c790}\label{classpepr3d_1_1_geometry_aa4c82bc662d7178d9a79ae47a513c790}} 
-struct \mbox{\hyperlink{structpepr3d_1_1_geometry_1_1_polyhedron_data}{pepr3d\+::\+Geometry\+::\+Polyhedron\+Data}} {\bfseries m\+Polyhedron\+Data}
-\item 
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a040e500c0481caafb88141d8e42128bb}\label{classpepr3d_1_1_geometry_a040e500c0481caafb88141d8e42128bb}} 
+\mbox{\hyperlink{structpepr3d_1_1_polyhedron_data}{Polyhedron\+Data}} \mbox{\hyperlink{classpepr3d_1_1_geometry_a040e500c0481caafb88141d8e42128bb}{m\+Polyhedron\+Data}}
+\begin{DoxyCompactList}\small\item\em Polyhedron structure. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_ab9f70b2e8bbd7a9baa001b981c6215aa}\label{classpepr3d_1_1_geometry_ab9f70b2e8bbd7a9baa001b981c6215aa}} 
 std\+::unique\+\_\+ptr$<$ Tree $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_ab9f70b2e8bbd7a9baa001b981c6215aa}{m\+Tree}}
-\begin{DoxyCompactList}\small\item\em A\+A\+BB tree from the C\+G\+AL library, to find intersections with rays generated by user mouse clicks and the mesh. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em A\+A\+BB tree from the \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} library, to find intersections with rays generated by user mouse clicks and the mesh. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a1108d0993ef23fb246ae10244a0c2240}\label{classpepr3d_1_1_geometry_a1108d0993ef23fb246ae10244a0c2240}} 
 std\+::unique\+\_\+ptr$<$ Tree $>$ \mbox{\hyperlink{classpepr3d_1_1_geometry_a1108d0993ef23fb246ae10244a0c2240}{m\+Tree\+Detailed}}
 \begin{DoxyCompactList}\small\item\em A\+A\+BB tree built over all triangles, including details. This tree is invalidated on every operation that changes triangle\+Detail topology. \end{DoxyCompactList}\item 
@@ -299,6 +344,9 @@ class {\bfseries cereal\+::access}
 \end{DoxyCompactItemize}
 
 
+\subsection{Detailed Description}
+The whole geometry of a model that the user is painting. 
+
 \subsection{Member Function Documentation}
 \mbox{\Hypertarget{classpepr3d_1_1_geometry_a5f0594ebe7f3a779dc9cf18f943f1c56}\label{classpepr3d_1_1_geometry_a5f0594ebe7f3a779dc9cf18f943f1c56}} 
 \index{pepr3d::Geometry@{pepr3d::Geometry}!buildDetailedMesh@{buildDetailedMesh}}
@@ -308,9 +356,41 @@ class {\bfseries cereal\+::access}
 
 
 
-Build a C\+G\+AL mesh over detailed triangles. 
+Build a \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} mesh over detailed triangles. 
 
-Yes, we are about to hash floating point values. These values come from C\+G\+AL exact kernel, so they should be bit-\/equal and safe to hash. There is no betters way to get indices before this, as different color parts are stored in different polygons.\mbox{\Hypertarget{classpepr3d_1_1_geometry_a1d420e96bc8c92c620b5473677173d81}\label{classpepr3d_1_1_geometry_a1d420e96bc8c92c620b5473677173d81}} 
+Yes, we are about to hash floating point values. These values come from \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} exact kernel, so they should be bit-\/equal and safe to hash. There is no betters way to get indices before this, as different color parts are stored in different polygons.\mbox{\Hypertarget{classpepr3d_1_1_geometry_ae6d2ae86fca37592a5dbb93784ca4ef0}\label{classpepr3d_1_1_geometry_ae6d2ae86fca37592a5dbb93784ca4ef0}} 
+\index{pepr3d::Geometry@{pepr3d::Geometry}!changeColorIds@{changeColorIds}}
+\index{changeColorIds@{changeColorIds}!pepr3d::Geometry@{pepr3d::Geometry}}
+\subsubsection{\texorpdfstring{changeColorIds()}{changeColorIds()}}
+{\footnotesize\ttfamily template$<$typename Color\+Func $>$ \\
+void pepr3d\+::\+Geometry\+::change\+Color\+Ids (\begin{DoxyParamCaption}\item[{const Color\+Func \&}]{color\+Func }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Change all color ID\textquotesingle{}s from one to another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Color\+Func} & functor of type size\+\_\+t func(size\+\_\+t original\+Color), that returns the new color ID \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a4907bc6f193156a3d68956b2ce622120}\label{classpepr3d_1_1_geometry_a4907bc6f193156a3d68956b2ce622120}} 
+\index{pepr3d::Geometry@{pepr3d::Geometry}!getTrianglesInRadius@{getTrianglesInRadius}}
+\index{getTrianglesInRadius@{getTrianglesInRadius}!pepr3d::Geometry@{pepr3d::Geometry}}
+\subsubsection{\texorpdfstring{getTrianglesInRadius()}{getTrianglesInRadius()}}
+{\footnotesize\ttfamily template$<$typename Object $>$ \\
+std\+::vector$<$size\+\_\+t$>$ pepr3d\+::\+Geometry\+::get\+Triangles\+In\+Radius (\begin{DoxyParamCaption}\item[{const Object \&}]{object,  }\item[{double}]{radius }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get all triangles that are closer to the object than radius This function operates on spherical bounds of triangles and may therefore return false positives. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em object} & \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Object -\/ point, line, etc \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a1d420e96bc8c92c620b5473677173d81}\label{classpepr3d_1_1_geometry_a1d420e96bc8c92c620b5473677173d81}} 
 \index{pepr3d::Geometry@{pepr3d::Geometry}!getTrianglesUnderBrush@{getTrianglesUnderBrush}}
 \index{getTrianglesUnderBrush@{getTrianglesUnderBrush}!pepr3d::Geometry@{pepr3d::Geometry}}
 \subsubsection{\texorpdfstring{getTrianglesUnderBrush()}{getTrianglesUnderBrush()}}
@@ -340,7 +420,26 @@ No intersection detected. \mbox{\Hypertarget{classpepr3d_1_1_geometry_ace58dc7a4
 
 Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists. Example use\+: generate ray based on a mouse click, call this method, then call set\+Triangle\+Color. 
 
-No intersection detected. \mbox{\Hypertarget{classpepr3d_1_1_geometry_a027715ec109b060ffc8b420947c4fde0}\label{classpepr3d_1_1_geometry_a027715ec109b060ffc8b420947c4fde0}} 
+No intersection detected. \mbox{\Hypertarget{classpepr3d_1_1_geometry_a993a7383980e9c4aa955ae156d714f15}\label{classpepr3d_1_1_geometry_a993a7383980e9c4aa955ae156d714f15}} 
+\index{pepr3d::Geometry@{pepr3d::Geometry}!isTriangleInRadius@{isTriangleInRadius}}
+\index{isTriangleInRadius@{isTriangleInRadius}!pepr3d::Geometry@{pepr3d::Geometry}}
+\subsubsection{\texorpdfstring{isTriangleInRadius()}{isTriangleInRadius()}}
+{\footnotesize\ttfamily template$<$typename Object $>$ \\
+bool pepr3d\+::\+Geometry\+::is\+Triangle\+In\+Radius (\begin{DoxyParamCaption}\item[{const Object \&}]{object,  }\item[{double}]{radius,  }\item[{size\+\_\+t}]{triangle\+Idx }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Test if distance from object to spherical boundary of a triangle is closer than radius. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em object} & \mbox{\hyperlink{namespace_c_g_a_l}{C\+G\+AL}} Object -\/ point, line, etc \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true, object is closer than radius to the triangle bound shpere 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a027715ec109b060ffc8b420947c4fde0}\label{classpepr3d_1_1_geometry_a027715ec109b060ffc8b420947c4fde0}} 
 \index{pepr3d::Geometry@{pepr3d::Geometry}!loadNewGeometry@{loadNewGeometry}}
 \index{loadNewGeometry@{loadNewGeometry}!pepr3d::Geometry@{pepr3d::Geometry}}
 \subsubsection{\texorpdfstring{loadNewGeometry()}{loadNewGeometry()}}
@@ -358,7 +457,41 @@ Fill Polyhedron data to compute Surface\+Mesh
 
 Get the generated color palette of the model, replace the current one
 
-Do the computations in parallel \mbox{\Hypertarget{classpepr3d_1_1_geometry_a7671cab77f226a80cbea5703aba2026c}\label{classpepr3d_1_1_geometry_a7671cab77f226a80cbea5703aba2026c}} 
+Do the computations in parallel \mbox{\Hypertarget{classpepr3d_1_1_geometry_a6c6b8ef6f157f8bb818e38f6e2e49b37}\label{classpepr3d_1_1_geometry_a6c6b8ef6f157f8bb818e38f6e2e49b37}} 
+\index{pepr3d::Geometry@{pepr3d::Geometry}!paintWithShape@{paintWithShape}}
+\index{paintWithShape@{paintWithShape}!pepr3d::Geometry@{pepr3d::Geometry}}
+\subsubsection{\texorpdfstring{paintWithShape()}{paintWithShape()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void pepr3d\+::\+Geometry\+::paint\+With\+Shape (\begin{DoxyParamCaption}\item[{const ci\+::\+Ray \&}]{ray,  }\item[{const std\+::vector$<$ Point3 $>$ \&}]{shape,  }\item[{size\+\_\+t}]{color,  }\item[{bool}]{paint\+Backfaces = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Paint area with a shaped brush. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ray} & Ray along which to project the shape, using orthogonal projection \\
+\hline
+{\em shape} & Points in world space representing a polygonal shape \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a152673dacbe299a55ee9dc6a2403d6a5}\label{classpepr3d_1_1_geometry_a152673dacbe299a55ee9dc6a2403d6a5}} 
+\index{pepr3d::Geometry@{pepr3d::Geometry}!paintWithShape@{paintWithShape}}
+\index{paintWithShape@{paintWithShape}!pepr3d::Geometry@{pepr3d::Geometry}}
+\subsubsection{\texorpdfstring{paintWithShape()}{paintWithShape()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void pepr3d\+::\+Geometry\+::paint\+With\+Shape (\begin{DoxyParamCaption}\item[{const ci\+::\+Ray \&}]{ray,  }\item[{const std\+::vector$<$ Data\+Triangle\+::\+Triangle $>$ \&}]{triangles,  }\item[{size\+\_\+t}]{color }\end{DoxyParamCaption})}
+
+
+
+Paint area with a shaped brush. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ray} & Ray along which to project the shape, using orthogonal projection \\
+\hline
+{\em triangles} & Triangles in world space representing the shape \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classpepr3d_1_1_geometry_a7671cab77f226a80cbea5703aba2026c}\label{classpepr3d_1_1_geometry_a7671cab77f226a80cbea5703aba2026c}} 
 \index{pepr3d::Geometry@{pepr3d::Geometry}!recomputeFromData@{recomputeFromData}}
 \index{recomputeFromData@{recomputeFromData}!pepr3d::Geometry@{pepr3d::Geometry}}
 \subsubsection{\texorpdfstring{recomputeFromData()}{recomputeFromData()}}
@@ -388,17 +521,7 @@ Wait for building the polyhedron and tree \mbox{\Hypertarget{classpepr3d_1_1_geo
 
 Set new triangle color. 
 
-Change it in the triangle soup \mbox{\Hypertarget{classpepr3d_1_1_geometry_ad25fda5afe4c73c0fd9dbd4bf77952b1}\label{classpepr3d_1_1_geometry_ad25fda5afe4c73c0fd9dbd4bf77952b1}} 
-\index{pepr3d::Geometry@{pepr3d::Geometry}!updateTemporaryDetailedData@{updateTemporaryDetailedData}}
-\index{updateTemporaryDetailedData@{updateTemporaryDetailedData}!pepr3d::Geometry@{pepr3d::Geometry}}
-\subsubsection{\texorpdfstring{updateTemporaryDetailedData()}{updateTemporaryDetailedData()}}
-{\footnotesize\ttfamily void pepr3d\+::\+Geometry\+::update\+Temporary\+Detailed\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-Update temporary detailed data like detailed A\+A\+BB tree and detailed Mesh This is a slow operation. 
-
-Async build the data 
+Change it in the triangle soup 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

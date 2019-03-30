@@ -1,20 +1,29 @@
 \hypertarget{classpepr3d_1_1_hotkeys}{}\section{pepr3d\+::Hotkeys Class Reference}
 \label{classpepr3d_1_1_hotkeys}\index{pepr3d::Hotkeys@{pepr3d::Hotkeys}}
+
+
+All hotkeys and their corresponding actions.  
+
+
+
+
+{\ttfamily \#include $<$Hotkeys.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_hotkeys_af57c6eb43b445e2f94f5777c216186d7}\label{classpepr3d_1_1_hotkeys_af57c6eb43b445e2f94f5777c216186d7}} 
-std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries find\+Hotkey} (Hotkey\+Action action) const
-\item 
+std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_hotkeys_af57c6eb43b445e2f94f5777c216186d7}{find\+Hotkey}} (\mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}} action) const
+\begin{DoxyCompactList}\small\item\em Returns a hotkey for a certain action. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_hotkeys_ade71a2e93bb0ad6f9e5fe9898be16cf5}\label{classpepr3d_1_1_hotkeys_ade71a2e93bb0ad6f9e5fe9898be16cf5}} 
-std\+::optional$<$ Hotkey\+Action $>$ {\bfseries find\+Action} (\mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} hotkey) const
-\item 
+std\+::optional$<$ \mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}} $>$ \mbox{\hyperlink{classpepr3d_1_1_hotkeys_ade71a2e93bb0ad6f9e5fe9898be16cf5}{find\+Action}} (\mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} hotkey) const
+\begin{DoxyCompactList}\small\item\em Returns an action for a certain hotkey. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_hotkeys_a841a7666ac1997ef11756d284e427dfd}\label{classpepr3d_1_1_hotkeys_a841a7666ac1997ef11756d284e427dfd}} 
-void {\bfseries add} (\mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} hotkey, Hotkey\+Action action)
-\item 
+void \mbox{\hyperlink{classpepr3d_1_1_hotkeys_a841a7666ac1997ef11756d284e427dfd}{add}} (\mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} hotkey, \mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}} action)
+\begin{DoxyCompactList}\small\item\em Adds a new hotkey \& action pair. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_hotkeys_ab708b1e552b5adc73e05aa4284c0651c}\label{classpepr3d_1_1_hotkeys_ab708b1e552b5adc73e05aa4284c0651c}} 
-void {\bfseries load\+Defaults} ()
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classpepr3d_1_1_hotkeys_ab708b1e552b5adc73e05aa4284c0651c}{load\+Defaults}} ()
+\begin{DoxyCompactList}\small\item\em Loads default hotkeys. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -28,10 +37,10 @@ void {\bfseries load\+Defaults} ()
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_hotkeys_ace32a0c35b2c80135b45460dca1fd313}\label{classpepr3d_1_1_hotkeys_ace32a0c35b2c80135b45460dca1fd313}} 
-std\+::unordered\+\_\+map$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}}, Hotkey\+Action, \mbox{\hyperlink{structpepr3d_1_1_hotkey_hasher}{Hotkey\+Hasher}} $>$ {\bfseries m\+Keys\+To\+Actions}
+std\+::unordered\+\_\+map$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}}, \mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}}, \mbox{\hyperlink{structpepr3d_1_1_hotkey_hasher}{Hotkey\+Hasher}} $>$ {\bfseries m\+Keys\+To\+Actions}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_hotkeys_afd769fcf12839dafab79c6d4da780412}\label{classpepr3d_1_1_hotkeys_afd769fcf12839dafab79c6d4da780412}} 
-std\+::unordered\+\_\+map$<$ Hotkey\+Action, \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries m\+Actions\+To\+Keys}
+std\+::unordered\+\_\+map$<$ \mbox{\hyperlink{namespacepepr3d_ae35d8dfd4e5925d633f100eb9b525cbe}{Hotkey\+Action}}, \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries m\+Actions\+To\+Keys}
 \end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
@@ -40,6 +49,9 @@ std\+::unordered\+\_\+map$<$ Hotkey\+Action, \mbox{\hyperlink{structpepr3d_1_1_h
 class {\bfseries cereal\+::access}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+All hotkeys and their corresponding actions. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

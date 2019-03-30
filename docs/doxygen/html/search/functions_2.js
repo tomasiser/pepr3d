@@ -1,16 +1,27 @@
 var searchData=
 [
   ['calculateindexbuffer',['calculateIndexBuffer',['../classpepr3d_1_1_model_importer.html#aa537966d73404c3f4c463799030a1d2b',1,'pepr3d::ModelImporter']]],
-  ['calculatenormal',['calculateNormal',['../classpepr3d_1_1_model_importer.html#a9f88ce7372a94ac4682d2918f879ea05',1,'pepr3d::ModelImporter']]],
+  ['calculatenormal',['calculateNormal',['../classpepr3d_1_1_model_exporter.html#a0ac9e0564adb8d2a8d3283b19aa033de',1,'pepr3d::ModelExporter::calculateNormal()'],['../classpepr3d_1_1_model_importer.html#a9f88ce7372a94ac4682d2918f879ea05',1,'pepr3d::ModelImporter::calculateNormal()']]],
   ['calculatevertexbuffer',['calculateVertexBuffer',['../classpepr3d_1_1_model_importer.html#a8632c7f0d773fd50da714ef177a3b9f2',1,'pepr3d::ModelImporter']]],
   ['cameraui',['CameraUi',['../classpepr3d_1_1_camera_ui.html#a760af7644107708a275ef37cf49b64d8',1,'pepr3d::CameraUi']]],
   ['canbejoined',['canBeJoined',['../classpepr3d_1_1_command_base.html#aead9aa5e9149a485497805aa1a4527bf',1,'pepr3d::CommandBase']]],
   ['canredo',['canRedo',['../classpepr3d_1_1_command_manager.html#a2ae3625cc0baac8bb27f659ee0182eff',1,'pepr3d::CommandManager']]],
   ['canundo',['canUndo',['../classpepr3d_1_1_command_manager.html#a2d53a763697329e206e72ddeef1ce75b',1,'pepr3d::CommandManager']]],
+  ['changecolorids',['changeColorIds',['../classpepr3d_1_1_geometry.html#ae6d2ae86fca37592a5dbb93784ca4ef0',1,'pepr3d::Geometry::changeColorIds()'],['../classpepr3d_1_1_triangle_detail.html#a9bce9da8bea065df486537a2933f635c',1,'pepr3d::TriangleDetail::changeColorIds()']]],
   ['clear',['clear',['../classpepr3d_1_1_color_manager.html#adb8aeb957d6a1cd5a79ebc0e246f5ca7',1,'pepr3d::ColorManager']]],
+  ['cmdpainttext',['CmdPaintText',['../classpepr3d_1_1_cmd_paint_text.html#aab856aaa010955874c11426257d20627',1,'pepr3d::CmdPaintText']]],
   ['commandbase',['CommandBase',['../classpepr3d_1_1_command_base.html#aa4644cac610c68ac671fbf04af61186f',1,'pepr3d::CommandBase']]],
   ['commandmanager',['CommandManager',['../classpepr3d_1_1_command_manager.html#aa4545583769603c741a2dab3e876a5fb',1,'pepr3d::CommandManager']]],
+  ['computeboundaryedges',['computeBoundaryEdges',['../classpepr3d_1_1_model_exporter.html#ab278eb54afeced3be63e4e5eccdf3802',1,'pepr3d::ModelExporter']]],
   ['computesdfvalues',['computeSdfValues',['../classpepr3d_1_1_geometry.html#abba4d7a86b23f0d1a5aef9739d087f7d',1,'pepr3d::Geometry']]],
   ['connect',['connect',['../classpepr3d_1_1_camera_ui.html#a740dadafa1f80d92bf2a902d86f61158',1,'pepr3d::CameraUi']]],
-  ['correctsharedvertices',['correctSharedVertices',['../classpepr3d_1_1_geometry.html#aa981414573779195fbfb7a64cfcbc1f1',1,'pepr3d::Geometry::correctSharedVertices()'],['../classpepr3d_1_1_triangle_detail.html#a30215d8b668385e1f6c145545d9366f2',1,'pepr3d::TriangleDetail::correctSharedVertices()']]]
+  ['construct_5fvertex_5f2',['Construct_vertex_2',['../class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2.html#ade4df041a1e859d7c17c0ba660bdead6',1,'CGAL::Gps_traits_adaptor::Construct_vertex_2']]],
+  ['correctsharedvertices',['correctSharedVertices',['../classpepr3d_1_1_geometry.html#aa981414573779195fbfb7a64cfcbc1f1',1,'pepr3d::Geometry::correctSharedVertices()'],['../classpepr3d_1_1_triangle_detail.html#a30215d8b668385e1f6c145545d9366f2',1,'pepr3d::TriangleDetail::correctSharedVertices()']]],
+  ['createnonpolyscenes',['createNonPolyScenes',['../classpepr3d_1_1_model_exporter.html#aaf14c84e428fce47a5aefd330218e0c8',1,'pepr3d::ModelExporter']]],
+  ['createnonpolysurfacescenes',['createNonPolySurfaceScenes',['../classpepr3d_1_1_model_exporter.html#a31cfba9f522ed35f2f25e1d88f5c0291',1,'pepr3d::ModelExporter']]],
+  ['createpolygonsetsfromtriangles',['createPolygonSetsFromTriangles',['../classpepr3d_1_1_triangle_detail.html#ad8daeb9c2bdb4d033a553ec4fa35e5a0',1,'pepr3d::TriangleDetail']]],
+  ['createpolyscenes',['createPolyScenes',['../classpepr3d_1_1_model_exporter.html#a1e9c64e2f9dd0482f3216ff9cfd016f3',1,'pepr3d::ModelExporter']]],
+  ['createpolysurfacescenes',['createPolySurfaceScenes',['../classpepr3d_1_1_model_exporter.html#aebf51f53d44f88e180a63900aedd386c',1,'pepr3d::ModelExporter']]],
+  ['createpreviewmesh',['createPreviewMesh',['../classpepr3d_1_1_text_editor.html#a8e848393dc43187cfe5e89833fc61a91',1,'pepr3d::TextEditor']]],
+  ['createscenes',['createScenes',['../classpepr3d_1_1_model_exporter.html#a4fd1351a4fb5634b761f1693206e0a1d',1,'pepr3d::ModelExporter']]]
 ];

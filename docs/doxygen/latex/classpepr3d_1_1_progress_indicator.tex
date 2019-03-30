@@ -1,14 +1,26 @@
 \hypertarget{classpepr3d_1_1_progress_indicator}{}\section{pepr3d\+::Progress\+Indicator Class Reference}
 \label{classpepr3d_1_1_progress_indicator}\index{pepr3d::ProgressIndicator@{pepr3d::ProgressIndicator}}
+
+
+User interface for showing a current progress, contains a spinner and progress bars.  
+
+
+
+
+{\ttfamily \#include $<$Progress\+Indicator.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_progress_indicator_ac0931998aeb37b012ca79b418896044b}\label{classpepr3d_1_1_progress_indicator_ac0931998aeb37b012ca79b418896044b}} 
-void {\bfseries set\+Geometry\+In\+Progress} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $>$ geometry)
+void \mbox{\hyperlink{classpepr3d_1_1_progress_indicator_ac0931998aeb37b012ca79b418896044b}{set\+Geometry\+In\+Progress}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $>$ geometry)
+\begin{DoxyCompactList}\small\item\em Sets the current \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} whose \mbox{\hyperlink{structpepr3d_1_1_geometry_progress}{Geometry\+Progress}} is going to be used. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_progress_indicator_ab60bafabdc2821c10bdb320e9b859c18}\label{classpepr3d_1_1_progress_indicator_ab60bafabdc2821c10bdb320e9b859c18}} 
+bool {\bfseries is\+In\+Progress} ()
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_progress_indicator_a6b9af9848a2fb8bf39e38b9c9b8fc001}\label{classpepr3d_1_1_progress_indicator_a6b9af9848a2fb8bf39e38b9c9b8fc001}} 
-void {\bfseries draw} ()
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classpepr3d_1_1_progress_indicator_a6b9af9848a2fb8bf39e38b9c9b8fc001}{draw}} ()
+\begin{DoxyCompactList}\small\item\em Renders the progress indicator. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -25,6 +37,9 @@ void {\bfseries draw\+Status} (const std\+::string \&label, float progress, bool
 std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} $>$ {\bfseries m\+Geometry}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+User interface for showing a current progress, contains a spinner and progress bars. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

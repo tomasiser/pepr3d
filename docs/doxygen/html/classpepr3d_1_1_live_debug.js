@@ -11,5 +11,7 @@ var classpepr3d_1_1_live_debug =
     [ "mIntegerManager", "classpepr3d_1_1_live_debug.html#abd1c63025b81a3ecb4d261ae9ad74690", null ],
     [ "mIntegerState", "classpepr3d_1_1_live_debug.html#a90845ed0b4390f47e4136d2ff173f740", null ],
     [ "mMousePos", "classpepr3d_1_1_live_debug.html#a6066097404396581853e888df170969f", null ],
+    [ "mSquaredRadius", "classpepr3d_1_1_live_debug.html#a01d11e4cfd58c1805813133e9b761d59", null ],
+    [ "mTrianglesInRadius", "classpepr3d_1_1_live_debug.html#a9ccf555f71724262cf5f49ff8d765cab", null ],
     [ "mTriangleUnderRay", "classpepr3d_1_1_live_debug.html#a2e9c2ebd4834ed6d6ee27a30ea6216b7", null ]
 ];

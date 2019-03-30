@@ -1,23 +1,32 @@
 \hypertarget{classpepr3d_1_1_side_pane_1_1_category}{}\section{pepr3d\+::Side\+Pane\+::Category Class Reference}
 \label{classpepr3d_1_1_side_pane_1_1_category}\index{pepr3d::SidePane::Category@{pepr3d::SidePane::Category}}
+
+
+A category of a \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} that can be opened and closed by a user.  
+
+
+
+
+{\ttfamily \#include $<$Side\+Pane.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_1_1_category_acb1fc3a5d7bd9101fcb8f4379cc70a02}\label{classpepr3d_1_1_side_pane_1_1_category_acb1fc3a5d7bd9101fcb8f4379cc70a02}} 
-{\bfseries Category} (const std\+::string \&caption, bool is\+Open=false)
+{\bfseries Category} (const std\+::string \&caption, bool \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category_aac016fcb205b58448834ba7ccb950b05}{is\+Open}}=false)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_1_1_category_aac016fcb205b58448834ba7ccb950b05}\label{classpepr3d_1_1_side_pane_1_1_category_aac016fcb205b58448834ba7ccb950b05}} 
-bool {\bfseries is\+Open} () const
-\item 
+bool \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category_aac016fcb205b58448834ba7ccb950b05}{is\+Open}} () const
+\begin{DoxyCompactList}\small\item\em Returns true if the \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category}{Category}} is open. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_1_1_category_a3f0786593b21a0428b8e9b8772f352ef}\label{classpepr3d_1_1_side_pane_1_1_category_a3f0786593b21a0428b8e9b8772f352ef}} 
-{\footnotesize template$<$typename Draw\+Inside\+Function $>$ }\\void {\bfseries draw} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane, Draw\+Inside\+Function draw\+Inside)
-\end{DoxyCompactItemize}
+{\footnotesize template$<$typename Draw\+Inside\+Function $>$ }\\void \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category_a3f0786593b21a0428b8e9b8772f352ef}{draw}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane, Draw\+Inside\+Function draw\+Inside)
+\begin{DoxyCompactList}\small\item\em Draws the header and the inside (using the provided function) is the \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category}{Category}} is open. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_side_pane_1_1_category_a774041d63e1e1c39dd22f5f221fc6797}\label{classpepr3d_1_1_side_pane_1_1_category_a774041d63e1e1c39dd22f5f221fc6797}} 
-void {\bfseries draw\+Header} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane)
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category_a774041d63e1e1c39dd22f5f221fc6797}{draw\+Header}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane)
+\begin{DoxyCompactList}\small\item\em Draws the clickable header of the \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category}{Category}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -28,6 +37,9 @@ std\+::string {\bfseries m\+Caption}
 bool {\bfseries m\+Is\+Open}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+A category of a \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} that can be opened and closed by a user. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

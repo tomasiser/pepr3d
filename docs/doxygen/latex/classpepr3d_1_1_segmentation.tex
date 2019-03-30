@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_segmentation}{}\section{pepr3d\+::Segmentation Class Reference}
 \label{classpepr3d_1_1_segmentation}\index{pepr3d::Segmentation@{pepr3d::Segmentation}}
+
+
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for automatically separating and coloring the model into regions based on the thickness of the model.  
+
+
+
+
+{\ttfamily \#include $<$Segmentation.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Segmentation\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -13,37 +22,38 @@ Inheritance diagram for pepr3d\+::Segmentation\+:\begin{figure}[H]
 {\bfseries Segmentation} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_a992852fd1abddc360051ec6af862c75f}\label{classpepr3d_1_1_segmentation_a992852fd1abddc360051ec6af862c75f}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_segmentation_a992852fd1abddc360051ec6af862c75f}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_af2c28c0bff05165c8283e3727e09f726}\label{classpepr3d_1_1_segmentation_af2c28c0bff05165c8283e3727e09f726}} 
-virtual std\+::string {\bfseries get\+Description} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_segmentation_af2c28c0bff05165c8283e3727e09f726}{get\+Description}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a description, displayed e.\+g., in a tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_a6e48ed1de1808a831027cea1bb3c4332}\label{classpepr3d_1_1_segmentation_a6e48ed1de1808a831027cea1bb3c4332}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_segmentation_a6e48ed1de1808a831027cea1bb3c4332}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_af67898a59f818d71a97069b2fe62bd25}\label{classpepr3d_1_1_segmentation_af67898a59f818d71a97069b2fe62bd25}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_segmentation_af67898a59f818d71a97069b2fe62bd25}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_acd5aff018741e43604441d50701492fa}\label{classpepr3d_1_1_segmentation_acd5aff018741e43604441d50701492fa}} 
-virtual bool {\bfseries is\+Enabled} () const override
-\item 
+virtual bool \mbox{\hyperlink{classpepr3d_1_1_segmentation_acd5aff018741e43604441d50701492fa}{is\+Enabled}} () const override
+\begin{DoxyCompactList}\small\item\em Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}\label{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}} 
 virtual void \mbox{\hyperlink{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
-\item 
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_aba217ddc3fefb9f9a253bcaee39df3b2}\label{classpepr3d_1_1_segmentation_aba217ddc3fefb9f9a253bcaee39df3b2}} 
-virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_segmentation_aba217ddc3fefb9f9a253bcaee39df3b2}{draw\+To\+Model\+View}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_a7c9ae1b970f2b19f7c8cc6d7009b106d}\label{classpepr3d_1_1_segmentation_a7c9ae1b970f2b19f7c8cc6d7009b106d}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_segmentation_a7c9ae1b970f2b19f7c8cc6d7009b106d}{on\+Model\+View\+Mouse\+Down}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users presses a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_a42edd9ea2cb784c82804d3e84dcde864}\label{classpepr3d_1_1_segmentation_a42edd9ea2cb784c82804d3e84dcde864}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_segmentation_a42edd9ea2cb784c82804d3e84dcde864}{on\+Model\+View\+Mouse\+Move}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users moves mouse cursor over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. Note\+: This method is not called when the user is dragging the mouse! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_abe22494520721c3d078daca8abbfd4ae}\label{classpepr3d_1_1_segmentation_abe22494520721c3d078daca8abbfd4ae}} 
-virtual void {\bfseries on\+Tool\+Deselect} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_segmentation_abe22494520721c3d078daca8abbfd4ae}{on\+Tool\+Deselect}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on a \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after user selects another tool. Note\+: It may also be called when a user selects the same tool again! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac8b133f64246862034299f64b38cd080}\label{classpepr3d_1_1_segmentation_ac8b133f64246862034299f64b38cd080}} 
-virtual void {\bfseries on\+New\+Geometry\+Loaded} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\end{DoxyCompactItemize}
+virtual void \mbox{\hyperlink{classpepr3d_1_1_segmentation_ac8b133f64246862034299f64b38cd080}{on\+New\+Geometry\+Loaded}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on E\+V\+E\+RY \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after a new \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} is loaded or imported. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -65,11 +75,11 @@ void {\bfseries set\+Segment\+Color} (const size\+\_\+t segment\+Id, const glm\+
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac2717aba7269a3eb01e1ec3c03331c17}\label{classpepr3d_1_1_segmentation_ac2717aba7269a3eb01e1ec3c03331c17}} 
 \mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
 \item 
-\mbox{\Hypertarget{classpepr3d_1_1_segmentation_aeae786bdab94aea8ffa0fb73390294dc}\label{classpepr3d_1_1_segmentation_aeae786bdab94aea8ffa0fb73390294dc}} 
-int {\bfseries m\+Number\+Of\+Clusters} = 5
+\mbox{\Hypertarget{classpepr3d_1_1_segmentation_a7097b3a93fea80b798e8e0117d4ab2a0}\label{classpepr3d_1_1_segmentation_a7097b3a93fea80b798e8e0117d4ab2a0}} 
+float {\bfseries m\+Number\+Of\+Clusters} = 20.\+0f
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_a9b58e2e5f005ec47eb16cb65033b81ae}\label{classpepr3d_1_1_segmentation_a9b58e2e5f005ec47eb16cb65033b81ae}} 
-float {\bfseries m\+Smoothing\+Lambda} = 0.\+3f
+float {\bfseries m\+Smoothing\+Lambda} = 30.\+0f
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac28116b16a089414c90acaa13e1b767d}\label{classpepr3d_1_1_segmentation_ac28116b16a089414c90acaa13e1b767d}} 
 size\+\_\+t {\bfseries m\+Number\+Of\+Segments} = 0
@@ -100,20 +110,8 @@ std\+::unordered\+\_\+map$<$ size\+\_\+t, size\+\_\+t $>$ {\bfseries m\+Triangle
 \end{DoxyCompactItemize}
 
 
-\subsection{Member Function Documentation}
-\mbox{\Hypertarget{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}\label{classpepr3d_1_1_segmentation_ac823ffa67827629012a45f3ac9a22c72}} 
-\index{pepr3d::Segmentation@{pepr3d::Segmentation}!drawToSidePane@{drawToSidePane}}
-\index{drawToSidePane@{drawToSidePane}!pepr3d::Segmentation@{pepr3d::Segmentation}}
-\subsubsection{\texorpdfstring{drawToSidePane()}{drawToSidePane()}}
-{\footnotesize\ttfamily void pepr3d\+::\+Segmentation\+::draw\+To\+Side\+Pane (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&}]{side\+Pane }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
-
-\begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000001}{Todo}}]Popup for the user \end{DoxyRefDesc}
-
-
-Reimplemented from \mbox{\hyperlink{classpepr3d_1_1_tool}{pepr3d\+::\+Tool}}.
-
-
+\subsection{Detailed Description}
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for automatically separating and coloring the model into regions based on the thickness of the model. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

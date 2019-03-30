@@ -8,6 +8,7 @@ var classpepr3d_1_1_color_manager =
     [ "clear", "classpepr3d_1_1_color_manager.html#adb8aeb957d6a1cd5a79ebc0e246f5ca7", null ],
     [ "empty", "classpepr3d_1_1_color_manager.html#a439df566020a7f10221a4e4c3fd36e7d", null ],
     [ "generateColors", "classpepr3d_1_1_color_manager.html#a9c9dcef30e057653f1ecc55071fdf12c", null ],
+    [ "getActiveColor", "classpepr3d_1_1_color_manager.html#a928abdce32ef88875b11a370924a4fb4", null ],
     [ "getActiveColorIndex", "classpepr3d_1_1_color_manager.html#a3532df102b706a03bc0e23401c457e4f", null ],
     [ "getColor", "classpepr3d_1_1_color_manager.html#aa6453cf533bb4bb251203bd599c48321", null ],
     [ "getColorMap", "classpepr3d_1_1_color_manager.html#a7c86d46f583135d81ffe2842a8a2f8d1", null ],

@@ -97,24 +97,32 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_side_pane_1_1_category
 <div class="title">pepr3d::SidePane::Category Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A category of a <a class="el" href="classpepr3d_1_1_side_pane.html" title="Right side of the user interface that displays options of the currently selected tool.">SidePane</a> that can be opened and closed by a user.  
+ <a href="classpepr3d_1_1_side_pane_1_1_category.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_side_pane_8h_source.html">SidePane.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acb1fc3a5d7bd9101fcb8f4379cc70a02"><td class="memItemLeft" align="right" valign="top"><a id="acb1fc3a5d7bd9101fcb8f4379cc70a02"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Category</b> (const std::string &amp;caption, bool isOpen=false)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Category</b> (const std::string &amp;caption, bool <a class="el" href="classpepr3d_1_1_side_pane_1_1_category.html#aac016fcb205b58448834ba7ccb950b05">isOpen</a>=false)</td></tr>
 <tr class="separator:acb1fc3a5d7bd9101fcb8f4379cc70a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac016fcb205b58448834ba7ccb950b05"><td class="memItemLeft" align="right" valign="top"><a id="aac016fcb205b58448834ba7ccb950b05"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isOpen</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_side_pane_1_1_category.html#aac016fcb205b58448834ba7ccb950b05">isOpen</a> () const</td></tr>
+<tr class="memdesc:aac016fcb205b58448834ba7ccb950b05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the <a class="el" href="classpepr3d_1_1_side_pane_1_1_category.html" title="A category of a SidePane that can be opened and closed by a user.">Category</a> is open. <br /></td></tr>
 <tr class="separator:aac016fcb205b58448834ba7ccb950b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f0786593b21a0428b8e9b8772f352ef"><td class="memTemplParams" colspan="2"><a id="a3f0786593b21a0428b8e9b8772f352ef"></a>
 template&lt;typename DrawInsideFunction &gt; </td></tr>
-<tr class="memitem:a3f0786593b21a0428b8e9b8772f352ef"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>draw</b> (<a class="el" href="classpepr3d_1_1_side_pane.html">SidePane</a> &amp;sidePane, DrawInsideFunction drawInside)</td></tr>
+<tr class="memitem:a3f0786593b21a0428b8e9b8772f352ef"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_side_pane_1_1_category.html#a3f0786593b21a0428b8e9b8772f352ef">draw</a> (<a class="el" href="classpepr3d_1_1_side_pane.html">SidePane</a> &amp;sidePane, DrawInsideFunction drawInside)</td></tr>
+<tr class="memdesc:a3f0786593b21a0428b8e9b8772f352ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the header and the inside (using the provided function) is the <a class="el" href="classpepr3d_1_1_side_pane_1_1_category.html" title="A category of a SidePane that can be opened and closed by a user.">Category</a> is open. <br /></td></tr>
 <tr class="separator:a3f0786593b21a0428b8e9b8772f352ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a774041d63e1e1c39dd22f5f221fc6797"><td class="memItemLeft" align="right" valign="top"><a id="a774041d63e1e1c39dd22f5f221fc6797"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawHeader</b> (<a class="el" href="classpepr3d_1_1_side_pane.html">SidePane</a> &amp;sidePane)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_side_pane_1_1_category.html#a774041d63e1e1c39dd22f5f221fc6797">drawHeader</a> (<a class="el" href="classpepr3d_1_1_side_pane.html">SidePane</a> &amp;sidePane)</td></tr>
+<tr class="memdesc:a774041d63e1e1c39dd22f5f221fc6797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the clickable header of the <a class="el" href="classpepr3d_1_1_side_pane_1_1_category.html" title="A category of a SidePane that can be opened and closed by a user.">Category</a>. <br /></td></tr>
 <tr class="separator:a774041d63e1e1c39dd22f5f221fc6797"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -126,7 +134,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>mCaption</b></
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>mIsOpen</b></td></tr>
 <tr class="separator:a5b8bfd770ebb2c4e786f15ada443efa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A category of a <a class="el" href="classpepr3d_1_1_side_pane.html" title="Right side of the user interface that displays options of the currently selected tool.">SidePane</a> that can be opened and closed by a user. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/<a class="el" href="_side_pane_8h_source.html">SidePane.h</a></li>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/SidePane.cpp</li>
 </ul>

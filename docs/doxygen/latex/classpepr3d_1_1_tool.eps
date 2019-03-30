@@ -5,7 +5,7 @@
 %%For: 
 %Magnification: 1.00
 %%Orientation: Portrait
-%%BoundingBox: 0 0 500 497.737557
+%%BoundingBox: 0 0 500 542.986425
 %%Pages: 0
 %%BeginSetup
 %%EndSetup
@@ -19,12 +19,12 @@
 /marginwidth 10 def
 /distx 20 def
 /disty 40 def
-/boundaspect 1.004545 def  % aspect ratio of the BoundingBox (width/height)
+/boundaspect 0.920833 def  % aspect ratio of the BoundingBox (width/height)
 /boundx 500 def
 /boundy boundx boundaspect div def
 /xspacing 0 def
 /yspacing 0 def
-/rows 11 def
+/rows 12 def
 /cols 2 def
 /scalefactor 0 def
 /boxfont /Times-Roman findfont fontheight scalefont def
@@ -176,6 +176,7 @@ boxfont setfont
 (pepr3d::Tool) cw
 (pepr3d::Brush) cw
 (pepr3d::DisplayOptions) cw
+(pepr3d::ExportAssistant) cw
 (pepr3d::Information) cw
 (pepr3d::LiveDebug) cw
 (pepr3d::PaintBucket) cw
@@ -195,9 +196,10 @@ boundx scalefactor div boundy scalefactor div scale
 
 % ----- classes -----
 
- (pepr3d::Tool) 0.000000 10.000000 box
- (pepr3d::Brush) 1.000000 9.000000 box
- (pepr3d::DisplayOptions) 1.000000 8.000000 box
+ (pepr3d::Tool) 0.000000 11.000000 box
+ (pepr3d::Brush) 1.000000 10.000000 box
+ (pepr3d::DisplayOptions) 1.000000 9.000000 box
+ (pepr3d::ExportAssistant) 1.000000 8.000000 box
  (pepr3d::Information) 1.000000 7.000000 box
  (pepr3d::LiveDebug) 1.000000 6.000000 box
  (pepr3d::PaintBucket) 1.000000 5.000000 box
@@ -210,7 +212,9 @@ boundx scalefactor div boundy scalefactor div scale
 % ----- relations -----
 
 solid
-1 0.000000 9.250000 out
+1 0.000000 10.250000 out
+solid
+0 0.000000 10.500000 hedge
 solid
 0 0.000000 9.500000 hedge
 solid
@@ -232,4 +236,4 @@ solid
 solid
 0 0.000000 0.500000 hedge
 solid
-0.000000 10.000000 0.500000 vedge
+0.000000 11.000000 0.500000 vedge

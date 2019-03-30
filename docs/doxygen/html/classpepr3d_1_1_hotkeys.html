@@ -98,20 +98,29 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_hotkeys.html','');});
 <div class="title">pepr3d::Hotkeys Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>All hotkeys and their corresponding actions.  
+ <a href="classpepr3d_1_1_hotkeys.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_hotkeys_8h_source.html">Hotkeys.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af57c6eb43b445e2f94f5777c216186d7"><td class="memItemLeft" align="right" valign="top"><a id="af57c6eb43b445e2f94f5777c216186d7"></a>
-std::optional&lt; <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>findHotkey</b> (HotkeyAction action) const</td></tr>
+std::optional&lt; <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_hotkeys.html#af57c6eb43b445e2f94f5777c216186d7">findHotkey</a> (<a class="el" href="namespacepepr3d.html#ae35d8dfd4e5925d633f100eb9b525cbe">HotkeyAction</a> action) const</td></tr>
+<tr class="memdesc:af57c6eb43b445e2f94f5777c216186d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a hotkey for a certain action. <br /></td></tr>
 <tr class="separator:af57c6eb43b445e2f94f5777c216186d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade71a2e93bb0ad6f9e5fe9898be16cf5"><td class="memItemLeft" align="right" valign="top"><a id="ade71a2e93bb0ad6f9e5fe9898be16cf5"></a>
-std::optional&lt; HotkeyAction &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>findAction</b> (<a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> hotkey) const</td></tr>
+std::optional&lt; <a class="el" href="namespacepepr3d.html#ae35d8dfd4e5925d633f100eb9b525cbe">HotkeyAction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_hotkeys.html#ade71a2e93bb0ad6f9e5fe9898be16cf5">findAction</a> (<a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> hotkey) const</td></tr>
+<tr class="memdesc:ade71a2e93bb0ad6f9e5fe9898be16cf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an action for a certain hotkey. <br /></td></tr>
 <tr class="separator:ade71a2e93bb0ad6f9e5fe9898be16cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a841a7666ac1997ef11756d284e427dfd"><td class="memItemLeft" align="right" valign="top"><a id="a841a7666ac1997ef11756d284e427dfd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>add</b> (<a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> hotkey, HotkeyAction action)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_hotkeys.html#a841a7666ac1997ef11756d284e427dfd">add</a> (<a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> hotkey, <a class="el" href="namespacepepr3d.html#ae35d8dfd4e5925d633f100eb9b525cbe">HotkeyAction</a> action)</td></tr>
+<tr class="memdesc:a841a7666ac1997ef11756d284e427dfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a new hotkey &amp; action pair. <br /></td></tr>
 <tr class="separator:a841a7666ac1997ef11756d284e427dfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab708b1e552b5adc73e05aa4284c0651c"><td class="memItemLeft" align="right" valign="top"><a id="ab708b1e552b5adc73e05aa4284c0651c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>loadDefaults</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_hotkeys.html#ab708b1e552b5adc73e05aa4284c0651c">loadDefaults</a> ()</td></tr>
+<tr class="memdesc:ab708b1e552b5adc73e05aa4284c0651c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads default hotkeys. <br /></td></tr>
 <tr class="separator:ab708b1e552b5adc73e05aa4284c0651c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
@@ -128,10 +137,10 @@ template&lt;class Archive &gt; </td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:ace32a0c35b2c80135b45460dca1fd313"><td class="memItemLeft" align="right" valign="top"><a id="ace32a0c35b2c80135b45460dca1fd313"></a>
-std::unordered_map&lt; <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a>, HotkeyAction, <a class="el" href="structpepr3d_1_1_hotkey_hasher.html">HotkeyHasher</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mKeysToActions</b></td></tr>
+std::unordered_map&lt; <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a>, <a class="el" href="namespacepepr3d.html#ae35d8dfd4e5925d633f100eb9b525cbe">HotkeyAction</a>, <a class="el" href="structpepr3d_1_1_hotkey_hasher.html">HotkeyHasher</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mKeysToActions</b></td></tr>
 <tr class="separator:ace32a0c35b2c80135b45460dca1fd313"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd769fcf12839dafab79c6d4da780412"><td class="memItemLeft" align="right" valign="top"><a id="afd769fcf12839dafab79c6d4da780412"></a>
-std::unordered_map&lt; HotkeyAction, <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mActionsToKeys</b></td></tr>
+std::unordered_map&lt; <a class="el" href="namespacepepr3d.html#ae35d8dfd4e5925d633f100eb9b525cbe">HotkeyAction</a>, <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mActionsToKeys</b></td></tr>
 <tr class="separator:afd769fcf12839dafab79c6d4da780412"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -140,7 +149,9 @@ Friends</h2></td></tr>
 class&#160;</td><td class="memItemRight" valign="bottom"><b>cereal::access</b></td></tr>
 <tr class="separator:ab2f44cbb59a08132f4c843e5225bba0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>All hotkeys and their corresponding actions. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/<a class="el" href="_hotkeys_8h_source.html">Hotkeys.h</a></li>
 </ul>
 </div><!-- contents -->

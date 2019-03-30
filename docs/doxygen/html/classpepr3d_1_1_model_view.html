@@ -91,6 +91,7 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_model_view.html','');}
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classpepr3d_1_1_model_view-members.html">List of all members</a>  </div>
@@ -98,12 +99,19 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_model_view.html','');}
 <div class="title">pepr3d::ModelView Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The main part of the user interface, shows the geometry to the user.  
+ <a href="classpepr3d_1_1_model_view.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_model_view_8h_source.html">ModelView.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_model_view_1_1_attributes.html">Attributes</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom OpenGL attributes.  <a href="structpepr3d_1_1_model_view_1_1_attributes.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_model_view_1_1_color_override_data.html">ColorOverrideData</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpepr3d_1_1_model_view_1_1_mesh_data_override.html">MeshDataOverride</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override currently displayed mesh data, making it possibly to change displayed mesh without chaning the geometry itself.  <a href="structpepr3d_1_1_model_view_1_1_mesh_data_override.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -111,98 +119,188 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a599453dcbeead48f23193e0305f24e75"><td class="memItemLeft" align="right" valign="top"><a id="a599453dcbeead48f23193e0305f24e75"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ModelView</b> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;app)</td></tr>
 <tr class="separator:a599453dcbeead48f23193e0305f24e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f5861e62821a38aac0de71d98019037"><td class="memItemLeft" align="right" valign="top"><a id="a9f5861e62821a38aac0de71d98019037"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>resetPreview</b> ()</td></tr>
+<tr class="separator:a9f5861e62821a38aac0de71d98019037"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76ad73738050d3aabb681b53e5ea8398"><td class="memItemLeft" align="right" valign="top"><a id="a76ad73738050d3aabb681b53e5ea8398"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a76ad73738050d3aabb681b53e5ea8398">setup</a> ()</td></tr>
+<tr class="memdesc:a76ad73738050d3aabb681b53e5ea8398"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setups the camera and shaders. Call only once! <br /></td></tr>
 <tr class="separator:a76ad73738050d3aabb681b53e5ea8398"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab25e5abfcab1d8869e2ef78b44c98721"><td class="memItemLeft" align="right" valign="top"><a id="ab25e5abfcab1d8869e2ef78b44c98721"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resize</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#ab25e5abfcab1d8869e2ef78b44c98721">resize</a> ()</td></tr>
+<tr class="memdesc:ab25e5abfcab1d8869e2ef78b44c98721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a> should recalculate its size. <br /></td></tr>
 <tr class="separator:ab25e5abfcab1d8869e2ef78b44c98721"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3336add9f3f59fb474713d4552590a5c"><td class="memItemLeft" align="right" valign="top"><a id="a3336add9f3f59fb474713d4552590a5c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>draw</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a3336add9f3f59fb474713d4552590a5c">draw</a> ()</td></tr>
+<tr class="memdesc:a3336add9f3f59fb474713d4552590a5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>, both ImGui and the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a>. <br /></td></tr>
 <tr class="separator:a3336add9f3f59fb474713d4552590a5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab428e44311e1ada48f4224f1cfd32915"><td class="memItemLeft" align="right" valign="top"><a id="ab428e44311e1ada48f4224f1cfd32915"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawGeometry</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#ab428e44311e1ada48f4224f1cfd32915">drawGeometry</a> ()</td></tr>
+<tr class="memdesc:ab428e44311e1ada48f4224f1cfd32915"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a>. <br /></td></tr>
 <tr class="separator:ab428e44311e1ada48f4224f1cfd32915"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8dcae17a2801bbc3f6f26d919f12224"><td class="memItemLeft" align="right" valign="top"><a id="aa8dcae17a2801bbc3f6f26d919f12224"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>onMouseDown</b> (ci::app::MouseEvent event)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#aa8dcae17a2801bbc3f6f26d919f12224">onMouseDown</a> (ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:aa8dcae17a2801bbc3f6f26d919f12224"><td class="mdescLeft">&#160;</td><td class="mdescRight">On mouse-down event over the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a> area. <br /></td></tr>
 <tr class="separator:aa8dcae17a2801bbc3f6f26d919f12224"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a661a9c2b434be28bee4b2f30052031f2"><td class="memItemLeft" align="right" valign="top"><a id="a661a9c2b434be28bee4b2f30052031f2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>onMouseDrag</b> (ci::app::MouseEvent event)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a661a9c2b434be28bee4b2f30052031f2">onMouseDrag</a> (ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:a661a9c2b434be28bee4b2f30052031f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">On mouse-drag event over the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a> area. <br /></td></tr>
 <tr class="separator:a661a9c2b434be28bee4b2f30052031f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a872e02f519f6737a69b427271f6e6c96"><td class="memItemLeft" align="right" valign="top"><a id="a872e02f519f6737a69b427271f6e6c96"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>onMouseUp</b> (ci::app::MouseEvent event)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a872e02f519f6737a69b427271f6e6c96">onMouseUp</a> (ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:a872e02f519f6737a69b427271f6e6c96"><td class="mdescLeft">&#160;</td><td class="mdescRight">On mouse-up event over the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a> area. <br /></td></tr>
 <tr class="separator:a872e02f519f6737a69b427271f6e6c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90934c651648861138d6d754be15c140"><td class="memItemLeft" align="right" valign="top"><a id="a90934c651648861138d6d754be15c140"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>onMouseWheel</b> (ci::app::MouseEvent event)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a90934c651648861138d6d754be15c140">onMouseWheel</a> (ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:a90934c651648861138d6d754be15c140"><td class="mdescLeft">&#160;</td><td class="mdescRight">On mouse-wheel event over the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a> area. <br /></td></tr>
 <tr class="separator:a90934c651648861138d6d754be15c140"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7223e1c00bbf6401b11b55d49bed71c5"><td class="memItemLeft" align="right" valign="top"><a id="a7223e1c00bbf6401b11b55d49bed71c5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>onMouseMove</b> (ci::app::MouseEvent event)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a7223e1c00bbf6401b11b55d49bed71c5">onMouseMove</a> (ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:a7223e1c00bbf6401b11b55d49bed71c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">On mouse-move event over the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a> area. <br /></td></tr>
 <tr class="separator:a7223e1c00bbf6401b11b55d49bed71c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add99723c6e0ac1041b29b9a54902b157"><td class="memItemLeft" align="right" valign="top"><a id="add99723c6e0ac1041b29b9a54902b157"></a>
-ci::Ray&#160;</td><td class="memItemRight" valign="bottom"><b>getRayFromWindowCoordinates</b> (glm::ivec2 windowCoords) const</td></tr>
+ci::Ray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#add99723c6e0ac1041b29b9a54902b157">getRayFromWindowCoordinates</a> (glm::ivec2 windowCoords) const</td></tr>
+<tr class="memdesc:add99723c6e0ac1041b29b9a54902b157"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a 3D ray in the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> scene computed from window coordinates. <br /></td></tr>
 <tr class="separator:add99723c6e0ac1041b29b9a54902b157"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab31d990c6c32a93af35258ce2e512db2"><td class="memItemLeft" align="right" valign="top"><a id="ab31d990c6c32a93af35258ce2e512db2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawTriangleHighlight</b> (const <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a> triangleId)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#ab31d990c6c32a93af35258ce2e512db2">drawTriangleHighlight</a> (const <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a> triangleId)</td></tr>
+<tr class="memdesc:ab31d990c6c32a93af35258ce2e512db2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a highlight (3 lines with a contrasting color) of a specified <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html" title="Triangle ID in all detailed triangles Face index in mMeshDetailed faces;.">DetailedTriangleId</a>. <br /></td></tr>
 <tr class="separator:ab31d990c6c32a93af35258ce2e512db2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82f24b5d17a8352e76a69d87f4359d39"><td class="memItemLeft" align="right" valign="top"><a id="a82f24b5d17a8352e76a69d87f4359d39"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawTriangleHighlight</b> (const size_t triangleIdx)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a82f24b5d17a8352e76a69d87f4359d39">drawTriangleHighlight</a> (const size_t triangleIdx)</td></tr>
+<tr class="memdesc:a82f24b5d17a8352e76a69d87f4359d39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a highlight (3 lines with a contrasting color) of a specified triangle ID. <br /></td></tr>
 <tr class="separator:a82f24b5d17a8352e76a69d87f4359d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae13bed5785ac370ecc80211dc5896f34"><td class="memItemLeft" align="right" valign="top"><a id="ae13bed5785ac370ecc80211dc5896f34"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>drawLine</b> (const glm::vec3 &amp;from, const glm::vec3 &amp;to, const ci::Color &amp;color=ci::Color::white())</td></tr>
-<tr class="separator:ae13bed5785ac370ecc80211dc5896f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55cdb6c309001e315259b9c2151ed571"><td class="memItemLeft" align="right" valign="top"><a id="a55cdb6c309001e315259b9c2151ed571"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a55cdb6c309001e315259b9c2151ed571">drawLine</a> (const glm::vec3 &amp;from, const glm::vec3 &amp;to, const ci::Color &amp;color=ci::Color::white(), float width=1.0f, bool depthTest=false)</td></tr>
+<tr class="memdesc:a55cdb6c309001e315259b9c2151ed571"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a 3D line. <br /></td></tr>
+<tr class="separator:a55cdb6c309001e315259b9c2151ed571"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a338d7d487eaf95ca572a0ad63508d42f"><td class="memItemLeft" align="right" valign="top"><a id="a338d7d487eaf95ca572a0ad63508d42f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a338d7d487eaf95ca572a0ad63508d42f">drawCaption</a> (const std::string &amp;caption, const std::string &amp;errorCaption)</td></tr>
+<tr class="memdesc:a338d7d487eaf95ca572a0ad63508d42f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a text label (caption) to the top left corner. <code>caption</code> is black, <code>errorCaption</code> is red and below <code>caption</code> <br /></td></tr>
+<tr class="separator:a338d7d487eaf95ca572a0ad63508d42f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9463d814c0df630235f7f7ac212eb54"><td class="memItemLeft" align="right" valign="top"><a id="af9463d814c0df630235f7f7ac212eb54"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isWireframeEnabled</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#af9463d814c0df630235f7f7ac212eb54">isWireframeEnabled</a> () const</td></tr>
+<tr class="memdesc:af9463d814c0df630235f7f7ac212eb54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if wireframe of <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> is rendered. <br /></td></tr>
 <tr class="separator:af9463d814c0df630235f7f7ac212eb54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6af1ab71ae31eb1a1e9290a1e5e45e3"><td class="memItemLeft" align="right" valign="top"><a id="ad6af1ab71ae31eb1a1e9290a1e5e45e3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>enableWireframe</b> (bool enable=true)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#ad6af1ab71ae31eb1a1e9290a1e5e45e3">enableWireframe</a> (bool enable=true)</td></tr>
+<tr class="memdesc:ad6af1ab71ae31eb1a1e9290a1e5e45e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether the wireframe of <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> should be rendered. <br /></td></tr>
 <tr class="separator:ad6af1ab71ae31eb1a1e9290a1e5e45e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af233e744e89acdc27258033377f9f14e"><td class="memItemLeft" align="right" valign="top"><a id="af233e744e89acdc27258033377f9f14e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isGridEnabled</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#af233e744e89acdc27258033377f9f14e">isGridEnabled</a> () const</td></tr>
+<tr class="memdesc:af233e744e89acdc27258033377f9f14e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the grid below the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> is rendered. <br /></td></tr>
 <tr class="separator:af233e744e89acdc27258033377f9f14e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43a0d49736a4f8b204b93594d964f308"><td class="memItemLeft" align="right" valign="top"><a id="a43a0d49736a4f8b204b93594d964f308"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>enableGrid</b> (bool enable=true)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a43a0d49736a4f8b204b93594d964f308">enableGrid</a> (bool enable=true)</td></tr>
+<tr class="memdesc:a43a0d49736a4f8b204b93594d964f308"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether the grid below the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> should be rendered. <br /></td></tr>
 <tr class="separator:a43a0d49736a4f8b204b93594d964f308"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a359a106369373c8e669649fac95e8cf4"><td class="memItemLeft" align="right" valign="top"><a id="a359a106369373c8e669649fac95e8cf4"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>getModelRoll</b> () const</td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a359a106369373c8e669649fac95e8cf4">getModelRoll</a> () const</td></tr>
+<tr class="memdesc:a359a106369373c8e669649fac95e8cf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current roll (rotation in the axis not controlled by <a class="el" href="classpepr3d_1_1_camera_ui.html" title="Enables user interaction with a CameraPersp via the mouse.">CameraUi</a>) of the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> object. <br /></td></tr>
 <tr class="separator:a359a106369373c8e669649fac95e8cf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91d166d8c1ff522ed0b37ba9e4a16501"><td class="memItemLeft" align="right" valign="top"><a id="a91d166d8c1ff522ed0b37ba9e4a16501"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setModelRoll</b> (float roll)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a91d166d8c1ff522ed0b37ba9e4a16501">setModelRoll</a> (float roll)</td></tr>
+<tr class="memdesc:a91d166d8c1ff522ed0b37ba9e4a16501"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the current roll (rotation in the axis not controlled by <a class="el" href="classpepr3d_1_1_camera_ui.html" title="Enables user interaction with a CameraPersp via the mouse.">CameraUi</a>) of the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> object. <br /></td></tr>
 <tr class="separator:a91d166d8c1ff522ed0b37ba9e4a16501"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa02348736ac32b98423eb091c74ee0a2"><td class="memItemLeft" align="right" valign="top"><a id="aa02348736ac32b98423eb091c74ee0a2"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>getModelTranslate</b> () const</td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#aa02348736ac32b98423eb091c74ee0a2">getModelTranslate</a> () const</td></tr>
+<tr class="memdesc:aa02348736ac32b98423eb091c74ee0a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the 3D translation of the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> object. <br /></td></tr>
 <tr class="separator:aa02348736ac32b98423eb091c74ee0a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a746d83e4e97ca487e3c78c4576b808d9"><td class="memItemLeft" align="right" valign="top"><a id="a746d83e4e97ca487e3c78c4576b808d9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setModelTranslate</b> (glm::vec3 translate)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a746d83e4e97ca487e3c78c4576b808d9">setModelTranslate</a> (glm::vec3 translate)</td></tr>
+<tr class="memdesc:a746d83e4e97ca487e3c78c4576b808d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the 3D translation of the <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> object. <br /></td></tr>
 <tr class="separator:a746d83e4e97ca487e3c78c4576b808d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fc846e84bbc088d430d65d29dabb663"><td class="memItemLeft" align="right" valign="top"><a id="a2fc846e84bbc088d430d65d29dabb663"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resetCamera</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a2fc846e84bbc088d430d65d29dabb663">resetCamera</a> ()</td></tr>
+<tr class="memdesc:a2fc846e84bbc088d430d65d29dabb663"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the camera to the default position. <br /></td></tr>
 <tr class="separator:a2fc846e84bbc088d430d65d29dabb663"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc02d10fd1a5a0607a6a494475139993"><td class="memItemLeft" align="right" valign="top"><a id="afc02d10fd1a5a0607a6a494475139993"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setFovZoomEnabled</b> (bool enabled)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#afc02d10fd1a5a0607a6a494475139993">setFovZoomEnabled</a> (bool enabled)</td></tr>
+<tr class="memdesc:afc02d10fd1a5a0607a6a494475139993"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the camera and sets zoom to be field-of-view based (so on zoom, the camera position does not change, only FOV). <br /></td></tr>
 <tr class="separator:afc02d10fd1a5a0607a6a494475139993"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d6337d9cc434235ed959b6efb22ca83"><td class="memItemLeft" align="right" valign="top"><a id="a9d6337d9cc434235ed959b6efb22ca83"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isFovZoomEnabled</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a9d6337d9cc434235ed959b6efb22ca83">isFovZoomEnabled</a> () const</td></tr>
+<tr class="memdesc:a9d6337d9cc434235ed959b6efb22ca83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the camera zoom is field-of-view based (so on zoom, the camera position does not change, only FOV). <br /></td></tr>
 <tr class="separator:a9d6337d9cc434235ed959b6efb22ca83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa55de542cc8588d1fca8398f588602db"><td class="memItemLeft" align="right" valign="top"><a id="aa55de542cc8588d1fca8398f588602db"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setColorOverride</b> (bool val)</td></tr>
-<tr class="separator:aa55de542cc8588d1fca8398f588602db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55cf0ef14fc43eda6567ac6b33b786f4"><td class="memItemLeft" align="right" valign="top"><a id="a55cf0ef14fc43eda6567ac6b33b786f4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isColorOverride</b> () const</td></tr>
-<tr class="separator:a55cf0ef14fc43eda6567ac6b33b786f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c1fd212021f24db3f703f039bcc3bf2"><td class="memItemLeft" align="right" valign="top"><a id="a4c1fd212021f24db3f703f039bcc3bf2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a4c1fd212021f24db3f703f039bcc3bf2">toggleMeshOverride</a> (bool newState)</td></tr>
+<tr class="memdesc:a4c1fd212021f24db3f703f039bcc3bf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables or disables vertex, normal, and index buffer override (all at once) <br /></td></tr>
+<tr class="separator:a4c1fd212021f24db3f703f039bcc3bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4546779d56626083622f7bdefcbd0bde"><td class="memItemLeft" align="right" valign="top"><a id="a4546779d56626083622f7bdefcbd0bde"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a4546779d56626083622f7bdefcbd0bde">forceBatchRefresh</a> ()</td></tr>
+<tr class="memdesc:a4546779d56626083622f7bdefcbd0bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Batch data is going to be created again before rendering new frame. This will apply the overriden mesh. <br /></td></tr>
+<tr class="separator:a4546779d56626083622f7bdefcbd0bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27cbaf51762a74685b86a58103b5a1e8"><td class="memItemLeft" align="right" valign="top"><a id="a27cbaf51762a74685b86a58103b5a1e8"></a>
-std::vector&lt; glm::vec4 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getOverrideColorBuffer</b> ()</td></tr>
+std::vector&lt; glm::vec4 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a27cbaf51762a74685b86a58103b5a1e8">getOverrideColorBuffer</a> ()</td></tr>
+<tr class="memdesc:a27cbaf51762a74685b86a58103b5a1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the override color buffer, so you can read it or write to it. <br /></td></tr>
 <tr class="separator:a27cbaf51762a74685b86a58103b5a1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7dbddb9b59b9c869b9ee48bc0fcd03c2"><td class="memItemLeft" align="right" valign="top"><a id="a7dbddb9b59b9c869b9ee48bc0fcd03c2"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a7dbddb9b59b9c869b9ee48bc0fcd03c2">isMeshOverriden</a> () const</td></tr>
+<tr class="memdesc:a7dbddb9b59b9c869b9ee48bc0fcd03c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the mesh data is overriden. (A mesh different from the geometry is being displayed) <br /></td></tr>
+<tr class="separator:a7dbddb9b59b9c869b9ee48bc0fcd03c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebca60d3e5b812601056f52918154370"><td class="memItemLeft" align="right" valign="top"><a id="aebca60d3e5b812601056f52918154370"></a>
+std::vector&lt; glm::vec3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#aebca60d3e5b812601056f52918154370">getOverrideVertexBuffer</a> ()</td></tr>
+<tr class="memdesc:aebca60d3e5b812601056f52918154370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the override vertex buffer, so you can read it or write to it. <br /></td></tr>
+<tr class="separator:aebca60d3e5b812601056f52918154370"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe2f0a133e9bb7aa5cb1fba102f4a1e1"><td class="memItemLeft" align="right" valign="top"><a id="abe2f0a133e9bb7aa5cb1fba102f4a1e1"></a>
+std::vector&lt; glm::vec3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#abe2f0a133e9bb7aa5cb1fba102f4a1e1">getOverrideNormalBuffer</a> ()</td></tr>
+<tr class="memdesc:abe2f0a133e9bb7aa5cb1fba102f4a1e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the override normal buffer, so you can read it or write to it. <br /></td></tr>
+<tr class="separator:abe2f0a133e9bb7aa5cb1fba102f4a1e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cbad5b695e0e63ff5b77545bcc77286"><td class="memItemLeft" align="right" valign="top"><a id="a8cbad5b695e0e63ff5b77545bcc77286"></a>
+std::vector&lt; uint32_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a8cbad5b695e0e63ff5b77545bcc77286">getOverrideIndexBuffer</a> ()</td></tr>
+<tr class="memdesc:a8cbad5b695e0e63ff5b77545bcc77286"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the override index buffer, so you can read it or write to it. <br /></td></tr>
+<tr class="separator:a8cbad5b695e0e63ff5b77545bcc77286"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6cfd84f9d3dc6d3c98e8dcc905dba42"><td class="memItemLeft" align="right" valign="top"><a id="ae6cfd84f9d3dc6d3c98e8dcc905dba42"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#ae6cfd84f9d3dc6d3c98e8dcc905dba42">initOverrideFromBasicGeoemtry</a> ()</td></tr>
+<tr class="memdesc:ae6cfd84f9d3dc6d3c98e8dcc905dba42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize override buffer to data from non-detailed geometry. <br /></td></tr>
+<tr class="separator:ae6cfd84f9d3dc6d3c98e8dcc905dba42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7a7110a5396aee8bb3261c8d191dc28"><td class="memItemLeft" align="right" valign="top"><a id="aa7a7110a5396aee8bb3261c8d191dc28"></a>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#aa7a7110a5396aee8bb3261c8d191dc28">getPreviewMinMaxHeight</a> () const</td></tr>
+<tr class="memdesc:aa7a7110a5396aee8bb3261c8d191dc28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the minimum (first) and maximum (second) height that is rendered in the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. <br /></td></tr>
+<tr class="separator:aa7a7110a5396aee8bb3261c8d191dc28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac813369be27a029b6f2ecf32eae5c612"><td class="memItemLeft" align="right" valign="top"><a id="ac813369be27a029b6f2ecf32eae5c612"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#ac813369be27a029b6f2ecf32eae5c612">setPreviewMinMaxHeight</a> (glm::vec2 minMax)</td></tr>
+<tr class="memdesc:ac813369be27a029b6f2ecf32eae5c612"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the minimum (first) and maximum (second) height that is rendered in the <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. <br /></td></tr>
+<tr class="separator:ac813369be27a029b6f2ecf32eae5c612"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9f8bb7d19cca89bc4cdfc8f958c0eaa"><td class="memItemLeft" align="right" valign="top"><a id="af9f8bb7d19cca89bc4cdfc8f958c0eaa"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxSize</b> () const</td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#af9f8bb7d19cca89bc4cdfc8f958c0eaa">getMaxSize</a> () const</td></tr>
+<tr class="memdesc:af9f8bb7d19cca89bc4cdfc8f958c0eaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum size (in the X, Y, Z axes) of the current <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> object. <br /></td></tr>
 <tr class="separator:af9f8bb7d19cca89bc4cdfc8f958c0eaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a324a3111305b1a127e61e628b1a8e066"><td class="memItemLeft" align="right" valign="top"><a id="a324a3111305b1a127e61e628b1a8e066"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a324a3111305b1a127e61e628b1a8e066">onNewGeometryLoaded</a> ()</td></tr>
+<tr class="memdesc:a324a3111305b1a127e61e628b1a8e066"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by MainAplication when new geometry is loaded. <br /></td></tr>
+<tr class="separator:a324a3111305b1a127e61e628b1a8e066"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ae61178850cad2d5ca2621ed474c12d"><td class="memItemLeft" align="right" valign="top"><a id="a6ae61178850cad2d5ca2621ed474c12d"></a>
+glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>getModelMatrix</b> () const</td></tr>
+<tr class="separator:a6ae61178850cad2d5ca2621ed474c12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb14ac330c5a1b5618efa20624c07d42"><td class="memItemLeft" align="right" valign="top"><a id="abb14ac330c5a1b5618efa20624c07d42"></a>
+const ci::CameraPersp &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getCamera</b> () const</td></tr>
+<tr class="separator:abb14ac330c5a1b5618efa20624c07d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:adbcd7fa73c38c88bda111dd1400e7c82"><td class="memItemLeft" align="right" valign="top"><a id="adbcd7fa73c38c88bda111dd1400e7c82"></a>
+std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>previewTriangles</b></td></tr>
+<tr class="separator:adbcd7fa73c38c88bda111dd1400e7c82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3df7a703a9ea4bec3e28ba409326bda"><td class="memItemLeft" align="right" valign="top"><a id="ae3df7a703a9ea4bec3e28ba409326bda"></a>
+std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>previewIndices</b></td></tr>
+<tr class="separator:ae3df7a703a9ea4bec3e28ba409326bda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7acedc0788dd9115a85bb84ed2e27402"><td class="memItemLeft" align="right" valign="top"><a id="a7acedc0788dd9115a85bb84ed2e27402"></a>
+std::vector&lt; glm::vec4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>previewColors</b></td></tr>
+<tr class="separator:a7acedc0788dd9115a85bb84ed2e27402"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbba4767e833257eaac687cc5d5b1896"><td class="memItemLeft" align="right" valign="top"><a id="afbba4767e833257eaac687cc5d5b1896"></a>
+std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>previewNormals</b></td></tr>
+<tr class="separator:afbba4767e833257eaac687cc5d5b1896"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a13a0075d890659252e739cb212f5ce1a"><td class="memItemLeft" align="right" valign="top"><a id="a13a0075d890659252e739cb212f5ce1a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>updateModelMatrix</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#a13a0075d890659252e739cb212f5ce1a">updateModelMatrix</a> ()</td></tr>
+<tr class="memdesc:a13a0075d890659252e739cb212f5ce1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recalculates the model matrix of the current <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> object. The model matrix ensures that the object's maximum displayed size is 1.0 and it is centered above the grid, touching it on the bottom. <br /></td></tr>
 <tr class="separator:a13a0075d890659252e739cb212f5ce1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd9a0fe559b6443aa3baeae23fd21809"><td class="memItemLeft" align="right" valign="top"><a id="acd9a0fe559b6443aa3baeae23fd21809"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>updateVboAndBatch</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_view.html#acd9a0fe559b6443aa3baeae23fd21809">updateVboAndBatch</a> ()</td></tr>
+<tr class="memdesc:acd9a0fe559b6443aa3baeae23fd21809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recalculates the OpenGL vertex buffer object and the Cinder batch. <br /></td></tr>
 <tr class="separator:acd9a0fe559b6443aa3baeae23fd21809"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -249,11 +347,16 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>mModelTranslate<
 <tr class="memitem:adf575a92a3398753c447f0f15e4ad79f"><td class="memItemLeft" align="right" valign="top"><a id="adf575a92a3398753c447f0f15e4ad79f"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxSize</b> = 1.f</td></tr>
 <tr class="separator:adf575a92a3398753c447f0f15e4ad79f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f76b4e84b17567332ac41564b9b70d8"><td class="memItemLeft" align="right" valign="top"><a id="a8f76b4e84b17567332ac41564b9b70d8"></a>
-struct <a class="el" href="structpepr3d_1_1_model_view_1_1_color_override_data.html">pepr3d::ModelView::ColorOverrideData</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mColorOverride</b></td></tr>
-<tr class="separator:a8f76b4e84b17567332ac41564b9b70d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8a8ca2c09bf45ce02d87ae32e08c1cc"><td class="memItemLeft" align="right" valign="top"><a id="af8a8ca2c09bf45ce02d87ae32e08c1cc"></a>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>mPreviewMinMaxHeight</b> = glm::vec2(0.0f, 1.0f)</td></tr>
+<tr class="separator:af8a8ca2c09bf45ce02d87ae32e08c1cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ba7c53c4f4a93938bb3a4f46a9d3dea"><td class="memItemLeft" align="right" valign="top"><a id="a8ba7c53c4f4a93938bb3a4f46a9d3dea"></a>
+struct <a class="el" href="structpepr3d_1_1_model_view_1_1_mesh_data_override.html">pepr3d::ModelView::MeshDataOverride</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mMeshOverride</b></td></tr>
+<tr class="separator:a8ba7c53c4f4a93938bb3a4f46a9d3dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The main part of the user interface, shows the geometry to the user. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/<a class="el" href="_model_view_8h_source.html">ModelView.h</a></li>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/ModelView.cpp</li>
 </ul>

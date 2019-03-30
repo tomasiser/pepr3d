@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_settings}{}\section{pepr3d\+::Settings Class Reference}
 \label{classpepr3d_1_1_settings}\index{pepr3d::Settings@{pepr3d::Settings}}
+
+
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for configuring the color palette and application.  
+
+
+
+
+{\ttfamily \#include $<$Settings.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Settings\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -13,20 +22,20 @@ Inheritance diagram for pepr3d\+::Settings\+:\begin{figure}[H]
 {\bfseries Settings} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_settings_ab1cb768c5f1d54d9dd58534dd52fee9c}\label{classpepr3d_1_1_settings_ab1cb768c5f1d54d9dd58534dd52fee9c}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_settings_ab1cb768c5f1d54d9dd58534dd52fee9c}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_settings_af12e0a7190ff25d41a51b483ec661962}\label{classpepr3d_1_1_settings_af12e0a7190ff25d41a51b483ec661962}} 
-virtual std\+::string {\bfseries get\+Description} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_settings_af12e0a7190ff25d41a51b483ec661962}{get\+Description}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a description, displayed e.\+g., in a tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_settings_a4146e189ce75f6703e498b85a83701a0}\label{classpepr3d_1_1_settings_a4146e189ce75f6703e498b85a83701a0}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_settings_a4146e189ce75f6703e498b85a83701a0}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_settings_ab8db98e9aababb2f7a896d000bfd5069}\label{classpepr3d_1_1_settings_ab8db98e9aababb2f7a896d000bfd5069}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_settings_ab8db98e9aababb2f7a896d000bfd5069}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_settings_a69cb0d00220487d9b5d1b3b8844db0a0}\label{classpepr3d_1_1_settings_a69cb0d00220487d9b5d1b3b8844db0a0}} 
-virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_settings_a69cb0d00220487d9b5d1b3b8844db0a0}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_settings_af1aed4fc1479b60b2cbe20e1d19a79ba}\label{classpepr3d_1_1_settings_af1aed4fc1479b60b2cbe20e1d19a79ba}} 
 void {\bfseries draw\+Ui\+Settings} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane)
 \end{DoxyCompactItemize}
@@ -43,6 +52,9 @@ void {\bfseries draw\+Ui\+Settings} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}
 \mbox{\hyperlink{classpepr3d_1_1_side_pane_1_1_category}{Side\+Pane\+::\+Category}} {\bfseries m\+Ui\+Category}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for configuring the color palette and application. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

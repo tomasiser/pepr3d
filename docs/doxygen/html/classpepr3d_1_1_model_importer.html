@@ -98,6 +98,11 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_model_importer.html','
 <div class="title">pepr3d::ModelImporter Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Imports triangles and color palette from a model via Assimp.  
+ <a href="classpepr3d_1_1_model_importer.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_model_importer_8h_source.html">ModelImporter.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -105,19 +110,24 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ModelImporter</b> (const std::string p, <a class="el" href="structpepr3d_1_1_geometry_progress.html">GeometryProgress</a> *progress, ::ThreadPool &amp;threadPool)</td></tr>
 <tr class="separator:ae34f94fa256e598818039431f49f8709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca674c511db529638e83ade8aad83e24"><td class="memItemLeft" align="right" valign="top"><a id="aca674c511db529638e83ade8aad83e24"></a>
-std::vector&lt; <a class="el" href="classpepr3d_1_1_data_triangle.html">DataTriangle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getTriangles</b> () const</td></tr>
+std::vector&lt; <a class="el" href="classpepr3d_1_1_data_triangle.html">DataTriangle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_importer.html#aca674c511db529638e83ade8aad83e24">getTriangles</a> () const</td></tr>
+<tr class="memdesc:aca674c511db529638e83ade8aad83e24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of all <a class="el" href="classpepr3d_1_1_data_triangle.html" title="Custom Triangle type holding the CGAL::Triangle_3 and additional data.">DataTriangle</a> of the imported mesh. <br /></td></tr>
 <tr class="separator:aca674c511db529638e83ade8aad83e24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3ba28412e9317aff4850ccd251e721e"><td class="memItemLeft" align="right" valign="top"><a id="aa3ba28412e9317aff4850ccd251e721e"></a>
-<a class="el" href="classpepr3d_1_1_color_manager.html">ColorManager</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getColorManager</b> () const</td></tr>
+<a class="el" href="classpepr3d_1_1_color_manager.html">ColorManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_importer.html#aa3ba28412e9317aff4850ccd251e721e">getColorManager</a> () const</td></tr>
+<tr class="memdesc:aa3ba28412e9317aff4850ccd251e721e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a <a class="el" href="classpepr3d_1_1_color_manager.html" title="Represents a color palette, i.e., all colors and a selected active color.">ColorManager</a> of the imported mesh. <br /></td></tr>
 <tr class="separator:aa3ba28412e9317aff4850ccd251e721e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49b8a0fd779eedce1cf24a910fcce833"><td class="memItemLeft" align="right" valign="top"><a id="a49b8a0fd779eedce1cf24a910fcce833"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isModelLoaded</b> ()</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_importer.html#a49b8a0fd779eedce1cf24a910fcce833">isModelLoaded</a> ()</td></tr>
+<tr class="memdesc:a49b8a0fd779eedce1cf24a910fcce833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the mesh was imported successfully. <br /></td></tr>
 <tr class="separator:a49b8a0fd779eedce1cf24a910fcce833"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b27edc2cd72882c9144ff870ee26a6b"><td class="memItemLeft" align="right" valign="top"><a id="a8b27edc2cd72882c9144ff870ee26a6b"></a>
-std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getVertexBuffer</b> () const</td></tr>
+std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_importer.html#a8b27edc2cd72882c9144ff870ee26a6b">getVertexBuffer</a> () const</td></tr>
+<tr class="memdesc:a8b27edc2cd72882c9144ff870ee26a6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vertex buffer of the imported mesh. <br /></td></tr>
 <tr class="separator:a8b27edc2cd72882c9144ff870ee26a6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d21b9019f26f672414ad0bb40bb946c"><td class="memItemLeft" align="right" valign="top"><a id="a0d21b9019f26f672414ad0bb40bb946c"></a>
-std::vector&lt; std::array&lt; size_t, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getIndexBuffer</b> () const</td></tr>
+std::vector&lt; std::array&lt; size_t, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_model_importer.html#a0d21b9019f26f672414ad0bb40bb946c">getIndexBuffer</a> () const</td></tr>
+<tr class="memdesc:a0d21b9019f26f672414ad0bb40bb946c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an index buffer of the imported mesh. <br /></td></tr>
 <tr class="separator:a0d21b9019f26f672414ad0bb40bb946c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
@@ -176,7 +186,9 @@ std::vector&lt; std::array&lt; size_t, 3 &gt; &gt;&#160;</td><td class="memItemR
 <a class="el" href="structpepr3d_1_1_geometry_progress.html">GeometryProgress</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>mProgress</b></td></tr>
 <tr class="separator:a15f30eb03ee6489b372b4ca2ca2dc9de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Imports triangles and color palette from a model via Assimp. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa537966d73404c3f4c463799030a1d2b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa537966d73404c3f4c463799030a1d2b">&#9670;&nbsp;</a></span>calculateIndexBuffer()</h2>
 

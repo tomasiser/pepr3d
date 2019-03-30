@@ -1,5 +1,14 @@
 \hypertarget{structpepr3d_1_1_brush_settings}{}\section{pepr3d\+::Brush\+Settings Struct Reference}
 \label{structpepr3d_1_1_brush_settings}\index{pepr3d::BrushSettings@{pepr3d::BrushSettings}}
+
+
+Current settings of the \mbox{\hyperlink{classpepr3d_1_1_brush}{Brush}} tool.  
+
+
+
+
+{\ttfamily \#include $<$Brush.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -15,19 +24,31 @@ size\+\_\+t \mbox{\hyperlink{structpepr3d_1_1_brush_settings_a926d73e6b64dda9d77
 \mbox{\Hypertarget{structpepr3d_1_1_brush_settings_a01300f710ecd757b8f532a1da1f3bc4c}\label{structpepr3d_1_1_brush_settings_a01300f710ecd757b8f532a1da1f3bc4c}} 
 float \mbox{\hyperlink{structpepr3d_1_1_brush_settings_a01300f710ecd757b8f532a1da1f3bc4c}{size}} = 0.\+2f
 \begin{DoxyCompactList}\small\item\em Size of a brush in model space units. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{structpepr3d_1_1_brush_settings_a45ac5bb04d5a502b31811ecd94d6fe2b}\label{structpepr3d_1_1_brush_settings_a45ac5bb04d5a502b31811ecd94d6fe2b}} 
-bool \mbox{\hyperlink{structpepr3d_1_1_brush_settings_a45ac5bb04d5a502b31811ecd94d6fe2b}{continuous}} = false
-\begin{DoxyCompactList}\small\item\em Paint only to triangles connected to the origin. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_brush_settings_a297b93063de058754d95730263c48a59}\label{structpepr3d_1_1_brush_settings_a297b93063de058754d95730263c48a59}} 
+int \mbox{\hyperlink{structpepr3d_1_1_brush_settings_a297b93063de058754d95730263c48a59}{segments}} = 12
+\begin{DoxyCompactList}\small\item\em Number of segments of the brush. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structpepr3d_1_1_brush_settings_ab509aa6a59f8a36b9de2ae9d579a47f7}\label{structpepr3d_1_1_brush_settings_ab509aa6a59f8a36b9de2ae9d579a47f7}} 
 bool \mbox{\hyperlink{structpepr3d_1_1_brush_settings_ab509aa6a59f8a36b9de2ae9d579a47f7}{paint\+Backfaces}} = false
 \begin{DoxyCompactList}\small\item\em Paint onto backward facing triangles. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_brush_settings_a6988634902d2ebb5e10e4ed2ed9e74dc}\label{structpepr3d_1_1_brush_settings_a6988634902d2ebb5e10e4ed2ed9e74dc}} 
+bool \mbox{\hyperlink{structpepr3d_1_1_brush_settings_a6988634902d2ebb5e10e4ed2ed9e74dc}{spherical}} = true
+\begin{DoxyCompactList}\small\item\em Use spherical brush (otherwise shape brush will be used. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_brush_settings_a45ac5bb04d5a502b31811ecd94d6fe2b}\label{structpepr3d_1_1_brush_settings_a45ac5bb04d5a502b31811ecd94d6fe2b}} 
+bool \mbox{\hyperlink{structpepr3d_1_1_brush_settings_a45ac5bb04d5a502b31811ecd94d6fe2b}{continuous}} = false
+\begin{DoxyCompactList}\small\item\em Paint only to triangles connected to the origin. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structpepr3d_1_1_brush_settings_adddaabb9e5cd0271e781423eb77765db}\label{structpepr3d_1_1_brush_settings_adddaabb9e5cd0271e781423eb77765db}} 
 bool \mbox{\hyperlink{structpepr3d_1_1_brush_settings_adddaabb9e5cd0271e781423eb77765db}{respect\+Original\+Triangles}} = false
 \begin{DoxyCompactList}\small\item\em Will not create new triangles to match brush shape. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structpepr3d_1_1_brush_settings_abe64fa6555c4a22a17cdf58779b0288e}\label{structpepr3d_1_1_brush_settings_abe64fa6555c4a22a17cdf58779b0288e}} 
 bool \mbox{\hyperlink{structpepr3d_1_1_brush_settings_abe64fa6555c4a22a17cdf58779b0288e}{paint\+Outer\+Ring}} = false
-\begin{DoxyCompactList}\small\item\em When respecting original triangles should we paint triangles that are not fully inside the brush? \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em When respecting original triangles should we paint triangles that are not fully inside the brush? \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structpepr3d_1_1_brush_settings_a4949a6501a1ac9525c0b8ef4219bfdec}\label{structpepr3d_1_1_brush_settings_a4949a6501a1ac9525c0b8ef4219bfdec}} 
+bool \mbox{\hyperlink{structpepr3d_1_1_brush_settings_a4949a6501a1ac9525c0b8ef4219bfdec}{align\+To\+Normal}} = false
+\begin{DoxyCompactList}\small\item\em Use local normal for direction of shape brush. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Current settings of the \mbox{\hyperlink{classpepr3d_1_1_brush}{Brush}} tool. 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

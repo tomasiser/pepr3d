@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_text_editor}{}\section{pepr3d\+::Text\+Editor Class Reference}
 \label{classpepr3d_1_1_text_editor}\index{pepr3d::TextEditor@{pepr3d::TextEditor}}
+
+
+A tool used for painting texts on a model.  
+
+
+
+
+{\ttfamily \#include $<$Text\+Editor.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Text\+Editor\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -9,17 +18,129 @@ Inheritance diagram for pepr3d\+::Text\+Editor\+:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a81990497a4ab26ee3c73f00aa8312fd8}\label{classpepr3d_1_1_text_editor_a81990497a4ab26ee3c73f00aa8312fd8}} 
+{\bfseries Text\+Editor} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
+\item 
 \mbox{\Hypertarget{classpepr3d_1_1_text_editor_a89d5554aba18be49d5e8f13c1729e3b0}\label{classpepr3d_1_1_text_editor_a89d5554aba18be49d5e8f13c1729e3b0}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_text_editor_a89d5554aba18be49d5e8f13c1729e3b0}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_text_editor_a45e0186c35d934adc4af68640074d44e}\label{classpepr3d_1_1_text_editor_a45e0186c35d934adc4af68640074d44e}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_text_editor_a45e0186c35d934adc4af68640074d44e}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_text_editor_ad7adaa2d3f7104bface2115407ea3ef3}\label{classpepr3d_1_1_text_editor_ad7adaa2d3f7104bface2115407ea3ef3}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_text_editor_ad7adaa2d3f7104bface2115407ea3ef3}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a0bb2481c00c38ff55eab21baa66624dc}\label{classpepr3d_1_1_text_editor_a0bb2481c00c38ff55eab21baa66624dc}} 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a0bb2481c00c38ff55eab21baa66624dc}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_ac670b5620dda898d049c395c5b899b3f}\label{classpepr3d_1_1_text_editor_ac670b5620dda898d049c395c5b899b3f}} 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_text_editor_ac670b5620dda898d049c395c5b899b3f}{on\+Model\+View\+Mouse\+Down}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users presses a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a7598ba82ef36ae87f0317fe18c800bcb}\label{classpepr3d_1_1_text_editor_a7598ba82ef36ae87f0317fe18c800bcb}} 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a7598ba82ef36ae87f0317fe18c800bcb}{on\+Model\+View\+Mouse\+Move}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users moves mouse cursor over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. Note\+: This method is not called when the user is dragging the mouse! \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_aae35d8a952efd0493c5a12031054b783}\label{classpepr3d_1_1_text_editor_aae35d8a952efd0493c5a12031054b783}} 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_text_editor_aae35d8a952efd0493c5a12031054b783}{draw\+To\+Model\+View}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} from inside this method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a2e868d665405249a775466848e5ac6ad}\label{classpepr3d_1_1_text_editor_a2e868d665405249a775466848e5ac6ad}} 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a2e868d665405249a775466848e5ac6ad}{on\+Tool\+Select}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on a \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after user selects it. Note\+: It may also be called when a user selects the same tool again! \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a20b497c331cb642819f366b4689aff1b}\label{classpepr3d_1_1_text_editor_a20b497c331cb642819f366b4689aff1b}} 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a20b497c331cb642819f366b4689aff1b}{on\+Tool\+Deselect}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on a \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after user selects another tool. Note\+: It may also be called when a user selects the same tool again! \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a0c7d5a45e94fd87a930b127c1f816deb}\label{classpepr3d_1_1_text_editor_a0c7d5a45e94fd87a930b127c1f816deb}} 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a0c7d5a45e94fd87a930b127c1f816deb}{on\+New\+Geometry\+Loaded}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on E\+V\+E\+RY \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after a new \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} is loaded or imported. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a477667ab0ee9ea117e196d0b045d69b1}\label{classpepr3d_1_1_text_editor_a477667ab0ee9ea117e196d0b045d69b1}} 
+void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a477667ab0ee9ea117e196d0b045d69b1}{paint\+Text}} ()
+\begin{DoxyCompactList}\small\item\em Paint prepared text onto the model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a3ef1d677128a8c5d745bddb9f2e00119}\label{classpepr3d_1_1_text_editor_a3ef1d677128a8c5d745bddb9f2e00119}} 
+std\+::vector$<$ std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_font_rasterizer_1_1_tri}{Font\+Rasterizer\+::\+Tri}} $>$ $>$ {\bfseries triangulate\+Text} () const
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a8e848393dc43187cfe5e89833fc61a91}\label{classpepr3d_1_1_text_editor_a8e848393dc43187cfe5e89833fc61a91}} 
+void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a8e848393dc43187cfe5e89833fc61a91}{create\+Preview\+Mesh}} () const
+\begin{DoxyCompactList}\small\item\em Update model\+View\textquotesingle{}s preview data with new triangles to render. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a4d708589412de7f0bf3c0bd0a76efe9c}\label{classpepr3d_1_1_text_editor_a4d708589412de7f0bf3c0bd0a76efe9c}} 
+void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a4d708589412de7f0bf3c0bd0a76efe9c}{generate\+And\+Update}} ()
+\begin{DoxyCompactList}\small\item\em Generate text and update preview. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a6215bc1584a7ec5a7591f286f153891b}\label{classpepr3d_1_1_text_editor_a6215bc1584a7ec5a7591f286f153891b}} 
+void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a6215bc1584a7ec5a7591f286f153891b}{update\+Text\+Preview}} ()
+\begin{DoxyCompactList}\small\item\em Update text preview without generating again. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a811d714a58f7f3cc06d271fc1e3b223f}\label{classpepr3d_1_1_text_editor_a811d714a58f7f3cc06d271fc1e3b223f}} 
+void \mbox{\hyperlink{classpepr3d_1_1_text_editor_a811d714a58f7f3cc06d271fc1e3b223f}{rotate\+Text}} (std\+::vector$<$ std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_font_rasterizer_1_1_tri}{Font\+Rasterizer\+::\+Tri}} $>$$>$ \&text)
+\begin{DoxyCompactList}\small\item\em Rotate to face ray direction. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a3e6a4761960a15d7ee1a2d4af6b93adc}\label{classpepr3d_1_1_text_editor_a3e6a4761960a15d7ee1a2d4af6b93adc}} 
+void {\bfseries rescale\+Text} (std\+::vector$<$ std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_font_rasterizer_1_1_tri}{Font\+Rasterizer\+::\+Tri}} $>$$>$ \&result)
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a8b6e697183b6df4f7c571015b32f1032}\label{classpepr3d_1_1_text_editor_a8b6e697183b6df4f7c571015b32f1032}} 
+glm\+::vec3 \mbox{\hyperlink{classpepr3d_1_1_text_editor_a8b6e697183b6df4f7c571015b32f1032}{get\+Plane\+Base\+Vector}} (const glm\+::vec3 \&direction) const
+\begin{DoxyCompactList}\small\item\em Get vector perpendicular to the direction, that is pointing towards the right halfplane. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_aa111e897d281d8f936378ae278ef2eb9}\label{classpepr3d_1_1_text_editor_aa111e897d281d8f936378ae278ef2eb9}} 
+glm\+::vec3 \mbox{\hyperlink{classpepr3d_1_1_text_editor_aa111e897d281d8f936378ae278ef2eb9}{get\+Preview\+Origin}} (const glm\+::vec3 \&direction) const
+\begin{DoxyCompactList}\small\item\em Get origin point of the text preview. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a8c2340d0b6d8d583c4582cbfedb2b852}\label{classpepr3d_1_1_text_editor_a8c2340d0b6d8d583c4582cbfedb2b852}} 
+\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \& {\bfseries m\+Application}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a0bf4101cffb4567e68c2ee19ed1476f1}\label{classpepr3d_1_1_text_editor_a0bf4101cffb4567e68c2ee19ed1476f1}} 
+ci\+::\+Ray \mbox{\hyperlink{classpepr3d_1_1_text_editor_a0bf4101cffb4567e68c2ee19ed1476f1}{m\+Selected\+Ray}} \{\}
+\begin{DoxyCompactList}\small\item\em Intersection and point used for for text projection. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a1a0efb92849ddd1901a264cfa15ef294}\label{classpepr3d_1_1_text_editor_a1a0efb92849ddd1901a264cfa15ef294}} 
+std\+::optional$<$ size\+\_\+t $>$ {\bfseries m\+Selected\+Intersection} \{\}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a7688ecc7a7f2f1abd04f50461fb4b909}\label{classpepr3d_1_1_text_editor_a7688ecc7a7f2f1abd04f50461fb4b909}} 
+glm\+::vec3 {\bfseries m\+Selected\+Intersection\+Point} \{\}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_accf4f63e05399a24062d88ce13c1056b}\label{classpepr3d_1_1_text_editor_accf4f63e05399a24062d88ce13c1056b}} 
+ci\+::\+Ray \mbox{\hyperlink{classpepr3d_1_1_text_editor_accf4f63e05399a24062d88ce13c1056b}{m\+Current\+Ray}} \{\}
+\begin{DoxyCompactList}\small\item\em Intersection and point used for cursor highlight. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_ade2da5abbcd47021fe88ecbe5febdbb9}\label{classpepr3d_1_1_text_editor_ade2da5abbcd47021fe88ecbe5febdbb9}} 
+std\+::optional$<$ size\+\_\+t $>$ {\bfseries m\+Current\+Intersection} \{\}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_ae577cc4fe9f9d2bc1ae73f179ea4f818}\label{classpepr3d_1_1_text_editor_ae577cc4fe9f9d2bc1ae73f179ea4f818}} 
+glm\+::vec3 {\bfseries m\+Current\+Intersection\+Point} \{\}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a083f0600b1412d98a8a4e98588474f5a}\label{classpepr3d_1_1_text_editor_a083f0600b1412d98a8a4e98588474f5a}} 
+std\+::string {\bfseries m\+Font}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a2586c9a5862e1a87cf0b888c343a91ae}\label{classpepr3d_1_1_text_editor_a2586c9a5862e1a87cf0b888c343a91ae}} 
+std\+::string {\bfseries m\+Font\+Path}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_aeb1c8cb4529b4420fcc55ad6ffeff6f9}\label{classpepr3d_1_1_text_editor_aeb1c8cb4529b4420fcc55ad6ffeff6f9}} 
+std\+::string {\bfseries m\+Text} = \char`\"{}Pepr3D\char`\"{}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_ad6cfceb88b4988d66f1c2088c75d3bcd}\label{classpepr3d_1_1_text_editor_ad6cfceb88b4988d66f1c2088c75d3bcd}} 
+int {\bfseries m\+Font\+Size} = 12
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a2d5c48f7ce2bf201b35a409428f6fd94}\label{classpepr3d_1_1_text_editor_a2d5c48f7ce2bf201b35a409428f6fd94}} 
+int {\bfseries m\+Bezier\+Steps} = 3
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_aaef16fdb05549a5c778d46b563e5b491}\label{classpepr3d_1_1_text_editor_aaef16fdb05549a5c778d46b563e5b491}} 
+float {\bfseries m\+Font\+Scale} = 0.\+2f
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_ab8655ad98860f317999f61e16eaf28cf}\label{classpepr3d_1_1_text_editor_ab8655ad98860f317999f61e16eaf28cf}} 
+float \mbox{\hyperlink{classpepr3d_1_1_text_editor_ab8655ad98860f317999f61e16eaf28cf}{m\+Text\+Rotation}} = 0.f
+\begin{DoxyCompactList}\small\item\em Rotation of text in degrees. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a367eed1983f4cd98bc465206ac2bf6ee}\label{classpepr3d_1_1_text_editor_a367eed1983f4cd98bc465206ac2bf6ee}} 
+const float \mbox{\hyperlink{classpepr3d_1_1_text_editor_a367eed1983f4cd98bc465206ac2bf6ee}{T\+E\+X\+T\+\_\+\+D\+I\+S\+T\+A\+N\+C\+E\+\_\+\+S\+C\+A\+LE}} = 0.\+02f
+\begin{DoxyCompactList}\small\item\em How far should the text preview placed from the model (normalized by model scale) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a84883561e33acc9e2bdf227823cbe505}\label{classpepr3d_1_1_text_editor_a84883561e33acc9e2bdf227823cbe505}} 
+std\+::vector$<$ std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_font_rasterizer_1_1_tri}{Font\+Rasterizer\+::\+Tri}} $>$ $>$ {\bfseries m\+Triangulated\+Text}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_text_editor_a694e71b4b9124a567257054b7af14c59}\label{classpepr3d_1_1_text_editor_a694e71b4b9124a567257054b7af14c59}} 
+std\+::vector$<$ std\+::vector$<$ \mbox{\hyperlink{structpepr3d_1_1_font_rasterizer_1_1_tri}{Font\+Rasterizer\+::\+Tri}} $>$ $>$ {\bfseries m\+Rendered\+Text}
 \end{DoxyCompactItemize}
 
 
-The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\subsection{Detailed Description}
+A tool used for painting texts on a model. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Text\+Editor.\+h\end{DoxyCompactItemize}
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Text\+Editor.\+h\item 
+D\+:/\+Home/\+M\+F\+F/1-\/\+Mgr/projekt/pepr3d/src/tools/Text\+Editor.\+cpp\end{DoxyCompactItemize}

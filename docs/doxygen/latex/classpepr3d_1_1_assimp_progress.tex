@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_assimp_progress}{}\section{pepr3d\+::Assimp\+Progress$<$ Progress $>$ Class Template Reference}
 \label{classpepr3d_1_1_assimp_progress}\index{pepr3d::AssimpProgress$<$ Progress $>$@{pepr3d::AssimpProgress$<$ Progress $>$}}
+
+
+Represents a progress of importing/exporting a model via Assimp.  
+
+
+
+
+{\ttfamily \#include $<$Assimp\+Progress.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Assimp\+Progress$<$ Progress $>$\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -13,8 +22,8 @@ Inheritance diagram for pepr3d\+::Assimp\+Progress$<$ Progress $>$\+:\begin{figu
 {\bfseries Assimp\+Progress} (Progress $\ast$progress)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_assimp_progress_a3cce9ce3f66ff7c1bca017ec0e1caa04}\label{classpepr3d_1_1_assimp_progress_a3cce9ce3f66ff7c1bca017ec0e1caa04}} 
-virtual bool {\bfseries Update} (float percentage=-\/1.f) override
-\end{DoxyCompactItemize}
+virtual bool \mbox{\hyperlink{classpepr3d_1_1_assimp_progress_a3cce9ce3f66ff7c1bca017ec0e1caa04}{Update}} (float percentage=-\/1.f) override
+\begin{DoxyCompactList}\small\item\em Sets the progress to a certain value, usually -\/1 means unknown progress / not started yet, 0 means start of a progress and 1 means finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -22,6 +31,12 @@ virtual bool {\bfseries Update} (float percentage=-\/1.f) override
 Progress $\ast$ {\bfseries m\+Progress}
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Progress$>$\newline
+class pepr3d\+::\+Assimp\+Progress$<$ Progress $>$}
+
+Represents a progress of importing/exporting a model via Assimp. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

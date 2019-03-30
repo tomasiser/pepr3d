@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_information}{}\section{pepr3d\+::Information Class Reference}
 \label{classpepr3d_1_1_information}\index{pepr3d::Information@{pepr3d::Information}}
+
+
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for getting details about the application.  
+
+
+
+
+{\ttfamily \#include $<$Information.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Information\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -10,21 +19,24 @@ Inheritance diagram for pepr3d\+::Information\+:\begin{figure}[H]
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_information_a47a2d35503bb815b00b1af744b756c01}\label{classpepr3d_1_1_information_a47a2d35503bb815b00b1af744b756c01}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_information_a47a2d35503bb815b00b1af744b756c01}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_information_a60e2c3f0fd0426bf321b611f2dd6739c}\label{classpepr3d_1_1_information_a60e2c3f0fd0426bf321b611f2dd6739c}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_information_a60e2c3f0fd0426bf321b611f2dd6739c}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_information_a5520aaebfdfc050b9d637fa04f21b79c}\label{classpepr3d_1_1_information_a5520aaebfdfc050b9d637fa04f21b79c}} 
-virtual std\+::string {\bfseries get\+Description} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_information_a5520aaebfdfc050b9d637fa04f21b79c}{get\+Description}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a description, displayed e.\+g., in a tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_information_ae3de34239571758b64090255ac9cf223}\label{classpepr3d_1_1_information_ae3de34239571758b64090255ac9cf223}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_information_ae3de34239571758b64090255ac9cf223}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_information_aaf1074d0f4f7055de706d8561ce14ed2}\label{classpepr3d_1_1_information_aaf1074d0f4f7055de706d8561ce14ed2}} 
-virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
-\end{DoxyCompactItemize}
+virtual void \mbox{\hyperlink{classpepr3d_1_1_information_aaf1074d0f4f7055de706d8561ce14ed2}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for getting details about the application. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

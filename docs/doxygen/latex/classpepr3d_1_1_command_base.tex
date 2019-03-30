@@ -2,7 +2,7 @@
 \label{classpepr3d_1_1_command_base}\index{pepr3d::CommandBase$<$ Target $>$@{pepr3d::CommandBase$<$ Target $>$}}
 
 
-\mbox{\hyperlink{classpepr3d_1_1_command_base}{Command\+Base}} is a base class for commands representing a single undoable operation.  
+\mbox{\hyperlink{classpepr3d_1_1_command_base}{Command\+Base}} is a base class for commands representing a single undoable operation. The command itself should be an immutable entity, containing only the necessary data to perform the action.  
 
 
 
@@ -52,9 +52,7 @@ const bool {\bfseries m\+Can\+Be\+Joined}
 \subsubsection*{template$<$typename Target$>$\newline
 class pepr3d\+::\+Command\+Base$<$ Target $>$}
 
-\mbox{\hyperlink{classpepr3d_1_1_command_base}{Command\+Base}} is a base class for commands representing a single undoable operation. 
-
-The command itself should be an immutable entity, containing only the necessary data to perform the action. 
+\mbox{\hyperlink{classpepr3d_1_1_command_base}{Command\+Base}} is a base class for commands representing a single undoable operation. The command itself should be an immutable entity, containing only the necessary data to perform the action. 
 
 \subsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classpepr3d_1_1_command_base_aa4644cac610c68ac671fbf04af61186f}\label{classpepr3d_1_1_command_base_aa4644cac610c68ac671fbf04af61186f}} 
@@ -90,7 +88,7 @@ true on successful join
 \end{DoxyReturn}
 
 
-Reimplemented in \mbox{\hyperlink{classpepr3d_1_1_cmd_paint_single_color_a99945a65b5efae3151ebdbae619f3eed}{pepr3d\+::\+Cmd\+Paint\+Single\+Color}}, \mbox{\hyperlink{classpepr3d_1_1_cmd_paint_brush_a05e6c87b7cd47b72150e05f2ee584ee8}{pepr3d\+::\+Cmd\+Paint\+Brush}}, and \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_change_color_a0c77133a022d16d1aa55ba477dade531}{pepr3d\+::\+Cmd\+Color\+Manager\+Change\+Color}}.
+Reimplemented in \mbox{\hyperlink{classpepr3d_1_1_cmd_paint_brush_a05e6c87b7cd47b72150e05f2ee584ee8}{pepr3d\+::\+Cmd\+Paint\+Brush}}, \mbox{\hyperlink{classpepr3d_1_1_cmd_paint_single_color_a99945a65b5efae3151ebdbae619f3eed}{pepr3d\+::\+Cmd\+Paint\+Single\+Color}}, and \mbox{\hyperlink{classpepr3d_1_1_cmd_color_manager_change_color_a0c77133a022d16d1aa55ba477dade531}{pepr3d\+::\+Cmd\+Color\+Manager\+Change\+Color}}.
 
 
 

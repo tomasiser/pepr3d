@@ -1,66 +1,81 @@
 \hypertarget{classpepr3d_1_1_tool}{}\section{pepr3d\+::Tool Class Reference}
 \label{classpepr3d_1_1_tool}\index{pepr3d::Tool@{pepr3d::Tool}}
+
+
+A base class of all tools that the user can select and manipulate the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} and application with them.  
+
+
+
+
+{\ttfamily \#include $<$Tool.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Tool\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=11.000000cm]{classpepr3d_1_1_tool}
+\includegraphics[height=12.000000cm]{classpepr3d_1_1_tool}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a5706faac1c122203317c60b3eb231d1a}\label{classpepr3d_1_1_tool_a5706faac1c122203317c60b3eb231d1a}} 
-virtual std\+::string {\bfseries get\+Name} () const =0
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_tool_a5706faac1c122203317c60b3eb231d1a}{get\+Name}} () const =0
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a331bbb48707ea07c472b7634b02e1a18}\label{classpepr3d_1_1_tool_a331bbb48707ea07c472b7634b02e1a18}} 
-virtual std\+::string {\bfseries get\+Description} () const
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_tool_a331bbb48707ea07c472b7634b02e1a18}{get\+Description}} () const
+\begin{DoxyCompactList}\small\item\em Returns a description, displayed e.\+g., in a tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a2b3b7279f6a942a99c11c9495b3a3d84}\label{classpepr3d_1_1_tool_a2b3b7279f6a942a99c11c9495b3a3d84}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_tool_a2b3b7279f6a942a99c11c9495b3a3d84}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a068b3420aff7edd507e3348c6d83c383}\label{classpepr3d_1_1_tool_a068b3420aff7edd507e3348c6d83c383}} 
-virtual std\+::string {\bfseries get\+Icon} () const =0
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_tool_a068b3420aff7edd507e3348c6d83c383}{get\+Icon}} () const =0
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_aae323508b6d824047abc981e10a42c0f}\label{classpepr3d_1_1_tool_aae323508b6d824047abc981e10a42c0f}} 
-virtual bool {\bfseries is\+Enabled} () const
-\item 
+virtual bool \mbox{\hyperlink{classpepr3d_1_1_tool_aae323508b6d824047abc981e10a42c0f}{is\+Enabled}} () const
+\begin{DoxyCompactList}\small\item\em Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a07eac1be4dee577eec8c865390e8277d}\label{classpepr3d_1_1_tool_a07eac1be4dee577eec8c865390e8277d}} 
-virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_a07eac1be4dee577eec8c865390e8277d}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane)
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a7278925cff7d0da94e54f9bca201bda7}\label{classpepr3d_1_1_tool_a7278925cff7d0da94e54f9bca201bda7}} 
-virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_a7278925cff7d0da94e54f9bca201bda7}{draw\+To\+Model\+View}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_aaa49ecd05152b869571601c7741fc5ca}\label{classpepr3d_1_1_tool_aaa49ecd05152b869571601c7741fc5ca}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_aaa49ecd05152b869571601c7741fc5ca}{on\+Model\+View\+Mouse\+Down}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users presses a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a56cc05810dfb90d78b0c1388f710a445}\label{classpepr3d_1_1_tool_a56cc05810dfb90d78b0c1388f710a445}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Drag} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_a56cc05810dfb90d78b0c1388f710a445}{on\+Model\+View\+Mouse\+Drag}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users drags a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a3d6d4e593753eba998b2a6d6fb49c5af}\label{classpepr3d_1_1_tool_a3d6d4e593753eba998b2a6d6fb49c5af}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Up} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_a3d6d4e593753eba998b2a6d6fb49c5af}{on\+Model\+View\+Mouse\+Up}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users releases a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_aa1aae7ecebb6d2e63dfa61d08ff022ae}\label{classpepr3d_1_1_tool_aa1aae7ecebb6d2e63dfa61d08ff022ae}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Wheel} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_aa1aae7ecebb6d2e63dfa61d08ff022ae}{on\+Model\+View\+Mouse\+Wheel}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users scrolls mouse wheel over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a25a3db1cbb37241f473e009ac702d867}\label{classpepr3d_1_1_tool_a25a3db1cbb37241f473e009ac702d867}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_a25a3db1cbb37241f473e009ac702d867}{on\+Model\+View\+Mouse\+Move}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event)
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users moves mouse cursor over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. Note\+: This method is not called when the user is dragging the mouse! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a139c1e72bd9eada36ce660e1fbf10c6b}\label{classpepr3d_1_1_tool_a139c1e72bd9eada36ce660e1fbf10c6b}} 
-virtual void {\bfseries on\+Tool\+Select} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_a139c1e72bd9eada36ce660e1fbf10c6b}{on\+Tool\+Select}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\begin{DoxyCompactList}\small\item\em Called on a \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after user selects it. Note\+: It may also be called when a user selects the same tool again! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_aafba698d859abbc2b1dc48a38ca24d36}\label{classpepr3d_1_1_tool_aafba698d859abbc2b1dc48a38ca24d36}} 
-virtual void {\bfseries on\+Tool\+Deselect} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_aafba698d859abbc2b1dc48a38ca24d36}{on\+Tool\+Deselect}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\begin{DoxyCompactList}\small\item\em Called on a \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after user selects another tool. Note\+: It may also be called when a user selects the same tool again! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_ac94e48ba121b7f4e4bf897de871ad479}\label{classpepr3d_1_1_tool_ac94e48ba121b7f4e4bf897de871ad479}} 
-virtual void {\bfseries on\+New\+Geometry\+Loaded} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_tool_ac94e48ba121b7f4e4bf897de871ad479}{on\+New\+Geometry\+Loaded}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View)
+\begin{DoxyCompactList}\small\item\em Called on E\+V\+E\+RY \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after a new \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} is loaded or imported. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a2420df1e8a95c66a882a923158084020}\label{classpepr3d_1_1_tool_a2420df1e8a95c66a882a923158084020}} 
-virtual std\+::optional$<$ std\+::size\+\_\+t $>$ {\bfseries safe\+Intersect\+Mesh} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application, const ci\+::\+Ray ray) final
-\item 
+virtual std\+::optional$<$ std\+::size\+\_\+t $>$ \mbox{\hyperlink{classpepr3d_1_1_tool_a2420df1e8a95c66a882a923158084020}{safe\+Intersect\+Mesh}} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application, const ci\+::\+Ray ray) final
+\begin{DoxyCompactList}\small\item\em Returns an optional intersection (an index of a triangle) of a ci\+::\+Ray with current \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. This method is safe and if an exception occurs, an error dialog is automatically shown. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_tool_a2645ac765f26cbda2ab9c818a362912f}\label{classpepr3d_1_1_tool_a2645ac765f26cbda2ab9c818a362912f}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$ {\bfseries safe\+Intersect\+Detailed\+Mesh} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application, const ci\+::\+Ray ray) final
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}} $>$ \mbox{\hyperlink{classpepr3d_1_1_tool_a2645ac765f26cbda2ab9c818a362912f}{safe\+Intersect\+Detailed\+Mesh}} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application, const ci\+::\+Ray ray) final
+\begin{DoxyCompactList}\small\item\em Returns an optional intersection (\mbox{\hyperlink{structpepr3d_1_1_detailed_triangle_id}{Detailed\+Triangle\+Id}}) of a ci\+::\+Ray with current \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}}. This method is safe and if an exception occurs, an error dialog is automatically shown. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classpepr3d_1_1_tool_aff4584fe20f552ae3b7814ecab423768}\label{classpepr3d_1_1_tool_aff4584fe20f552ae3b7814ecab423768}} 
+virtual bool {\bfseries safe\+Compute\+Sdf} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&main\+Application) final
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+A base class of all tools that the user can select and manipulate the \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} and application with them. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

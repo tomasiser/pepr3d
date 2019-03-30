@@ -96,6 +96,11 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_dialog.html','');});
 <div class="title">pepr3d::Dialog Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents a modal dialog shown to a user in the user interface in front of everything else.  
+ <a href="classpepr3d_1_1_dialog.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_dialog_8h_source.html">Dialog.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -103,22 +108,28 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Dialog</b> (DialogType type, const std::string &amp;caption, const std::string &amp;message=&quot;&quot;, const std::string &amp;acceptButton=&quot;Continue&quot;)</td></tr>
 <tr class="separator:a76e84fe63c48e1598340732b4973e051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45181133f311f1f19c30242b18d69e74"><td class="memItemLeft" align="right" valign="top"><a id="a45181133f311f1f19c30242b18d69e74"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>draw</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_dialog.html#a45181133f311f1f19c30242b18d69e74">draw</a> () const</td></tr>
+<tr class="memdesc:a45181133f311f1f19c30242b18d69e74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the dialog and returns true if the confirmation button was pressed. <br /></td></tr>
 <tr class="separator:a45181133f311f1f19c30242b18d69e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3634fe3a89e32eeb2758cabf556e8f86"><td class="memItemLeft" align="right" valign="top"><a id="a3634fe3a89e32eeb2758cabf556e8f86"></a>
-DialogType&#160;</td><td class="memItemRight" valign="bottom"><b>getType</b> () const</td></tr>
+DialogType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_dialog.html#a3634fe3a89e32eeb2758cabf556e8f86">getType</a> () const</td></tr>
+<tr class="memdesc:a3634fe3a89e32eeb2758cabf556e8f86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns DialogType of this dialog. <br /></td></tr>
 <tr class="separator:a3634fe3a89e32eeb2758cabf556e8f86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a176eac0bbf832b8688ebbd9f62c75bc0"><td class="memItemLeft" align="right" valign="top"><a id="a176eac0bbf832b8688ebbd9f62c75bc0"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getCaption</b> () const</td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_dialog.html#a176eac0bbf832b8688ebbd9f62c75bc0">getCaption</a> () const</td></tr>
+<tr class="memdesc:a176eac0bbf832b8688ebbd9f62c75bc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the caption (title) of this dialog. <br /></td></tr>
 <tr class="separator:a176eac0bbf832b8688ebbd9f62c75bc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae355e45bb6a9d50ddaa2e83b16ae45e2"><td class="memItemLeft" align="right" valign="top"><a id="ae355e45bb6a9d50ddaa2e83b16ae45e2"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getMessage</b> () const</td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_dialog.html#ae355e45bb6a9d50ddaa2e83b16ae45e2">getMessage</a> () const</td></tr>
+<tr class="memdesc:ae355e45bb6a9d50ddaa2e83b16ae45e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the message (description) of this dialog. <br /></td></tr>
 <tr class="separator:ae355e45bb6a9d50ddaa2e83b16ae45e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d81c6ce2dad14e34ebdb553e84023b4"><td class="memItemLeft" align="right" valign="top"><a id="a5d81c6ce2dad14e34ebdb553e84023b4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;</b> (const <a class="el" href="classpepr3d_1_1_dialog.html">Dialog</a> &amp;dialog) const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_dialog.html#a5d81c6ce2dad14e34ebdb553e84023b4">operator&lt;</a> (const <a class="el" href="classpepr3d_1_1_dialog.html">Dialog</a> &amp;dialog) const</td></tr>
+<tr class="memdesc:a5d81c6ce2dad14e34ebdb553e84023b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares another <a class="el" href="classpepr3d_1_1_dialog.html" title="Represents a modal dialog shown to a user in the user interface in front of everything else.">Dialog</a> to this one based on their DialogType. <br /></td></tr>
 <tr class="separator:a5d81c6ce2dad14e34ebdb553e84023b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e8161d42cbe0d944c17a3654c488b9a"><td class="memItemLeft" align="right" valign="top"><a id="a6e8161d42cbe0d944c17a3654c488b9a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isFatalError</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_dialog.html#a6e8161d42cbe0d944c17a3654c488b9a">isFatalError</a> () const</td></tr>
+<tr class="memdesc:a6e8161d42cbe0d944c17a3654c488b9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this is a DialogType::FatalError dialog. <br /></td></tr>
 <tr class="separator:a6e8161d42cbe0d944c17a3654c488b9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -136,7 +147,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>mMessage</b></
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>mAcceptButton</b></td></tr>
 <tr class="separator:a3676a0eaba149cbd1a5b611ca10360e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Represents a modal dialog shown to a user in the user interface in front of everything else. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/<a class="el" href="_dialog_8h_source.html">Dialog.h</a></li>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/Dialog.cpp</li>
 </ul>

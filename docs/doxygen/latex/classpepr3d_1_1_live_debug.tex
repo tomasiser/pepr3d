@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_live_debug}{}\section{pepr3d\+::Live\+Debug Class Reference}
 \label{classpepr3d_1_1_live_debug}\index{pepr3d::LiveDebug@{pepr3d::LiveDebug}}
+
+
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for real-\/time debugging purposes.  
+
+
+
+
+{\ttfamily \#include $<$Live\+Debug.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Live\+Debug\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -13,23 +22,23 @@ Inheritance diagram for pepr3d\+::Live\+Debug\+:\begin{figure}[H]
 {\bfseries Live\+Debug} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_live_debug_a420f10c060c4c5eb9bcef32353938809}\label{classpepr3d_1_1_live_debug_a420f10c060c4c5eb9bcef32353938809}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_live_debug_a420f10c060c4c5eb9bcef32353938809}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_live_debug_acf1c75d3b573f28aef50e9073fa482da}\label{classpepr3d_1_1_live_debug_acf1c75d3b573f28aef50e9073fa482da}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_live_debug_acf1c75d3b573f28aef50e9073fa482da}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_live_debug_ab2ea7bc2137e9b18f3f138d47b793ebb}\label{classpepr3d_1_1_live_debug_ab2ea7bc2137e9b18f3f138d47b793ebb}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_live_debug_ab2ea7bc2137e9b18f3f138d47b793ebb}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_live_debug_a310f31d348b9437ff1c04e9ca830054d}\label{classpepr3d_1_1_live_debug_a310f31d348b9437ff1c04e9ca830054d}} 
-virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_live_debug_a310f31d348b9437ff1c04e9ca830054d}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_live_debug_a52a05193e6b6a9d4f112af81be3d6683}\label{classpepr3d_1_1_live_debug_a52a05193e6b6a9d4f112af81be3d6683}} 
-virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_live_debug_a52a05193e6b6a9d4f112af81be3d6683}{draw\+To\+Model\+View}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_live_debug_aaef30c7f133d6d4c9400add728cacbe5}\label{classpepr3d_1_1_live_debug_aaef30c7f133d6d4c9400add728cacbe5}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\end{DoxyCompactItemize}
+virtual void \mbox{\hyperlink{classpepr3d_1_1_live_debug_aaef30c7f133d6d4c9400add728cacbe5}{on\+Model\+View\+Mouse\+Move}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users moves mouse cursor over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. Note\+: This method is not called when the user is dragging the mouse! \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -47,8 +56,17 @@ glm\+::ivec2 {\bfseries m\+Mouse\+Pos}
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_live_debug_a2e9c2ebd4834ed6d6ee27a30ea6216b7}\label{classpepr3d_1_1_live_debug_a2e9c2ebd4834ed6d6ee27a30ea6216b7}} 
 std\+::optional$<$ std\+::size\+\_\+t $>$ {\bfseries m\+Triangle\+Under\+Ray} \{\}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a9ccf555f71724262cf5f49ff8d765cab}\label{classpepr3d_1_1_live_debug_a9ccf555f71724262cf5f49ff8d765cab}} 
+std\+::vector$<$ std\+::size\+\_\+t $>$ {\bfseries m\+Triangles\+In\+Radius}
+\item 
+\mbox{\Hypertarget{classpepr3d_1_1_live_debug_a01d11e4cfd58c1805813133e9b761d59}\label{classpepr3d_1_1_live_debug_a01d11e4cfd58c1805813133e9b761d59}} 
+float {\bfseries m\+Squared\+Radius} = 0.\+1f
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for real-\/time debugging purposes. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

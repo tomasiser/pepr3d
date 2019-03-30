@@ -96,13 +96,18 @@ $(document).ready(function(){initNavTree('classpepr3d_1_1_display_options.html',
 <div class="title">pepr3d::DisplayOptions Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> used to adjust how the model is displayed.  
+ <a href="classpepr3d_1_1_display_options.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_display_options_8h_source.html">DisplayOptions.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for pepr3d::DisplayOptions:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classpepr3d_1_1_display_options.png" usemap="#pepr3d::DisplayOptions_map" alt=""/>
   <map id="pepr3d::DisplayOptions_map" name="pepr3d::DisplayOptions_map">
-<area href="classpepr3d_1_1_tool.html" alt="pepr3d::Tool" shape="rect" coords="0,0,143,24"/>
+<area href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t..." alt="pepr3d::Tool" shape="rect" coords="0,0,143,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -112,57 +117,77 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>DisplayOptions</b> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;app)</td></tr>
 <tr class="separator:a139425e33e4e1ba7b85aae7ea288e926"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa743b8c99fcabb4603c1d8c3357020f6"><td class="memItemLeft" align="right" valign="top"><a id="aa743b8c99fcabb4603c1d8c3357020f6"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getName</b> () const override</td></tr>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_display_options.html#aa743b8c99fcabb4603c1d8c3357020f6">getName</a> () const override</td></tr>
+<tr class="memdesc:aa743b8c99fcabb4603c1d8c3357020f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a short name, displayed e.g., in a side pane and tooltip. <br /></td></tr>
 <tr class="separator:aa743b8c99fcabb4603c1d8c3357020f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa68e8ddd00436caf8f3b5d4cab81f4cd"><td class="memItemLeft" align="right" valign="top"><a id="aa68e8ddd00436caf8f3b5d4cab81f4cd"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getDescription</b> () const override</td></tr>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_display_options.html#aa68e8ddd00436caf8f3b5d4cab81f4cd">getDescription</a> () const override</td></tr>
+<tr class="memdesc:aa68e8ddd00436caf8f3b5d4cab81f4cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a description, displayed e.g., in a tooltip. <br /></td></tr>
 <tr class="separator:aa68e8ddd00436caf8f3b5d4cab81f4cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad81f1aa914b4b7f513d4d01995c4d60e"><td class="memItemLeft" align="right" valign="top"><a id="ad81f1aa914b4b7f513d4d01995c4d60e"></a>
-virtual std::optional&lt; <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getHotkey</b> (const <a class="el" href="classpepr3d_1_1_hotkeys.html">Hotkeys</a> &amp;hotkeys) const override</td></tr>
+virtual std::optional&lt; <a class="el" href="structpepr3d_1_1_hotkey.html">Hotkey</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_display_options.html#ad81f1aa914b4b7f513d4d01995c4d60e">getHotkey</a> (const <a class="el" href="classpepr3d_1_1_hotkeys.html">Hotkeys</a> &amp;hotkeys) const override</td></tr>
+<tr class="memdesc:ad81f1aa914b4b7f513d4d01995c4d60e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an associated <a class="el" href="structpepr3d_1_1_hotkey.html" title="A hotkey, i.e., a keycode and modifiers (Ctrl)">Hotkey</a> or an empty value. Use hotkeys.findHotkey() method. <br /></td></tr>
 <tr class="separator:ad81f1aa914b4b7f513d4d01995c4d60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f1a481272d7ebcc96c32937027be68c"><td class="memItemLeft" align="right" valign="top"><a id="a8f1a481272d7ebcc96c32937027be68c"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getIcon</b> () const override</td></tr>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_display_options.html#a8f1a481272d7ebcc96c32937027be68c">getIcon</a> () const override</td></tr>
+<tr class="memdesc:a8f1a481272d7ebcc96c32937027be68c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a UTF-8 icon from an icon font. <br /></td></tr>
 <tr class="separator:a8f1a481272d7ebcc96c32937027be68c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a403d402fdd5fdfcdcc24a206b9f1ef66"><td class="memItemLeft" align="right" valign="top"><a id="a403d402fdd5fdfcdcc24a206b9f1ef66"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>drawToSidePane</b> (<a class="el" href="classpepr3d_1_1_side_pane.html">SidePane</a> &amp;sidePane) override</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_display_options.html#a403d402fdd5fdfcdcc24a206b9f1ef66">drawToSidePane</a> (<a class="el" href="classpepr3d_1_1_side_pane.html">SidePane</a> &amp;sidePane) override</td></tr>
+<tr class="memdesc:a403d402fdd5fdfcdcc24a206b9f1ef66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called every frame on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a>. Draw to <a class="el" href="classpepr3d_1_1_side_pane.html" title="Right side of the user interface that displays options of the currently selected tool.">SidePane</a> from inside this method. <br /></td></tr>
 <tr class="separator:a403d402fdd5fdfcdcc24a206b9f1ef66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classpepr3d_1_1_tool"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classpepr3d_1_1_tool')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classpepr3d_1_1_tool.html">pepr3d::Tool</a></td></tr>
 <tr class="memitem:aae323508b6d824047abc981e10a42c0f inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="aae323508b6d824047abc981e10a42c0f"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>isEnabled</b> () const</td></tr>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#aae323508b6d824047abc981e10a42c0f">isEnabled</a> () const</td></tr>
+<tr class="memdesc:aae323508b6d824047abc981e10a42c0f inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! <br /></td></tr>
 <tr class="separator:aae323508b6d824047abc981e10a42c0f inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7278925cff7d0da94e54f9bca201bda7 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a7278925cff7d0da94e54f9bca201bda7"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>drawToModelView</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a7278925cff7d0da94e54f9bca201bda7">drawToModelView</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+<tr class="memdesc:a7278925cff7d0da94e54f9bca201bda7 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called every frame on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a>. Draw to <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a> from inside this method. <br /></td></tr>
 <tr class="separator:a7278925cff7d0da94e54f9bca201bda7 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa49ecd05152b869571601c7741fc5ca inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="aaa49ecd05152b869571601c7741fc5ca"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onModelViewMouseDown</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#aaa49ecd05152b869571601c7741fc5ca">onModelViewMouseDown</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:aaa49ecd05152b869571601c7741fc5ca inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> when users presses a mouse button over a <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. <br /></td></tr>
 <tr class="separator:aaa49ecd05152b869571601c7741fc5ca inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56cc05810dfb90d78b0c1388f710a445 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a56cc05810dfb90d78b0c1388f710a445"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onModelViewMouseDrag</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a56cc05810dfb90d78b0c1388f710a445">onModelViewMouseDrag</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:a56cc05810dfb90d78b0c1388f710a445 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> when users drags a mouse button over a <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. <br /></td></tr>
 <tr class="separator:a56cc05810dfb90d78b0c1388f710a445 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d6d4e593753eba998b2a6d6fb49c5af inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a3d6d4e593753eba998b2a6d6fb49c5af"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onModelViewMouseUp</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a3d6d4e593753eba998b2a6d6fb49c5af">onModelViewMouseUp</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:a3d6d4e593753eba998b2a6d6fb49c5af inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> when users releases a mouse button over a <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. <br /></td></tr>
 <tr class="separator:a3d6d4e593753eba998b2a6d6fb49c5af inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1aae7ecebb6d2e63dfa61d08ff022ae inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="aa1aae7ecebb6d2e63dfa61d08ff022ae"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onModelViewMouseWheel</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#aa1aae7ecebb6d2e63dfa61d08ff022ae">onModelViewMouseWheel</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:aa1aae7ecebb6d2e63dfa61d08ff022ae inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> when users scrolls mouse wheel over a <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. <br /></td></tr>
 <tr class="separator:aa1aae7ecebb6d2e63dfa61d08ff022ae inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25a3db1cbb37241f473e009ac702d867 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a25a3db1cbb37241f473e009ac702d867"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onModelViewMouseMove</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a25a3db1cbb37241f473e009ac702d867">onModelViewMouseMove</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
+<tr class="memdesc:a25a3db1cbb37241f473e009ac702d867 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> when users moves mouse cursor over a <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. Note: This method is not called when the user is dragging the mouse! <br /></td></tr>
 <tr class="separator:a25a3db1cbb37241f473e009ac702d867 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a139c1e72bd9eada36ce660e1fbf10c6b inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a139c1e72bd9eada36ce660e1fbf10c6b"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onToolSelect</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a139c1e72bd9eada36ce660e1fbf10c6b">onToolSelect</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+<tr class="memdesc:a139c1e72bd9eada36ce660e1fbf10c6b inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> right after user selects it. Note: It may also be called when a user selects the same tool again! <br /></td></tr>
 <tr class="separator:a139c1e72bd9eada36ce660e1fbf10c6b inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafba698d859abbc2b1dc48a38ca24d36 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="aafba698d859abbc2b1dc48a38ca24d36"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onToolDeselect</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#aafba698d859abbc2b1dc48a38ca24d36">onToolDeselect</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+<tr class="memdesc:aafba698d859abbc2b1dc48a38ca24d36 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> right after user selects another tool. Note: It may also be called when a user selects the same tool again! <br /></td></tr>
 <tr class="separator:aafba698d859abbc2b1dc48a38ca24d36 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac94e48ba121b7f4e4bf897de871ad479 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="ac94e48ba121b7f4e4bf897de871ad479"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onNewGeometryLoaded</b> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#ac94e48ba121b7f4e4bf897de871ad479">onNewGeometryLoaded</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView)</td></tr>
+<tr class="memdesc:ac94e48ba121b7f4e4bf897de871ad479 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on EVERY <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> right after a new <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a> is loaded or imported. <br /></td></tr>
 <tr class="separator:ac94e48ba121b7f4e4bf897de871ad479 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2420df1e8a95c66a882a923158084020 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a2420df1e8a95c66a882a923158084020"></a>
-virtual std::optional&lt; std::size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>safeIntersectMesh</b> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;mainApplication, const ci::Ray ray) final</td></tr>
+virtual std::optional&lt; std::size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a2420df1e8a95c66a882a923158084020">safeIntersectMesh</a> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;mainApplication, const ci::Ray ray) final</td></tr>
+<tr class="memdesc:a2420df1e8a95c66a882a923158084020 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an optional intersection (an index of a triangle) of a ci::Ray with current <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a>. This method is safe and if an exception occurs, an error dialog is automatically shown. <br /></td></tr>
 <tr class="separator:a2420df1e8a95c66a882a923158084020 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2645ac765f26cbda2ab9c818a362912f inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a2645ac765f26cbda2ab9c818a362912f"></a>
-virtual std::optional&lt; <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>safeIntersectDetailedMesh</b> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;mainApplication, const ci::Ray ray) final</td></tr>
+virtual std::optional&lt; <a class="el" href="structpepr3d_1_1_detailed_triangle_id.html">DetailedTriangleId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a2645ac765f26cbda2ab9c818a362912f">safeIntersectDetailedMesh</a> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;mainApplication, const ci::Ray ray) final</td></tr>
+<tr class="memdesc:a2645ac765f26cbda2ab9c818a362912f inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an optional intersection (<a class="el" href="structpepr3d_1_1_detailed_triangle_id.html" title="Triangle ID in all detailed triangles Face index in mMeshDetailed faces;.">DetailedTriangleId</a>) of a ci::Ray with current <a class="el" href="classpepr3d_1_1_geometry.html" title="The whole geometry of a model that the user is painting.">Geometry</a>. This method is safe and if an exception occurs, an error dialog is automatically shown. <br /></td></tr>
 <tr class="separator:a2645ac765f26cbda2ab9c818a362912f inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff4584fe20f552ae3b7814ecab423768 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="aff4584fe20f552ae3b7814ecab423768"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>safeComputeSdf</b> (<a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;mainApplication) final</td></tr>
+<tr class="separator:aff4584fe20f552ae3b7814ecab423768 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -170,7 +195,9 @@ Private Attributes</h2></td></tr>
 <a class="el" href="classpepr3d_1_1_main_application.html">MainApplication</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mApplication</b></td></tr>
 <tr class="separator:ae51e9da0c45d0fee1aac00df4bc5f313"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> used to adjust how the model is displayed. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/<a class="el" href="_display_options_8h_source.html">DisplayOptions.h</a></li>
 <li>D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/DisplayOptions.cpp</li>
 </ul>

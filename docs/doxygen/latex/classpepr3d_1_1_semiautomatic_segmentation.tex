@@ -1,5 +1,14 @@
 \hypertarget{classpepr3d_1_1_semiautomatic_segmentation}{}\section{pepr3d\+::Semiautomatic\+Segmentation Class Reference}
 \label{classpepr3d_1_1_semiautomatic_segmentation}\index{pepr3d::SemiautomaticSegmentation@{pepr3d::SemiautomaticSegmentation}}
+
+
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for manually expanding specified regions to create a segmentation of the model.  
+
+
+
+
+{\ttfamily \#include $<$Semiautomatic\+Segmentation.\+h$>$}
+
 Inheritance diagram for pepr3d\+::Semiautomatic\+Segmentation\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -10,9 +19,9 @@ Inheritance diagram for pepr3d\+::Semiautomatic\+Segmentation\+:\begin{figure}[H
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping}{Normal\+Stopping}}
-\item 
+\begin{DoxyCompactList}\small\item\em A segmentation criterion that stops when angles of normals are too different. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structpepr3d_1_1_semiautomatic_segmentation_1_1_s_d_f_stopping}{S\+D\+F\+Stopping}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em A segmentation criterion that stops when S\+DF values are too different. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -20,41 +29,41 @@ struct \mbox{\hyperlink{structpepr3d_1_1_semiautomatic_segmentation_1_1_s_d_f_st
 {\bfseries Semiautomatic\+Segmentation} (\mbox{\hyperlink{classpepr3d_1_1_main_application}{Main\+Application}} \&app)
 \item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a2c30b8fe02de8112fc4295ba78d29077}\label{classpepr3d_1_1_semiautomatic_segmentation_a2c30b8fe02de8112fc4295ba78d29077}} 
-virtual std\+::string {\bfseries get\+Name} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_a2c30b8fe02de8112fc4295ba78d29077}{get\+Name}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a short name, displayed e.\+g., in a side pane and tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a181a28ad82f889489264ad75e3d41e6e}\label{classpepr3d_1_1_semiautomatic_segmentation_a181a28ad82f889489264ad75e3d41e6e}} 
-virtual std\+::string {\bfseries get\+Description} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_a181a28ad82f889489264ad75e3d41e6e}{get\+Description}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a description, displayed e.\+g., in a tooltip. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_ac660a9823195bf2d3df1066b177fc1d8}\label{classpepr3d_1_1_semiautomatic_segmentation_ac660a9823195bf2d3df1066b177fc1d8}} 
-virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ {\bfseries get\+Hotkey} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
-\item 
+virtual std\+::optional$<$ \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} $>$ \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_ac660a9823195bf2d3df1066b177fc1d8}{get\+Hotkey}} (const \mbox{\hyperlink{classpepr3d_1_1_hotkeys}{Hotkeys}} \&hotkeys) const override
+\begin{DoxyCompactList}\small\item\em Returns an associated \mbox{\hyperlink{structpepr3d_1_1_hotkey}{Hotkey}} or an empty value. Use hotkeys.\+find\+Hotkey() method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_aa3fb6ca454b5ef25a2efacc957fdaff8}\label{classpepr3d_1_1_semiautomatic_segmentation_aa3fb6ca454b5ef25a2efacc957fdaff8}} 
-virtual std\+::string {\bfseries get\+Icon} () const override
-\item 
+virtual std\+::string \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_aa3fb6ca454b5ef25a2efacc957fdaff8}{get\+Icon}} () const override
+\begin{DoxyCompactList}\small\item\em Returns a U\+T\+F-\/8 icon from an icon font. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a74f11046c9fe827f6be119bd6306fa0f}\label{classpepr3d_1_1_semiautomatic_segmentation_a74f11046c9fe827f6be119bd6306fa0f}} 
-virtual void {\bfseries draw\+To\+Side\+Pane} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_a74f11046c9fe827f6be119bd6306fa0f}{draw\+To\+Side\+Pane}} (\mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} \&side\+Pane) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_side_pane}{Side\+Pane}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a138b0b37e305c4a8d0dd4b89d7303c50}\label{classpepr3d_1_1_semiautomatic_segmentation_a138b0b37e305c4a8d0dd4b89d7303c50}} 
-virtual void {\bfseries draw\+To\+Model\+View} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_a138b0b37e305c4a8d0dd4b89d7303c50}{draw\+To\+Model\+View}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called every frame on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}}. Draw to \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} from inside this method. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a4c3f72008481531cc952c9d7957fb928}\label{classpepr3d_1_1_semiautomatic_segmentation_a4c3f72008481531cc952c9d7957fb928}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Down} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_a4c3f72008481531cc952c9d7957fb928}{on\+Model\+View\+Mouse\+Down}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users presses a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a77e201830fcc97742fae904303cbcc01}\label{classpepr3d_1_1_semiautomatic_segmentation_a77e201830fcc97742fae904303cbcc01}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Drag} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_a77e201830fcc97742fae904303cbcc01}{on\+Model\+View\+Mouse\+Drag}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users drags a mouse button over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_afb75b5da63d4444c57f4f75ae1660935}\label{classpepr3d_1_1_semiautomatic_segmentation_afb75b5da63d4444c57f4f75ae1660935}} 
-virtual void {\bfseries on\+Model\+View\+Mouse\+Move} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_afb75b5da63d4444c57f4f75ae1660935}{on\+Model\+View\+Mouse\+Move}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View, ci\+::app\+::\+Mouse\+Event event) override
+\begin{DoxyCompactList}\small\item\em Called on a currently active \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} when users moves mouse cursor over a \mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}}. Note\+: This method is not called when the user is dragging the mouse! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_aa682000b0095bf95a3d67d54977324bc}\label{classpepr3d_1_1_semiautomatic_segmentation_aa682000b0095bf95a3d67d54977324bc}} 
-virtual void {\bfseries on\+New\+Geometry\+Loaded} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_aa682000b0095bf95a3d67d54977324bc}{on\+New\+Geometry\+Loaded}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on E\+V\+E\+RY \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after a new \mbox{\hyperlink{classpepr3d_1_1_geometry}{Geometry}} is loaded or imported. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_aa7992f161194bd23ddff96433819029d}\label{classpepr3d_1_1_semiautomatic_segmentation_aa7992f161194bd23ddff96433819029d}} 
-virtual void {\bfseries on\+Tool\+Deselect} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
-\item 
+virtual void \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_aa7992f161194bd23ddff96433819029d}{on\+Tool\+Deselect}} (\mbox{\hyperlink{classpepr3d_1_1_model_view}{Model\+View}} \&model\+View) override
+\begin{DoxyCompactList}\small\item\em Called on a \mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} right after user selects another tool. Note\+: It may also be called when a user selects the same tool again! \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a5883c42824da8d5adec628e065e317b3}\label{classpepr3d_1_1_semiautomatic_segmentation_a5883c42824da8d5adec628e065e317b3}} 
-virtual bool {\bfseries is\+Enabled} () const override
-\end{DoxyCompactItemize}
+virtual bool \mbox{\hyperlink{classpepr3d_1_1_semiautomatic_segmentation_a5883c42824da8d5adec628e065e317b3}{is\+Enabled}} () const override
+\begin{DoxyCompactList}\small\item\em Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Types}
 \begin{DoxyCompactItemize}
 \item 
@@ -138,6 +147,9 @@ const bool $\ast$ {\bfseries m\+Sdf\+Enabled} = nullptr
 Criteria {\bfseries m\+Criterion\+Used} = Criteria\+::\+S\+DF
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classpepr3d_1_1_tool}{Tool}} used for manually expanding specified regions to create a segmentation of the model. 
 
 \subsection{Member Function Documentation}
 \mbox{\Hypertarget{classpepr3d_1_1_semiautomatic_segmentation_a163c52c9b1e672ba76141923ab87eb0a}\label{classpepr3d_1_1_semiautomatic_segmentation_a163c52c9b1e672ba76141923ab87eb0a}} 
