@@ -112,6 +112,15 @@ We made a simplified API for exactly this purpose that Tools can use when enqueu
 The \texttt{MainApplication} has a templated method \texttt{enqueueSlowOperation} to which we can pass the $F$ and $A$ functions.
 Thread pool and dispatching will be used automatically and a progress indicator will be shown.
 
+\subsection{Preventing race conditions in UI}
+
+Unfortunately, certain operations (e.g., with CGAL) are not thread-safe for the UI even though the UI is read-only when a progress indicator is shown.
+To solve this problem with possible race conditions, we actually render the whole user interface in a frame buffer (off-screen rendering).
+
+If there is no asynchronous progress going on, we simply show this frame buffer on screen and it looks like we are rendering directly to the screen.
+If, however, a progress indicator is active, we pause all UI rendering and processing, we show the cached frame buffer on screen and overlay it with the progress indicator.
+So the indicator is the only part of the UI which is actively rendered, which is thread-safe as the progress relies on \texttt{std::atomic} values.
+
 \subsection{Resources of a minimized or obscured window}
 
 Because Pepr3D runs at a vertically synchronized framerate (typically 60 frames per second), it uses CPU and GPU resources even when minimized or obscured.
