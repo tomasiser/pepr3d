@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_information">
+<title>pepr3d::Information Class Reference</title>
+<indexterm><primary>pepr3d::Information</primary></indexterm>
+<para>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for getting details about the application. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Information.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::Information:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_information.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_information_1a47a2d35503bb815b00b1af744b756c01"/>virtual std::string <link linkend="_classpepr3d_1_1_information_1a47a2d35503bb815b00b1af744b756c01">getName</link> () const override</para>
+
+<para>Returns a short name, displayed e.g., in a side pane and tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_information_1a60e2c3f0fd0426bf321b611f2dd6739c"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> &gt; <link linkend="_classpepr3d_1_1_information_1a60e2c3f0fd0426bf321b611f2dd6739c">getHotkey</link> (const <link linkend="_classpepr3d_1_1_hotkeys">Hotkeys</link> &amp;hotkeys) const override</para>
+
+<para>Returns an associated <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> or an empty value. Use hotkeys.findHotkey() method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_information_1a5520aaebfdfc050b9d637fa04f21b79c"/>virtual std::string <link linkend="_classpepr3d_1_1_information_1a5520aaebfdfc050b9d637fa04f21b79c">getDescription</link> () const override</para>
+
+<para>Returns a description, displayed e.g., in a tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_information_1ae3de34239571758b64090255ac9cf223"/>virtual std::string <link linkend="_classpepr3d_1_1_information_1ae3de34239571758b64090255ac9cf223">getIcon</link> () const override</para>
+
+<para>Returns a UTF-8 icon from an icon font. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_information_1aaf1074d0f4f7055de706d8561ce14ed2"/>virtual void <link linkend="_classpepr3d_1_1_information_1aaf1074d0f4f7055de706d8561ce14ed2">drawToSidePane</link> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> from inside this method. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for getting details about the application. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/Information.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/Information.cpp</section>
+</section>

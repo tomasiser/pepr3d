@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping">
+<title>pepr3d::SemiautomaticSegmentation::NormalStopping Struct Reference</title>
+<indexterm><primary>pepr3d::SemiautomaticSegmentation::NormalStopping</primary></indexterm>
+<para>
+
+<para>A segmentation criterion that stops when angles of normals are too different. </para>
+ 
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping_1a725367fe48e8877e92b84e478dc4609f"/><emphasis role="strong">NormalStopping</emphasis> (const <link linkend="_classpepr3d_1_1_geometry">Geometry</link> *g, const double thresh)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping_1a3c70191daf3fba43f9d76c4eaa8837bb"/>bool <emphasis role="strong">operator()</emphasis> (const size_t a, const size_t b) const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping_1a86816219b14ac1b44d4abacc188d8673"/>const <link linkend="_classpepr3d_1_1_geometry">Geometry</link> * <emphasis role="strong">geo</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping_1a194134abb7e778168aaf77a7f4b36c7c"/>const double <emphasis role="strong">threshold</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>A segmentation criterion that stops when angles of normals are too different. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/SemiautomaticSegmentation.h</section>
+</section>

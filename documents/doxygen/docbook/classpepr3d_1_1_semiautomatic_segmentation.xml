@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_semiautomatic_segmentation">
+<title>pepr3d::SemiautomaticSegmentation Class Reference</title>
+<indexterm><primary>pepr3d::SemiautomaticSegmentation</primary></indexterm>
+<para>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for manually expanding specified regions to create a segmentation of the model. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;SemiautomaticSegmentation.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::SemiautomaticSegmentation:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_semiautomatic_segmentation.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping">NormalStopping</link></para>
+
+<para>A segmentation criterion that stops when angles of normals are too different. </para>
+</listitem>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_semiautomatic_segmentation_1_1_s_d_f_stopping">SDFStopping</link></para>
+
+<para>A segmentation criterion that stops when SDF values are too different. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1ac17cad75cd7d333414c0d5db567026d6"/><emphasis role="strong">SemiautomaticSegmentation</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;app)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a2c30b8fe02de8112fc4295ba78d29077"/>virtual std::string <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a2c30b8fe02de8112fc4295ba78d29077">getName</link> () const override</para>
+
+<para>Returns a short name, displayed e.g., in a side pane and tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a181a28ad82f889489264ad75e3d41e6e"/>virtual std::string <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a181a28ad82f889489264ad75e3d41e6e">getDescription</link> () const override</para>
+
+<para>Returns a description, displayed e.g., in a tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1ac660a9823195bf2d3df1066b177fc1d8"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> &gt; <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1ac660a9823195bf2d3df1066b177fc1d8">getHotkey</link> (const <link linkend="_classpepr3d_1_1_hotkeys">Hotkeys</link> &amp;hotkeys) const override</para>
+
+<para>Returns an associated <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> or an empty value. Use hotkeys.findHotkey() method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1aa3fb6ca454b5ef25a2efacc957fdaff8"/>virtual std::string <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1aa3fb6ca454b5ef25a2efacc957fdaff8">getIcon</link> () const override</para>
+
+<para>Returns a UTF-8 icon from an icon font. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a74f11046c9fe827f6be119bd6306fa0f"/>virtual void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a74f11046c9fe827f6be119bd6306fa0f">drawToSidePane</link> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a138b0b37e305c4a8d0dd4b89d7303c50"/>virtual void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a138b0b37e305c4a8d0dd4b89d7303c50">drawToModelView</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_model_view">ModelView</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a4c3f72008481531cc952c9d7957fb928"/>virtual void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a4c3f72008481531cc952c9d7957fb928">onModelViewMouseDown</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users presses a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a77e201830fcc97742fae904303cbcc01"/>virtual void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a77e201830fcc97742fae904303cbcc01">onModelViewMouseDrag</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users drags a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1afb75b5da63d4444c57f4f75ae1660935"/>virtual void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1afb75b5da63d4444c57f4f75ae1660935">onModelViewMouseMove</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users moves mouse cursor over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. Note: This method is not called when the user is dragging the mouse! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1aa682000b0095bf95a3d67d54977324bc"/>virtual void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1aa682000b0095bf95a3d67d54977324bc">onNewGeometryLoaded</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on EVERY <link linkend="_classpepr3d_1_1_tool">Tool</link> right after a new <link linkend="_classpepr3d_1_1_geometry">Geometry</link> is loaded or imported. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1aa7992f161194bd23ddff96433819029d"/>virtual void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1aa7992f161194bd23ddff96433819029d">onToolDeselect</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on a <link linkend="_classpepr3d_1_1_tool">Tool</link> right after user selects another tool. Note: It may also be called when a user selects the same tool again! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a5883c42824da8d5adec628e065e317b3"/>virtual bool <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a5883c42824da8d5adec628e065e317b3">isEnabled</link> () const override</para>
+
+<para>Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a97a8b6061b26cb4dd67ac14eace1f30b"/>enum <emphasis role="strong">Criteria</emphasis> { <emphasis role="strong">NORMAL</emphasis> = 1, 
+<emphasis role="strong">SDF</emphasis> = 2
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a9e3e327658d9a422cf5e68d14cfa25f0"/>void <emphasis role="strong">reset</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a0a41d3c0fd80854417323e16010f7b67"/>void <emphasis role="strong">setupOverride</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a98d9b835dfb7d5cb98abc6caa1a75f8e"/>void <emphasis role="strong">setTriangleColor</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1ae7a57a2621edd7b2aa30ccf0b313b34f"/>std::unordered_map&lt; std::size_t, std::vector&lt; std::size_t &gt; &gt; <emphasis role="strong">collectTrianglesByColor</emphasis> (const std::unordered_map&lt; std::size_t, std::size_t &gt; &amp;sourceTriangles)</para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_semiautomatic_segmentation_1a163c52c9b1e672ba76141923ab87eb0a">spreadColors</link> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1acbdbc4dfe19c562f9212eded1556f1fd"/>bool <emphasis role="strong">postprocess</emphasis> (const std::unordered_map&lt; std::size_t, std::vector&lt; double &gt;&gt; &amp;sdfValuesPerColor)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a66b87e3be75a6d3becc1e01c6025abb3"/>size_t <emphasis role="strong">findClosestColorFromSDF</emphasis> (const size_t triangle, const size_t color1, const size_t color2, const std::unordered_map&lt; std::size_t, std::vector&lt; double &gt;&gt; &amp;sdfValuesPerColor)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1acbc1de3fdcec0222fffde0c7a4d7c943"/><link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp; <emphasis role="strong">mApplication</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1ada6a7bc61dd887650790d6ab7e124be0"/>std::optional&lt; std::size_t &gt; <emphasis role="strong">mHoveredTriangleId</emphasis> = {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a3dbfdce521caeb15d2a6ff6afe0bfd6c"/>std::unordered_map&lt; std::size_t, std::size_t &gt; <emphasis role="strong">mStartingTriangles</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a0edb6cea56b65770a0198afa0327f95a"/>std::vector&lt; glm::vec4 &gt; <emphasis role="strong">mBackupColorBuffer</emphasis> = {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1aa11a69bd21677ed61f031742bc9f70b9"/>std::unordered_map&lt; std::size_t, std::vector&lt; std::size_t &gt; &gt; <emphasis role="strong">mCurrentColoring</emphasis> = {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a14ee2f3433e625c292873dc40d59ded7"/>float <emphasis role="strong">mBucketSpread</emphasis> = 0.0f</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1abf0842f9b84704f6bd1f573d3cd9d71f"/>float <emphasis role="strong">mBucketSpreadLatest</emphasis> = 0.0f</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1ac5fdb732b042108da0a96fa2376d6f25"/>bool <emphasis role="strong">mRegionOverlap</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a891511ae4a879017f2b41f7ea60ea00d"/>bool <emphasis role="strong">mRegionOverlapLatest</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a36fe1e14da326441541dae71813efcbd"/>bool <emphasis role="strong">mHardEdges</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a6a66c343b795f12b6e0ce2da9348a114"/>bool <emphasis role="strong">mHardEdgesLatest</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a66acd079f9745d4256ab565875a16467"/>bool <emphasis role="strong">mGeometryCorrect</emphasis> = true</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a9241c976815c903667d695474f800ed7"/>bool <emphasis role="strong">mNormalStop</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1aaf38b8e2bd48df516e2dc85bc96255d8"/>bool <emphasis role="strong">mDragging</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a54b1b6bd1dc72e3e2c8705fc40d8bd24"/>const bool * <emphasis role="strong">mSdfEnabled</emphasis> = nullptr</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1aa313797e5f5f5650463d9c5423a5f8a6"/>Criteria <emphasis role="strong">mCriterionUsed</emphasis> = Criteria::SDF</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for manually expanding specified regions to create a segmentation of the model. </para>
+</section>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_classpepr3d_1_1_semiautomatic_segmentation_1a163c52c9b1e672ba76141923ab87eb0a"/>    <section>
+    <title>spreadColors()</title>
+<indexterm><primary>spreadColors</primary><secondary>pepr3d::SemiautomaticSegmentation</secondary></indexterm>
+<indexterm><primary>pepr3d::SemiautomaticSegmentation</primary><secondary>spreadColors</secondary></indexterm>
+<para><computeroutput>void pepr3d::SemiautomaticSegmentation::spreadColors ( )<computeroutput>[private]</computeroutput></computeroutput></para>
+<para>Normal stopping init, uncomment in case we want to include it as a feature </para>
+</section>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/SemiautomaticSegmentation.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/SemiautomaticSegmentation.cpp</section>
+</section>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_settings">
+<title>pepr3d::Settings Class Reference</title>
+<indexterm><primary>pepr3d::Settings</primary></indexterm>
+<para>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for configuring the color palette and application. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Settings.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::Settings:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_settings.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1a32bce083767edda443276c495665a1dc"/><emphasis role="strong">Settings</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;app)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1ab1cb768c5f1d54d9dd58534dd52fee9c"/>virtual std::string <link linkend="_classpepr3d_1_1_settings_1ab1cb768c5f1d54d9dd58534dd52fee9c">getName</link> () const override</para>
+
+<para>Returns a short name, displayed e.g., in a side pane and tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1af12e0a7190ff25d41a51b483ec661962"/>virtual std::string <link linkend="_classpepr3d_1_1_settings_1af12e0a7190ff25d41a51b483ec661962">getDescription</link> () const override</para>
+
+<para>Returns a description, displayed e.g., in a tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1a4146e189ce75f6703e498b85a83701a0"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> &gt; <link linkend="_classpepr3d_1_1_settings_1a4146e189ce75f6703e498b85a83701a0">getHotkey</link> (const <link linkend="_classpepr3d_1_1_hotkeys">Hotkeys</link> &amp;hotkeys) const override</para>
+
+<para>Returns an associated <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> or an empty value. Use hotkeys.findHotkey() method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1ab8db98e9aababb2f7a896d000bfd5069"/>virtual std::string <link linkend="_classpepr3d_1_1_settings_1ab8db98e9aababb2f7a896d000bfd5069">getIcon</link> () const override</para>
+
+<para>Returns a UTF-8 icon from an icon font. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1a69cb0d00220487d9b5d1b3b8844db0a0"/>virtual void <link linkend="_classpepr3d_1_1_settings_1a69cb0d00220487d9b5d1b3b8844db0a0">drawToSidePane</link> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1af1aed4fc1479b60b2cbe20e1d19a79ba"/>void <emphasis role="strong">drawUiSettings</emphasis> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1a0148b73a88a1d78cd0f3d2cf6e029954"/><link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp; <emphasis role="strong">mApplication</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1ab37151c9365505c083401b05171623e2"/><link linkend="_classpepr3d_1_1_side_pane_1_1_category">SidePane::Category</link> <emphasis role="strong">mColorPaletteCategory</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_settings_1a05198990c87d8cfa45a4d26c68aafd0b"/><link linkend="_classpepr3d_1_1_side_pane_1_1_category">SidePane::Category</link> <emphasis role="strong">mUiCategory</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for configuring the color palette and application. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/Settings.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/Settings.cpp</section>
+</section>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">
+<title>pepr3d::ModelExporter::IndexedEdge Struct Reference</title>
+<indexterm><primary>pepr3d::ModelExporter::IndexedEdge</primary></indexterm>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_model_exporter_1_1_indexed_edge_1a96c2ac311bdefbdd05d3d440f6cb7aae"/>unsigned int <emphasis role="strong">tri</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_model_exporter_1_1_indexed_edge_1a6480f84ae4bf23063dcb133b03aac124"/>unsigned int <emphasis role="strong">id1</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_model_exporter_1_1_indexed_edge_1acc7a156af891555d2131eae033e18556"/>unsigned int <emphasis role="strong">id2</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_model_exporter_1_1_indexed_edge_1a696a80a83650f39fe9e12bfee08df746"/>colorIndex <emphasis role="strong">color</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_model_exporter_1_1_indexed_edge_1ac7a7dae103a447d85fa9074a1cd054b7"/>bool <emphasis role="strong">isBoundary</emphasis> = false</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/ModelExporter.h</section>

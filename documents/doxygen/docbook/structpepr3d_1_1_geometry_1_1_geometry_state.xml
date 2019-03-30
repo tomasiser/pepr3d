@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_geometry_1_1_geometry_state">
+<title>pepr3d::Geometry::GeometryState Struct Reference</title>
+<indexterm><primary>pepr3d::Geometry::GeometryState</primary></indexterm>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_geometry_state_1afd1702b2b655b81ee6d9f140893d440c"/>std::vector&lt; <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &gt; <emphasis role="strong">triangles</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_geometry_state_1a097f2aebe0d060076410e6b92edbc152"/>std::map&lt; size_t, <link linkend="_classpepr3d_1_1_triangle_detail">TriangleDetail</link> &gt; <emphasis role="strong">triangleDetails</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_geometry_state_1afee735ce954eea322e684923cc7c0920"/>ColorManager::ColorMap <emphasis role="strong">colorMap</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/Geometry.h</section>

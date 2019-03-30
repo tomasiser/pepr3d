@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_color_manager">
+<title>pepr3d::ColorManager Class Reference</title>
+<indexterm><primary>pepr3d::ColorManager</primary></indexterm>
+<para>
+
+<para>Represents a color palette, i.e., all colors and a selected active color. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;ColorManager.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1adc519f02303d002bbc80e731ef3937eb"/>using <emphasis role="strong">ColorMap</emphasis> = std::vector&lt; glm::vec4 &gt;</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a224a83a4fd10df768ce5463366992fa9"/><emphasis role="strong">ColorManager</emphasis> (const ColorMap::const_iterator start, const ColorMap::const_iterator end)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a50c0362e45843f826984b86b4f5f7bf3"/><emphasis role="strong">ColorManager</emphasis> (const size_t number)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1aa6453cf533bb4bb251203bd599c48321"/>glm::vec4 <link linkend="_classpepr3d_1_1_color_manager_1aa6453cf533bb4bb251203bd599c48321">getColor</link> (const size_t i) const</para>
+
+<para>Return the i-th color. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a136ee5ee62632d6537377fccdc5ef9c6"/>size_t <link linkend="_classpepr3d_1_1_color_manager_1a136ee5ee62632d6537377fccdc5ef9c6">size</link> () const</para>
+
+<para>Returns the number of currently used colors. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a439df566020a7f10221a4e4c3fd36e7d"/>bool <link linkend="_classpepr3d_1_1_color_manager_1a439df566020a7f10221a4e4c3fd36e7d">empty</link> () const</para>
+
+<para>Returns true iff no colors are currently used. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1adb8aeb957d6a1cd5a79ebc0e246f5ca7"/>void <link linkend="_classpepr3d_1_1_color_manager_1adb8aeb957d6a1cd5a79ebc0e246f5ca7">clear</link> ()</para>
+
+<para>Clears all colors and becomes empty. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a5ddc4ed221439f8b744b6d85b89127b3"/>void <link linkend="_classpepr3d_1_1_color_manager_1a5ddc4ed221439f8b744b6d85b89127b3">addColor</link> (const glm::vec4 newColor)</para>
+
+<para>Adds a new color if not above limit. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a3f11321a8da932e4bf9f7d9a83ecc7f1"/>void <link linkend="_classpepr3d_1_1_color_manager_1a3f11321a8da932e4bf9f7d9a83ecc7f1">setColor</link> (const size_t i, const glm::vec4 newColor)</para>
+
+<para>Set the i-th color to a new color. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1add375baf3a503d79d4922dbd360b62af"/>void <link linkend="_classpepr3d_1_1_color_manager_1add375baf3a503d79d4922dbd360b62af">replaceColors</link> (const ColorMap::const_iterator start, const ColorMap::const_iterator end)</para>
+
+<para>Replace the current colors with this list, trims if above limit. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a2393992e48c2c6715ac33cb067d3dc75"/>void <link linkend="_classpepr3d_1_1_color_manager_1a2393992e48c2c6715ac33cb067d3dc75">replaceColors</link> (const ColorMap &amp;newColors)</para>
+
+<para>Replace the current colors with this new vector of colors, trims if above limit. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a3532df102b706a03bc0e23401c457e4f"/>size_t <link linkend="_classpepr3d_1_1_color_manager_1a3532df102b706a03bc0e23401c457e4f">getActiveColorIndex</link> () const</para>
+
+<para>Gets index of the currently selected / active color. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a81d621c28e948d1b3159dde1bcb73aea"/>void <link linkend="_classpepr3d_1_1_color_manager_1a81d621c28e948d1b3159dde1bcb73aea">setActiveColorIndex</link> (size_t index)</para>
+
+<para>Sets index of the currently selected / active color, safely checks boundaries. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a928abdce32ef88875b11a370924a4fb4"/>glm::vec4 <emphasis role="strong">getActiveColor</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a7c86d46f583135d81ffe2842a8a2f8d1"/>ColorMap &amp; <emphasis role="strong">getColorMap</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1acafb11f4d679dfe058c43ac3edc8a47c"/>const ColorMap &amp; <emphasis role="strong">getColorMap</emphasis> () const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Static Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a9c9dcef30e057653f1ecc55071fdf12c"/>static void <emphasis role="strong">generateColors</emphasis> (const size_t colorCount, std::vector&lt; glm::vec4 &gt; &amp;outNewColors)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a3fc86df9e3fcb8ac2efaedcd0f180676"/>template&lt;class Archive &gt; </para><para>void <emphasis role="strong">serialize</emphasis> (Archive &amp;ar)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1ad6b9cb7395ea796012aec61e6292cdfd"/>ColorMap <link linkend="_classpepr3d_1_1_color_manager_1ad6b9cb7395ea796012aec61e6292cdfd">mColorMap</link></para>
+
+<para>A vector containing all the colors that the application supports at this time. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1a29706f2b1a4d4870f4d9398c4830f9ec"/>size_t <link linkend="_classpepr3d_1_1_color_manager_1a29706f2b1a4d4870f4d9398c4830f9ec">mActiveColorIndex</link> = 0</para>
+
+<para>Index of a currently selected / active color. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Friends    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_color_manager_1ab2f44cbb59a08132f4c843e5225bba0e"/>class <emphasis role="strong">cereal::access</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Represents a color palette, i.e., all colors and a selected active color. </para>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/ColorManager.h</section>
+</section>

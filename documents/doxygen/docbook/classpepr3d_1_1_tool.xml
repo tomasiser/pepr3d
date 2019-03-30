@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_tool">
+<title>pepr3d::Tool Class Reference</title>
+<indexterm><primary>pepr3d::Tool</primary></indexterm>
+<para>
+
+<para>A base class of all tools that the user can select and manipulate the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> and application with them. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Tool.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::Tool:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_tool.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a5706faac1c122203317c60b3eb231d1a"/>virtual std::string <link linkend="_classpepr3d_1_1_tool_1a5706faac1c122203317c60b3eb231d1a">getName</link> () const =0</para>
+
+<para>Returns a short name, displayed e.g., in a side pane and tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a331bbb48707ea07c472b7634b02e1a18"/>virtual std::string <link linkend="_classpepr3d_1_1_tool_1a331bbb48707ea07c472b7634b02e1a18">getDescription</link> () const</para>
+
+<para>Returns a description, displayed e.g., in a tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a2b3b7279f6a942a99c11c9495b3a3d84"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> &gt; <link linkend="_classpepr3d_1_1_tool_1a2b3b7279f6a942a99c11c9495b3a3d84">getHotkey</link> (const <link linkend="_classpepr3d_1_1_hotkeys">Hotkeys</link> &amp;hotkeys) const</para>
+
+<para>Returns an associated <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> or an empty value. Use hotkeys.findHotkey() method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a068b3420aff7edd507e3348c6d83c383"/>virtual std::string <link linkend="_classpepr3d_1_1_tool_1a068b3420aff7edd507e3348c6d83c383">getIcon</link> () const =0</para>
+
+<para>Returns a UTF-8 icon from an icon font. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1aae323508b6d824047abc981e10a42c0f"/>virtual bool <link linkend="_classpepr3d_1_1_tool_1aae323508b6d824047abc981e10a42c0f">isEnabled</link> () const</para>
+
+<para>Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a07eac1be4dee577eec8c865390e8277d"/>virtual void <link linkend="_classpepr3d_1_1_tool_1a07eac1be4dee577eec8c865390e8277d">drawToSidePane</link> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane)</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a7278925cff7d0da94e54f9bca201bda7"/>virtual void <link linkend="_classpepr3d_1_1_tool_1a7278925cff7d0da94e54f9bca201bda7">drawToModelView</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView)</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_model_view">ModelView</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1aaa49ecd05152b869571601c7741fc5ca"/>virtual void <link linkend="_classpepr3d_1_1_tool_1aaa49ecd05152b869571601c7741fc5ca">onModelViewMouseDown</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event)</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users presses a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a56cc05810dfb90d78b0c1388f710a445"/>virtual void <link linkend="_classpepr3d_1_1_tool_1a56cc05810dfb90d78b0c1388f710a445">onModelViewMouseDrag</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event)</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users drags a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a3d6d4e593753eba998b2a6d6fb49c5af"/>virtual void <link linkend="_classpepr3d_1_1_tool_1a3d6d4e593753eba998b2a6d6fb49c5af">onModelViewMouseUp</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event)</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users releases a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1aa1aae7ecebb6d2e63dfa61d08ff022ae"/>virtual void <link linkend="_classpepr3d_1_1_tool_1aa1aae7ecebb6d2e63dfa61d08ff022ae">onModelViewMouseWheel</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event)</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users scrolls mouse wheel over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a25a3db1cbb37241f473e009ac702d867"/>virtual void <link linkend="_classpepr3d_1_1_tool_1a25a3db1cbb37241f473e009ac702d867">onModelViewMouseMove</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event)</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users moves mouse cursor over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. Note: This method is not called when the user is dragging the mouse! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a139c1e72bd9eada36ce660e1fbf10c6b"/>virtual void <link linkend="_classpepr3d_1_1_tool_1a139c1e72bd9eada36ce660e1fbf10c6b">onToolSelect</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView)</para>
+
+<para>Called on a <link linkend="_classpepr3d_1_1_tool">Tool</link> right after user selects it. Note: It may also be called when a user selects the same tool again! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1aafba698d859abbc2b1dc48a38ca24d36"/>virtual void <link linkend="_classpepr3d_1_1_tool_1aafba698d859abbc2b1dc48a38ca24d36">onToolDeselect</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView)</para>
+
+<para>Called on a <link linkend="_classpepr3d_1_1_tool">Tool</link> right after user selects another tool. Note: It may also be called when a user selects the same tool again! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1ac94e48ba121b7f4e4bf897de871ad479"/>virtual void <link linkend="_classpepr3d_1_1_tool_1ac94e48ba121b7f4e4bf897de871ad479">onNewGeometryLoaded</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView)</para>
+
+<para>Called on EVERY <link linkend="_classpepr3d_1_1_tool">Tool</link> right after a new <link linkend="_classpepr3d_1_1_geometry">Geometry</link> is loaded or imported. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a2420df1e8a95c66a882a923158084020"/>virtual std::optional&lt; std::size_t &gt; <link linkend="_classpepr3d_1_1_tool_1a2420df1e8a95c66a882a923158084020">safeIntersectMesh</link> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;mainApplication, const ci::Ray ray) final</para>
+
+<para>Returns an optional intersection (an index of a triangle) of a ci::Ray with current <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. This method is safe and if an exception occurs, an error dialog is automatically shown. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1a2645ac765f26cbda2ab9c818a362912f"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; <link linkend="_classpepr3d_1_1_tool_1a2645ac765f26cbda2ab9c818a362912f">safeIntersectDetailedMesh</link> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;mainApplication, const ci::Ray ray) final</para>
+
+<para>Returns an optional intersection (<link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link>) of a ci::Ray with current <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. This method is safe and if an exception occurs, an error dialog is automatically shown. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_tool_1aff4584fe20f552ae3b7814ecab423768"/>virtual bool <emphasis role="strong">safeComputeSdf</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;mainApplication) final</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>A base class of all tools that the user can select and manipulate the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> and application with them. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/Tool.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/Tool.cpp</section>
+</section>

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_namespacepepr">
+<title>pepr Namespace Reference</title>
+<indexterm><primary>pepr</primary></indexterm>
+<para>
+
+<para>Custom assert definition that throws an exception on assertion. </para>
+ 
+</para>
+<section>
+<title>Detailed Description</title>
+
+<para>Custom assert definition that throws an exception on assertion. </para>
+
+<para>The original assert header sometimes straight up terminated program without any information on what happened. </para>
+</section>
+</section>

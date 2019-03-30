@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_font_rasterizer_1_1_tri">
+<title>pepr3d::FontRasterizer::Tri Struct Reference</title>
+<indexterm><primary>pepr3d::FontRasterizer::Tri</primary></indexterm>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_font_rasterizer_1_1_tri_1a7dc030fc391253b493fd19a19c5df2e8"/>glm::vec3 <emphasis role="strong">a</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_font_rasterizer_1_1_tri_1aff84a1311ee97a572a5c2b40c625198f"/>glm::vec3 <emphasis role="strong">b</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_font_rasterizer_1_1_tri_1a606c3befadad2bb152038a0b5d26e182"/>glm::vec3 <emphasis role="strong">c</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/FontRasterizer.h</section>

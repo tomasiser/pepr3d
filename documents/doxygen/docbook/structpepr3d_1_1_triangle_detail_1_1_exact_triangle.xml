@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle">
+<title>pepr3d::TriangleDetail::ExactTriangle Struct Reference</title>
+<indexterm><primary>pepr3d::TriangleDetail::ExactTriangle</primary></indexterm>
+<para>
+
+<para>Exact triangle with colour and polygon information. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;TriangleDetail.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a735227d6c7a1e7e6a4c4d53a5c640bfa"/><emphasis role="strong">ExactTriangle</emphasis> (Triangle2 &amp;tri, size_t color, size_t <link linkend="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a111197095d54e403e689e775ecfe58c5">polygonIdx</link>)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a2e95c53007c71155c27f4763cbd91ad9"/><emphasis role="strong">ExactTriangle</emphasis> (Triangle2 &amp;&amp;tri, size_t color, size_t <link linkend="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a111197095d54e403e689e775ecfe58c5">polygonIdx</link>)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a687c567eb29062f8a200cd28db2d92bf"/><emphasis role="strong">ExactTriangle</emphasis> (const <link linkend="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle">ExactTriangle</link> &amp;)=default</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a7bec4a290c6558f4af998237da007043"/><emphasis role="strong">ExactTriangle</emphasis> (<link linkend="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle">ExactTriangle</link> &amp;&amp;)=default</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a006ad644f94d22167d6e0a15c5e3a6c7"/>template&lt;typename Archive &gt; </para><para>void <emphasis role="strong">serialize</emphasis> (Archive &amp;archive)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a8c7a1db1bb87182448972c58ef053caf"/>Triangle2 <link linkend="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a8c7a1db1bb87182448972c58ef053caf">triangle</link></para>
+
+<para>Epeck representation of the triangle. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a66959e4b747023fe1211b974fc0062b0"/>size_t <emphasis role="strong">color</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a111197095d54e403e689e775ecfe58c5"/>size_t <link linkend="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle_1a111197095d54e403e689e775ecfe58c5">polygonIdx</link></para>
+
+<para>Idx of the polygon this triangle belongs to. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Exact triangle with colour and polygon information. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/TriangleDetail.h</section>
+</section>

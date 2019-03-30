@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_geometry_progress">
+<title>pepr3d::GeometryProgress Struct Reference</title>
+<indexterm><primary>pepr3d::GeometryProgress</primary></indexterm>
+<para>
+
+<para>Atomic values representing percentage progress of geometry import, export, and SDF computation. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;GeometryProgress.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1ab944febac0a583ad7d84a3a256bfff6c"/>void <emphasis role="strong">resetLoad</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1a7ae0e47843993e4c2513dfbfb9ad2461"/>void <emphasis role="strong">resetSave</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1a87f38a8ae8188212a4dfd6fa0f4d0fdb"/>void <emphasis role="strong">resetSdf</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1a6d98e5cabfc9a73a492bac055a9b1481"/>void <emphasis role="strong">resetPaintText</emphasis> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1a8c0d575de2c03359bc4e003dda1dcb0d"/>std::atomic&lt; float &gt; <emphasis role="strong">importRenderPercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1a65d7951c07a721ef6f5db6df74a15bba"/>std::atomic&lt; float &gt; <emphasis role="strong">importComputePercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1a6b47ccbd1d8ec7d551579d19a2cf99de"/>std::atomic&lt; float &gt; <emphasis role="strong">buffersPercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1add7138f9550b00a8c5e67b6b68affc8a"/>std::atomic&lt; float &gt; <emphasis role="strong">aabbTreePercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1af854f0a26bb66e3ffdb71efae415a5ec"/>std::atomic&lt; float &gt; <emphasis role="strong">polyhedronPercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1ab9c88b44511633f051fea6616a34e4f5"/>std::atomic&lt; float &gt; <emphasis role="strong">createScenePercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1af0505fdb14dae3cdadd49ce5aa70516e"/>std::atomic&lt; float &gt; <emphasis role="strong">exportFilePercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1aa79131603d395402c2073ea89bffd546"/>std::atomic&lt; float &gt; <emphasis role="strong">sdfPercentage</emphasis> {-1.0f}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_progress_1a3cb2fcdd60b9f3a73449d3bd1950f0fc"/>std::atomic&lt; float &gt; <emphasis role="strong">paintTextPercentage</emphasis> {-1.0f}</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Atomic values representing percentage progress of geometry import, export, and SDF computation. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/GeometryProgress.h</section>
+</section>

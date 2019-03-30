@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_text_editor">
+<title>pepr3d::TextEditor Class Reference</title>
+<indexterm><primary>pepr3d::TextEditor</primary></indexterm>
+<para>
+
+<para>A tool used for painting texts on a model. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;TextEditor.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::TextEditor:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_text_editor.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a81990497a4ab26ee3c73f00aa8312fd8"/><emphasis role="strong">TextEditor</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;app)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a89d5554aba18be49d5e8f13c1729e3b0"/>virtual std::string <link linkend="_classpepr3d_1_1_text_editor_1a89d5554aba18be49d5e8f13c1729e3b0">getName</link> () const override</para>
+
+<para>Returns a short name, displayed e.g., in a side pane and tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a45e0186c35d934adc4af68640074d44e"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> &gt; <link linkend="_classpepr3d_1_1_text_editor_1a45e0186c35d934adc4af68640074d44e">getHotkey</link> (const <link linkend="_classpepr3d_1_1_hotkeys">Hotkeys</link> &amp;hotkeys) const override</para>
+
+<para>Returns an associated <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> or an empty value. Use hotkeys.findHotkey() method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1ad7adaa2d3f7104bface2115407ea3ef3"/>virtual std::string <link linkend="_classpepr3d_1_1_text_editor_1ad7adaa2d3f7104bface2115407ea3ef3">getIcon</link> () const override</para>
+
+<para>Returns a UTF-8 icon from an icon font. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a0bb2481c00c38ff55eab21baa66624dc"/>virtual void <link linkend="_classpepr3d_1_1_text_editor_1a0bb2481c00c38ff55eab21baa66624dc">drawToSidePane</link> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1ac670b5620dda898d049c395c5b899b3f"/>virtual void <link linkend="_classpepr3d_1_1_text_editor_1ac670b5620dda898d049c395c5b899b3f">onModelViewMouseDown</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users presses a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a7598ba82ef36ae87f0317fe18c800bcb"/>virtual void <link linkend="_classpepr3d_1_1_text_editor_1a7598ba82ef36ae87f0317fe18c800bcb">onModelViewMouseMove</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users moves mouse cursor over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. Note: This method is not called when the user is dragging the mouse! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1aae35d8a952efd0493c5a12031054b783"/>virtual void <link linkend="_classpepr3d_1_1_text_editor_1aae35d8a952efd0493c5a12031054b783">drawToModelView</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_model_view">ModelView</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a2e868d665405249a775466848e5ac6ad"/>virtual void <link linkend="_classpepr3d_1_1_text_editor_1a2e868d665405249a775466848e5ac6ad">onToolSelect</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on a <link linkend="_classpepr3d_1_1_tool">Tool</link> right after user selects it. Note: It may also be called when a user selects the same tool again! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a20b497c331cb642819f366b4689aff1b"/>virtual void <link linkend="_classpepr3d_1_1_text_editor_1a20b497c331cb642819f366b4689aff1b">onToolDeselect</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on a <link linkend="_classpepr3d_1_1_tool">Tool</link> right after user selects another tool. Note: It may also be called when a user selects the same tool again! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a0c7d5a45e94fd87a930b127c1f816deb"/>virtual void <link linkend="_classpepr3d_1_1_text_editor_1a0c7d5a45e94fd87a930b127c1f816deb">onNewGeometryLoaded</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on EVERY <link linkend="_classpepr3d_1_1_tool">Tool</link> right after a new <link linkend="_classpepr3d_1_1_geometry">Geometry</link> is loaded or imported. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a477667ab0ee9ea117e196d0b045d69b1"/>void <link linkend="_classpepr3d_1_1_text_editor_1a477667ab0ee9ea117e196d0b045d69b1">paintText</link> ()</para>
+
+<para>Paint prepared text onto the model. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a3ef1d677128a8c5d745bddb9f2e00119"/>std::vector&lt; std::vector&lt; <link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">FontRasterizer::Tri</link> &gt; &gt; <emphasis role="strong">triangulateText</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a8e848393dc43187cfe5e89833fc61a91"/>void <link linkend="_classpepr3d_1_1_text_editor_1a8e848393dc43187cfe5e89833fc61a91">createPreviewMesh</link> () const</para>
+
+<para>Update modelView&apos;s preview data with new triangles to render. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a4d708589412de7f0bf3c0bd0a76efe9c"/>void <link linkend="_classpepr3d_1_1_text_editor_1a4d708589412de7f0bf3c0bd0a76efe9c">generateAndUpdate</link> ()</para>
+
+<para>Generate text and update preview. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a6215bc1584a7ec5a7591f286f153891b"/>void <link linkend="_classpepr3d_1_1_text_editor_1a6215bc1584a7ec5a7591f286f153891b">updateTextPreview</link> ()</para>
+
+<para>Update text preview without generating again. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a811d714a58f7f3cc06d271fc1e3b223f"/>void <link linkend="_classpepr3d_1_1_text_editor_1a811d714a58f7f3cc06d271fc1e3b223f">rotateText</link> (std::vector&lt; std::vector&lt; <link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">FontRasterizer::Tri</link> &gt;&gt; &amp;text)</para>
+
+<para>Rotate to face ray direction. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a3e6a4761960a15d7ee1a2d4af6b93adc"/>void <emphasis role="strong">rescaleText</emphasis> (std::vector&lt; std::vector&lt; <link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">FontRasterizer::Tri</link> &gt;&gt; &amp;result)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a8b6e697183b6df4f7c571015b32f1032"/>glm::vec3 <link linkend="_classpepr3d_1_1_text_editor_1a8b6e697183b6df4f7c571015b32f1032">getPlaneBaseVector</link> (const glm::vec3 &amp;direction) const</para>
+
+<para>Get vector perpendicular to the direction, that is pointing towards the right halfplane. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1aa111e897d281d8f936378ae278ef2eb9"/>glm::vec3 <link linkend="_classpepr3d_1_1_text_editor_1aa111e897d281d8f936378ae278ef2eb9">getPreviewOrigin</link> (const glm::vec3 &amp;direction) const</para>
+
+<para>Get origin point of the text preview. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a8c2340d0b6d8d583c4582cbfedb2b852"/><link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp; <emphasis role="strong">mApplication</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a0bf4101cffb4567e68c2ee19ed1476f1"/>ci::Ray <link linkend="_classpepr3d_1_1_text_editor_1a0bf4101cffb4567e68c2ee19ed1476f1">mSelectedRay</link> {}</para>
+
+<para>Intersection and point used for for text projection. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a1a0efb92849ddd1901a264cfa15ef294"/>std::optional&lt; size_t &gt; <emphasis role="strong">mSelectedIntersection</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a7688ecc7a7f2f1abd04f50461fb4b909"/>glm::vec3 <emphasis role="strong">mSelectedIntersectionPoint</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1accf4f63e05399a24062d88ce13c1056b"/>ci::Ray <link linkend="_classpepr3d_1_1_text_editor_1accf4f63e05399a24062d88ce13c1056b">mCurrentRay</link> {}</para>
+
+<para>Intersection and point used for cursor highlight. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1ade2da5abbcd47021fe88ecbe5febdbb9"/>std::optional&lt; size_t &gt; <emphasis role="strong">mCurrentIntersection</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1ae577cc4fe9f9d2bc1ae73f179ea4f818"/>glm::vec3 <emphasis role="strong">mCurrentIntersectionPoint</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a083f0600b1412d98a8a4e98588474f5a"/>std::string <emphasis role="strong">mFont</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a2586c9a5862e1a87cf0b888c343a91ae"/>std::string <emphasis role="strong">mFontPath</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1aeb1c8cb4529b4420fcc55ad6ffeff6f9"/>std::string <emphasis role="strong">mText</emphasis> = &quot;Pepr3D&quot;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1ad6cfceb88b4988d66f1c2088c75d3bcd"/>int <emphasis role="strong">mFontSize</emphasis> = 12</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a2d5c48f7ce2bf201b35a409428f6fd94"/>int <emphasis role="strong">mBezierSteps</emphasis> = 3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1aaef16fdb05549a5c778d46b563e5b491"/>float <emphasis role="strong">mFontScale</emphasis> = 0.2f</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1ab8655ad98860f317999f61e16eaf28cf"/>float <link linkend="_classpepr3d_1_1_text_editor_1ab8655ad98860f317999f61e16eaf28cf">mTextRotation</link> = 0.f</para>
+
+<para>Rotation of text in degrees. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a367eed1983f4cd98bc465206ac2bf6ee"/>const float <link linkend="_classpepr3d_1_1_text_editor_1a367eed1983f4cd98bc465206ac2bf6ee">TEXT_DISTANCE_SCALE</link> = 0.02f</para>
+
+<para>How far should the text preview placed from the model (normalized by model scale) </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a84883561e33acc9e2bdf227823cbe505"/>std::vector&lt; std::vector&lt; <link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">FontRasterizer::Tri</link> &gt; &gt; <emphasis role="strong">mTriangulatedText</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_text_editor_1a694e71b4b9124a567257054b7af14c59"/>std::vector&lt; std::vector&lt; <link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">FontRasterizer::Tri</link> &gt; &gt; <emphasis role="strong">mRenderedText</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>A tool used for painting texts on a model. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/TextEditor.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/TextEditor.cpp</section>
+</section>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_cmd_paint_brush">
+<title>pepr3d::CmdPaintBrush Class Reference</title>
+<indexterm><primary>pepr3d::CmdPaintBrush</primary></indexterm>
+<para>
+
+<para>Command that paints a stroke with a brush. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;CmdPaintBrush.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::CmdPaintBrush:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_cmd_paint_brush.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1a3e2136c68fe1c36a812e576ead824d53"/>std::string_view <link linkend="_classpepr3d_1_1_cmd_paint_brush_1a3e2136c68fe1c36a812e576ead824d53">getDescription</link> () const override</para>
+
+<para>Get description of the command. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1a80458a030d3d002307414e17f89da621"/><emphasis role="strong">CmdPaintBrush</emphasis> (ci::Ray ray, const <link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> settings)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1af77ed19d5ba71492a6e513a204b00ba5"/>void <link linkend="_classpepr3d_1_1_cmd_paint_brush_1af77ed19d5ba71492a6e513a204b00ba5">run</link> (<link linkend="_classpepr3d_1_1_geometry">Geometry</link> &amp;target) const override</para>
+
+<para>Run the command, applying the modifications to the target. </para>
+</listitem>
+            <listitem><para>bool <link linkend="_classpepr3d_1_1_cmd_paint_brush_1a05e6c87b7cd47b72150e05f2ee584ee8">joinCommand</link> (const <link linkend="_classpepr3d_1_1_command_base">CommandBase</link> &amp;otherBase) override</para>
+
+<para>Join this command with other command of the same commandType, uniting both commands into this command&apos;s contents. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1a06ebbb4a1031e29a7929dd80c87bcd38"/>std::vector&lt; ci::Ray &gt; <emphasis role="strong">mRays</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1a859b62eb61a41ecf2d0c740b3eeecb4f"/><link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> <emphasis role="strong">mSettings</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1a290379a49d9bebc4942c4943afa1b4b7"/>using <emphasis role="strong">Point3</emphasis> = Geometry::Point3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1a907d867e41dad74e0e62fe7fe66254e1"/>using <emphasis role="strong">Vector3</emphasis> = Geometry::Vector3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1add56ca85f16c7df09fde483fc2bc4a4e"/>using <emphasis role="strong">Circle</emphasis> = Geometry::Circle</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Command that paints a stroke with a brush. </para>
+</section>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_classpepr3d_1_1_cmd_paint_brush_1a05e6c87b7cd47b72150e05f2ee584ee8"/>    <section>
+    <title>joinCommand()</title>
+<indexterm><primary>joinCommand</primary><secondary>pepr3d::CmdPaintBrush</secondary></indexterm>
+<indexterm><primary>pepr3d::CmdPaintBrush</primary><secondary>joinCommand</secondary></indexterm>
+<para><computeroutput>bool pepr3d::CmdPaintBrush::joinCommand (const <link linkend="_classpepr3d_1_1_command_base">CommandBase</link> &amp; )<computeroutput>[inline]</computeroutput>, <computeroutput>[override]</computeroutput>, <computeroutput>[protected]</computeroutput>, <computeroutput>[virtual]</computeroutput></computeroutput></para><para>
+
+<para>Join this command with other command of the same commandType, uniting both commands into this command&apos;s contents. </para>
+</para>
+
+<para><formalpara><title>Returns: </title>
+
+<para>true on successful join </para>
+</formalpara>
+</para>
+<para>
+Reimplemented from <link linkend="_classpepr3d_1_1_command_base_1a9ef408154b7cb446e626e049f268abb4">pepr3d::CommandBase&lt; Geometry &gt;</link>.</para>
+</section>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/commands/CmdPaintBrush.h</section>
+</section>

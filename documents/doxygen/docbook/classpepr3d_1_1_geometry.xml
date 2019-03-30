@@ -1,0 +1,654 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_geometry">
+<title>pepr3d::Geometry Class Reference</title>
+<indexterm><primary>pepr3d::Geometry</primary></indexterm>
+<para>
+
+<para>The whole geometry of a model that the user is painting. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Geometry.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_geometry_1_1_area_highlight">AreaHighlight</link></para>
+
+<para>A highlight of a part of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+</listitem>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_geometry_1_1_geometry_state">GeometryState</link></para>
+</listitem>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data">OpenGlData</link></para>
+
+<para>All OpenGL buffers of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a6077ec326305ac7fe4c3f6819b53c2fb"/>using <emphasis role="strong">Direction</emphasis> = pepr3d::DataTriangle::K::Direction_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a44e4ffb13740677b37412b9863c8aedc"/>using <emphasis role="strong">Circle</emphasis> = DataTriangle::K::Circle_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a7fe4812fe3bdb9f9bf29b2a9ed9664ad"/>using <emphasis role="strong">Sphere</emphasis> = DataTriangle::K::Sphere_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a71ec638da1019894f11c1ca6a3b42e38"/>using <emphasis role="strong">Line3</emphasis> = DataTriangle::K::Line_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a9aeff66de9a33a389c3de9d0b836819b"/>using <emphasis role="strong">Vector3</emphasis> = pepr3d::DataTriangle::K::Vector_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ab8e951387d775d43de2581a925f89e7b"/>using <emphasis role="strong">Point3</emphasis> = pepr3d::DataTriangle::K::Point_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a2902716bce3c243a990d3b89b1e3e62b"/>using <emphasis role="strong">Ft</emphasis> = pepr3d::DataTriangle::K::FT</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1abf08f06fad7e1acf0298bbb32418ef0a"/>using <emphasis role="strong">Ray</emphasis> = pepr3d::DataTriangle::K::Ray_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1adec6ddfe2738bb0792535ad33da96f3a"/>using <emphasis role="strong">My_AABB_traits</emphasis> = CGAL::AABB_traits&lt; pepr3d::DataTriangle::K, <link linkend="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive">DataTriangleAABBPrimitive</link> &gt;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aa14c4ca4e78b66267ff0191397768159"/>using <emphasis role="strong">Tree</emphasis> = CGAL::AABB_tree&lt; My_AABB_traits &gt;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a6ec337c2f2b15ab3cc65fbef4869a163"/>using <emphasis role="strong">Ray_intersection</emphasis> = boost::optional&lt; Tree::Intersection_and_primitive_id&lt; Ray &gt;::Type &gt;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a817ca5983c6140981a78819b090bb899"/>using <emphasis role="strong">BoundingBox</emphasis> = My_AABB_traits::Bounding_box</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1af654ca82ebbd5dd354a71af346937c32"/>using <emphasis role="strong">ColorIndex</emphasis> = GLuint</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ad9cad69d72176d09ebb2f345ca862b01"/><link linkend="_classpepr3d_1_1_geometry_1ad9cad69d72176d09ebb2f345ca862b01">Geometry</link> ()</para>
+
+<para>Empty constructor. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ab35ff0294173d65bba8fc6f101046ede"/><emphasis role="strong">Geometry</emphasis> (std::vector&lt; <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &gt; &amp;&amp;triangles)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1abb5ab45b0a5f5d84b38fae0d1bbc71ab"/>std::vector&lt; glm::vec3 &gt; &amp; <emphasis role="strong">getVertexBuffer</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1acd5c4c218183865d75c38534918f3cdd"/>bool <emphasis role="strong">polyhedronValid</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a09ca8294ff86ad47e8cbd2051e0b02df"/>size_t <emphasis role="strong">polyVertCount</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a2c1c327d2f449865a3c66fae52b0b54a"/>const <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data">OpenGlData</link> &amp; <emphasis role="strong">getOpenGlData</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a1550192711eb10ddb685c08d15ef9922"/>void <link linkend="_classpepr3d_1_1_geometry_1a1550192711eb10ddb685c08d15ef9922">updateOpenGlBuffers</link> ()</para>
+
+<para>Update buffers used by openGl. Should only be called when they are dirty. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ad25fda5afe4c73c0fd9dbd4bf77952b1"/>void <link linkend="_classpepr3d_1_1_geometry_1ad25fda5afe4c73c0fd9dbd4bf77952b1">updateTemporaryDetailedData</link> ()</para>
+
+<para>Update temporary detailed data like detailed AABB tree and detailed Mesh This is a slow operation. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a995a46878723dd2108960ad3163097b5"/>bool <emphasis role="strong">isTemporaryDetailedDataValid</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a672f356239790e119faf9fedac88826c"/>glm::vec3 <emphasis role="strong">getBoundingBoxMin</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a99b2474e709c4965c4936c69c094b02b"/>glm::vec3 <emphasis role="strong">getBoundingBoxMax</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ad37135e84945f5e02ee7135a7fa57429"/>const <link linkend="_structpepr3d_1_1_geometry_1_1_area_highlight">Geometry::AreaHighlight</link> &amp; <emphasis role="strong">getAreaHighlight</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a671769c7156f27e4666d4db982e30ec6"/>void <emphasis role="strong">hideHighlight</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a7246a4afe6b3e0624e3b22f7b28aea9e"/>const <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &amp; <emphasis role="strong">getTriangle</emphasis> (const size_t triangleIndex) const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a93214e41fbec98dd0e144af5643611e8"/>const <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &amp; <emphasis role="strong">getTriangle</emphasis> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> triangleId) const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a58031509df8f5a9a83e98106cc37af4a"/>size_t <emphasis role="strong">getTriangleColor</emphasis> (const size_t triangleIndex) const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a83359891c1ed0cf815a5367c56c78d3e"/>size_t <emphasis role="strong">getTriangleColor</emphasis> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> triangleId) const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1acca576cfa8a735ecfe36e4fca67204d8"/>size_t <link linkend="_classpepr3d_1_1_geometry_1acca576cfa8a735ecfe36e4fca67204d8">getTriangleCount</link> () const</para>
+
+<para>Return the number of triangles in the whole mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a08d96522ac82d058abd68bbda3ac1201"/>const <link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> &amp; <emphasis role="strong">getColorManager</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a416e1fbfffdbeab4f5775fd0987d312d"/><link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> &amp; <emphasis role="strong">getColorManager</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a7b3af18af2bd43104f8024ca24c8541d"/>bool <emphasis role="strong">isSimpleTriangle</emphasis> (size_t triangleIdx) const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ae0e251c83044d0cd06c50ded6cee21cb"/>const <link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> &amp; <emphasis role="strong">getProgress</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a3b33233684966de8e2f4ba4fa3d6f02d"/><link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> &amp; <emphasis role="strong">getProgress</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a81c9e23b272c99b9e1692ce1900c2b15"/>PolyhedronData::Mesh * <emphasis role="strong">getMeshDetailed</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a90455dda02cab7e2affdda58966a831b"/>const std::unordered_map&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link>, PolyhedronData::face_descriptor &gt; &amp; <emphasis role="strong">getMeshDetailedFaceDescs</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a586922a1b2662d6455bce899af40b6b2"/>const PolyhedronData::Mesh::Property_map&lt; PolyhedronData::face_descriptor, <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; &amp; <emphasis role="strong">getMeshDetailedIdMap</emphasis> () const</para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_geometry_1a027715ec109b060ffc8b420947c4fde0">loadNewGeometry</link> (const std::string &amp;fileName)</para>
+
+<para>Loads new geometry into the private data, rebuilds the buffers and other data structures automatically. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_geometry_1aa473f80280346656024fc494994c065e">setTriangleColor</link> (const size_t triangleIndex, const size_t newColor)</para>
+
+<para>Set new triangle color. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a0a8c000a3009ae4372ce223b27765ae6"/>void <link linkend="_classpepr3d_1_1_geometry_1a0a8c000a3009ae4372ce223b27765ae6">setTriangleColor</link> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> triangleId, const size_t newColor)</para>
+
+<para>Set new triangle color. </para>
+</listitem>
+            <listitem><para>std::optional&lt; size_t &gt; <link linkend="_classpepr3d_1_1_geometry_1ace58dc7a4182240000e9b773cb8da4ee">intersectMesh</link> (const ci::Ray &amp;ray) const</para>
+
+<para>Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists. Example use: generate ray based on a mouse click, call this method, then call setTriangleColor. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a039de87ce062281b93132481ca7ddba8"/>std::optional&lt; size_t &gt; <link linkend="_classpepr3d_1_1_geometry_1a039de87ce062281b93132481ca7ddba8">intersectMesh</link> (const ci::Ray &amp;ray, glm::vec3 &amp;outPos) const</para>
+
+<para>Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists. Additionally outputs intersection point to the outPos param Example use: generate ray based on a mouse click, call this method, then call setTriangleColor. </para>
+</listitem>
+            <listitem><para>std::optional&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; <link linkend="_classpepr3d_1_1_geometry_1ae68a633ab4ab435156e0b03e64c9ede9">intersectDetailedMesh</link> (const ci::Ray &amp;ray)</para>
+
+<para>Intersects the detailed mesh with the given ray and returns the ID of the triangle intersected, if it exists. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a69f784973726ce83893d8ec3fcdf9ff1"/>void <link linkend="_classpepr3d_1_1_geometry_1a69f784973726ce83893d8ec3fcdf9ff1">highlightArea</link> (const ci::Ray &amp;ray, const struct <link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> &amp;settings)</para>
+
+<para>Highlight an area around the intersection point. All points on a continuous surface closer than the size are highlighted. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_geometry_1a6c6b8ef6f157f8bb818e38f6e2e49b37">paintWithShape</link> (const ci::Ray &amp;ray, const std::vector&lt; Point3 &gt; &amp;shape, size_t color, bool paintBackfaces=false)</para>
+
+<para>Paint area with a shaped brush. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_geometry_1a152673dacbe299a55ee9dc6a2403d6a5">paintWithShape</link> (const ci::Ray &amp;ray, const std::vector&lt; DataTriangle::Triangle &gt; &amp;triangles, size_t color)</para>
+
+<para>Paint area with a shaped brush. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ab4593a2aa8017add96d6cd7e177a0cf1"/>void <link linkend="_classpepr3d_1_1_geometry_1ab4593a2aa8017add96d6cd7e177a0cf1">paintAreaWithSphere</link> (const ci::Ray &amp;ray, const <link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> &amp;settings)</para>
+
+<para>Paint continuous spherical area with a brush of specified size. </para>
+</listitem>
+            <listitem><para>template&lt;typename ColorFunc &gt; </para><para>void <link linkend="_classpepr3d_1_1_geometry_1ae6d2ae86fca37592a5dbb93784ca4ef0">changeColorIds</link> (const ColorFunc &amp;colorFunc)</para>
+
+<para>Change all color ID&apos;s from one to another. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a80198ecc7f17d1db360ab2bf50b7f594"/><link linkend="_structpepr3d_1_1_geometry_1_1_geometry_state">GeometryState</link> <link linkend="_classpepr3d_1_1_geometry_1a80198ecc7f17d1db360ab2bf50b7f594">saveState</link> () const</para>
+
+<para>Save current state into a struct so that it can be restored later (<link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> target requirement) </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aebe9b03fabcd1d3fca4108eaf34c6e70"/>void <link linkend="_classpepr3d_1_1_geometry_1aebe9b03fabcd1d3fca4108eaf34c6e70">loadState</link> (const <link linkend="_structpepr3d_1_1_geometry_1_1_geometry_state">GeometryState</link> &amp;)</para>
+
+<para>Load previous state from a struct (<link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> target requirement) </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a4a49d4588081ba91381fbd86e3837e75"/>template&lt;typename StoppingCondition &gt; </para><para>std::vector&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; <link linkend="_classpepr3d_1_1_geometry_1a4a49d4588081ba91381fbd86e3837e75">bucket</link> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> startTriangle, const StoppingCondition &amp;stopFunctor)</para>
+
+<para>Spreads as BFS, starting from startTriangle to wherever it can reach. Stopping is handled by the StoppingCondition functor/lambda. A vector of reached triangle indices is returned;. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a7a6b768a13d349b8e5a88e1210e034fb"/>template&lt;typename StoppingCondition &gt; </para><para>std::vector&lt; size_t &gt; <emphasis role="strong">bucket</emphasis> (const size_t startTriangle, const StoppingCondition &amp;stopFunctor)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a982d86bb64738f64e4de60017e1a4ee3"/>template&lt;typename StoppingCondition &gt; </para><para>std::vector&lt; size_t &gt; <emphasis role="strong">bucket</emphasis> (const std::vector&lt; size_t &gt; &amp;startTriangles, const StoppingCondition &amp;stopFunctor)</para>
+</listitem>
+            <listitem><para>std::vector&lt; size_t &gt; <link linkend="_classpepr3d_1_1_geometry_1a1d420e96bc8c92c620b5473677173d81">getTrianglesUnderBrush</link> (const glm::vec3 &amp;originPoint, const glm::vec3 &amp;insideDirection, size_t startTriangle, const struct <link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> &amp;settings)</para>
+
+<para>Spread as BFS from starting triangle, until the limits of brush settings are reached. </para>
+</listitem>
+            <listitem><para>template&lt;typename Object &gt; </para><para>std::vector&lt; size_t &gt; <link linkend="_classpepr3d_1_1_geometry_1a4907bc6f193156a3d68956b2ce622120">getTrianglesInRadius</link> (const Object &amp;object, double radius) const</para>
+
+<para>Get all triangles that are closer to the object than radius This function operates on spherical bounds of triangles and may therefore return false positives. </para>
+</listitem>
+            <listitem><para>template&lt;typename Object &gt; </para><para>bool <link linkend="_classpepr3d_1_1_geometry_1a993a7383980e9c4aa955ae156d714f15">isTriangleInRadius</link> (const Object &amp;object, double radius, size_t triangleIdx) const</para>
+
+<para>Test if distance from object to spherical boundary of a triangle is closer than radius. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1abba4d7a86b23f0d1a5aef9739d087f7d"/>void <link linkend="_classpepr3d_1_1_geometry_1abba4d7a86b23f0d1a5aef9739d087f7d">computeSdfValues</link> ()</para>
+
+<para><link linkend="_classpepr3d_1_1_segmentation">Segmentation</link> is CPU heavy because it needs to calculate a lot of data. This method allows to pre-compute the heaviest calculation. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a4acf91e1482adf0a1a77d03c23c108b3"/>bool <link linkend="_classpepr3d_1_1_geometry_1a4acf91e1482adf0a1a77d03c23c108b3">isSdfComputed</link> () const</para>
+
+<para><link linkend="_classpepr3d_1_1_segmentation">Segmentation</link> algorithms will not work if SDF values are not pre-computed. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ab4ef6e071146e7fd4e06c26dac3ffb43"/>size_t <link linkend="_classpepr3d_1_1_geometry_1ab4ef6e071146e7fd4e06c26dac3ffb43">segmentation</link> (const int numberOfClusters, const float smoothingLambda, std::map&lt; size_t, std::vector&lt; size_t &gt;&gt; &amp;segmentToTriangleIds, std::unordered_map&lt; size_t, size_t &gt; &amp;triangleToSegmentMap)</para>
+
+<para>Once SDF is computed, segment the whole SurfaceMesh automatically. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a5c8624f91ad0e27ab08dbab1ef7d2ada"/>double <emphasis role="strong">getSdfValue</emphasis> (const size_t triangleIndex) const</para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_geometry_1a7671cab77f226a80cbea5703aba2026c">recomputeFromData</link> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aa084c208c8fcb9802d5afd68e72b527d"/>size_t <link linkend="_classpepr3d_1_1_geometry_1aa084c208c8fcb9802d5afd68e72b527d">getTriangleDetailCount</link> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> triangleIndex) const</para>
+
+<para>Get number of detailed triangles for this baseId. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aa82245c699bf946457e251ad1176926c"/>size_t <link linkend="_classpepr3d_1_1_geometry_1aa82245c699bf946457e251ad1176926c">getTriangleDetailCount</link> (const size_t triangleIndex) const</para>
+
+<para>Get number of detailed triangles for this baseId. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1af361ddfbc36e637fe8c46b7f916c07a8"/>const bool * <emphasis role="strong">sdfValuesValid</emphasis> () const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a3c89c3e2f698d1cb25ad68767b90efc3"/>void <link linkend="_classpepr3d_1_1_geometry_1a3c89c3e2f698d1cb25ad68767b90efc3">generateVertexBuffer</link> ()</para>
+
+<para>Generates the vertex buffer linearly - adding each vertex of each triangle as a new one. We need to do this because each triangle has to be able to be colored differently, therefore no vertex sharing is possible. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ac0ccbc4a83e4eeaa61fd3a7de4e0e7a9"/>void <link linkend="_classpepr3d_1_1_geometry_1ac0ccbc4a83e4eeaa61fd3a7de4e0e7a9">generateIndexBuffer</link> ()</para>
+
+<para>Generating a linear index buffer, since we do not reuse any vertices. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a93545e8dae1b2cfee74fbd8c7e203389"/>void <link linkend="_classpepr3d_1_1_geometry_1a93545e8dae1b2cfee74fbd8c7e203389">generateColorBuffer</link> ()</para>
+
+<para>Generating triplets of colors, since we only allow a single-colored triangle. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a7d69aae6b0c09c7727d170af8b8b99b2"/>void <link linkend="_classpepr3d_1_1_geometry_1a7d69aae6b0c09c7727d170af8b8b99b2">generateNormalBuffer</link> ()</para>
+
+<para>Generate a buffer of normals. Generates only &quot;triangle normals&quot; - all three vertices have the same normal. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a36740d72ad8b50c81f39ad506fa0281e"/>void <link linkend="_classpepr3d_1_1_geometry_1a36740d72ad8b50c81f39ad506fa0281e">generateHighlightBuffer</link> ()</para>
+
+<para>Generate a buffer of highlight information. Saves per-triangle data to each vertex. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a1f4435ad35840859cbb4dd949af46845"/>void <link linkend="_classpepr3d_1_1_geometry_1a1f4435ad35840859cbb4dd949af46845">generateTriangleBounds</link> ()</para>
+
+<para>Generate spherical bounds for each original triangle. Used to speed up capsule querries. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a9ffaaaa3702f7505206f4e45aebfd4a9"/>void <link linkend="_classpepr3d_1_1_geometry_1a9ffaaaa3702f7505206f4e45aebfd4a9">buildPolyhedron</link> ()</para>
+
+<para>Build the <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron construct in mPolyhedronData. Takes a bit of time to rebuild. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aff6b12b0be4f64925e3a9aa88b85bb09"/>void <link linkend="_classpepr3d_1_1_geometry_1aff6b12b0be4f64925e3a9aa88b85bb09">buildTree</link> ()</para>
+
+<para>Builds AABB tree over the original mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a11091a0db475dc20b6635f17afb07b23"/>void <link linkend="_classpepr3d_1_1_geometry_1a11091a0db475dc20b6635f17afb07b23">buildDetailedTree</link> ()</para>
+
+<para>Build AABB Tree over all triangles including details. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_geometry_1a5f0594ebe7f3a779dc9cf18f943f1c56">buildDetailedMesh</link> ()</para>
+
+<para>Build a <link linkend="_namespace_c_g_a_l">CGAL</link> mesh over detailed triangles. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aa981414573779195fbfb7a64cfcbc1f1"/>void <link linkend="_classpepr3d_1_1_geometry_1aa981414573779195fbfb7a64cfcbc1f1">correctSharedVertices</link> ()</para>
+
+<para>Fixes T-junctions and unmatched vertices on edges of TriangleDetails by creating a matching vertex on the neighbouring triangle. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a69f341b26bd3ebd9158648b7d35ffa10"/>void <link linkend="_classpepr3d_1_1_geometry_1a69f341b26bd3ebd9158648b7d35ffa10">invalidateTemporaryDetailedData</link> ()</para>
+
+<para>Invalidate temporary detailed data like detailed AABB tree and mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a3f3506ff18e87cd35469c89a7d7a71f3"/><link linkend="_classpepr3d_1_1_triangle_detail">TriangleDetail</link> * <emphasis role="strong">createTriangleDetail</emphasis> (size_t triangleIdx)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a6b287e4fe195a2b1d74690ca4c387b95"/><link linkend="_classpepr3d_1_1_triangle_detail">TriangleDetail</link> * <emphasis role="strong">getTriangleDetail</emphasis> (const size_t triangleIndex)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a8c14c117f916e93e9578087dd85fe3ef"/>void <emphasis role="strong">removeTriangleDetail</emphasis> (size_t triangleIndex)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aeabf9a91453ddd3d744ccbc862583874"/>std::array&lt; int, 3 &gt; <link linkend="_classpepr3d_1_1_geometry_1aeabf9a91453ddd3d744ccbc862583874">gatherNeighbours</link> (const size_t triIndex) const</para>
+
+<para>Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron construct. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a1638b74697c69d6dfb5125092130a9a0"/>std::array&lt; std::optional&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt;, 3 &gt; <link linkend="_classpepr3d_1_1_geometry_1a1638b74697c69d6dfb5125092130a9a0">gatherNeighbours</link> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> triIndex) const</para>
+
+<para>Used by BFS in bucket painting. Aggregates the neighbours of the triangle at triIndex by looking into the <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron construct. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ae361aadf7f7b305ec57f7d0c3f5ec076"/>template&lt;typename StoppingCondition &gt; </para><para>void <link linkend="_classpepr3d_1_1_geometry_1ae361aadf7f7b305ec57f7d0c3f5ec076">addNeighboursToQueue</link> (const size_t currentVertex, std::unordered_set&lt; size_t &gt; &amp;alreadyVisited, std::deque&lt; size_t &gt; &amp;toVisit, const StoppingCondition &amp;stopFunctor) const</para>
+
+<para>Used by BFS in bucket painting. Manages the queue used to search through the graph. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a598ec7cc38c6849908d97fb1ee482db5"/>template&lt;typename StoppingCondition &gt; </para><para>void <link linkend="_classpepr3d_1_1_geometry_1a598ec7cc38c6849908d97fb1ee482db5">addNeighboursToQueue</link> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> currentVertex, std::unordered_set&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; &amp;alreadyVisited, std::deque&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; &amp;toVisit, const StoppingCondition &amp;stopFunctor) const</para>
+
+<para>Used by BFS in bucket painting. Manages the queue used to search through the graph. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a2dbc2ee792c43857a7d9b1d16b3320df"/>void <emphasis role="strong">computeSdf</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ab00aaf9b4fdf18c56d57e8f0d646ab45"/>size_t <emphasis role="strong">segment</emphasis> (const int numberOfClusters, const float smoothingLambda, std::map&lt; size_t, std::vector&lt; size_t &gt;&gt; &amp;segmentToTriangleIds, std::unordered_map&lt; size_t, size_t &gt; &amp;triangleToSegmentMap)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a531c94e0221f47462af2c9b5f0961e56"/>template&lt;class Archive &gt; </para><para>void <link linkend="_classpepr3d_1_1_geometry_1a531c94e0221f47462af2c9b5f0961e56">save</link> (Archive &amp;saveArchive) const</para>
+
+<para>Method to allow the Cereal library to serialize this class. Used for saving a .p3d project. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a2a8b9b75eb5033c9af30570ace03e921"/>template&lt;class Archive &gt; </para><para>void <link linkend="_classpepr3d_1_1_geometry_1a2a8b9b75eb5033c9af30570ace03e921">load</link> (Archive &amp;loadArchive)</para>
+
+<para>Method to allow the Cereal library to deserialize this class. Used for loading a .p3d project. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a383d95503293a68382275bc269280690"/>template&lt;typename StoppingCondition &gt; </para><para>std::vector&lt; size_t &gt; <emphasis role="strong">bucketSpread</emphasis> (const StoppingCondition &amp;stopFunctor, std::deque&lt; size_t &gt; &amp;toVisit, std::unordered_set&lt; size_t &gt; &amp;alreadyVisited)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a4d2b971ea77ab01284de6803ab7642c6"/>template&lt;typename StoppingCondition &gt; </para><para>std::vector&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; <emphasis role="strong">bucketSpread</emphasis> (const StoppingCondition &amp;stopFunctor, std::deque&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; &amp;toVisit, std::unordered_set&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; &amp;alreadyVisited)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ae72aa9945025d6609ef0fe5beab238f9"/>std::vector&lt; <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &gt; <link linkend="_classpepr3d_1_1_geometry_1ae72aa9945025d6609ef0fe5beab238f9">mTriangles</link></para>
+
+<para>Triangle soup of the original model mesh, containing CGAL::Triangle_3 data for AABB tree. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a2ab785869db636d7dc75d192cbd34c30"/>std::vector&lt; std::pair&lt; Point3, double &gt; &gt; <link linkend="_classpepr3d_1_1_geometry_1a2ab785869db636d7dc75d192cbd34c30">mTriangleBounds</link></para>
+
+<para>Stores a rough collision sphere for each triangle in a form of a center point + radius. Used to speed up capsule/cylinder querries on original triangles. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a899b65a3e64dc086f6275e4a5b616b62"/>std::map&lt; size_t, <link linkend="_classpepr3d_1_1_triangle_detail">TriangleDetail</link> &gt; <link linkend="_classpepr3d_1_1_geometry_1a899b65a3e64dc086f6275e4a5b616b62">mTriangleDetails</link></para>
+
+<para>Map of triangle details. (Detailed triangles that replace the original) </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1aee03bb37cbf326e4594b58edacbc17c0"/>std::map&lt; size_t, size_t &gt; <link linkend="_classpepr3d_1_1_geometry_1aee03bb37cbf326e4594b58edacbc17c0">mTriangleDetailColorBufferStart</link></para>
+
+<para>Map of baseTriangleId -&gt; Index of first detail triangle color in mOgl.colorBuffer. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1addf4b4de09e100d6e4279d21e01a05eb"/><link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data">OpenGlData</link> <link linkend="_classpepr3d_1_1_geometry_1addf4b4de09e100d6e4279d21e01a05eb">mOgl</link></para>
+
+<para>All open GL buffers. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a040e500c0481caafb88141d8e42128bb"/><link linkend="_structpepr3d_1_1_polyhedron_data">PolyhedronData</link> <link linkend="_classpepr3d_1_1_geometry_1a040e500c0481caafb88141d8e42128bb">mPolyhedronData</link></para>
+
+<para>Polyhedron structure. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ab9f70b2e8bbd7a9baa001b981c6215aa"/>std::unique_ptr&lt; Tree &gt; <link linkend="_classpepr3d_1_1_geometry_1ab9f70b2e8bbd7a9baa001b981c6215aa">mTree</link></para>
+
+<para>AABB tree from the <link linkend="_namespace_c_g_a_l">CGAL</link> library, to find intersections with rays generated by user mouse clicks and the mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a1108d0993ef23fb246ae10244a0c2240"/>std::unique_ptr&lt; Tree &gt; <link linkend="_classpepr3d_1_1_geometry_1a1108d0993ef23fb246ae10244a0c2240">mTreeDetailed</link></para>
+
+<para>AABB tree built over all triangles, including details. This tree is invalidated on every operation that changes triangleDetail topology. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a73e2b6c74082b59b5d99d58e018e5bff"/>std::unique_ptr&lt; PolyhedronData::Mesh &gt; <link linkend="_classpepr3d_1_1_geometry_1a73e2b6c74082b59b5d99d58e018e5bff">mMeshDetailed</link></para>
+
+<para>Surface mesh with detail triangles included. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a111ad109dfecf9e9d3371291d1271ac9"/>std::unordered_map&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link>, PolyhedronData::face_descriptor &gt; <emphasis role="strong">mMeshDetailedFaceDescs</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1adf2777044b00de455536e8bc0efc3b07"/>PolyhedronData::Mesh::Property_map&lt; PolyhedronData::face_descriptor, <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; <link linkend="_classpepr3d_1_1_geometry_1adf2777044b00de455536e8bc0efc3b07">mMeshDetailedIdMap</link></para>
+
+<para>Map converting a face_descriptor into an ID. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1af247be6afb090aa4edecb32786103ae1"/>std::unique_ptr&lt; BoundingBox &gt; <link linkend="_classpepr3d_1_1_geometry_1af247be6afb090aa4edecb32786103ae1">mBoundingBox</link></para>
+
+<para>AABB of the whole mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a435bf3487105e8fb7867614845d69885"/><link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> <link linkend="_classpepr3d_1_1_geometry_1a435bf3487105e8fb7867614845d69885">mColorManager</link></para>
+
+<para>A vector based map mapping size_t into ci::ColorA. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a47baed18f665dbbe1c69b9b400ace85c"/><link linkend="_structpepr3d_1_1_geometry_1_1_area_highlight">AreaHighlight</link> <link linkend="_classpepr3d_1_1_geometry_1a47baed18f665dbbe1c69b9b400ace85c">mAreaHighlight</link></para>
+
+<para>Struct representing a highlight around user&apos;s cursor. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1a0bf613cec3cd854058e183f199542ada"/>std::unique_ptr&lt; <link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> &gt; <link linkend="_classpepr3d_1_1_geometry_1a0bf613cec3cd854058e183f199542ada">mProgress</link></para>
+
+<para>Current progress of import, tree, polyhedron building, export, etc. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Friends    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_geometry_1ab2f44cbb59a08132f4c843e5225bba0e"/>class <emphasis role="strong">cereal::access</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>The whole geometry of a model that the user is painting. </para>
+</section>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_classpepr3d_1_1_geometry_1a5f0594ebe7f3a779dc9cf18f943f1c56"/>    <section>
+    <title>buildDetailedMesh()</title>
+<indexterm><primary>buildDetailedMesh</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>buildDetailedMesh</secondary></indexterm>
+<para><computeroutput>void pepr3d::Geometry::buildDetailedMesh ( )<computeroutput>[private]</computeroutput></computeroutput></para><para>
+
+<para>Build a <link linkend="_namespace_c_g_a_l">CGAL</link> mesh over detailed triangles. </para>
+</para>
+
+<para>Yes, we are about to hash floating point values. These values come from <link linkend="_namespace_c_g_a_l">CGAL</link> exact kernel, so they should be bit-equal and safe to hash. There is no betters way to get indices before this, as different color parts are stored in different polygons.</para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1ae6d2ae86fca37592a5dbb93784ca4ef0"/>    <section>
+    <title>changeColorIds()</title>
+<indexterm><primary>changeColorIds</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>changeColorIds</secondary></indexterm>
+<computeroutput>template&lt;typename ColorFunc &gt; </computeroutput><para><computeroutput>void pepr3d::Geometry::changeColorIds (const ColorFunc &amp; colorFunc)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Change all color ID&apos;s from one to another. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>ColorFunc</entry>
+                                <entry>
+<para>functor of type size_t func(size_t originalColor), that returns the new color ID </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1a4907bc6f193156a3d68956b2ce622120"/>    <section>
+    <title>getTrianglesInRadius()</title>
+<indexterm><primary>getTrianglesInRadius</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>getTrianglesInRadius</secondary></indexterm>
+<computeroutput>template&lt;typename Object &gt; </computeroutput><para><computeroutput>std::vector&lt;size_t&gt; pepr3d::Geometry::getTrianglesInRadius (const Object &amp; object, double radius) const<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Get all triangles that are closer to the object than radius This function operates on spherical bounds of triangles and may therefore return false positives. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>object</entry>
+                                <entry>
+<para><link linkend="_namespace_c_g_a_l">CGAL</link> Object - point, line, etc </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1a1d420e96bc8c92c620b5473677173d81"/>    <section>
+    <title>getTrianglesUnderBrush()</title>
+<indexterm><primary>getTrianglesUnderBrush</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>getTrianglesUnderBrush</secondary></indexterm>
+<para><computeroutput>std::vector&lt; size_t &gt; pepr3d::Geometry::getTrianglesUnderBrush (const glm::vec3 &amp; originPoint, const glm::vec3 &amp; insideDirection, size_t startTriangle, const struct <link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> &amp; settings)</computeroutput></para><para>
+
+<para>Spread as BFS from starting triangle, until the limits of brush settings are reached. </para>
+</para>
+
+<para>Stop when the triangle has no intersection with the area highlight </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1ae68a633ab4ab435156e0b03e64c9ede9"/>    <section>
+    <title>intersectDetailedMesh()</title>
+<indexterm><primary>intersectDetailedMesh</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>intersectDetailedMesh</secondary></indexterm>
+<para><computeroutput>std::optional&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; pepr3d::Geometry::intersectDetailedMesh (const ci::Ray &amp; ray)</computeroutput></para><para>
+
+<para>Intersects the detailed mesh with the given ray and returns the ID of the triangle intersected, if it exists. </para>
+</para>
+
+<para>No intersection detected. </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1ace58dc7a4182240000e9b773cb8da4ee"/>    <section>
+    <title>intersectMesh()</title>
+<indexterm><primary>intersectMesh</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>intersectMesh</secondary></indexterm>
+<para><computeroutput>std::optional&lt; size_t &gt; pepr3d::Geometry::intersectMesh (const ci::Ray &amp; ray) const</computeroutput></para><para>
+
+<para>Intersects the mesh with the given ray and returns the index of the triangle intersected, if it exists. Example use: generate ray based on a mouse click, call this method, then call setTriangleColor. </para>
+</para>
+
+<para>No intersection detected. </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1a993a7383980e9c4aa955ae156d714f15"/>    <section>
+    <title>isTriangleInRadius()</title>
+<indexterm><primary>isTriangleInRadius</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>isTriangleInRadius</secondary></indexterm>
+<computeroutput>template&lt;typename Object &gt; </computeroutput><para><computeroutput>bool pepr3d::Geometry::isTriangleInRadius (const Object &amp; object, double radius, size_t triangleIdx) const<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Test if distance from object to spherical boundary of a triangle is closer than radius. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>object</entry>
+                                <entry>
+<para><link linkend="_namespace_c_g_a_l">CGAL</link> Object - point, line, etc </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns: </title>
+
+<para>true, object is closer than radius to the triangle bound shpere </para>
+</formalpara>
+</para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1a027715ec109b060ffc8b420947c4fde0"/>    <section>
+    <title>loadNewGeometry()</title>
+<indexterm><primary>loadNewGeometry</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>loadNewGeometry</secondary></indexterm>
+<para><computeroutput>void pepr3d::Geometry::loadNewGeometry (const std::string &amp; fileName)</computeroutput></para><para>
+
+<para>Loads new geometry into the private data, rebuilds the buffers and other data structures automatically. </para>
+</para>
+
+<para>Import the object via Assimp</para>
+
+<para>Fill triangle data to compute AABB</para>
+
+<para>Fill Polyhedron data to compute SurfaceMesh</para>
+
+<para>Get the generated color palette of the model, replace the current one</para>
+
+<para>Do the computations in parallel </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1a6c6b8ef6f157f8bb818e38f6e2e49b37"/>    <section>
+    <title>paintWithShape()<computeroutput>[1/2]</computeroutput></title>
+<indexterm><primary>paintWithShape</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>paintWithShape</secondary></indexterm>
+<para><computeroutput>void pepr3d::Geometry::paintWithShape (const ci::Ray &amp; ray, const std::vector&lt; Point3 &gt; &amp; shape, size_t color, bool paintBackfaces = <computeroutput>false</computeroutput>
+)</computeroutput></para><para>
+
+<para>Paint area with a shaped brush. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>ray</entry>
+                                <entry>
+<para>Ray along which to project the shape, using orthogonal projection </para>
+</entry>
+                            </row>
+                            <row>
+                                <entry>shape</entry>
+                                <entry>
+<para>Points in world space representing a polygonal shape </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1a152673dacbe299a55ee9dc6a2403d6a5"/>    <section>
+    <title>paintWithShape()<computeroutput>[2/2]</computeroutput></title>
+<indexterm><primary>paintWithShape</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>paintWithShape</secondary></indexterm>
+<para><computeroutput>void pepr3d::Geometry::paintWithShape (const ci::Ray &amp; ray, const std::vector&lt; DataTriangle::Triangle &gt; &amp; triangles, size_t color)</computeroutput></para><para>
+
+<para>Paint area with a shaped brush. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>ray</entry>
+                                <entry>
+<para>Ray along which to project the shape, using orthogonal projection </para>
+</entry>
+                            </row>
+                            <row>
+                                <entry>triangles</entry>
+                                <entry>
+<para>Triangles in world space representing the shape </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1a7671cab77f226a80cbea5703aba2026c"/>    <section>
+    <title>recomputeFromData()</title>
+<indexterm><primary>recomputeFromData</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>recomputeFromData</secondary></indexterm>
+<para><computeroutput>void pepr3d::Geometry::recomputeFromData ( )</computeroutput></para>
+<para>Async build the polyhedron data structure</para>
+
+<para>Async build the AABB tree</para>
+
+<para>Get the new bounding box</para>
+
+<para>Generate new vertex buffer</para>
+
+<para>Generate new index buffer</para>
+
+<para>Generate new color buffer from triangle color data</para>
+
+<para>Generate new normal buffer, copying the triangle normal to each vertex</para>
+
+<para>Wait for building the polyhedron and tree </para>
+    </section><anchor xml:id="_classpepr3d_1_1_geometry_1aa473f80280346656024fc494994c065e"/>    <section>
+    <title>setTriangleColor()</title>
+<indexterm><primary>setTriangleColor</primary><secondary>pepr3d::Geometry</secondary></indexterm>
+<indexterm><primary>pepr3d::Geometry</primary><secondary>setTriangleColor</secondary></indexterm>
+<para><computeroutput>void pepr3d::Geometry::setTriangleColor (const size_t triangleIndex, const size_t newColor)</computeroutput></para><para>
+
+<para>Set new triangle color. </para>
+</para>
+
+<para>Change it in the triangle soup </para>
+</section>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/Geometry.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/Geometry.cpp</section>
+</section>

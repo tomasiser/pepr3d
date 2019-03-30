@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_export_assistant">
+<title>pepr3d::ExportAssistant Class Reference</title>
+<indexterm><primary>pepr3d::ExportAssistant</primary></indexterm>
+<para>Inheritance diagram for pepr3d::ExportAssistant:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_export_assistant.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_export_assistant_1_1_settings_per_color">SettingsPerColor</link></para>
+
+<para>Export settings available for each color. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a6a210a4059ae4d63eaf3568863906fb2"/><emphasis role="strong">ExportAssistant</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;app)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a2763d4ce06d7b48ab8034484d66e8465"/>virtual std::string <link linkend="_classpepr3d_1_1_export_assistant_1a2763d4ce06d7b48ab8034484d66e8465">getName</link> () const override</para>
+
+<para>Returns a short name, displayed e.g., in a side pane and tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aee997d81f569128c7ace00c601fdd879"/>virtual std::string <link linkend="_classpepr3d_1_1_export_assistant_1aee997d81f569128c7ace00c601fdd879">getDescription</link> () const override</para>
+
+<para>Returns a description, displayed e.g., in a tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a28db381b8657b27eb3c88428f3b2dd27"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> &gt; <link linkend="_classpepr3d_1_1_export_assistant_1a28db381b8657b27eb3c88428f3b2dd27">getHotkey</link> (const <link linkend="_classpepr3d_1_1_hotkeys">Hotkeys</link> &amp;hotkeys) const override</para>
+
+<para>Returns an associated <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> or an empty value. Use hotkeys.findHotkey() method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aa959ec6d01b6fdef8f3f094ef8e9eb95"/>virtual std::string <link linkend="_classpepr3d_1_1_export_assistant_1aa959ec6d01b6fdef8f3f094ef8e9eb95">getIcon</link> () const override</para>
+
+<para>Returns a UTF-8 icon from an icon font. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aa2d7a586b03190a3848a513bd1706613"/>virtual bool <link linkend="_classpepr3d_1_1_export_assistant_1aa2d7a586b03190a3848a513bd1706613">isEnabled</link> () const override</para>
+
+<para>Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1ac4f307d1aa139898232471b56e93efd3"/>virtual void <link linkend="_classpepr3d_1_1_export_assistant_1ac4f307d1aa139898232471b56e93efd3">drawToSidePane</link> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1adc7fd57555d1f92afa856a892846b895"/>virtual void <link linkend="_classpepr3d_1_1_export_assistant_1adc7fd57555d1f92afa856a892846b895">drawToModelView</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_model_view">ModelView</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1acb764e7f07b64884c024f079e3936037"/>virtual void <link linkend="_classpepr3d_1_1_export_assistant_1acb764e7f07b64884c024f079e3936037">onToolSelect</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on a <link linkend="_classpepr3d_1_1_tool">Tool</link> right after user selects it. Note: It may also be called when a user selects the same tool again! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1ae1942fa90724a66bf6bc9e0d8b521667"/>virtual void <link linkend="_classpepr3d_1_1_export_assistant_1ae1942fa90724a66bf6bc9e0d8b521667">onToolDeselect</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on a <link linkend="_classpepr3d_1_1_tool">Tool</link> right after user selects another tool. Note: It may also be called when a user selects the same tool again! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1af1d731fa49180aea45b8097b47f4c21e"/>virtual void <link linkend="_classpepr3d_1_1_export_assistant_1af1d731fa49180aea45b8097b47f4c21e">onNewGeometryLoaded</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on EVERY <link linkend="_classpepr3d_1_1_tool">Tool</link> right after a new <link linkend="_classpepr3d_1_1_geometry">Geometry</link> is loaded or imported. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1ab2ee00e6bf2de96aee502114a48d3aa2"/>void <link linkend="_classpepr3d_1_1_export_assistant_1ab2ee00e6bf2de96aee502114a48d3aa2">resetOverride</link> ()</para>
+
+<para>Removes the <link linkend="_classpepr3d_1_1_model_view">ModelView</link> override of color, vertex, normal, and index buffers and height range. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aa15997d19575439f94ac261a91deacd4"/>void <link linkend="_classpepr3d_1_1_export_assistant_1aa15997d19575439f94ac261a91deacd4">setOverride</link> ()</para>
+
+<para>Sets the <link linkend="_classpepr3d_1_1_model_view">ModelView</link> override of color, vertex, normal, and index buffers and height range. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a3f3f04d46d7d147fd6be601ad8290a6e"/>void <link linkend="_classpepr3d_1_1_export_assistant_1a3f3f04d46d7d147fd6be601ad8290a6e">updateSettings</link> ()</para>
+
+<para>Updates the number of <link linkend="_structpepr3d_1_1_export_assistant_1_1_settings_per_color">SettingsPerColor</link> for the current <link linkend="_classpepr3d_1_1_geometry">Geometry</link> and calls validateExportType. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aed9235451440d361e5f2281523b3394c"/>void <link linkend="_classpepr3d_1_1_export_assistant_1aed9235451440d361e5f2281523b3394c">validateExportType</link> ()</para>
+
+<para>Makes sure the selected export type is valid for the current <link linkend="_classpepr3d_1_1_geometry">Geometry</link> and changes it if needed. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a030d2048fee88d46c3f3db387815f588"/>void <link linkend="_classpepr3d_1_1_export_assistant_1a030d2048fee88d46c3f3db387815f588">exportFiles</link> ()</para>
+
+<para>Export the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> to files. Opens and handles the file dialog. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a9197c8f12e3a88c1c45563d130292017"/>void <link linkend="_classpepr3d_1_1_export_assistant_1a9197c8f12e3a88c1c45563d130292017">updateExtrusionPreview</link> ()</para>
+
+<para>Updates the preview in the <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1addcbba7a5c032146a2284f7bc8bc4273"/>void <link linkend="_classpepr3d_1_1_export_assistant_1addcbba7a5c032146a2284f7bc8bc4273">prepareExport</link> ()</para>
+
+<para>Prepares the current <link linkend="_classpepr3d_1_1_geometry">Geometry</link> to be exported, e.g., computes SDF if needed, etc. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a513ed5de202c31f9440bfa86c13a66de"/>void <link linkend="_classpepr3d_1_1_export_assistant_1a513ed5de202c31f9440bfa86c13a66de">pushErrorDialog</link> (const std::string &amp;errorDetails)</para>
+
+<para>Pushes an error dialog stating that the export was not successful. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1ad495ca8829b6dd3a11f40b97fd0adaa9"/>bool <link linkend="_classpepr3d_1_1_export_assistant_1ad495ca8829b6dd3a11f40b97fd0adaa9">isSurfaceExport</link> ()</para>
+
+<para>Returns true if the selected export is surface only. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a0d189d2736a0d8885470acd5249be346"/><link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp; <emphasis role="strong">mApplication</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a0d2833668f741000b55a72fff4962df3"/>glm::vec2 <emphasis role="strong">mPreviewMinMaxHeight</emphasis> = glm::vec2(0.0f, 1.0f)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a6184c3ee081e787e9749405c647f259d"/>bool <emphasis role="strong">mIsFirstFrame</emphasis> = true</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aa444c180b7ee9cde1e438c79d37d65a0"/>bool <emphasis role="strong">mIsSelected</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a99f3d21c6f76c3443376680951cceed7"/>std::map&lt; size_t, std::unique_ptr&lt; aiScene &gt; &gt; <link linkend="_classpepr3d_1_1_export_assistant_1a99f3d21c6f76c3443376680951cceed7">mScenes</link></para>
+
+<para>Map of colors (color index) and Assimp scenes representing them. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1ab047792af2173b6a30121db9e6100843"/>std::vector&lt; <link linkend="_structpepr3d_1_1_export_assistant_1_1_settings_per_color">SettingsPerColor</link> &gt; <link linkend="_classpepr3d_1_1_export_assistant_1ab047792af2173b6a30121db9e6100843">mSettingsPerColor</link></para>
+
+<para><link linkend="_classpepr3d_1_1_settings">Settings</link> per color, indexed by the color index. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aae991da0c7b884c0004f46b763a7d941"/>ExportType <emphasis role="strong">mExportType</emphasis> = ExportType::PolyExtrusion</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aaa3c65341b50ece8cf27c1a9aaf82160"/>std::unique_ptr&lt; <link linkend="_classpepr3d_1_1_model_exporter">ModelExporter</link> &gt; <emphasis role="strong">mExporter</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a8d352fcdc0c39bd6ad0234462dde11c3"/>size_t <emphasis role="strong">mLastVersionPreviewed</emphasis> = std::numeric_limits&lt;size_t&gt;::max()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1aabb310072c4389c99b52410c095f76be"/>bool <emphasis role="strong">mIsPreviewUpToDate</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a50eccc83e66faf6009e28c1ab4c65524"/>bool <emphasis role="strong">mShouldExportInNewFolder</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_export_assistant_1a5eaf6eec0212e24225c371cc462160d6"/>std::string <emphasis role="strong">mExportFileType</emphasis> = &quot;stl&quot;</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/ExportAssistant.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/ExportAssistant.cpp</section>

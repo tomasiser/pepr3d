@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_class_gnuplot_debug">
+<title>GnuplotDebug&lt; PointType &gt; Class Template Reference</title>
+<indexterm><primary>GnuplotDebug&lt; PointType &gt;</primary></indexterm>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_gnuplot_debug_1a7f9f4b6f6232f04a49b6826211e10e81"/>enum <emphasis role="strong">GraphType</emphasis> { <emphasis role="strong">LINES</emphasis>, 
+<emphasis role="strong">LINESPOINTS</emphasis>, 
+<emphasis role="strong">POINTS</emphasis>
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_gnuplot_debug_1ac5fe70017e88c33c296439b5eac9fe91"/><emphasis role="strong">GnuplotDebug</emphasis> (const <link linkend="_class_gnuplot_debug">GnuplotDebug</link> &amp;)=delete</para>
+</listitem>
+            <listitem><para>template&lt;typename Polygon &gt; </para><para>void <link linkend="_class_gnuplot_debug_1a6a7c67bbc05029c50f9a8d80db0e17c0">addPoly</link> (const Polygon &amp;poly, const std::string &amp;rgbStr, GraphType type=GraphType::LINES)</para>
+
+<para>Add polygon to view. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_class_gnuplot_debug_1ac727f20a69cf6ab905ef30df076b93ad"/>void <emphasis role="strong">exportToFile</emphasis> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_gnuplot_debug_1a3a8a3177495da970501359805e24afd3"/>std::string <emphasis role="strong">typeToString</emphasis> (GraphType type)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_gnuplot_debug_1ac61e5ea9d59fe22cc032ed8205a8d9b7"/>std::vector&lt; std::vector&lt; PointType &gt; &gt; <emphasis role="strong">mPolysToDraw</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_class_gnuplot_debug_1af29afad0bc0edc62400b851e371ff22c"/>std::vector&lt; std::string &gt; <emphasis role="strong">mRgbStrings</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_class_gnuplot_debug_1a07521d13a95439ffa57c4e8872f6debb"/>std::vector&lt; GraphType &gt; <emphasis role="strong">mTypes</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_class_gnuplot_debug_1a6a7c67bbc05029c50f9a8d80db0e17c0"/>    <section>
+    <title>addPoly()</title>
+<indexterm><primary>addPoly</primary><secondary>GnuplotDebug&lt; PointType &gt;</secondary></indexterm>
+<indexterm><primary>GnuplotDebug&lt; PointType &gt;</primary><secondary>addPoly</secondary></indexterm>
+<computeroutput>template&lt;typename PointType &gt; </computeroutput><computeroutput>template&lt;typename Polygon &gt; </computeroutput><para><computeroutput>void <link linkend="_class_gnuplot_debug">GnuplotDebug</link>&lt; PointType &gt;::addPoly (const Polygon &amp; poly, const std::string &amp; rgbStr, GraphType type = <computeroutput>GraphType::LINES</computeroutput>
+)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Add polygon to view. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>rgbStr</entry>
+                                <entry>
+<para>Color in gnuplot format: #CCCCCC </para>
+</entry>
+                            </row>
+                            <row>
+                                <entry>type</entry>
+                                <entry>
+<para>Type of graph to use </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/GnuplotDebugHelper.h</section>
+</section>

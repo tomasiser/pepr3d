@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_toolbar">
+<title>pepr3d::Toolbar Class Reference</title>
+<indexterm><primary>pepr3d::Toolbar</primary></indexterm>
+<para>
+
+<para>A top part of the user interface that shows a File menu, Undo, Redo, and all tools. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Toolbar.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_toolbar_1_1_button_properties">ButtonProperties</link></para>
+
+<para>Properties of a clickable and selectable button in the <link linkend="_classpepr3d_1_1_toolbar">Toolbar</link>. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a84600ac501c165a06e775e70e5414a5a"/><emphasis role="strong">Toolbar</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;app)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a05d027cd466b54792502653043a8db60"/>float <link linkend="_classpepr3d_1_1_toolbar_1a05d027cd466b54792502653043a8db60">getHeight</link> ()</para>
+
+<para>Returns the height. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1ab84f478320ce74f523bede52c0966271"/>void <link linkend="_classpepr3d_1_1_toolbar_1ab84f478320ce74f523bede52c0966271">draw</link> ()</para>
+
+<para>Draws the <link linkend="_classpepr3d_1_1_toolbar">Toolbar</link> using ImGui. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a7d84a6ca9d9aad7afe53b7aecb1fdddf"/>using <emphasis role="strong">ToolsVector</emphasis> = std::vector&lt; std::unique_ptr&lt; <link linkend="_classpepr3d_1_1_tool">Tool</link> &gt; &gt;</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a1d55b21ed7022216756d4d156c8f1e52"/>void <link linkend="_classpepr3d_1_1_toolbar_1a1d55b21ed7022216756d4d156c8f1e52">drawSeparator</link> ()</para>
+
+<para>Draws a vertical separator. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a8ec26251465c349def3cb032370bdf25"/>template&lt;typename Callback &gt; </para><para>void <link linkend="_classpepr3d_1_1_toolbar_1a8ec26251465c349def3cb032370bdf25">drawButton</link> (<link linkend="_structpepr3d_1_1_toolbar_1_1_button_properties">ButtonProperties</link> &amp;props, Callback onPressed)</para>
+
+<para>Draws a clickable and selectable button in the <link linkend="_classpepr3d_1_1_toolbar">Toolbar</link> according to the <link linkend="_structpepr3d_1_1_toolbar_1_1_button_properties">ButtonProperties</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1aceb99e5459d3b1ba1d557caeec2e57d1"/>void <link linkend="_classpepr3d_1_1_toolbar_1aceb99e5459d3b1ba1d557caeec2e57d1">drawFileDropDown</link> ()</para>
+
+<para>Draws a File drop down menu. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1afd2e255728e6b0962da017f3ee1822bc"/>void <link linkend="_classpepr3d_1_1_toolbar_1afd2e255728e6b0962da017f3ee1822bc">drawUndoRedo</link> ()</para>
+
+<para>Draws the Undo and Redo buttons. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a88b084de711b74735348315189c01fe7"/>void <link linkend="_classpepr3d_1_1_toolbar_1a88b084de711b74735348315189c01fe7">drawToolButtons</link> ()</para>
+
+<para>Draws buttons of all <link linkend="_classpepr3d_1_1_tool">Tool</link> instances. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a9366ee163dfe041a2661fe5eb664a325"/>void <link linkend="_classpepr3d_1_1_toolbar_1a9366ee163dfe041a2661fe5eb664a325">drawToolButton</link> (ToolsVector::iterator tool)</para>
+
+<para>Draws a single button for a specified <link linkend="_classpepr3d_1_1_tool">Tool</link> (an iterator to the <link linkend="_classpepr3d_1_1_tool">Tool</link>). </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1a29f26071f02ab35bdaa35cd08326766a"/><link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp; <emphasis role="strong">mApplication</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1af5cb57247638ff59f7dc9fef191fdcf3"/>std::size_t <emphasis role="strong">mSelectedButtonIndex</emphasis> = 3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_toolbar_1aea711be10561a98a3736e87570463b02"/>float <emphasis role="strong">mHeight</emphasis> = 50.0f</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>A top part of the user interface that shows a File menu, Undo, Redo, and all tools. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/Toolbar.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/Toolbar.cpp</section>
+</section>

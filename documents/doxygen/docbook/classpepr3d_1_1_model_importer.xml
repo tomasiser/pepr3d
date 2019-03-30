@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_model_importer">
+<title>pepr3d::ModelImporter Class Reference</title>
+<indexterm><primary>pepr3d::ModelImporter</primary></indexterm>
+<para>
+
+<para>Imports triangles and color palette from a model via Assimp. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;ModelImporter.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1ae34f94fa256e598818039431f49f8709"/><emphasis role="strong">ModelImporter</emphasis> (const std::string p, <link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> *progress, ::ThreadPool &amp;threadPool)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1aca674c511db529638e83ade8aad83e24"/>std::vector&lt; <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &gt; <link linkend="_classpepr3d_1_1_model_importer_1aca674c511db529638e83ade8aad83e24">getTriangles</link> () const</para>
+
+<para>Returns a vector of all <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> of the imported mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1aa3ba28412e9317aff4850ccd251e721e"/><link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> <link linkend="_classpepr3d_1_1_model_importer_1aa3ba28412e9317aff4850ccd251e721e">getColorManager</link> () const</para>
+
+<para>Returns a <link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> of the imported mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a49b8a0fd779eedce1cf24a910fcce833"/>bool <link linkend="_classpepr3d_1_1_model_importer_1a49b8a0fd779eedce1cf24a910fcce833">isModelLoaded</link> ()</para>
+
+<para>Returns true if the mesh was imported successfully. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a8b27edc2cd72882c9144ff870ee26a6b"/>std::vector&lt; glm::vec3 &gt; <link linkend="_classpepr3d_1_1_model_importer_1a8b27edc2cd72882c9144ff870ee26a6b">getVertexBuffer</link> () const</para>
+
+<para>Returns a vertex buffer of the imported mesh. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a0d21b9019f26f672414ad0bb40bb946c"/>std::vector&lt; std::array&lt; size_t, 3 &gt; &gt; <link linkend="_classpepr3d_1_1_model_importer_1a0d21b9019f26f672414ad0bb40bb946c">getIndexBuffer</link> () const</para>
+
+<para>Returns an index buffer of the imported mesh. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="_classpepr3d_1_1_model_importer_1aa9220087658f958e335ed87632c364be">loadModelWithJoinedVertices</link> (const std::string &amp;path)</para>
+
+<para>A method which loads the model with ALL vertex information apart from position removed. This is done to correctly merge all vertices and receive a closed mesh, which can&apos;t be done if more than one vertex per position exists. </para>
+</listitem>
+            <listitem><para>bool <link linkend="_classpepr3d_1_1_model_importer_1aa3ee5189df6ae1d8530915fe8cc964e7">loadModel</link> (const std::string &amp;path)</para>
+
+<para>A method which loads the model we will use for rendering - with duplicated vertices for normals, colors, etc. </para>
+</listitem>
+            <listitem><para>std::vector&lt; <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &gt; <link linkend="_classpepr3d_1_1_model_importer_1acf84e4d461505e722c827812418ef0d1">processFirstMesh</link> (aiMesh *mesh)</para>
+
+<para>Obtains model information only from first of the meshes. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Static Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para>static bool <link linkend="_classpepr3d_1_1_model_importer_1a4d252ce45c2cf7a093d8b067b55ba2ca">zeroAreaCheck</link> (const std::array&lt; glm::vec3, 3 &gt; &amp;triangle, const double Eps=0.000001)</para>
+
+<para>Returns true if the given triangle has a zero area either due to rounding or vertices. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a8632c7f0d773fd50da714ef177a3b9f2"/>static std::vector&lt; glm::vec3 &gt; <link linkend="_classpepr3d_1_1_model_importer_1a8632c7f0d773fd50da714ef177a3b9f2">calculateVertexBuffer</link> (aiMesh *mesh)</para>
+
+<para>Pull the correct Vertex buffer (correct as in vertices are re-used for multiple triangles) from the mesh. </para>
+</listitem>
+            <listitem><para>static std::vector&lt; std::array&lt; size_t, 3 &gt; &gt; <link linkend="_classpepr3d_1_1_model_importer_1aa537966d73404c3f4c463799030a1d2b">calculateIndexBuffer</link> (aiMesh *mesh)</para>
+
+<para>Pull the correct index buffer (correct as in different than 0-N) from the mesh. </para>
+</listitem>
+            <listitem><para>static void <link linkend="_classpepr3d_1_1_model_importer_1a4594f67b4aa8b90ac1a21e52e1871494">processNode</link> (aiNode *node, const aiScene *scene, std::vector&lt; aiMesh * &gt; &amp;meshes)</para>
+
+<para>Processes scene tree recursively. Retrieving meshes from file. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a9f88ce7372a94ac4682d2918f879ea05"/>static glm::vec3 <link linkend="_classpepr3d_1_1_model_importer_1a9f88ce7372a94ac4682d2918f879ea05">calculateNormal</link> (const std::array&lt; glm::vec3, 3 &gt; vertices, const glm::vec3 normals[3])</para>
+
+<para>Calculates triangle normal from its vertices with orientation of original vertex normals. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a246ce191de19d1ab72551c935012405c"/>std::string <emphasis role="strong">mPath</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a4e1963a18c5ac3d49837b37198fb1f07"/>std::vector&lt; <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> &gt; <emphasis role="strong">mTriangles</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a0c75d881e5a8995f9d868d3648f99fed"/><link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> <emphasis role="strong">mPalette</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a4b325d259c20fa610a3c37505e07ed9b"/>bool <emphasis role="strong">mModelLoaded</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a783426cd94762a3c47b208bd93131056"/>std::vector&lt; glm::vec3 &gt; <emphasis role="strong">mVertexBuffer</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a1f8ebea24ac6768d0aa19e35b9378511"/>std::vector&lt; std::array&lt; size_t, 3 &gt; &gt; <emphasis role="strong">mIndexBuffer</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_importer_1a15f30eb03ee6489b372b4ca2ca2dc9de"/><link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> * <emphasis role="strong">mProgress</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Imports triangles and color palette from a model via Assimp. </para>
+</section>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_classpepr3d_1_1_model_importer_1aa537966d73404c3f4c463799030a1d2b"/>    <section>
+    <title>calculateIndexBuffer()</title>
+<indexterm><primary>calculateIndexBuffer</primary><secondary>pepr3d::ModelImporter</secondary></indexterm>
+<indexterm><primary>pepr3d::ModelImporter</primary><secondary>calculateIndexBuffer</secondary></indexterm>
+<para><computeroutput>static std::vector&lt;std::array&lt;size_t, 3&gt; &gt; pepr3d::ModelImporter::calculateIndexBuffer (aiMesh * mesh)<computeroutput>[inline]</computeroutput>, <computeroutput>[static]</computeroutput>, <computeroutput>[private]</computeroutput></computeroutput></para><para>
+
+<para>Pull the correct index buffer (correct as in different than 0-N) from the mesh. </para>
+</para>
+
+<para>Check for degenerate triangles which we do not want in the representation </para>
+    </section><anchor xml:id="_classpepr3d_1_1_model_importer_1aa3ee5189df6ae1d8530915fe8cc964e7"/>    <section>
+    <title>loadModel()</title>
+<indexterm><primary>loadModel</primary><secondary>pepr3d::ModelImporter</secondary></indexterm>
+<indexterm><primary>pepr3d::ModelImporter</primary><secondary>loadModel</secondary></indexterm>
+<para><computeroutput>bool pepr3d::ModelImporter::loadModel (const std::string &amp; path)<computeroutput>[inline]</computeroutput>, <computeroutput>[private]</computeroutput></computeroutput></para><para>
+
+<para>A method which loads the model we will use for rendering - with duplicated vertices for normals, colors, etc. </para>
+</para>
+
+<para>Creates an instance of the Importer class</para>
+
+<para>Scene with some postprocessing</para>
+
+<para>Access the file&apos;s contents </para>
+    </section><anchor xml:id="_classpepr3d_1_1_model_importer_1aa9220087658f958e335ed87632c364be"/>    <section>
+    <title>loadModelWithJoinedVertices()</title>
+<indexterm><primary>loadModelWithJoinedVertices</primary><secondary>pepr3d::ModelImporter</secondary></indexterm>
+<indexterm><primary>pepr3d::ModelImporter</primary><secondary>loadModelWithJoinedVertices</secondary></indexterm>
+<para><computeroutput>bool pepr3d::ModelImporter::loadModelWithJoinedVertices (const std::string &amp; path)<computeroutput>[inline]</computeroutput>, <computeroutput>[private]</computeroutput></computeroutput></para><para>
+
+<para>A method which loads the model with ALL vertex information apart from position removed. This is done to correctly merge all vertices and receive a closed mesh, which can&apos;t be done if more than one vertex per position exists. </para>
+</para>
+
+<para>Creates an instance of the Importer class</para>
+
+<para>Scene with some postprocessing</para>
+
+<para>Access the file&apos;s contents </para>
+    </section><anchor xml:id="_classpepr3d_1_1_model_importer_1acf84e4d461505e722c827812418ef0d1"/>    <section>
+    <title>processFirstMesh()</title>
+<indexterm><primary>processFirstMesh</primary><secondary>pepr3d::ModelImporter</secondary></indexterm>
+<indexterm><primary>pepr3d::ModelImporter</primary><secondary>processFirstMesh</secondary></indexterm>
+<para><computeroutput>std::vector&lt;<link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link>&gt; pepr3d::ModelImporter::processFirstMesh (aiMesh * mesh)<computeroutput>[inline]</computeroutput>, <computeroutput>[private]</computeroutput></computeroutput></para><para>
+
+<para>Obtains model information only from first of the meshes. </para>
+</para>
+
+<para>Obtaining triangle color. Default color is set if there is no color information</para>
+
+<para>Loading triangle vertices and normals (if it has them)</para>
+
+<para>Calculation of surface normals from vertices and vertex normals or only from vertices.</para>
+
+<para>Check for degenerate triangles which we do not want in the representation</para>
+
+<para>Do last minute quality checks on the triangle</para>
+
+<para>Place the constructed triangle </para>
+    </section><anchor xml:id="_classpepr3d_1_1_model_importer_1a4594f67b4aa8b90ac1a21e52e1871494"/>    <section>
+    <title>processNode()</title>
+<indexterm><primary>processNode</primary><secondary>pepr3d::ModelImporter</secondary></indexterm>
+<indexterm><primary>pepr3d::ModelImporter</primary><secondary>processNode</secondary></indexterm>
+<para><computeroutput>static void pepr3d::ModelImporter::processNode (aiNode * node, const aiScene * scene, std::vector&lt; aiMesh * &gt; &amp; meshes)<computeroutput>[inline]</computeroutput>, <computeroutput>[static]</computeroutput>, <computeroutput>[private]</computeroutput></computeroutput></para><para>
+
+<para>Processes scene tree recursively. Retrieving meshes from file. </para>
+</para>
+
+<para>Process all the node&apos;s meshes (if any).</para>
+
+<para>Recursively do the same for each of its children. </para>
+    </section><anchor xml:id="_classpepr3d_1_1_model_importer_1a4d252ce45c2cf7a093d8b067b55ba2ca"/>    <section>
+    <title>zeroAreaCheck()</title>
+<indexterm><primary>zeroAreaCheck</primary><secondary>pepr3d::ModelImporter</secondary></indexterm>
+<indexterm><primary>pepr3d::ModelImporter</primary><secondary>zeroAreaCheck</secondary></indexterm>
+<para><computeroutput>static bool pepr3d::ModelImporter::zeroAreaCheck (const std::array&lt; glm::vec3, 3 &gt; &amp; triangle, const double Eps = <computeroutput>0.000001</computeroutput>
+)<computeroutput>[inline]</computeroutput>, <computeroutput>[static]</computeroutput>, <computeroutput>[private]</computeroutput></computeroutput></para><para>
+
+<para>Returns true if the given triangle has a zero area either due to rounding or vertices. </para>
+</para>
+
+<para>Check for degenerate triangles which we do not want in the representation </para>
+</section>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/ModelImporter.h</section>
+</section>

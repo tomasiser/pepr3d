@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive">
+<title>pepr3d::DataTriangleAABBPrimitive Struct Reference</title>
+<indexterm><primary>pepr3d::DataTriangleAABBPrimitive</primary></indexterm>
+<para>
+
+<para>Provides the conversion facilities between the custom triangle <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> and the <link linkend="_namespace_c_g_a_l">CGAL</link> Triangle_3 class. Taken from CGAL/examples/AABB_tree/custom_example.cpp, modified. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;TrianglePrimitive.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1a43fbba8b479b4508f52b69e8bb5836ac"/>using <emphasis role="strong">Id</emphasis> = std::pair&lt; const class <link linkend="_classpepr3d_1_1_geometry">Geometry</link> *, <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1ad5e320270958d6054c0128bd803dc6da"/>using <emphasis role="strong">Point</emphasis> = DataTriangle::K::Point_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1ae1cb31e643a04da18a42a869625f249b"/>using <emphasis role="strong">Datum</emphasis> = DataTriangle::K::Triangle_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1a94e6b53c64384b020566cd57a5a7ba21"/>using <emphasis role="strong">Datum_reference</emphasis> = const DataTriangle::K::Triangle_3 &amp;</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1ac15769289a1f00edca2755ef957c32ce"/><emphasis role="strong">DataTriangleAABBPrimitive</emphasis> (const class <link linkend="_classpepr3d_1_1_geometry">Geometry</link> *geometry, <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> triangleId)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1a1859d36669fbe329932f428f3ecee85f"/><emphasis role="strong">DataTriangleAABBPrimitive</emphasis> (Id id)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1a8a808ea38f341eea53d9ee7b8ec75a5e"/>const Id &amp; <emphasis role="strong">id</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1adc3319330dc4c5cbaa4c5fa04e6da337"/>Datum_reference <emphasis role="strong">datum</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1a2ea734c391b726dd56db7c8933f7dd0e"/>Point <emphasis role="strong">reference_point</emphasis> () const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive_1a6de025ee40eb24d625f08d227e575aa7"/>Id <emphasis role="strong">idPair</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Provides the conversion facilities between the custom triangle <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> and the <link linkend="_namespace_c_g_a_l">CGAL</link> Triangle_3 class. Taken from CGAL/examples/AABB_tree/custom_example.cpp, modified. </para>
+<para>
+The documentation for this struct was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/TrianglePrimitive.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/TrianglePrimitive.cpp</section>
+</section>

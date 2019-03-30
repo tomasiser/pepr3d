@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_paint_bucket">
+<title>pepr3d::PaintBucket Class Reference</title>
+<indexterm><primary>pepr3d::PaintBucket</primary></indexterm>
+<para>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for coloring whole regions with a single click. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;PaintBucket.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::PaintBucket:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_paint_bucket.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_paint_bucket_1_1_color_stopping">ColorStopping</link></para>
+
+<para>A paint bucket criterion that stops on a different color. </para>
+</listitem>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_paint_bucket_1_1_do_not_stop">DoNotStop</link></para>
+
+<para>A paint bucket criterion that never stops, used for coloring the whole model. </para>
+</listitem>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping">NormalStopping</link></para>
+
+<para>A paint bucket criterion that stops when an angle between normals is too high. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a9e31fe563fd8e90416c17e18ab58b8a3"/>enum <emphasis role="strong">NormalAngleCompare</emphasis> { <emphasis role="strong">NEIGHBOURS</emphasis> = 1, 
+<emphasis role="strong">ABSOLUTE</emphasis> = 2
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a48ecf4d542b2ada2c2a9b51669f75bcb"/><emphasis role="strong">PaintBucket</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;app)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1ab714ccf52a91777feb38d1149bda8451"/>virtual std::string <link linkend="_classpepr3d_1_1_paint_bucket_1ab714ccf52a91777feb38d1149bda8451">getName</link> () const override</para>
+
+<para>Returns a short name, displayed e.g., in a side pane and tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1af756844e2801c8da35fffb900fc2d831"/>virtual std::string <link linkend="_classpepr3d_1_1_paint_bucket_1af756844e2801c8da35fffb900fc2d831">getDescription</link> () const override</para>
+
+<para>Returns a description, displayed e.g., in a tooltip. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a5707861e941cb4b2337a6b8b8da9c739"/>virtual std::optional&lt; <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> &gt; <link linkend="_classpepr3d_1_1_paint_bucket_1a5707861e941cb4b2337a6b8b8da9c739">getHotkey</link> (const <link linkend="_classpepr3d_1_1_hotkeys">Hotkeys</link> &amp;hotkeys) const override</para>
+
+<para>Returns an associated <link linkend="_structpepr3d_1_1_hotkey">Hotkey</link> or an empty value. Use hotkeys.findHotkey() method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a81f945468a9ddcca09bd3bd1fa4e156c"/>virtual std::string <link linkend="_classpepr3d_1_1_paint_bucket_1a81f945468a9ddcca09bd3bd1fa4e156c">getIcon</link> () const override</para>
+
+<para>Returns a UTF-8 icon from an icon font. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a493abf6741118fc98fefa50adc266a6d"/>virtual bool <link linkend="_classpepr3d_1_1_paint_bucket_1a493abf6741118fc98fefa50adc266a6d">isEnabled</link> () const override</para>
+
+<para>Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a1e4d61353e4c1a2bf4e911690cc45e64"/>virtual void <link linkend="_classpepr3d_1_1_paint_bucket_1a1e4d61353e4c1a2bf4e911690cc45e64">drawToSidePane</link> (<link linkend="_classpepr3d_1_1_side_pane">SidePane</link> &amp;sidePane) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a166b6b6bd0caef117635aec4489cce66"/>virtual void <link linkend="_classpepr3d_1_1_paint_bucket_1a166b6b6bd0caef117635aec4489cce66">drawToModelView</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called every frame on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link>. Draw to <link linkend="_classpepr3d_1_1_model_view">ModelView</link> from inside this method. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1af0204c28c5e9f6ec4a244ab0e9105ef6"/>virtual void <link linkend="_classpepr3d_1_1_paint_bucket_1af0204c28c5e9f6ec4a244ab0e9105ef6">onModelViewMouseDown</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users presses a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a64f3acef2f66ba3c5b323267aeadd98d"/>virtual void <link linkend="_classpepr3d_1_1_paint_bucket_1a64f3acef2f66ba3c5b323267aeadd98d">onModelViewMouseDrag</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users drags a mouse button over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a4e667f3a895759cd6807241a378a6615"/>virtual void <link linkend="_classpepr3d_1_1_paint_bucket_1a4e667f3a895759cd6807241a378a6615">onModelViewMouseMove</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView, ci::app::MouseEvent event) override</para>
+
+<para>Called on a currently active <link linkend="_classpepr3d_1_1_tool">Tool</link> when users moves mouse cursor over a <link linkend="_classpepr3d_1_1_model_view">ModelView</link>. Note: This method is not called when the user is dragging the mouse! </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a3460bee5bb24684edcdeca08b76b4cc4"/>virtual void <link linkend="_classpepr3d_1_1_paint_bucket_1a3460bee5bb24684edcdeca08b76b4cc4">onNewGeometryLoaded</link> (<link linkend="_classpepr3d_1_1_model_view">ModelView</link> &amp;modelView) override</para>
+
+<para>Called on EVERY <link linkend="_classpepr3d_1_1_tool">Tool</link> right after a new <link linkend="_classpepr3d_1_1_geometry">Geometry</link> is loaded or imported. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a5756508c517dbec4bb4aeb17fc8acac8"/><link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp; <emphasis role="strong">mApplication</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a2d44e37110a6d39bacc8789ad0d2fd6f"/>bool <emphasis role="strong">mStopOnNormal</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1afc22a30f5702c5b06afe5f0e6d3124a2"/>int <emphasis role="strong">mStopOnNormalDegrees</emphasis> = 30</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a7fefc0ec504e248fb0f5ef49687edc6e"/>bool <emphasis role="strong">mStopOnColor</emphasis> = true</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1ad28c149c77707dab895d7a2cc29ae713"/>bool <emphasis role="strong">mDoNotStop</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a1797fee17fba3e0f11e977fe9a8fe0a6"/>bool <emphasis role="strong">mShouldPaintWhileDrag</emphasis> = true</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1ad90734d28f1841f9510908343042d49a"/>bool <emphasis role="strong">mDragging</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a0841aa42b8a40150ae4ef8c8620ff837"/>bool <emphasis role="strong">mGeometryCorrect</emphasis> = true</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a25e2b7aabc00a4c0c92e2e113de3298d"/>NormalAngleCompare <emphasis role="strong">mNormalCompare</emphasis> = NormalAngleCompare::NEIGHBOURS</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_paint_bucket_1a76a19ec31e54b1325acdf8290c7e6682"/>glm::ivec2 <emphasis role="strong">mLastMousePos</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for coloring whole regions with a single click. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/PaintBucket.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/PaintBucket.cpp</section>
+</section>

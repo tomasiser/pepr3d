@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_detailed_triangle_id">
+<title>pepr3d::DetailedTriangleId Struct Reference</title>
+<indexterm><primary>pepr3d::DetailedTriangleId</primary></indexterm>
+<para>
+
+<para>Triangle ID in all detailed triangles Face index in mMeshDetailed faces;. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;TrianglePrimitive.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_detailed_triangle_id_1af758a086dc2823986b1c70ec29a66f8c"/><emphasis role="strong">DetailedTriangleId</emphasis> (size_t baseId, std::optional&lt; size_t &gt; detailId={})</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_detailed_triangle_id_1a12c3624f3da8776679f07a061aa97bc5"/>size_t <emphasis role="strong">getBaseId</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_detailed_triangle_id_1afb6b76f863e071c9327b1eb15ccff0ff"/>std::optional&lt; size_t &gt; <emphasis role="strong">getDetailId</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_detailed_triangle_id_1afb2c674521599b6e944134a9545443b2"/>bool <emphasis role="strong">operator==</emphasis> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &amp;other) const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_detailed_triangle_id_1a9320ee2b908edfc7e1932fbfdde2483c"/>size_t <emphasis role="strong">mBaseId</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_detailed_triangle_id_1a61de43049478653158ca696d4cb66e2a"/>std::optional&lt; size_t &gt; <emphasis role="strong">mDetailId</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Triangle ID in all detailed triangles Face index in mMeshDetailed faces;. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/TrianglePrimitive.h</section>
+</section>

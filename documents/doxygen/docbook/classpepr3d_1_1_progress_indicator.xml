@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_progress_indicator">
+<title>pepr3d::ProgressIndicator Class Reference</title>
+<indexterm><primary>pepr3d::ProgressIndicator</primary></indexterm>
+<para>
+
+<para>User interface for showing a current progress, contains a spinner and progress bars. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;ProgressIndicator.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_progress_indicator_1ac0931998aeb37b012ca79b418896044b"/>void <link linkend="_classpepr3d_1_1_progress_indicator_1ac0931998aeb37b012ca79b418896044b">setGeometryInProgress</link> (std::shared_ptr&lt; <link linkend="_classpepr3d_1_1_geometry">Geometry</link> &gt; geometry)</para>
+
+<para>Sets the current <link linkend="_classpepr3d_1_1_geometry">Geometry</link> whose <link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> is going to be used. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_progress_indicator_1ab60bafabdc2821c10bdb320e9b859c18"/>bool <emphasis role="strong">isInProgress</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_progress_indicator_1a6b9af9848a2fb8bf39e38b9c9b8fc001"/>void <link linkend="_classpepr3d_1_1_progress_indicator_1a6b9af9848a2fb8bf39e38b9c9b8fc001">draw</link> ()</para>
+
+<para>Renders the progress indicator. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_progress_indicator_1a8f0893bc73387592c4013831417f1824"/>void <emphasis role="strong">drawSpinner</emphasis> (const char *label)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_progress_indicator_1aa4ecbee160baa9e56864d382b737c6dd"/>void <emphasis role="strong">drawStatus</emphasis> (const std::string &amp;label, float progress, bool isIndeterminate)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_progress_indicator_1a7f971e9165e17d75ea27dbcbc402991d"/>std::shared_ptr&lt; <link linkend="_classpepr3d_1_1_geometry">Geometry</link> &gt; <emphasis role="strong">mGeometry</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>User interface for showing a current progress, contains a spinner and progress bars. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/ProgressIndicator.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/ProgressIndicator.cpp</section>
+</section>

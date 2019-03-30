@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data">
+<title>pepr3d::Geometry::OpenGlData Struct Reference</title>
+<indexterm><primary>pepr3d::Geometry::OpenGlData</primary></indexterm>
+<para>
+
+<para>All OpenGL buffers of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Geometry.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1_1_info">Info</link></para>
+
+<para>Always editable struct that keeps track of changes since last frame Updates to color/highlight buffer set this flag to true <link linkend="_classpepr3d_1_1_model_view">ModelView</link> resets the flag to false when it updates OpenGl data. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data_1ae087e1484346b1ef7af7f04e6d745745"/>std::vector&lt; glm::vec3 &gt; <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1ae087e1484346b1ef7af7f04e6d745745">vertexBuffer</link></para>
+
+<para>Vertex buffer with the same data as mTriangles for OpenGL to render the mesh. Contains position and color data for each vertex. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data_1a5741e251aec5d181e48fbf2d9e56112d"/>std::vector&lt; ColorIndex &gt; <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1a5741e251aec5d181e48fbf2d9e56112d">colorBuffer</link></para>
+
+<para>Color buffer, keeping the invariant that every triangle has only one color - all three vertices have to have the same color. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data_1ab1e3327043c8d4e8924495db62eb2ad9"/>std::vector&lt; glm::vec3 &gt; <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1ab1e3327043c8d4e8924495db62eb2ad9">normalBuffer</link></para>
+
+<para>Normal buffer, the triangle has same normal for its every vertex. It is aligned with the vertex buffer and its size should be always equal to the vertex buffer. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data_1ad66b73ae688939f518a57411a9f02671"/>std::vector&lt; uint32_t &gt; <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1ad66b73ae688939f518a57411a9f02671">indexBuffer</link></para>
+
+<para>Index buffer for OpenGL frontend., specifying the same triangles as in mTriangles. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data_1a8c61b7f1139d0a7fa632ab221546e81b"/>std::vector&lt; GLint &gt; <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1a8c61b7f1139d0a7fa632ab221546e81b">highlightMask</link></para>
+
+<para>boolen for each triangle that indicates if the triangle should display cursor highlight Used to limit the highlight to continuous surface </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data_1ab219bc2425e6580d0667d3165b9c660b"/>bool <emphasis role="strong">isDirty</emphasis> {true}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_open_gl_data_1a1960dd95c0c38dda4a26422de4c981b4"/>struct <link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1_1_info">pepr3d::Geometry::OpenGlData::Info</link> <emphasis role="strong">info</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>All OpenGL buffers of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/Geometry.h</section>
+</section>

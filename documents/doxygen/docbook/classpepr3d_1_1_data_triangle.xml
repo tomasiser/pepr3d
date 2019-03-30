@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_data_triangle">
+<title>pepr3d::DataTriangle Class Reference</title>
+<indexterm><primary>pepr3d::DataTriangle</primary></indexterm>
+<para>
+
+<para>Custom Triangle type holding the CGAL::Triangle_3 and additional data. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Triangle.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1adf8c461f0a38c6878bf33fd634bb664a"/>using <emphasis role="strong">K</emphasis> = CGAL::Spherical_kernel_3&lt; CGAL::Simple_cartesian&lt; double &gt;, CGAL::Algebraic_kernel_for_spheres_2_3&lt; double &gt; &gt;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1ac03486dce366d46510967588934ac54e"/>using <emphasis role="strong">Point</emphasis> = K::Point_3</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1afd5820980632751ddbf6b3533546e9dd"/>using <emphasis role="strong">Triangle</emphasis> = K::Triangle_3</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1af76827325dc5d207829d0f3d56691ee5"/><emphasis role="strong">DataTriangle</emphasis> (const glm::vec3 x, const glm::vec3 y, const glm::vec3 z, const glm::vec3 n, const size_t col=0)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1a9db49161808a4c5794e5537fe3b9d33b"/>const Triangle &amp; <link linkend="_classpepr3d_1_1_data_triangle_1a9db49161808a4c5794e5537fe3b9d33b">getTri</link> () const</para>
+
+<para>Method used by the AABB conversion functor to make <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> searchable in AABB tree. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1a0fdf44e9dc19765d14fa7a22d6e80c46"/>glm::vec3 <emphasis role="strong">getVertex</emphasis> (const size_t i) const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1aea11c4f8f882393f928d49ab65719792"/>void <emphasis role="strong">setColor</emphasis> (const size_t newColor)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1a6aa86de585ed3546a23b6b916d80fb88"/>size_t <emphasis role="strong">getColor</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1ad18faef6aa1ae347540214be33d8b4a8"/>glm::vec3 <emphasis role="strong">getNormal</emphasis> () const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1a7c7bbbf69427a3c1417f03cac67890bc"/>template&lt;class Archive &gt; </para><para>void <emphasis role="strong">serialize</emphasis> (Archive &amp;ar)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1a772bbc9154b44aaeb7d62bd0842ed171"/>Triangle <link linkend="_classpepr3d_1_1_data_triangle_1a772bbc9154b44aaeb7d62bd0842ed171">mTriangleCgal</link></para>
+
+<para><link linkend="_classpepr3d_1_1_geometry">Geometry</link> data in <link linkend="_namespace_c_g_a_l">CGAL</link> format to allow for usage in AABB tree. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1a2fe0967cc85bdb8f04639acbe3547f51"/>size_t <link linkend="_classpepr3d_1_1_data_triangle_1a2fe0967cc85bdb8f04639acbe3547f51">mColor</link></para>
+
+<para>Color of the triangle in the final STL file. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1a86e289f4e1978d6e71240bf73ef8904e"/>glm::vec3 <link linkend="_classpepr3d_1_1_data_triangle_1a86e289f4e1978d6e71240bf73ef8904e">mNormal</link></para>
+
+<para>Normal of the triangle. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Friends    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_data_triangle_1ab2f44cbb59a08132f4c843e5225bba0e"/>class <emphasis role="strong">cereal::access</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Custom Triangle type holding the CGAL::Triangle_3 and additional data. </para>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/Triangle.h</section>
+</section>

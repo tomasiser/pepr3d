@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structstd_1_1hash_3_01pepr3d_1_1_detailed_triangle_id_01_4">
+<title>std::hash&lt; pepr3d::DetailedTriangleId &gt; Struct Template Reference</title>
+<indexterm><primary>std::hash&lt; pepr3d::DetailedTriangleId &gt;</primary></indexterm>
+<para>
+
+<para>Hashes a DetailedTriangleId. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;TrianglePrimitive.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structstd_1_1hash_3_01pepr3d_1_1_detailed_triangle_id_01_4_1a0c16ac520b8a68df45516c16eaf00aaa"/>size_t <emphasis role="strong">operator()</emphasis> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">pepr3d::DetailedTriangleId</link> &amp;id) const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<simplesect><title>template&lt;&gt;
+struct std::hash&lt; pepr3d::DetailedTriangleId &gt;</title></simplesect>
+
+
+<para>Hashes a DetailedTriangleId. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/TrianglePrimitive.h</section>
+</section>

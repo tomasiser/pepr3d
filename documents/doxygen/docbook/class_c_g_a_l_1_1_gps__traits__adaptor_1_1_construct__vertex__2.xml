@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2">
+<title>CGAL::Gps_traits_adaptor&lt; Traits_ &gt;::Construct_vertex_2 Class Reference</title>
+<indexterm><primary>CGAL::Gps_traits_adaptor&lt; Traits_ &gt;::Construct_vertex_2</primary></indexterm>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2_1aaf45479f66b915fb81cbedd0b0c8d07c"/>Point_2 <emphasis role="strong">operator()</emphasis> (const X_monotone_curve_2 &amp;cv, int i) const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2_1a4618aa3c4260f8debc8ef49e08e14b64"/>typedef <link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor">Gps_traits_adaptor</link>&lt; Base &gt; <emphasis role="strong">Traits_adaptor</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2_1ade4df041a1e859d7c17c0ba660bdead6">Construct_vertex_2</link> (const <link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor">Traits_adaptor</link> &amp;traits)</para>
+
+<para>Constructor. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2_1a4327f99990af235a15d4b36794b0acf8"/>const <link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor">Traits_adaptor</link> &amp; <link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2_1a4327f99990af235a15d4b36794b0acf8">m_traits</link></para>
+
+<para>The traits (in case it has state) </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Friends    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2_1a4d2b49536a2c62dc9d864d67dc9133b9"/>class <emphasis role="strong">Gps_traits_adaptor&lt; Base &gt;</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Constructor &amp; Destructor Documentation</title>
+<anchor xml:id="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2_1ade4df041a1e859d7c17c0ba660bdead6"/>    <section>
+    <title>Construct_vertex_2()</title>
+<indexterm><primary>Construct_vertex_2</primary><secondary>CGAL::Gps_traits_adaptor&lt; Traits_ &gt;::Construct_vertex_2</secondary></indexterm>
+<indexterm><primary>CGAL::Gps_traits_adaptor&lt; Traits_ &gt;::Construct_vertex_2</primary><secondary>Construct_vertex_2</secondary></indexterm>
+<computeroutput>template&lt;typename Traits_ &gt; </computeroutput><para><computeroutput><link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor">CGAL::Gps_traits_adaptor</link>&lt; Traits_ &gt;::Construct_vertex_2::Construct_vertex_2 (const <link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor">Traits_adaptor</link> &amp; traits)<computeroutput>[inline]</computeroutput>, <computeroutput>[protected]</computeroutput></computeroutput></para><para>
+
+<para>Constructor. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>traits</entry>
+                                <entry>
+<para>the traits (in case it has state) </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/CGAL-patched/Boolean_set_operations_2/Gps_traits_adaptor.h</section>
+</section>

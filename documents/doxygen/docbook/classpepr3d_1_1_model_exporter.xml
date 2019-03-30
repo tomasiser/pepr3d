@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_model_exporter">
+<title>pepr3d::ModelExporter Class Reference</title>
+<indexterm><primary>pepr3d::ModelExporter</primary></indexterm>
+<para>
+
+<para>Exports <link linkend="_classpepr3d_1_1_geometry">Geometry</link> to separate files via Assimp, supports surface export and depth extrusions. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;ModelExporter.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">IndexedEdge</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a90cdfb31200413255c75cc2af4c55952"/><emphasis role="strong">ModelExporter</emphasis> (const <link linkend="_classpepr3d_1_1_geometry">Geometry</link> *geometry, <link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> *progress)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a4fd1351a4fb5634b761f1693206e0a1d"/>std::map&lt; colorIndex, std::unique_ptr&lt; aiScene &gt; &gt; <link linkend="_classpepr3d_1_1_model_exporter_1a4fd1351a4fb5634b761f1693206e0a1d">createScenes</link> (ExportType exportType)</para>
+
+<para>Returns a map where each color index has a corresponding exported Assimp scene. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a0521b274720d0ad6beeaae466718fa45"/>void <link linkend="_classpepr3d_1_1_model_exporter_1a0521b274720d0ad6beeaae466718fa45">saveModel</link> (const std::string filePath, const std::string fileName, const std::string fileType, ExportType exportType)</para>
+
+<para>Saves the exported <link linkend="_classpepr3d_1_1_geometry">Geometry</link> to files, may throw an exception on error. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a395f37149485a267944542b378546f6e"/>void <link linkend="_classpepr3d_1_1_model_exporter_1a395f37149485a267944542b378546f6e">setExtrusionCoef</link> (std::vector&lt; float &gt; extrusionCoef)</para>
+
+<para>Sets extrusion coefficients between 0 and 1 indexed by the color index. The vector has to be as long as the number of colors in the <link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> of the current <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a31cfba9f522ed35f2f25e1d88f5c0291"/>std::map&lt; colorIndex, std::unique_ptr&lt; aiScene &gt; &gt; <link linkend="_classpepr3d_1_1_model_exporter_1a31cfba9f522ed35f2f25e1d88f5c0291">createNonPolySurfaceScenes</link> ()</para>
+
+<para>Creates surface only exported scenes without the need for a <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron. Returns a map where each color index has a corresponding exported Assimp scene. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1aebf51f53d44f88e180a63900aedd386c"/>std::map&lt; colorIndex, std::unique_ptr&lt; aiScene &gt; &gt; <link linkend="_classpepr3d_1_1_model_exporter_1aebf51f53d44f88e180a63900aedd386c">createPolySurfaceScenes</link> ()</para>
+
+<para>Creates surface only exported scenes with the need for a <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron. Returns a map where each color index has a corresponding exported Assimp scene. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1aaf14c84e428fce47a5aefd330218e0c8"/>std::map&lt; colorIndex, std::unique_ptr&lt; aiScene &gt; &gt; <link linkend="_classpepr3d_1_1_model_exporter_1aaf14c84e428fce47a5aefd330218e0c8">createNonPolyScenes</link> ()</para>
+
+<para>Creates extruded scenes without the need for a <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron. Returns a map where each color index has a corresponding exported Assimp scene. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a653be5616accde4e5dbb5c82bb260932"/>void <link linkend="_classpepr3d_1_1_model_exporter_1a653be5616accde4e5dbb5c82bb260932">normalizeSummedNormals</link> (std::map&lt; std::array&lt; float, 3 &gt;, glm::vec3 &gt; &amp;summedVertexNormals)</para>
+
+<para>Normalize summed vertex normals. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1ab278eb54afeced3be63e4e5eccdf3802"/>void <link linkend="_classpepr3d_1_1_model_exporter_1ab278eb54afeced3be63e4e5eccdf3802">computeBoundaryEdges</link> (std::map&lt; std::array&lt; std::array&lt; float, 3 &gt;, 2 &gt;, <link linkend="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">IndexedEdge</link> &gt; &amp;edgeLookup)</para>
+
+<para>Decide if the edge is between two colors. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a0ae56b6392c9db26a14ddd7a365a40fc"/>std::vector&lt; <link linkend="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">IndexedEdge</link> &gt; <link linkend="_classpepr3d_1_1_model_exporter_1a0ae56b6392c9db26a14ddd7a365a40fc">selectBoundaryEdgesByColor</link> (std::map&lt; std::array&lt; std::array&lt; float, 3 &gt;, 2 &gt;, <link linkend="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">IndexedEdge</link> &gt; &amp;edgeLookup, colorIndex color)</para>
+
+<para>Returns a vector of <link linkend="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">IndexedEdge</link> that were boundary and with the specified color. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a1e9c64e2f9dd0482f3216ff9cfd016f3"/>std::map&lt; colorIndex, std::unique_ptr&lt; aiScene &gt; &gt; <link linkend="_classpepr3d_1_1_model_exporter_1a1e9c64e2f9dd0482f3216ff9cfd016f3">createPolyScenes</link> (bool withSDF)</para>
+
+<para>Creates extruded scenes with the need for a <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron. Optionally extrudes relative to SDF values. Returns a map where each color index has a corresponding exported Assimp scene. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a007a46e5169890fa8ea5f87f2429e954"/>std::unique_ptr&lt; aiScene &gt; <emphasis role="strong">createNewNonPolySurfaceScene</emphasis> (std::vector&lt; unsigned int &gt; &amp;triangleIndices)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a33f988ccc16525698739ef2a84a4e215"/>std::unique_ptr&lt; aiScene &gt; <emphasis role="strong">createNewPolySurfaceScene</emphasis> (std::vector&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; &amp;triangleIndices)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a17c20f94f6f130c249b6ab8aa7d36ea6"/>std::unique_ptr&lt; aiScene &gt; <emphasis role="strong">createNewNonPolyScene</emphasis> (std::vector&lt; unsigned int &gt; &amp;triangleIndices, std::map&lt; std::array&lt; float, 3 &gt;, glm::vec3 &gt; &amp;vertexNormalLookup, std::vector&lt; <link linkend="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">IndexedEdge</link> &gt; &amp;borderEdges, float userCoef)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1ad79e95cf891b25f4b8b2e21451a3f321"/>std::unique_ptr&lt; aiScene &gt; <emphasis role="strong">createNewPolyScene</emphasis> (std::vector&lt; <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> &gt; &amp;triangleIndices, std::unordered_map&lt; PolyhedronData::vertex_descriptor, glm::vec3 &gt; &amp;vertexNormals, std::set&lt; PolyhedronData::halfedge_descriptor &gt; &amp;borderEdges, std::map&lt; PolyhedronData::vertex_descriptor, float &gt; &amp;vertexSDF, float userCoef)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Static Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a0ac9e0564adb8d2a8d3283b19aa033de"/>static aiVector3D <link linkend="_classpepr3d_1_1_model_exporter_1a0ac9e0564adb8d2a8d3283b19aa033de">calculateNormal</link> (const std::array&lt; glm::vec3, 3 &gt; vertices)</para>
+
+<para>Returns a normal vector of a triangle. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a76a48fd072cfd132b2d9130d915d5fc7"/>const <link linkend="_classpepr3d_1_1_geometry">Geometry</link> * <emphasis role="strong">mGeometry</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a618a0accacf4026df647364d4843049f"/><link linkend="_structpepr3d_1_1_geometry_progress">GeometryProgress</link> * <emphasis role="strong">mProgress</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_model_exporter_1a795c2ac3c88bd58f8d3972b7e5a17dc5"/>std::vector&lt; float &gt; <emphasis role="strong">mExtrusionCoef</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Exports <link linkend="_classpepr3d_1_1_geometry">Geometry</link> to separate files via Assimp, supports surface export and depth extrusions. </para>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/ModelExporter.h</section>
+</section>

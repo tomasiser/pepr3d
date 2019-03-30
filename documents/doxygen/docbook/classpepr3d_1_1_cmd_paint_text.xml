@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_cmd_paint_text">
+<title>pepr3d::CmdPaintText Class Reference</title>
+<indexterm><primary>pepr3d::CmdPaintText</primary></indexterm>
+<para>
+
+<para>Command that paints a text using orthogonal projection. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;CmdPaintText.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::CmdPaintText:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_cmd_paint_text.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1a41290460fb79bcf24bf69527fc5cdd42"/>using <emphasis role="strong">Triangle</emphasis> = DataTriangle::Triangle</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1a9a40bd26f122370011e8d4526e7e7758"/>using <emphasis role="strong">Point</emphasis> = DataTriangle::Point</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1a6f0151b7a51789642343678ba7b37b28"/>std::string_view <link linkend="_classpepr3d_1_1_cmd_paint_text_1a6f0151b7a51789642343678ba7b37b28">getDescription</link> () const override</para>
+
+<para>Get description of the command. </para>
+</listitem>
+            <listitem><para><link linkend="_classpepr3d_1_1_cmd_paint_text_1aab856aaa010955874c11426257d20627">CmdPaintText</link> (ci::Ray ray, const std::vector&lt; std::vector&lt; <link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">FontRasterizer::Tri</link> &gt;&gt; &amp;text, size_t color)</para>
+
+<para>Paint a text string, using orthogonal projection. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1a0d2c68846f62a633e4a83d33f4dd3d86"/>void <link linkend="_classpepr3d_1_1_cmd_paint_text_1a0d2c68846f62a633e4a83d33f4dd3d86">run</link> (<link linkend="_classpepr3d_1_1_geometry">Geometry</link> &amp;target) const override</para>
+
+<para>Run the command, applying the modifications to the target. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1aab61cd6dc511dd2ac9036a7ce79ea9be"/>std::vector&lt; std::vector&lt; Triangle &gt; &gt; <emphasis role="strong">mText</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1a4fbdc99db5de9d1d47214401d84b7aef"/>ci::Ray <emphasis role="strong">mRay</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1af80c1d4ae6d3ae3239b8fd390f32be73"/>size_t <emphasis role="strong">mColor</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Command that paints a text using orthogonal projection. </para>
+</section>
+<section>
+<title>Constructor &amp; Destructor Documentation</title>
+<anchor xml:id="_classpepr3d_1_1_cmd_paint_text_1aab856aaa010955874c11426257d20627"/>    <section>
+    <title>CmdPaintText()</title>
+<indexterm><primary>CmdPaintText</primary><secondary>pepr3d::CmdPaintText</secondary></indexterm>
+<indexterm><primary>pepr3d::CmdPaintText</primary><secondary>CmdPaintText</secondary></indexterm>
+<para><computeroutput>pepr3d::CmdPaintText::CmdPaintText (ci::Ray ray, const std::vector&lt; std::vector&lt; <link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">FontRasterizer::Tri</link> &gt;&gt; &amp; text, size_t color)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Paint a text string, using orthogonal projection. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>ray</entry>
+                                <entry>
+<para>Direction of text projection </para>
+</entry>
+                            </row>
+                            <row>
+                                <entry>text</entry>
+                                <entry>
+<para>Text mesh in world space </para>
+</entry>
+                            </row>
+                            <row>
+                                <entry>color</entry>
+                                <entry>
+<para>Color to paint with </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/commands/CmdPaintText.h</section>
+</section>

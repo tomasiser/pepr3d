@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping">
+<title>pepr3d::PaintBucket::NormalStopping Struct Reference</title>
+<indexterm><primary>pepr3d::PaintBucket::NormalStopping</primary></indexterm>
+<para>
+
+<para>A paint bucket criterion that stops when an angle between normals is too high. </para>
+ 
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping_1a432e44cb675c28037b7a045ed547669d"/><emphasis role="strong">NormalStopping</emphasis> (const <link linkend="_classpepr3d_1_1_geometry">Geometry</link> *g, const double thresh, const glm::vec3 normal, const NormalAngleCompare angleCmp)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping_1a9d143a0bc957e837cc897c316bf5268b"/>bool <emphasis role="strong">operator()</emphasis> (const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> a, const <link linkend="_structpepr3d_1_1_detailed_triangle_id">DetailedTriangleId</link> b) const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping_1aa5d1412d6141322da3fa57a776c0204e"/>const <link linkend="_classpepr3d_1_1_geometry">Geometry</link> * <emphasis role="strong">geo</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping_1a1c743104c8209ec02b57b838a96f88ab"/>const double <emphasis role="strong">threshold</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping_1a85815d0a0c3f538de4d9ebd2cba55a6d"/>const glm::vec3 <emphasis role="strong">startNormal</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping_1acc4c4a6791bf77f208ec4ee34939488e"/>NormalAngleCompare <emphasis role="strong">angleCompare</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>A paint bucket criterion that stops when an angle between normals is too high. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/PaintBucket.h</section>
+</section>

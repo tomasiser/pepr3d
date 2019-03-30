@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight">
+<title>pepr3d::Geometry::AreaHighlight Struct Reference</title>
+<indexterm><primary>pepr3d::Geometry::AreaHighlight</primary></indexterm>
+<para>
+
+<para>A highlight of a part of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Geometry.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1a39bafbb704eed4caf358ea9778fb64a9"/>std::set&lt; size_t &gt; <emphasis role="strong">triangles</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1a539a565869566b643d3536c2b9e3998f"/><link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> <emphasis role="strong">settings</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1ad39e62ccee10d0fb4c8165627aa952ec"/>ci::Ray <emphasis role="strong">ray</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1a33cf93e0ff8d167b0a4b877740dee49d"/>glm::vec3 <emphasis role="strong">origin</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1a7538655d67f5bfb2a04117f6fa6d3f51"/>glm::vec3 <emphasis role="strong">direction</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1a980ab51ea5dac86ef2fb68dbf6dc079f"/>double <emphasis role="strong">size</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1a054fa63a3e60e4a1e3b8db7a22aebf6f"/>bool <emphasis role="strong">enabled</emphasis> {}</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_geometry_1_1_area_highlight_1a129df0b43636f676500fdf0beb3cd021"/>bool <link linkend="_structpepr3d_1_1_geometry_1_1_area_highlight_1a129df0b43636f676500fdf0beb3cd021">dirty</link> {true}</para>
+
+<para>Do we need to upload new data to the gpu. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>A highlight of a part of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/Geometry.h</section>
+</section>

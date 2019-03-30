@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_brush_settings">
+<title>pepr3d::BrushSettings Struct Reference</title>
+<indexterm><primary>pepr3d::BrushSettings</primary></indexterm>
+<para>
+
+<para>Current settings of the <link linkend="_classpepr3d_1_1_brush">Brush</link> tool. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;Brush.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1a8ad6fcd04c952660c50cf80bcf9db233"/>bool <emphasis role="strong">operator==</emphasis> (const <link linkend="_structpepr3d_1_1_brush_settings">BrushSettings</link> &amp;other) const</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1a926d73e6b64dda9d777ba090074bd031"/>size_t <link linkend="_structpepr3d_1_1_brush_settings_1a926d73e6b64dda9d777ba090074bd031">color</link> = 0</para>
+
+<para>Index of the selected color. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1a01300f710ecd757b8f532a1da1f3bc4c"/>float <link linkend="_structpepr3d_1_1_brush_settings_1a01300f710ecd757b8f532a1da1f3bc4c">size</link> = 0.2f</para>
+
+<para>Size of a brush in model space units. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1a297b93063de058754d95730263c48a59"/>int <link linkend="_structpepr3d_1_1_brush_settings_1a297b93063de058754d95730263c48a59">segments</link> = 12</para>
+
+<para>Number of segments of the brush. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1ab509aa6a59f8a36b9de2ae9d579a47f7"/>bool <link linkend="_structpepr3d_1_1_brush_settings_1ab509aa6a59f8a36b9de2ae9d579a47f7">paintBackfaces</link> = false</para>
+
+<para>Paint onto backward facing triangles. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1a6988634902d2ebb5e10e4ed2ed9e74dc"/>bool <link linkend="_structpepr3d_1_1_brush_settings_1a6988634902d2ebb5e10e4ed2ed9e74dc">spherical</link> = true</para>
+
+<para>Use spherical brush (otherwise shape brush will be used. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1a45ac5bb04d5a502b31811ecd94d6fe2b"/>bool <link linkend="_structpepr3d_1_1_brush_settings_1a45ac5bb04d5a502b31811ecd94d6fe2b">continuous</link> = false</para>
+
+<para>Paint only to triangles connected to the origin. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1adddaabb9e5cd0271e781423eb77765db"/>bool <link linkend="_structpepr3d_1_1_brush_settings_1adddaabb9e5cd0271e781423eb77765db">respectOriginalTriangles</link> = false</para>
+
+<para>Will not create new triangles to match brush shape. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1abe64fa6555c4a22a17cdf58779b0288e"/>bool <link linkend="_structpepr3d_1_1_brush_settings_1abe64fa6555c4a22a17cdf58779b0288e">paintOuterRing</link> = false</para>
+
+<para>When respecting original triangles should we paint triangles that are not fully inside the brush? </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_brush_settings_1a4949a6501a1ac9525c0b8ef4219bfdec"/>bool <link linkend="_structpepr3d_1_1_brush_settings_1a4949a6501a1ac9525c0b8ef4219bfdec">alignToNormal</link> = false</para>
+
+<para>Use local normal for direction of shape brush. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Current settings of the <link linkend="_classpepr3d_1_1_brush">Brush</link> tool. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/tools/Brush.h</section>
+</section>

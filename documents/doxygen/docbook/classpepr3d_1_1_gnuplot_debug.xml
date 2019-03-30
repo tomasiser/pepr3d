@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_gnuplot_debug">
+<title>pepr3d::GnuplotDebug Class Reference</title>
+<indexterm><primary>pepr3d::GnuplotDebug</primary></indexterm>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_gnuplot_debug_1a6509512f1eed035a09cd6c4c5050c01f"/><emphasis role="strong">GnuplotDebug</emphasis> (const <link linkend="_classpepr3d_1_1_gnuplot_debug">GnuplotDebug</link> &amp;)=delete</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_gnuplot_debug_1aa1e77746ecbdd8b88584da18cdc4575e"/>void <emphasis role="strong">addPoly</emphasis> (const TriangleDetail::Polygon &amp;poly, const std::string &amp;rgbStr)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_gnuplot_debug_1a24feefb576434a6f78519897900478a2"/>void <emphasis role="strong">exportToFile</emphasis> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_gnuplot_debug_1a42d5570c79096af28d06053f4258fdcc"/>std::vector&lt; TriangleDetail::Polygon &gt; <emphasis role="strong">mPolysToDraw</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_gnuplot_debug_1a50b7db306f3168b2a549b8217d18fc34"/>std::vector&lt; std::string &gt; <emphasis role="strong">mRgbStrings</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/TriangleDetail.cpp</section>

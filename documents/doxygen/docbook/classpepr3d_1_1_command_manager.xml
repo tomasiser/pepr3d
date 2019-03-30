@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_command_manager">
+<title>pepr3d::CommandManager&lt; Target &gt; Class Template Reference</title>
+<indexterm><primary>pepr3d::CommandManager&lt; Target &gt;</primary></indexterm>
+<para>
+
+<para><link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> handles all undoable operations on target in the form of commands See. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;CommandManager.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structpepr3d_1_1_command_manager_1_1_snapshot_pair">SnapshotPair</link></para>
+
+<para>Saved states of the target and commandId after them. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1ae3090192cabdd49b5bc0b8f983a6681a"/>using <emphasis role="strong">CommandBaseType</emphasis> = <link linkend="_classpepr3d_1_1_command_base">CommandBase</link>&lt; Target &gt;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1aff7ffff59dcc764edce1bb4cbbe18704"/>using <emphasis role="strong">StateType</emphasis> = decltype(std::declval&lt; const Target &gt;().saveState())</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1aa4545583769603c741a2dab3e876a5fb"/><link linkend="_classpepr3d_1_1_command_manager_1aa4545583769603c741a2dab3e876a5fb">CommandManager</link> (Target &amp;target)</para>
+
+<para>Create a command manager that will be operating around a snapshottable target. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classpepr3d_1_1_command_manager_1a0aae9681640f09da9c908154b805273e">execute</link> (std::unique_ptr&lt; <link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &gt; &amp;&amp;command, bool join=false)</para>
+
+<para>Execute a command, saving it into a history and removing all currently redoable commands. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1af71406e4f6aee85b1cb9fe02b9a8b13e"/>void <link linkend="_classpepr3d_1_1_command_manager_1af71406e4f6aee85b1cb9fe02b9a8b13e">undo</link> ()</para>
+
+<para>Undo a single command operation. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1acb90e67e6e97c0d143ddb9e67ccbebb2"/>void <link linkend="_classpepr3d_1_1_command_manager_1acb90e67e6e97c0d143ddb9e67ccbebb2">redo</link> ()</para>
+
+<para>Redo a single command (if possible) </para>
+</listitem>
+            <listitem><para>bool <link linkend="_classpepr3d_1_1_command_manager_1a2d53a763697329e206e72ddeef1ce75b">canUndo</link> () const</para>
+
+<para>Is there a command that can be undoed? </para>
+</listitem>
+            <listitem><para>bool <link linkend="_classpepr3d_1_1_command_manager_1a2ae3625cc0baac8bb27f659ee0182eff">canRedo</link> () const</para>
+
+<para>Is there a command that can be redoed? </para>
+</listitem>
+            <listitem><para>const <link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &amp; <link linkend="_classpepr3d_1_1_command_manager_1a1dc9b90a3f5a6f14502999187a9d45ef">getLastCommand</link> () const</para>
+
+<para>Get last command that was executed (ie the command to be undoed) </para>
+</listitem>
+            <listitem><para>const <link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &amp; <link linkend="_classpepr3d_1_1_command_manager_1ab5767a90a4f309d166210a8e43dec560">getNextCommand</link> () const</para>
+
+<para>Get next command to be redoed if it exists. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a95e84353863839ebded5131aef0c06b9"/>size_t <link linkend="_classpepr3d_1_1_command_manager_1a95e84353863839ebded5131aef0c06b9">getVersionNumber</link> () const</para>
+
+<para>Return the current version number, used to compare any dirty unsaved changes. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Static Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1ae889dad593d812deb65c56c07a32bfdb"/>static const int <link linkend="_classpepr3d_1_1_command_manager_1ae889dad593d812deb65c56c07a32bfdb">SNAPSHOT_FREQUENCY</link> = 10</para>
+
+<para>How often snapshots of the target should be saved (at minimum) </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a9813d0996dc75f8a5f95ea6bb5627348"/>void <emphasis role="strong">clearFutureState</emphasis> ()</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a5f8002ebe6e7f1beb7f6176d424bae50"/>auto <link linkend="_classpepr3d_1_1_command_manager_1a5f8002ebe6e7f1beb7f6176d424bae50">getPrevSnapshotIterator</link> () const -&gt; decltype(std::declval&lt; const std::vector&lt; <link linkend="_structpepr3d_1_1_command_manager_1_1_snapshot_pair">SnapshotPair</link> &gt;&gt;().begin())</para>
+
+<para>Get snapshot before current state. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a96a37fef29ecd232b90da0612b402310"/>bool <link linkend="_classpepr3d_1_1_command_manager_1a96a37fef29ecd232b90da0612b402310">shouldSaveState</link> () const</para>
+
+<para>Should we save state before next command. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a40345eec97e82997c3e3a0f231185e30"/>bool <link linkend="_classpepr3d_1_1_command_manager_1a40345eec97e82997c3e3a0f231185e30">joinWithLastCommand</link> (<link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &amp;command)</para>
+
+<para>Join this command with the last one. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a9a231ac7e910086a522676323b69b9c4"/>size_t <emphasis role="strong">getNumOfCommandsSinceSnapshot</emphasis> () const</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1abc272c27fa76a577f4af8fd863d70368"/><link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &amp; <emphasis role="strong">getLastCommand</emphasis> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a9a6320349ad160fa9ca7a6c83fa2802a"/>Target &amp; <emphasis role="strong">mTarget</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a55847061c90eb00139370aa16d88a52a"/>std::vector&lt; std::unique_ptr&lt; <link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &gt; &gt; <link linkend="_classpepr3d_1_1_command_manager_1a55847061c90eb00139370aa16d88a52a">mCommandHistory</link></para>
+
+<para>Executed and possibly future commands. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a13e29779a7f1d4464306c952b96f0e94"/>std::vector&lt; <link linkend="_structpepr3d_1_1_command_manager_1_1_snapshot_pair">SnapshotPair</link> &gt; <emphasis role="strong">mTargetSnapshots</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1ae1b91a069626a707e392bdb92772a487"/>size_t <link linkend="_classpepr3d_1_1_command_manager_1ae1b91a069626a707e392bdb92772a487">mPosFromEnd</link> = 0</para>
+
+<para>Position from end of the stack. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_command_manager_1a4c73b4cacd523878dbef2cb7ed4805fa"/>size_t <link linkend="_classpepr3d_1_1_command_manager_1a4c73b4cacd523878dbef2cb7ed4805fa">mVersion</link> = 0</para>
+
+<para>Cumulative version number which gets incremented every single time a command is executed or Undo/Redo is done. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<simplesect><title>template&lt;typename Target&gt;
+class pepr3d::CommandManager&lt; Target &gt;</title></simplesect>
+
+
+<para><link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> handles all undoable operations on target in the form of commands See. </para>
+
+
+
+<para><formalpara><title>See also: </title>
+
+<para><link linkend="_classpepr3d_1_1_command_base">CommandBase</link>. All commands must be executed via the <link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> Requirements for Target: Target must have a saveState() and loadState(State) methods </para>
+</formalpara>
+</para>
+</section>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_classpepr3d_1_1_command_manager_1a2ae3625cc0baac8bb27f659ee0182eff"/>    <section>
+    <title>canRedo()</title>
+<indexterm><primary>canRedo</primary><secondary>pepr3d::CommandManager&lt; Target &gt;</secondary></indexterm>
+<indexterm><primary>pepr3d::CommandManager&lt; Target &gt;</primary><secondary>canRedo</secondary></indexterm>
+<computeroutput>template&lt;typename Target &gt; </computeroutput><para><computeroutput>bool <link linkend="_classpepr3d_1_1_command_manager">pepr3d::CommandManager</link>&lt; Target &gt;::canRedo ( ) const</computeroutput></para><para>
+
+<para>Is there a command that can be redoed? </para>
+</para>
+
+<para><formalpara><title>See also: </title>
+
+<para><link linkend="_classpepr3d_1_1_command_manager_1ab5767a90a4f309d166210a8e43dec560">getNextCommand()</link> </para>
+</formalpara>
+</para>
+    </section><anchor xml:id="_classpepr3d_1_1_command_manager_1a2d53a763697329e206e72ddeef1ce75b"/>    <section>
+    <title>canUndo()</title>
+<indexterm><primary>canUndo</primary><secondary>pepr3d::CommandManager&lt; Target &gt;</secondary></indexterm>
+<indexterm><primary>pepr3d::CommandManager&lt; Target &gt;</primary><secondary>canUndo</secondary></indexterm>
+<computeroutput>template&lt;typename Target &gt; </computeroutput><para><computeroutput>bool <link linkend="_classpepr3d_1_1_command_manager">pepr3d::CommandManager</link>&lt; Target &gt;::canUndo ( ) const</computeroutput></para><para>
+
+<para>Is there a command that can be undoed? </para>
+</para>
+
+<para><formalpara><title>See also: </title>
+
+<para>getLastCommand() </para>
+</formalpara>
+</para>
+    </section><anchor xml:id="_classpepr3d_1_1_command_manager_1a0aae9681640f09da9c908154b805273e"/>    <section>
+    <title>execute()</title>
+<indexterm><primary>execute</primary><secondary>pepr3d::CommandManager&lt; Target &gt;</secondary></indexterm>
+<indexterm><primary>pepr3d::CommandManager&lt; Target &gt;</primary><secondary>execute</secondary></indexterm>
+<computeroutput>template&lt;typename Target &gt; </computeroutput><para><computeroutput>void <link linkend="_classpepr3d_1_1_command_manager">pepr3d::CommandManager</link>&lt; Target &gt;::execute (std::unique_ptr&lt; <link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &gt; &amp;&amp; command, bool join = <computeroutput>false</computeroutput>
+)</computeroutput></para><para>
+
+<para>Execute a command, saving it into a history and removing all currently redoable commands. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters                    </title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+                                <entry>join</entry>
+                                <entry>
+<para>Try to join this command into the last one </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+    </section><anchor xml:id="_classpepr3d_1_1_command_manager_1a1dc9b90a3f5a6f14502999187a9d45ef"/>    <section>
+    <title>getLastCommand()</title>
+<indexterm><primary>getLastCommand</primary><secondary>pepr3d::CommandManager&lt; Target &gt;</secondary></indexterm>
+<indexterm><primary>pepr3d::CommandManager&lt; Target &gt;</primary><secondary>getLastCommand</secondary></indexterm>
+<computeroutput>template&lt;typename Target &gt; </computeroutput><para><computeroutput>const <link linkend="_classpepr3d_1_1_command_manager">CommandManager</link>&lt; Target &gt;::<link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &amp; <link linkend="_classpepr3d_1_1_command_manager">pepr3d::CommandManager</link>&lt; Target &gt;::getLastCommand ( ) const</computeroutput></para><para>
+
+<para>Get last command that was executed (ie the command to be undoed) </para>
+</para>
+
+<para><formalpara><title>See also: </title>
+
+<para><link linkend="_classpepr3d_1_1_command_manager_1a2d53a763697329e206e72ddeef1ce75b">canUndo()</link> </para>
+</formalpara>
+</para>
+    </section><anchor xml:id="_classpepr3d_1_1_command_manager_1ab5767a90a4f309d166210a8e43dec560"/>    <section>
+    <title>getNextCommand()</title>
+<indexterm><primary>getNextCommand</primary><secondary>pepr3d::CommandManager&lt; Target &gt;</secondary></indexterm>
+<indexterm><primary>pepr3d::CommandManager&lt; Target &gt;</primary><secondary>getNextCommand</secondary></indexterm>
+<computeroutput>template&lt;typename Target &gt; </computeroutput><para><computeroutput>const <link linkend="_classpepr3d_1_1_command_manager">CommandManager</link>&lt; Target &gt;::<link linkend="_classpepr3d_1_1_command_base">CommandBaseType</link> &amp; <link linkend="_classpepr3d_1_1_command_manager">pepr3d::CommandManager</link>&lt; Target &gt;::getNextCommand ( ) const</computeroutput></para><para>
+
+<para>Get next command to be redoed if it exists. </para>
+</para>
+
+<para><formalpara><title>See also: </title>
+
+<para><link linkend="_classpepr3d_1_1_command_manager_1a2ae3625cc0baac8bb27f659ee0182eff">canRedo()</link> </para>
+</formalpara>
+</para>
+</section>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/commands/CommandManager.h</section>
+</section>

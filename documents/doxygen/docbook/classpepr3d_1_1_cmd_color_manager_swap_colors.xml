@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_cmd_color_manager_swap_colors">
+<title>pepr3d::CmdColorManagerSwapColors Class Reference</title>
+<indexterm><primary>pepr3d::CmdColorManagerSwapColors</primary></indexterm>
+<para>
+
+<para>Command that swaps 2 colors in the palette, which also swaps the colors in the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;CmdColorManager.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::CmdColorManagerSwapColors:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_cmd_color_manager_swap_colors.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_swap_colors_1af6dc11ce3593fe744de4227aedc03239"/><emphasis role="strong">CmdColorManagerSwapColors</emphasis> (size_t color1Idx, size_t color2Idx)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_swap_colors_1abec8b759af2a20f032491ec55a6e36a4"/>std::string_view <link linkend="_classpepr3d_1_1_cmd_color_manager_swap_colors_1abec8b759af2a20f032491ec55a6e36a4">getDescription</link> () const override</para>
+
+<para>Get description of the command. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_swap_colors_1a8b2d71615f5391bfa047ab34ac81c08b"/>void <link linkend="_classpepr3d_1_1_cmd_color_manager_swap_colors_1a8b2d71615f5391bfa047ab34ac81c08b">run</link> (<link linkend="_classpepr3d_1_1_geometry">Geometry</link> &amp;target) const override</para>
+
+<para>Run the command, applying the modifications to the target. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_swap_colors_1ab844b45f5817551eb8cf94a6a79e8562"/>size_t <emphasis role="strong">mColor1Idx</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_swap_colors_1aaf0ac35ec3fad9416ce04a2e3af135d8"/>size_t <emphasis role="strong">mColor2Idx</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Command that swaps 2 colors in the palette, which also swaps the colors in the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/commands/CmdColorManager.h</section>
+</section>

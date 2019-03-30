@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_assimp_progress">
+<title>pepr3d::AssimpProgress&lt; Progress &gt; Class Template Reference</title>
+<indexterm><primary>pepr3d::AssimpProgress&lt; Progress &gt;</primary></indexterm>
+<para>
+
+<para>Represents a progress of importing/exporting a model via Assimp. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;AssimpProgress.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::AssimpProgress&lt; Progress &gt;:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_assimp_progress.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_assimp_progress_1aa839af95665149e0572ad2f8ab2aa056"/><emphasis role="strong">AssimpProgress</emphasis> (Progress *progress)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_assimp_progress_1a3cce9ce3f66ff7c1bca017ec0e1caa04"/>virtual bool <link linkend="_classpepr3d_1_1_assimp_progress_1a3cce9ce3f66ff7c1bca017ec0e1caa04">Update</link> (float percentage=-1.f) override</para>
+
+<para>Sets the progress to a certain value, usually -1 means unknown progress / not started yet, 0 means start of a progress and 1 means finished. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_assimp_progress_1ac6743a64c1e024474f694e29efcd8be1"/>Progress * <emphasis role="strong">mProgress</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<simplesect><title>template&lt;typename Progress&gt;
+class pepr3d::AssimpProgress&lt; Progress &gt;</title></simplesect>
+
+
+<para>Represents a progress of importing/exporting a model via Assimp. </para>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/AssimpProgress.h</section>
+</section>

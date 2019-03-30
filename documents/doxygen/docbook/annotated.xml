@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_annotated">
+<title>Class List</title>
+Here are the classes, structs, unions and interfaces with brief descriptions:<link linkend="_classpepr3d_1_1_add_value_command">pepr3d::AddValueCommand</link>
+<para>Example command used for debugging purposes of the <link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> system, adds an integer to <link linkend="_structpepr3d_1_1_integer_state">IntegerState</link> </para>
+<link linkend="_structpepr3d_1_1_geometry_1_1_area_highlight">pepr3d::Geometry::AreaHighlight</link>
+<para>A highlight of a part of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> </para>
+<link linkend="_classpepr3d_1_1_asset_not_found_exception">pepr3d::AssetNotFoundException</link>
+<para>Exception thrown when a required asset is not found in the assets/ directory </para>
+<link linkend="_classpepr3d_1_1_assimp_progress">pepr3d::AssimpProgress&lt; Progress &gt;</link>
+<para>Represents a progress of importing/exporting a model via Assimp </para>
+<link linkend="_structpepr3d_1_1_model_view_1_1_attributes">pepr3d::ModelView::Attributes</link>
+<para>Custom OpenGL attributes </para>
+<link linkend="_classpepr3d_1_1_brush">pepr3d::Brush</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for painting a model while not being limited by the original triangles </para>
+<link linkend="_structpepr3d_1_1_brush_settings">pepr3d::BrushSettings</link>
+<para>Current settings of the <link linkend="_classpepr3d_1_1_brush">Brush</link> tool </para>
+<link linkend="_structpepr3d_1_1_toolbar_1_1_button_properties">pepr3d::Toolbar::ButtonProperties</link>
+<para>Properties of a clickable and selectable button in the <link linkend="_classpepr3d_1_1_toolbar">Toolbar</link> </para>
+<link linkend="_classpepr3d_1_1_camera_ui">pepr3d::CameraUi</link>
+<para>Enables user interaction with a CameraPersp via the mouse </para>
+<link linkend="_classpepr3d_1_1_side_pane_1_1_category">pepr3d::SidePane::Category</link>
+<para>A category of a <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> that can be opened and closed by a user </para>
+<link linkend="_classpepr3d_1_1_cmd_color_manager_add_color">pepr3d::CmdColorManagerAddColor</link>
+<para>Command that adds a new color to the palette </para>
+<link linkend="_classpepr3d_1_1_cmd_color_manager_change_color">pepr3d::CmdColorManagerChangeColor</link>
+<para>Command that changes a color in the palette </para>
+<link linkend="_classpepr3d_1_1_cmd_color_manager_remove_color">pepr3d::CmdColorManagerRemoveColor</link>
+<para>Command that removes a color from the palette, which replaces it in the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> with the first color in the palette </para>
+<link linkend="_classpepr3d_1_1_cmd_color_manager_reorder_colors">pepr3d::CmdColorManagerReorderColors</link>
+<para>Command that reorders 2 colors in the palette, which does not change the colors in the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> </para>
+<link linkend="_classpepr3d_1_1_cmd_color_manager_reset_colors">pepr3d::CmdColorManagerResetColors</link>
+<para>Command that resets all colors of the palette to the default 4 colors </para>
+<link linkend="_classpepr3d_1_1_cmd_color_manager_swap_colors">pepr3d::CmdColorManagerSwapColors</link>
+<para>Command that swaps 2 colors in the palette, which also swaps the colors in the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> </para>
+<link linkend="_classpepr3d_1_1_cmd_paint_brush">pepr3d::CmdPaintBrush</link>
+<para>Command that paints a stroke with a brush </para>
+<link linkend="_classpepr3d_1_1_cmd_paint_single_color">pepr3d::CmdPaintSingleColor</link>
+<para>Command that sets a (same) color to a batch of triangles </para>
+<link linkend="_classpepr3d_1_1_cmd_paint_text">pepr3d::CmdPaintText</link>
+<para>Command that paints a text using orthogonal projection </para>
+<link linkend="_classpepr3d_1_1_color_manager">pepr3d::ColorManager</link>
+<para>Represents a color palette, i.e., all colors and a selected active color </para>
+<link linkend="_structpepr3d_1_1_paint_bucket_1_1_color_stopping">pepr3d::PaintBucket::ColorStopping</link>
+<para>A paint bucket criterion that stops on a different color </para>
+<link linkend="_classpepr3d_1_1_command_base">pepr3d::CommandBase&lt; Target &gt;</link>
+<para><link linkend="_classpepr3d_1_1_command_base">CommandBase</link> is a base class for commands representing a single undoable operation. The command itself should be an immutable entity, containing only the necessary data to perform the action </para>
+<link linkend="_classpepr3d_1_1_command_manager">pepr3d::CommandManager&lt; Target &gt;</link>
+<para><link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> handles all undoable operations on target in the form of commands See </para>
+<link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_construct__vertex__2">CGAL::Gps_traits_adaptor&lt; Traits_ &gt;::Construct_vertex_2</link><link linkend="_classpepr3d_1_1_data_triangle">pepr3d::DataTriangle</link>
+<para>Custom Triangle type holding the CGAL::Triangle_3 and additional data </para>
+<link linkend="_structpepr3d_1_1_data_triangle_a_a_b_b_primitive">pepr3d::DataTriangleAABBPrimitive</link>
+<para>Provides the conversion facilities between the custom triangle <link linkend="_classpepr3d_1_1_data_triangle">DataTriangle</link> and the <link linkend="_namespace_c_g_a_l">CGAL</link> Triangle_3 class. Taken from CGAL/examples/AABB_tree/custom_example.cpp, modified </para>
+<link linkend="_structpepr3d_1_1_detailed_triangle_id">pepr3d::DetailedTriangleId</link>
+<para>Triangle ID in all detailed triangles Face index in mMeshDetailed faces; </para>
+<link linkend="_classpepr3d_1_1_dialog">pepr3d::Dialog</link>
+<para>Represents a modal dialog shown to a user in the user interface in front of everything else </para>
+<link linkend="_classpepr3d_1_1_display_options">pepr3d::DisplayOptions</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used to adjust how the model is displayed </para>
+<link linkend="_structpepr3d_1_1_paint_bucket_1_1_do_not_stop">pepr3d::PaintBucket::DoNotStop</link>
+<para>A paint bucket criterion that never stops, used for coloring the whole model </para>
+<link linkend="_structpepr3d_1_1_triangle_detail_1_1_exact_triangle">pepr3d::TriangleDetail::ExactTriangle</link>
+<para>Exact triangle with colour and polygon information </para>
+<link linkend="_classpepr3d_1_1_export_assistant">pepr3d::ExportAssistant</link><link linkend="_structpepr3d_1_1_triangle_detail_1_1_face_info">pepr3d::TriangleDetail::FaceInfo</link>
+<para>Used in triangulation to distinguish filled faces from holes </para>
+<link linkend="_classpepr3d_1_1_fatal_logger">pepr3d::FatalLogger</link>
+<para>Cinder logger which only logs events with ci::log::Level::LEVEL_FATAL </para>
+<link linkend="_classpepr3d_1_1_font_rasterizer">pepr3d::FontRasterizer</link>
+<para>Used for triangulating a font outline </para>
+<link linkend="_classpepr3d_1_1_font_storage">pepr3d::FontStorage</link>
+<para>Keeps pointers to all fonts used in the user interface (regular, small, and icons) </para>
+<link linkend="_classpepr3d_1_1_geometry">pepr3d::Geometry</link>
+<para>The whole geometry of a model that the user is painting </para>
+<link linkend="_structpepr3d_1_1_geometry_progress">pepr3d::GeometryProgress</link>
+<para>Atomic values representing percentage progress of geometry import, export, and SDF computation </para>
+<link linkend="_structpepr3d_1_1_geometry_1_1_geometry_state">pepr3d::Geometry::GeometryState</link><link linkend="_classpepr3d_1_1_geometry_utils">pepr3d::GeometryUtils</link>
+<para>Static utility functions that are not closely tied to <link linkend="_classpepr3d_1_1_geometry">Geometry</link> </para>
+<link linkend="_class_gnuplot_debug">GnuplotDebug&lt; PointType &gt;</link><link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor">CGAL::Gps_traits_adaptor&lt; Traits_ &gt;</link><link linkend="_structstd_1_1hash_3_01pepr3d_1_1_detailed_triangle_id_01_4">std::hash&lt; pepr3d::DetailedTriangleId &gt;</link>
+<para>Hashes a DetailedTriangleId </para>
+<link linkend="_structpepr3d_1_1_hotkey">pepr3d::Hotkey</link>
+<para>A hotkey, i.e., a keycode and modifiers (Ctrl) </para>
+<link linkend="_structpepr3d_1_1_hotkey_hasher">pepr3d::HotkeyHasher</link>
+<para>Used for hashing a hotkey so it can be put in std::unordered_map </para>
+<link linkend="_classpepr3d_1_1_hotkeys">pepr3d::Hotkeys</link>
+<para>All hotkeys and their corresponding actions </para>
+<link linkend="_structpepr3d_1_1_model_exporter_1_1_indexed_edge">pepr3d::ModelExporter::IndexedEdge</link><link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data_1_1_info">pepr3d::Geometry::OpenGlData::Info</link>
+<para>Always editable struct that keeps track of changes since last frame Updates to color/highlight buffer set this flag to true <link linkend="_classpepr3d_1_1_model_view">ModelView</link> resets the flag to false when it updates OpenGl data </para>
+<link linkend="_classpepr3d_1_1_information">pepr3d::Information</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for getting details about the application </para>
+<link linkend="_structpepr3d_1_1_integer_state">pepr3d::IntegerState</link>
+<para>Example state used for debugging purposes of the <link linkend="_classpepr3d_1_1_command_manager">CommandManager</link> system, contains a single integer </para>
+<link linkend="_classpepr3d_1_1_live_debug">pepr3d::LiveDebug</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for real-time debugging purposes </para>
+<link linkend="_classpepr3d_1_1_main_application">pepr3d::MainApplication</link>
+<para>The main Cinder-based application, represents a window, handles events, thread pool, active tools, geometry, etc </para>
+<link linkend="_structpepr3d_1_1_model_view_1_1_mesh_data_override">pepr3d::ModelView::MeshDataOverride</link>
+<para>Override currently displayed mesh data, making it possibly to change displayed mesh without chaning the geometry itself </para>
+<link linkend="_classpepr3d_1_1_model_exporter">pepr3d::ModelExporter</link>
+<para>Exports <link linkend="_classpepr3d_1_1_geometry">Geometry</link> to separate files via Assimp, supports surface export and depth extrusions </para>
+<link linkend="_classpepr3d_1_1_model_importer">pepr3d::ModelImporter</link>
+<para>Imports triangles and color palette from a model via Assimp </para>
+<link linkend="_classpepr3d_1_1_model_view">pepr3d::ModelView</link>
+<para>The main part of the user interface, shows the geometry to the user </para>
+<link linkend="_structpepr3d_1_1_paint_bucket_1_1_normal_stopping">pepr3d::PaintBucket::NormalStopping</link>
+<para>A paint bucket criterion that stops when an angle between normals is too high </para>
+<link linkend="_structpepr3d_1_1_semiautomatic_segmentation_1_1_normal_stopping">pepr3d::SemiautomaticSegmentation::NormalStopping</link>
+<para>A segmentation criterion that stops when angles of normals are too different </para>
+<link linkend="_structpepr3d_1_1_geometry_1_1_open_gl_data">pepr3d::Geometry::OpenGlData</link>
+<para>All OpenGL buffers of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> </para>
+<link linkend="_class_c_g_a_l_1_1_gps__traits__adaptor_1_1_orientation__2">CGAL::Gps_traits_adaptor&lt; Traits_ &gt;::Orientation_2</link><link linkend="_classpepr3d_1_1_paint_bucket">pepr3d::PaintBucket</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for coloring whole regions with a single click </para>
+<link linkend="_classpepr3d_1_1_polyhedron_builder">pepr3d::PolyhedronBuilder&lt; HDS &gt;</link>
+<para>Builds a <link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron from triangles </para>
+<link linkend="_structpepr3d_1_1_polyhedron_data">pepr3d::PolyhedronData</link>
+<para><link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron data of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> </para>
+<link linkend="_classpepr3d_1_1_progress_indicator">pepr3d::ProgressIndicator</link>
+<para>User interface for showing a current progress, contains a spinner and progress bars </para>
+<link linkend="_structpepr3d_1_1_semiautomatic_segmentation_1_1_s_d_f_stopping">pepr3d::SemiautomaticSegmentation::SDFStopping</link>
+<para>A segmentation criterion that stops when SDF values are too different </para>
+<link linkend="_classpepr3d_1_1_sdf_values_exception">pepr3d::SdfValuesException</link>
+<para>Exception thrown when SDF values cannot be computed </para>
+<link linkend="_classpepr3d_1_1_segmentation">pepr3d::Segmentation</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for automatically separating and coloring the model into regions based on the thickness of the model </para>
+<link linkend="_classpepr3d_1_1_semiautomatic_segmentation">pepr3d::SemiautomaticSegmentation</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for manually expanding specified regions to create a segmentation of the model </para>
+<link linkend="_classpepr3d_1_1_settings">pepr3d::Settings</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for configuring the color palette and application </para>
+<link linkend="_structpepr3d_1_1_export_assistant_1_1_settings_per_color">pepr3d::ExportAssistant::SettingsPerColor</link>
+<para>Export settings available for each color </para>
+<link linkend="_classpepr3d_1_1_side_pane">pepr3d::SidePane</link>
+<para>Right side of the user interface that displays options of the currently selected tool </para>
+<link linkend="_structpepr3d_1_1_command_manager_1_1_snapshot_pair">pepr3d::CommandManager&lt; Target &gt;::SnapshotPair</link>
+<para>Saved states of the target and commandId after them </para>
+<link linkend="_structpepr3d_1_1_triangle_detail_1_1_sphere_intersection_visitor">pepr3d::TriangleDetail::SphereIntersectionVisitor</link><link linkend="_classpepr3d_1_1_text_editor">pepr3d::TextEditor</link>
+<para>A tool used for painting texts on a model </para>
+<link linkend="_classpepr3d_1_1_tool">pepr3d::Tool</link>
+<para>A base class of all tools that the user can select and manipulate the <link linkend="_classpepr3d_1_1_geometry">Geometry</link> and application with them </para>
+<link linkend="_classpepr3d_1_1_toolbar">pepr3d::Toolbar</link>
+<para>A top part of the user interface that shows a File menu, Undo, Redo, and all tools </para>
+<link linkend="_structpepr3d_1_1_font_rasterizer_1_1_tri">pepr3d::FontRasterizer::Tri</link><link linkend="_classpepr3d_1_1_triangle_detail">pepr3d::TriangleDetail</link>
+<para>Represents additional triangles that replace the original one </para>
+<link linkend="_classpepr3d_1_1_triangle_painter">pepr3d::TrianglePainter</link>
+<para><link linkend="_classpepr3d_1_1_tool">Tool</link> used for coloring individual triangles by clicking or dragging the mouse </para>
+<link linkend="_classpepr3d_1_1_geometry_utils_1_1_tri_ray_int_visitor">pepr3d::GeometryUtils::TriRayIntVisitor</link></section>

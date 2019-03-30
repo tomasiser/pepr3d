@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_side_pane">
+<title>pepr3d::SidePane Class Reference</title>
+<indexterm><primary>pepr3d::SidePane</primary></indexterm>
+<para>
+
+<para>Right side of the user interface that displays options of the currently selected tool. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;SidePane.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>class <link linkend="_classpepr3d_1_1_side_pane_1_1_category">Category</link></para>
+
+<para>A category of a <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> that can be opened and closed by a user. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1ac34e40627f74677c9acd8048fb6527e7"/><emphasis role="strong">SidePane</emphasis> (<link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp;app)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a0d9965d55d1b631ec97a98698bbcd67b"/>float <link linkend="_classpepr3d_1_1_side_pane_1a0d9965d55d1b631ec97a98698bbcd67b">getWidth</link> () const</para>
+
+<para>Returns the width. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a4418b3cd4e7c4e584d91f826d1e944b9"/>void <link linkend="_classpepr3d_1_1_side_pane_1a4418b3cd4e7c4e584d91f826d1e944b9">setWidth</link> (float width)</para>
+
+<para>Sets the width. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a1ff5531d18ef9a1ad2149e59661c8d77"/>void <link linkend="_classpepr3d_1_1_side_pane_1a1ff5531d18ef9a1ad2149e59661c8d77">draw</link> ()</para>
+
+<para>Draws the pane using ImGui. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a41774f95d968169688441c34a7b0e21b"/>void <link linkend="_classpepr3d_1_1_side_pane_1a41774f95d968169688441c34a7b0e21b">resize</link> ()</para>
+
+<para>Called when the <link linkend="_classpepr3d_1_1_side_pane">SidePane</link> should recalculate its size. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1ad52b2636cb54b25ed796ad8bae54a535"/>void <link linkend="_classpepr3d_1_1_side_pane_1ad52b2636cb54b25ed796ad8bae54a535">drawText</link> (std::string text)</para>
+
+<para>Draws a (multi-line) text label. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a28107c4c4448600ef6f07b5c22928b22"/>bool <link linkend="_classpepr3d_1_1_side_pane_1a28107c4c4448600ef6f07b5c22928b22">drawButton</link> (std::string label)</para>
+
+<para>Draws a button with a maximum available width. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a6fcb108b3358ec5b16e08359440d2e83"/>bool <link linkend="_classpepr3d_1_1_side_pane_1a6fcb108b3358ec5b16e08359440d2e83">drawColoredButton</link> (std::string label, const ci::ColorA color, const float borderThickness=3.0f)</para>
+
+<para>Draws a button with a colored highlight. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1ac9c2d073fb25be1145899accd17813fa"/>void <link linkend="_classpepr3d_1_1_side_pane_1ac9c2d073fb25be1145899accd17813fa">drawSeparator</link> ()</para>
+
+<para>Draws a horizontal separator. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a33641b0bade39edf124bc6c23a6271a0"/>void <link linkend="_classpepr3d_1_1_side_pane_1a33641b0bade39edf124bc6c23a6271a0">drawColorPalette</link> (const std::string &amp;label=&quot;Color Palette&quot;, bool isEditable=false)</para>
+
+<para>Draws a color palette of the current <link linkend="_classpepr3d_1_1_geometry">Geometry</link> and its <link linkend="_classpepr3d_1_1_color_manager">ColorManager</link>. If isEditable is true, a full editable user interface will be drawn. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1aa585367929e09354f49e0740571f475b"/>template&lt;typename Callback &gt; </para><para>void <link linkend="_classpepr3d_1_1_side_pane_1aa585367929e09354f49e0740571f475b">drawCheckbox</link> (std::string label, bool isChecked, Callback onChanged)</para>
+
+<para>Draws a checkbox with a callback called when the value is changed. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a65b9063ac82c6249eef2c1a7586a0cfb"/>void <link linkend="_classpepr3d_1_1_side_pane_1a65b9063ac82c6249eef2c1a7586a0cfb">drawCheckbox</link> (std::string label, bool &amp;isChecked)</para>
+
+<para>Draws a checkbox with a read-write reference to the current value. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1ae31dbf3dc9f11c3a4a2721c59ca043df"/>bool <link linkend="_classpepr3d_1_1_side_pane_1ae31dbf3dc9f11c3a4a2721c59ca043df">drawIntDragger</link> (std::string label, int &amp;value, float dragSpeed, int minValue, int maxValue, std::string displayFormat, float width)</para>
+
+<para>Draws an ImGui dragger (slider) for an integer value. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a284ec9b8a323a0b4bf01fddb8551d4b2"/>bool <link linkend="_classpepr3d_1_1_side_pane_1a284ec9b8a323a0b4bf01fddb8551d4b2">drawVec3Dragger</link> (std::string label, glm::vec3 &amp;value, float dragSpeed, float minValue, float maxValue, std::string displayFormat, float width)</para>
+
+<para>Draws an ImGui dragger (slider) for an glm::vec3 value. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a67b9ac3cbdcbae622df47cf7fa7fe0d0"/>bool <link linkend="_classpepr3d_1_1_side_pane_1a67b9ac3cbdcbae622df47cf7fa7fe0d0">drawFloatDragger</link> (std::string label, float &amp;value, float dragSpeed, float minValue, float maxValue, std::string displayFormat, float width)</para>
+
+<para>Draws an ImGui dragger (slider) for an float value. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1ad2aec2dd5fb2b89689af2478547c58c5"/>void <link linkend="_classpepr3d_1_1_side_pane_1ad2aec2dd5fb2b89689af2478547c58c5">drawTooltipOnHover</link> (const std::string &amp;label, const std::string &amp;shortcut=&quot;&quot;, const std::string &amp;description=&quot;&quot;, const std::string &amp;disabled=&quot;&quot;)</para>
+
+<para>Draws a tooltip if the previous ImGui element is hovered. The tooltip is drawn on the left of the <link linkend="_classpepr3d_1_1_side_pane">SidePane</link>. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a661999aa5735d68c9ac36fa07722ed5b"/>void <link linkend="_classpepr3d_1_1_side_pane_1a661999aa5735d68c9ac36fa07722ed5b">drawColorPaletteAddRemoveButtons</link> (<link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> &amp;colorManager, <link linkend="_classpepr3d_1_1_command_manager">CommandManager</link>&lt; <link linkend="_classpepr3d_1_1_geometry">Geometry</link> &gt; &amp;commandManager)</para>
+
+<para>Draws add &amp; remove buttons of an editable color palette. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a38039d44d10317e493730141b058d193"/>void <link linkend="_classpepr3d_1_1_side_pane_1a38039d44d10317e493730141b058d193">drawColorPaletteColorBoxes</link> (<link linkend="_classpepr3d_1_1_color_manager">ColorManager</link> &amp;colorManager, <link linkend="_classpepr3d_1_1_command_manager">CommandManager</link>&lt; <link linkend="_classpepr3d_1_1_geometry">Geometry</link> &gt; &amp;commandManager, bool isEditable)</para>
+
+<para>Draws the color boxes of a color palette. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Private Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1ab3342d437643b373b886c13fadbe2708"/><link linkend="_classpepr3d_1_1_main_application">MainApplication</link> &amp; <emphasis role="strong">mApplication</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_side_pane_1a943018559d65596c1c5822ca50495e8d"/>float <emphasis role="strong">mWidth</emphasis> = 250.0f</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Right side of the user interface that displays options of the currently selected tool. </para>
+<para>
+The documentation for this class was generated from the following files:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/SidePane.hD:/Home/MFF/1-Mgr/projekt/pepr3d/src/ui/SidePane.cpp</section>
+</section>

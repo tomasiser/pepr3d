@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classpepr3d_1_1_cmd_color_manager_reorder_colors">
+<title>pepr3d::CmdColorManagerReorderColors Class Reference</title>
+<indexterm><primary>pepr3d::CmdColorManagerReorderColors</primary></indexterm>
+<para>
+
+<para>Command that reorders 2 colors in the palette, which does not change the colors in the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;CmdColorManager.h&gt;</computeroutput>
+</para>
+<para>Inheritance diagram for pepr3d::CmdColorManagerReorderColors:    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="classpepr3d_1_1_cmd_color_manager_reorder_colors.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_reorder_colors_1a81dcf3c2b7affe3aef6fa8688be8edb7"/><emphasis role="strong">CmdColorManagerReorderColors</emphasis> (size_t color1Idx, size_t color2Idx)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_reorder_colors_1a165bc96ee062a1f4f35f3d34b6039fe1"/>std::string_view <link linkend="_classpepr3d_1_1_cmd_color_manager_reorder_colors_1a165bc96ee062a1f4f35f3d34b6039fe1">getDescription</link> () const override</para>
+
+<para>Get description of the command. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_reorder_colors_1a10fd4859ee24045dab33287150fb2573"/>void <link linkend="_classpepr3d_1_1_cmd_color_manager_reorder_colors_1a10fd4859ee24045dab33287150fb2573">run</link> (<link linkend="_classpepr3d_1_1_geometry">Geometry</link> &amp;target) const override</para>
+
+<para>Run the command, applying the modifications to the target. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_reorder_colors_1af50083a6f91b8cd5e105ad3e0a572630"/>size_t <emphasis role="strong">mColor1Idx</emphasis></para>
+</listitem>
+            <listitem><para><anchor xml:id="_classpepr3d_1_1_cmd_color_manager_reorder_colors_1ab20fc791088ea8c6e73cc809f57fce1b"/>size_t <emphasis role="strong">mColor2Idx</emphasis></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>Command that reorders 2 colors in the palette, which does not change the colors in the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+<para>
+The documentation for this class was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/commands/CmdColorManager.h</section>
+</section>

@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpepr3d_1_1_polyhedron_data">
+<title>pepr3d::PolyhedronData Struct Reference</title>
+<indexterm><primary>pepr3d::PolyhedronData</primary></indexterm>
+<para>
+
+<para><link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron data of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;PolyhedronData.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Types    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1ab24fbc9cbd4e66ec70b690902c64e58e"/>using <emphasis role="strong">Mesh</emphasis> = CGAL::Surface_mesh&lt; DataTriangle::K::Point_3 &gt;</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a770bd8d4c7f6212137ef585d9c521fe6"/>using <emphasis role="strong">vertex_descriptor</emphasis> = Mesh::Vertex_index</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1af0ed6a9fefd99e677e7512bbcfb2f05a"/>using <emphasis role="strong">face_descriptor</emphasis> = Mesh::Face_index</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1afb5116df41c91e3ceea149955fe33fed"/>using <emphasis role="strong">edge_descriptor</emphasis> = Mesh::Edge_index</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1aaead5fd611681a58a77bbefeff2e30f0"/>using <emphasis role="strong">halfedge_descriptor</emphasis> = Mesh::Halfedge_index</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a83aa9807ec5b6b95395d281dfe788086"/>std::vector&lt; glm::vec3 &gt; <link linkend="_structpepr3d_1_1_polyhedron_data_1a83aa9807ec5b6b95395d281dfe788086">vertices</link></para>
+
+<para>Vertex positions after joining all identical vertices. This is after removing all other componens and as such based only on the position property. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a9cd3b6704df3fb8caae2bd938e6d7de8"/>std::vector&lt; std::array&lt; size_t, 3 &gt; &gt; <link linkend="_structpepr3d_1_1_polyhedron_data_1a9cd3b6704df3fb8caae2bd938e6d7de8">indices</link></para>
+
+<para>Indices to triangles of the polyhedron. Indices are stored in a CCW order, as imported from Assimp. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a44da515196e97da9f68cd43c2692d516"/>bool <emphasis role="strong">isSdfComputed</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1addadf43cb5eedfa38cc06f097aff8c08"/>bool <emphasis role="strong">valid</emphasis> = false</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a46a914703d099c5f2237622309f4b4dc"/>bool <emphasis role="strong">sdfValuesValid</emphasis> = true</para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1ae8ef78643a8d1f2de16d90b3c6d401ea"/>PolyhedronData::Mesh::Property_map&lt; PolyhedronData::face_descriptor, size_t &gt; <link linkend="_structpepr3d_1_1_polyhedron_data_1ae8ef78643a8d1f2de16d90b3c6d401ea">mIdMap</link></para>
+
+<para>Map converting a face_descriptor into an ID, that corresponds to the mTriangles vector. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a18c628197dc544d7a79b636792783c31"/>PolyhedronData::Mesh::Property_map&lt; PolyhedronData::face_descriptor, double &gt; <link linkend="_structpepr3d_1_1_polyhedron_data_1a18c628197dc544d7a79b636792783c31">sdf_property_map</link></para>
+
+<para>Map converting a face_descriptor into the SDF value of the given face. Note: the SDF values are linearly normalized so min=0, max=1. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a405c876987a078bc168f267972b46514"/>std::vector&lt; PolyhedronData::face_descriptor &gt; <link linkend="_structpepr3d_1_1_polyhedron_data_1a405c876987a078bc168f267972b46514">mFaceDescs</link></para>
+
+<para>A &quot;map&quot; converting the ID of each triangle (from mTriangles) into a face_descriptor. </para>
+</listitem>
+            <listitem><para><anchor xml:id="_structpepr3d_1_1_polyhedron_data_1a27477466ca362daaf66ed853405cf959"/>Mesh <link linkend="_structpepr3d_1_1_polyhedron_data_1a27477466ca362daaf66ed853405cf959">mMesh</link></para>
+
+<para>The data-structure itself. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para><link linkend="_namespace_c_g_a_l">CGAL</link> Polyhedron data of the <link linkend="_classpepr3d_1_1_geometry">Geometry</link>. </para>
+<para>
+The documentation for this struct was generated from the following file:</para>
+D:/Home/MFF/1-Mgr/projekt/pepr3d/src/geometry/PolyhedronData.h</section>
+</section>
