@@ -34,10 +34,10 @@ The following dependencies have to be downloaded and/or installed on the machine
 \begin{enumerate}
 \item Download and install the latest \textbf{CMake} from https://cmake.org/.
 \item Download and install either \textbf{Visual Studio 2017} (Community version is enough) or alternatively only \textbf{Build Tools for Visual Studio 2017}. Both can be found at https://visualstudio.microsoft.com/downloads/.
-\item Download and install \textbf{CGAL} from https://www.cgal.org/download/windows.html. Make sure \texttt{CGAL\_DIR} environment variable is set to the installed CGAL path, which is done by default when using the official installer.
+\item Download and install \textbf{CGAL} from https://www.cgal.org/\-download/\-win\-dows.html. Make sure \texttt{CGAL\_DIR} environment variable is set to the installed CGAL path, which is done by default when using the official installer.
 \item Download and install \textbf{Boost} from https://www.boost.org/. You can either build Boost yourself or download pre-built binaries for the 14.1 toolset. Make sure to point \texttt{BOOST\_ROOT} environment variable to the installed Boost path.
 \item We use our own built version of \textbf{Assimp} from the latest \texttt{master} branch. Either build Assimp yourself from https://github.com/assimp/assimp, or download and unzip our prebuilt version\footnote{https://github.com/tomasiser/pepr3d/releases/download/v1.0/Assimp\_for\_Pepr3D.zip}. Our version is built with two \texttt{.dll}, one for Debug and one for Release. Do not mix them up! Make sure to point \texttt{ASSIMP\_ROOT} environment variable to the Assimp directory.
-\item Download \textbf{Freetype} from https://github.com/ubawurinna/freetype-windows-binaries, preferably version 2.9.1. After downloading, it is \emph{necessary} to rename the \texttt{win64} subdirectory to \texttt{lib}. Make sure to point \texttt{FREETYPE\_DIR} to the Freetype directory.
+\item Download \textbf{Freetype} from https://github.com/\-ubawurinna/\-freetype-\-win\-dows-\-binaries, preferably version 2.9.1. After downloading, it is \emph{necessary} to rename the \texttt{win64} subdirectory to \texttt{lib}. Make sure to point \texttt{FREETYPE\_DIR} to the Freetype directory.
 \end{enumerate}
 
 All other libraries are part of the Pepr3D repository and will be built automatically by our build system.
@@ -75,7 +75,7 @@ msbuild pepr3d.sln /m
 
 \subsection{Running}
 
-The executable of Pepr3D should be located in \texttt{build/pepr3d/Debug/pepr3d.exe} (or \texttt{Release} instead of \texttt{Debug}).
+The executable of Pepr3D should be located in \texttt{build/\-pepr3d/\-Debug/\-pe\-pr\-3d.exe} (or \texttt{Release} instead of \texttt{Debug}).
 
 After building in Visual Studio, we have to make sure the appropriate \texttt{.dll} files are copied next to the executables.
 If you used Visual Studio 2017 application to build it, some of the \texttt{.dll} files should be automatically copied to the executable directory.

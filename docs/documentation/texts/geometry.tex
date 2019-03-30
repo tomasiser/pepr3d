@@ -77,7 +77,7 @@ The second group of methods are the algorithms employed to implement all the too
 \begin{itemize}
 \item \texttt{intersectMesh(ray)} is the main method used to transform the user's clicks with tools into the geometry pipeline. Given a ray, this returns the id of the triangle which got intersected by the ray. Modern \texttt{std::optional} is utilized to avoid various "return codes" (like returning -1 for \textit{no hit}).
 
-\item \texttt{bucket(startTriangle, stoppingCriterion} is used in several tools and implements the \textit{breath-first} search over a 3D triangle mesh. The \textit{BFS} traverses the mesh triangle to triangle until it is stopped by the stopping criterion. This criterion corresponds to the user interface of the \textit{Bucket} tool -- the user can either select to never stop, to stop upon meeting a different color, to stop on sharp edges or a combination of both. Modern C++ template approach is utilized to replace the runtime \texttt{if-else} decisions with compile time template processing.
+\item \texttt{bucket(start, stopCriterion)} is used in se\-ve\-ral tools and implements the \textit{breath-first} search over a 3D triangle mesh. The \textit{BFS} traverses the mesh triangle to triangle until it is stopped by the stopping criterion. This criterion corresponds to the user interface of the \textit{Bucket} tool -- the user can either select to never stop, to stop upon meeting a different color, to stop on sharp edges or a combination of both. Modern C++ template approach is utilized to replace the runtime \texttt{if-else} decisions with compile time template processing.
 
 \item \texttt{paintWith} are two methods used by the \textit{Brush} and \textit{Text} tools. They allow to paint with selected settings along a target ray. \texttt{paintAreaWithSphere} only paints a circular region on the surface of the mesh, where the circle is computed as the intersection of a sphere placed on the surface of the mesh with the mesh's sides. \texttt{paintWithShape} accepts a \texttt{shape} vector composed of points in 3D space and allows the user to paint a custom shape onto the mesh's surface.
 
@@ -102,7 +102,7 @@ Further information is available in the \textit{doxygen} documentation or direct
 
 \texttt{TriangleDetail}
 
-The \texttt{TriangleDetail} class allows the user to divide a triangle of the original mesh into smaller, differently coloured pieces. The surface of a \texttt{TriangleDetail} can be represented in two formats. We first explain the core concepts of this class before giving a brief overview of its members.
+The \texttt{TriangleDetail} class allows the user to divide a triangle of the original mesh into smaller, differently coloured pieces. The surface of a \texttt{Triangle\-Detail} can be represented in two formats. We first explain the core concepts of this class before giving a brief overview of its members.
 
 \subsubsection{Internal format}
 
@@ -181,7 +181,7 @@ A triangle which has not been subdivided, will have the \texttt{DetailId} empty,
 
 \end{itemize}
 
-A second important class to talk about in this section is the \texttt{Data\-Triangle\-AABB\-Primitive}. This class provides the conversion between our \texttt{Data\-Triangle} (which contains a \texttt{CGAL::Triangle\_3}) and the \texttt{CGAL::AABB\_tree} which requires \texttt{CGAL::Triangle\_3} as input to build the tree around. We provide the tree our \texttt{Data\-Triangle} array and the tree converts it into \texttt{Data\-Triangle\-AABB\-Primitive}, which it accepts as a geometry primitive.
+A second important class to talk about in this section is the \texttt{Data\-Triangle\-AABB\-Primitive}. This class provides the conversion between our \texttt{Data\-Tri\-angle} (which contains a \texttt{CGAL::Triangle\_3}) and the \texttt{CGAL::AABB\_tree} which requires \texttt{CGAL::Triangle\_3} as input to build the tree around. We provide the tree our \texttt{Data\-Triangle} array and the tree converts it into \texttt{Data\-Triangle\-AABB\-Primitive}, which it accepts as a geometry primitive.
 
 \section{Model Importer}
 
@@ -266,7 +266,7 @@ There are a few basic methods which we will cover first, as well as an extra deg
 \item \texttt{saveModel()} is the main method the users will call if they wish to proceed with the export in the current setup. The user specifies the file path, file name and file type of the export, as well as which export should get used, as there are several options.
 \end{itemize}
 
-We mentioned several options of exporting, which are decided by the \texttt{ExportType} enumerator. The whole definition of this \texttt{enum} is:
+We mentioned several options of exporting, which are decided by the \texttt{Export\-Type} enumerator. The whole definition of this \texttt{enum} is:
 
 \begin{lstlisting}
 enum class ExportType { Surface, NonPolySurface, NonPolyExtrusion, PolyExtrusion, PolyExtrusionWithSDF };
@@ -313,7 +313,7 @@ As we can see, similar to the \texttt{ModelImporter} class, this class also uses
 
 The interface of this class is rather simple -- the constructor takes a single \texttt{std::string}, which is the path to the font file. The API provides a \texttt{isValid()} method to check whether the initialization was performed correctly. The API also provides the font file name, without the whole path, which can be accessed by the method \texttt{getCurrentFont()}. This is used in the user interface to display the currently selected font.
 
-The main method of the class is the \texttt{rasterizeText()}. It takes a \texttt{std::string} containing the text the user wants to convert to triangles, the \texttt{fontHeight} integer, which corresponds to the font height commonly found in text editors and the variable \texttt{bezierSteps}, which allows the user to control the roughness of the approximation. The useful range of the \texttt{bezierSteps} variable is around $1$ -- $5$. $1$ yields very rough results, useful for "blocky" fonts like \textit{Impact}, while $3$ should be sufficient for any standard font. For high precision, a higher setting should be used. Please note that the higher the \texttt{bezierSteps}, the more triangles will be generated.
+The main method of the class is the \texttt{rasterizeText()}. It takes a \texttt{string} containing the text the user wants to convert to triangles, the \texttt{fontHeight} integer, which corresponds to the font height commonly found in text editors and the variable \texttt{bezierSteps}, which allows the user to control the roughness of the approximation. The useful range of the \texttt{bezierSteps} variable is around $1$ -- $5$. $1$ yields very rough results, useful for "blocky" fonts like \textit{Impact}, while $3$ should be sufficient for any standard font. For high precision, a higher setting should be used. Please note that the higher the \texttt{bezierSteps}, the more triangles will be generated.
 
 Last thing to note, is the custom triangle object the \texttt{rasterizeText} method returns. \texttt{Tri} is a custom \texttt{struct} declared private in \texttt{FontRasterizer}. This is done to achieve two things: 
 

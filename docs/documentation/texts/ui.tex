@@ -17,7 +17,7 @@ We divide the Pepr3D UI into the following main parts:
 \item and a \textbf{model view} with the 3D model which the user can rotate, zoom, paint on it, etc.
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}
 	\centering
 	\centerline{\includegraphics[scale=1.0]{images/diagram_ui.eps}}
 	\caption{An overview of the Pepr3D UI architecture, based on Figure~\ref{fig:architecture}.}
@@ -138,7 +138,7 @@ In Pepr3D, there are 2 types of dialogs: general modal dialogs and a progress in
 These dialogs are drawn from the \texttt{MainApplication} on top of everything else.
 While they are shown, all mouse and keyboard input for the rest of the components is interrupted, meaning users cannot interact with any tools.
 
-\begin{figure}[h]
+\begin{figure}
 	\centering
 	\centerline{\includegraphics[scale=1.0]{images/fatal_error.png}}
 	\caption{Example of a fatal error dialog.}
@@ -204,7 +204,7 @@ Similarly, \texttt{Toolbar} and \texttt{SidePane} call \texttt{findHotkey} on th
 The \texttt{getString} method on a \texttt{Hotkey}, unfortunately, only supports letters and numbers and a \texttt{Ctrl+} modifier.
 There is no mapping between key codes and UTF-8 symbols.
 
-Hotkeys are customizable, but only by editing the file \texttt{assets/hotkeys.json}.
+Hotkeys are customizable by editing the file \texttt{assets/\-hot\-keys.json}, however, they are not customizable from the user interface.
 The file has a simple JSON structure as can be seen in the example:
 
 \begin{lstlisting}
