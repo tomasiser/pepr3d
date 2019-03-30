@@ -4,6 +4,7 @@
 
 #include "geometry/Geometry.h"
 
+/// Return a simple testing geometry of a cube
 pepr3d::Geometry getGeometryWithCube() {
     std::vector<pepr3d::DataTriangle> triangles;
     // cube
@@ -35,6 +36,10 @@ pepr3d::Geometry getGeometryWithCube() {
 }
 
 TEST(Geometry, initialize) {
+    /**
+     * Test initializing the Geometry class with custom geometry
+     */
+
     pepr3d::Geometry geo(getGeometryWithCube());
     geo.updateOpenGlBuffers();
 
@@ -51,6 +56,10 @@ TEST(Geometry, initialize) {
 }
 
 TEST(Geometry, getColor) {
+    /**
+     * Test getting a triangle color - only sets the indices, doesnt change the color buffer
+     */
+
     pepr3d::Geometry geo(getGeometryWithCube());
     geo.updateOpenGlBuffers();
 
@@ -67,6 +76,10 @@ TEST(Geometry, getColor) {
 }
 
 TEST(Geometry, setColor) {
+    /**
+     * Test setting a triangle color - only sets the indices, doesnt change the color buffer
+     */
+
     pepr3d::Geometry geo(getGeometryWithCube());
     geo.updateOpenGlBuffers();
 

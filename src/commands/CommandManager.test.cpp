@@ -147,6 +147,10 @@ TEST(CommandManager, Undo) {
 }
 
 TEST(CommandManager, Redo) {
+    /**
+     * Test canRedo, canUndo and actually re-doing
+     */
+
     MockTarget target;
     CommandManager<MockTarget> cm(target);
 
@@ -184,6 +188,10 @@ TEST(CommandManager, Redo) {
 }
 
 TEST(CommandManager, SlowCommandsRedo) {
+    /**
+     * Test canRedo, canUndo and actually re-doing on slow commands
+     */
+
     MockTarget target;
     CommandManager<MockTarget> cm(target);
 
@@ -226,6 +234,11 @@ TEST(CommandManager, SlowCommandsRedo) {
 }
 
 TEST(CommandManager, SlowCommandsFutureClear) {
+    /**
+     * Test the overwrite future funcionality - if you undo several times, and perform a new stroke, you cannot redo
+     * anymore.
+     */
+
     MockTarget target;
     CommandManager<MockTarget> cm(target);
 

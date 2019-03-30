@@ -5,12 +5,20 @@
 #include "geometry/ColorManager.h"
 
 TEST(ColorManager, constructor_basic) {
+    /**
+     * Test the basic constructor for ColorManager
+     */
+
     pepr3d::ColorManager cm;
     EXPECT_EQ(cm.size(), 4);
     EXPECT_LE(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
 }
 
 TEST(ColorManager, setColor) {
+    /**
+     * Test the setColor and getColor commands
+     */
+
     pepr3d::ColorManager cm;
     const glm::vec4 yellow(1, 1, 0, 1);
     EXPECT_EQ(cm.getColor(0), static_cast<glm::vec4>(ci::ColorA::hex(0x017BDA)));
@@ -28,6 +36,10 @@ TEST(ColorManager, setColor) {
 }
 
 TEST(ColorManager, empty_and_clear) {
+    /**
+     * Test the clear and empty method
+     */
+
     pepr3d::ColorManager cm;
     EXPECT_FALSE(cm.empty());
     cm.clear();
@@ -35,6 +47,10 @@ TEST(ColorManager, empty_and_clear) {
 }
 
 TEST(ColorManager, addColor) {
+    /**
+     * Test adding a new color
+     */
+
     pepr3d::ColorManager cm;
     cm.clear();
 
@@ -51,6 +67,10 @@ TEST(ColorManager, addColor) {
 }
 
 TEST(ColorManager, constructor_iterator) {
+    /**
+     * Test initializing the ColorManager with new colors
+     */
+
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
@@ -68,6 +88,10 @@ TEST(ColorManager, constructor_iterator) {
 }
 
 TEST(ColorManager, constructor_iterator_above_limit) {
+    /**
+     * Test initializing the ColorManager with new colors, but with too many colors
+     */
+
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 1);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 1; ++i) {
@@ -85,6 +109,10 @@ TEST(ColorManager, constructor_iterator_above_limit) {
 }
 
 TEST(ColorManager, replaceColors_iterators) {
+    /**
+     * Test replacing the colors with a part of std::vector
+     */
+
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
@@ -105,6 +133,10 @@ TEST(ColorManager, replaceColors_iterators) {
 }
 
 TEST(ColorManager, replaceColors_iterators_above_limit) {
+    /**
+     * Test replacing the colors with a part of std::vector with too many colors
+     */
+
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 3);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 3; ++i) {
@@ -125,6 +157,10 @@ TEST(ColorManager, replaceColors_iterators_above_limit) {
 }
 
 TEST(ColorManager, replaceColors_copy) {
+    /**
+     * Test replacing the colors with a whole new std::vector
+     */
+
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS; ++i) {
@@ -143,6 +179,10 @@ TEST(ColorManager, replaceColors_copy) {
 }
 
 TEST(ColorManager, replaceColors_copy_above_limit) {
+    /**
+     * Test replacing the colors with a whole new std::vector which is too big
+     */
+
     std::vector<glm::vec4> newColors;
     newColors.reserve(PEPR3D_MAX_PALETTE_COLORS + 1);
     for(int i = 0; i < PEPR3D_MAX_PALETTE_COLORS + 1; ++i) {
@@ -161,6 +201,10 @@ TEST(ColorManager, replaceColors_copy_above_limit) {
 }
 
 TEST(ColorManager, constructor_color_generation) {
+    /**
+     * Test initializing the ColorManager with max colors
+     */
+
     pepr3d::ColorManager cm(PEPR3D_MAX_PALETTE_COLORS);
     EXPECT_EQ(cm.size(), PEPR3D_MAX_PALETTE_COLORS);
 }
