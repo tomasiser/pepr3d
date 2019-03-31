@@ -32,6 +32,8 @@ class TextEditor : public Tool {
         return ICON_MD_TEXT_FIELDS;
     }
 
+    virtual bool isEnabled() const override;
+
     virtual void drawToSidePane(SidePane& sidePane) override;
     virtual void onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) override;
     virtual void onModelViewMouseMove(ModelView& modelView, ci::app::MouseEvent event) override;
