@@ -20,7 +20,7 @@ void Toolbar::draw() {
     ImGui::SetNextWindowPos(glm::ivec2(-1, 0));
     ImGui::SetNextWindowSize(size);
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
-    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xE5E5E5));
     ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
     ImGui::PushStyleColor(ImGuiCol_Button, ci::ColorA::zero());
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ci::ColorA::hex(0xCFD5DA));
@@ -50,7 +50,7 @@ void Toolbar::draw() {
 void Toolbar::drawSeparator() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     glm::ivec2 cursorPos = ImGui::GetCursorScreenPos();
-    drawList->AddLine(cursorPos, cursorPos + glm::ivec2(0, mHeight), ImColor(ci::ColorA::hex(0xEDEDED)));
+    drawList->AddLine(cursorPos, cursorPos + glm::ivec2(0, mHeight), ImColor(ci::ColorA::hex(0xE5E5E5)));
     ImGui::SetCursorScreenPos(cursorPos + glm::ivec2(1, 0));
 }
 

@@ -21,9 +21,9 @@ void ProgressIndicator::draw() {
     ImGui::SetNextWindowSize(ImVec2(400.0f, -1.0f));
     ImGui::SetNextWindowBgAlpha(1.0f);
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ci::ColorA::hex(0xFFFFFF));
-    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Border, ci::ColorA::hex(0xE5E5E5));
     ImGui::PushStyleColor(ImGuiCol_Text, ci::ColorA::hex(0x1C2A35));
-    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xEDEDED));
+    ImGui::PushStyleColor(ImGuiCol_Separator, ci::ColorA::hex(0xE5E5E5));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(12.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2(8.0f, 6.0f));

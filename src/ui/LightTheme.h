@@ -11,8 +11,8 @@ inline void applyColors(ImVec4* colors) {
     colors[ImGuiCol_WindowBg] = ImVec4(0.988f, 0.988f, 0.988f, 1.00f);
     colors[ImGuiCol_ChildBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.00f);
     colors[ImGuiCol_PopupBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.92f);
-    colors[ImGuiCol_Border] = ImVec4(0.73f, 0.73f, 0.73f, 0.65f);
-    colors[ImGuiCol_BorderShadow] = ImVec4(0.65f, 0.65f, 0.65f, 0.31f);
+    colors[ImGuiCol_Border] = ci::ColorA::hex(0xE5E5E5);
+    colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
     colors[ImGuiCol_FrameBg] = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
     colors[ImGuiCol_FrameBgHovered] = ImVec4(0.98f, 0.98f, 0.98f, 0.88f);
     colors[ImGuiCol_FrameBgActive] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -33,7 +33,7 @@ inline void applyColors(ImVec4* colors) {
     colors[ImGuiCol_Header] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_HeaderHovered] = ImVec4(0.92f, 0.92f, 0.92f, 1.00f);
     colors[ImGuiCol_HeaderActive] = ImVec4(0.84f, 0.84f, 0.84f, 1.00f);
-    colors[ImGuiCol_Separator] = ci::ColorA::hex(0xEDEDED);
+    colors[ImGuiCol_Separator] = ci::ColorA::hex(0xE5E5E5);
     colors[ImGuiCol_SeparatorHovered] = ImVec4(0.70f, 0.60f, 0.60f, 1.00f);
     colors[ImGuiCol_SeparatorActive] = ImVec4(0.90f, 0.70f, 0.70f, 1.00f);
     colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
