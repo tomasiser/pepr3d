@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace pepr::debug {
+namespace pepr3d::debug {
 void peprAssert(const char* msg, const char* file, unsigned line) {
     std::string errorStr(msg);
     errorStr += " File:";
@@ -17,4 +17,4 @@ void peprAssert(const char* msg, const char* file, unsigned line) {
 
     throw std::logic_error(errorStr);
 }
-}  // namespace pepr::debug
+}  // namespace pepr3d::debug
