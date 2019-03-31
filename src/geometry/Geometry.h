@@ -155,7 +155,7 @@ class Geometry {
     std::unique_ptr<GeometryProgress> mProgress;
 
     struct GeometryState {
-        std::vector<DataTriangle> triangles;
+        std::vector<size_t> triangleColors;
         std::map<size_t, TriangleDetail> triangleDetails;
         ColorManager::ColorMap colorMap;
     };
