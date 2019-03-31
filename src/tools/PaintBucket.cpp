@@ -62,6 +62,17 @@ void PaintBucket::drawToSidePane(SidePane &sidePane) {
     sidePane.drawSeparator();
 }
 
+void PaintBucket::onToolSelect(ModelView &modelView) {
+    Geometry *const geometry = mApplication.getCurrentGeometry();
+    if(geometry == nullptr || !mGeometryCorrect) {
+        return;
+    }
+    if(!geometry->isTemporaryDetailedDataValid()) {
+        mApplication.enqueueSlowOperation([this, geometry]() { geometry->updateTemporaryDetailedData(); }, []() {},
+                                          true);
+    }
+}
+
 void PaintBucket::drawToModelView(ModelView &modelView) {
     const ci::Ray cameraRay = modelView.getRayFromWindowCoordinates(mLastMousePos);
     const auto geometry = mApplication.getCurrentGeometry();
