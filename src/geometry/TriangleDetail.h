@@ -349,10 +349,6 @@ class TriangleDetail {
     std::map<size_t, PolygonSet> mColoredPolys;
 
     DataTriangle mOriginal;
-
-    static const int VERTICES_PER_UNIT_CIRCLE = 50;
-    static const int MIN_VERTICES_IN_CIRCLE = 12;
-
 #ifdef PEPR3D_COLLECT_DEBUG_DATA
     std::vector<HistoryEntry> history;
 #endif

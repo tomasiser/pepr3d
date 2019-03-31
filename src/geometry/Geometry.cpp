@@ -16,26 +16,32 @@ namespace pepr3d {
 
 Geometry::GeometryState Geometry::saveState() const {
     // Save only necessary data to keep snapshot size low
-    return GeometryState{mTriangles, mTriangleDetails, ColorManager::ColorMap(mColorManager.getColorMap())};
+    std::vector<size_t> triangleColors;
+    triangleColors.reserve(mTriangles.size());
+    for(const DataTriangle& tri : mTriangles) {
+        triangleColors.push_back(tri.getColor());
+    }
+
+    return GeometryState{triangleColors, mTriangleDetails, ColorManager::ColorMap(mColorManager.getColorMap())};
 }
 
 void Geometry::loadState(const GeometryState& state) {
-    mTriangles = state.triangles;
+    // mTriangles only possibly changes color
+    P_ASSERT(mTriangles.size() == state.triangleColors.size());
+    for(size_t triIdx = 0; triIdx < mTriangles.size(); triIdx++) {
+        mTriangles[triIdx].setColor(state.triangleColors[triIdx]);
+    }
     mTriangleDetails = state.triangleDetails;
 
     mColorManager.replaceColors(state.colorMap.begin(), state.colorMap.end());
     P_ASSERT(!mColorManager.empty());
 
-    // TODO Improve: Can we reuse something?
-
     // Set opengl state to dirty so it gets updated eventually
     // Note: Updating straight away would hide this change from ModelView
     mOgl.isDirty = true;
 
-    // Tree needs to be rebuilt to match loaded triangles
-    buildTree();
+    // Tree is built from the original geometry, that is the same
     P_ASSERT(mTree->size() == mTriangles.size());
-
     invalidateTemporaryDetailedData();
 }
 
