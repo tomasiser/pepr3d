@@ -9,8 +9,12 @@ Užití vytvořeného softwarového díla se řídí platnými ustanoveními Aut
 ---
 
 This project uses 3rd party libraries.
-The list of their licenses is below.
-If you redistribute this project, make sure to verify all licenses of all 3rd party libraries that we use.
+A lot of them require us to include their licenses together with our project.
+The list of the libraries and their licenses is below.
+
+Whenever this project is redistributed, it must be according to all these licenses of all 3rd party libraries that we use.
+Currently, the most prohibitive license is probably GPL as this project relies on the CGAL library distributed under GPL.
+Make sure to understand the GPL license before redistributing Pepr3D.
 
 ---
 
