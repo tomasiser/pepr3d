@@ -14,12 +14,12 @@
 
 #else
 
-namespace pepr::debug {
+namespace pepr3d::debug {
 /// Custom assert for Pepr3d
 void peprAssert(const char* msg, const char* file, unsigned line);
-}  // namespace pepr::debug
+}  // namespace pepr3d::debug
 
 #define P_ASSERT(expression) \
-    (void)((!!(expression)) || (pepr::debug::peprAssert((#expression), (__FILE__), (unsigned)(__LINE__)), 0))
+    (void)((!!(expression)) || (pepr3d::debug::peprAssert((#expression), (__FILE__), (unsigned)(__LINE__)), 0))
 
 #endif
