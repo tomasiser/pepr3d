@@ -1,0 +1,94 @@
+\chapter{Comparison to minimal requirements}
+
+In this chapter, we focus on comparing the finished product with the minimal and advanced requirements we set in the specification, before we started to implement the project.
+
+\section{Minimal requirements}
+
+We go through the minimal features one by one and elaborate on if and how well we achieved this goal.
+
+\begin{itemize}
+\item \textit{Loading a model from a basic 3D format} -- our application supports .STL, .OBJ and .PLY, which are the three most used formats on the 3D printing market today.
+
+\item \textit{Export a multi-coloured .STL file, which can be entered into the slicer} -- Upon discovering the slicer more, and having time to physically print something, we realised, that the slicer does not actually support a single multicoloured .STL file. We changed this goal to exporting a single .STL file for each color, which only contains the triangle of the chosen color. Our application supports this export, even though it is simpler and more error prone than the other (fully 3D) supported export.
+
+\item \textit{Bucket painter with a simple criterion} -- Our bucket painter currently supports edge sharpness, whose threshold the user can alter, a different color stopping, or the combination of both.
+
+\item \textit{Basic form of edit history with undo and redo steps} -- This feature is working exactly as promised, with infinite amount of steps to \textit{Undo} and \textit{Redo}. It is not a tree-like structure and it will overwrite the future upon \textit{Undoing} and then applying new commands. We observed that this is the case in many 3D applications.
+
+\item \textit{Functional 3D UI allowing zooming and rotating the model} -- We tried several methods of zooming (which are selectable in the settings menu) and we fit the model into the default view. This means that the size of the loaded model does not matter, it will always fit into the view when loaded.
+\end{itemize}
+
+Using this summary we conclude that we met the minimal requirements.
+
+\section{Additional features}
+\label{sec:features}
+
+We will now discuss the advanced features we disclosed in the specification, and compare the proposed feature with the implemented one.
+
+\subsection{Automatic and semi-automatic segmentation}
+
+While writing the specification, we thought that the semi-automatic segmentation (called \textit{Manual segmentation} in the application) would be the most used feature of the program. Upon implementing both segmentations, we actually think the automatic segmentation achieves the goal of quickly colouring the model much better. Meanwhile the manual segmentation is better for fine tuning some parts of the model, because it allows for colouring one part consistently, while leaving the rest intact (which the automatic one cannot do).
+
+In conclusion, we placed the automatic segmentation as second to last on our feature list, but we strongly disagree with the placement in hindsight and think the tool is one of the most usable tools in the application.
+
+\subsection{Text tool}
+
+In the specification, we discussed two extension to this tool: \textbf{text projection} and \textbf{fonts}.
+
+\paragraph{Text projections}
+
+Starting with text projections, we added more than just X/Y/Z -- the user can rotate the camera around the model, and the projection will be orthonormal from the camera angle. This allows the user to not only write the text from three angles, but from each point of the bounding sphere of the object. We chose this option because it was not much harder to do than the promised X/Y/Z, while adding a lot of functionality.
+
+On the other hand, we did not implement the cylindrical or any other special projections, mainly because we lacked the manpower to do everything we set out to do. The second reason is a more practical one. The application focuses on the \textit{WYSIWYG} pattern -- \textit{What you see is what you get} to be as intuitive as possible. Dealing with cylindrical and other complicated projections is not a task we can expect from a basic user.
+
+\paragraph{Fonts}
+
+Regarding the fonts, we were able to implement a class, called FontRasterizer, which takes the .ttf file and a font string, and creates triangle meshes out of it. This allows us to work on any font the user provides. However, the library we used (you can get more details about this class in the implementation section of the documentation) seems to have trouble with the non-letter characters (like the WiFi icon) we mentioned in the specification, which means this extension goal was fulfilled half way.
+
+\subsection{Brush and adaptive triangulation}
+
+This topic is very in-depth, and we would advise the reader to read through the implementation chapter first, but simply put, our implementation is the closest we could get to making it safe to use. This means that repeated painting on the same spot of the model, with the same color, does not subdivide the triangulation more. The brush also tries to simplify the topology already created -- for example, if you select the red color and paint over a blue detail, erasing it, the triangles of the detail do not stay, but get merged back together, which simplifies the topology.
+
+\subsection{Hotkeys and customizability}
+
+As we mentioned in the specification, very few users generally use hotkeys. However, we wanted to provide the option of changing the hotkeys anyway. In our application, the hotkeys are saved as a .json file, structured as the following example illustrates.
+
+\begin{lstlisting}
+{
+    "key": {
+        "ctrl": false,
+        "keycode": 112
+    },
+    "value": "SelectPaintBucket"
+},
+...
+\end{lstlisting}
+
+This .json is readily available next to the application's main executable file to edit by the user, as he sees fit. The \textit{keycode} values are provided in a separate file next to it, in the following format:
+
+\begin{lstlisting}
+KEY_a			= 97,
+KEY_b			= 98,
+KEY_c			= 99,
+...
+\end{lstlisting}
+
+We understand that this is not the most user-friendly way to change the hotkeys, but we believe, that if the user is advanced enough to want to customize his hotkeys, this process is simple enough as to not cause any issues.
+
+\subsection{Radial menu}
+
+In the specification we mentioned the possibility of adding a radial menu around the cursor. In the end, we did not implement this feature. This decision was made, because we saw many more areas of the application that could be improved and focused on instead. We thought that the users would benefit more from these improvements than the radial menu feature.
+
+\subsection{Triangle subdivision and decimation}
+
+While writing the specification we put this feature as the lowest priority feature, because we thought only the most advanced users would be able to utilize it. While developing the application, we downloaded and tested many models that are on the internet for anyone to download and print. The websites we used include Thingiverse \footnote{www.thingiverse.com} and yeggi \footnote{www.yeggi.com}. We noticed on many of these models, that many are unoptimized, include holes, unreasonably small or wastefully many triangles. From this observation we concluded that the users do not generally optimize and micromanage their models since a few operations done in software like Blender can reduce this waste by a big percentage. All of this made us decide to not include the feature, as we generally do not believe the users would use it or be able to use it to greatly improve the model.
+
+\subsection{Model exporting}
+
+For completeness' sake, we discuss the model exporting feature here. We did a lot of research and tried many different approaches, and the one implemented in the application looked to the team as the best solution. You can read more about the chosen method in the implementation part of the developer documentation.
+
+Here we state that this feature was a priority for us, as we have shown in Section \ref{sec:responsibilities}, one of our team members spent a big amount of time trying to optimize this feature. We believe we came up with a way that should at least help, if not solve clipping and other unwanted occurrences in the majority of the scenarios, though we do have examples of wrong behaviour. We also add manual control over the feature, to allow the user to fix the issue manually, should any issue arise.
+
+
+
+

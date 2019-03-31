@@ -1,0 +1,39 @@
+\chapter{Introduction}
+
+In this project, we aim to create an intuitive application that allows the user to interactively color a 3D model and export it in a 3D printable format. This chapter will provide a brief summary of the 3D printing environment, its pipeline and the goals of the project which we set in the beginning.
+
+\section{3D printing basics}
+
+3D printing is a new technology that has seen rapid development in the last years. It comes in many different forms, melting plastic, fusing metals, shining UV on photopolymers, etc. Fused Deposition Modelling (FDM) is the most popular and accessible to the general public and for the purpose of this project, when we talk about 3D printing, we will always mean FDM printers, unless stated otherwise.
+
+FDM printing is a relatively simple process - a printer head melts the plastic filament and deposits it on a preheated platform layer by layer, from the bottom towards the top. The printer has to regulate the temperature of both the filament in the head and the moving platform for the deposited material to bond correctly. Several types of filaments are used, namely PLA, ABS, PET and others.
+
+\section{Prusa environment}
+
+The Prusa environment is very similar to the general description we provided in the section 1.1. For the purpose of our project, the most important concept in the Prusa environment is the slicer. The slicer is a program that receives the 3D model the user wishes to print out and creates the instructions for the Prusa 3D Printer -- a G-code file. The file is then transferred to the printer, which then executes the commands in the G-code file. The slicer has to plan the movement of the head for the whole print. This includes several crucial things:
+
+\begin{itemize}
+\item Covering the whole area of each layer
+\item Reinforcing the walls of the object to make them sturdier
+\item Filling the inside of the object with a rougher print, because it won't be visible when finished
+\item Planning the path so the head can stay in one Z level - an "Eulerian path".
+\item Switching the materials for multimaterial printing (more in 1.3)
+\end{itemize}
+
+Prusa develop their own slicer - a forked branch of an open-source program called Slic3r \footnote{http://slic3r.org/}, called Slic3r Prusa Edition \footnote{https://www.prusa3d.com/slic3r-prusa-edition/}. This slicer can do all we listed above very well.
+
+\section{Multimaterial printing}
+
+Multimaterial printing is a very new concept, even in the fairly new world of 3D printing. Many of the simpler and cheaper 3D printers can only print one material models - one color for the whole object. However, many users would like to print models that include more than one color. Even though the more advanced printers are capable of combining up to four different materials into one print, the process to achieve this is rather cumbersome for the end user - the user has to manually split the 3D mesh of the object into parts that he wishes to have a different color.
+
+For example, if we are printing a dragon, want the dragon to be black and have white teeth, we have to take the dragon model, and split off each individual tooth. Then tell the slicer that the remaining file - the toothless dragon should be black and the teeth should be white.
+
+This model splitting has to be done in a full 3D editing software like Blender or 3ds Max, which is difficult to control for newcomers and overly complex.
+
+\section{Our project}
+
+Our project aims to make printing a multi-coloured object a lot easier, by developing an application that will allow the user to simply paint on the 3D model (i.e. the dragon) with different colors (i.e. color the teeth white), then simply click export and generate the files of the split-off models automatically.
+
+Our application allows for free hand painting as well as some forms of guided painting -- bucket fill and some smarter tools, for example a bucket fill that studies the object's geometry and stops the filling if it detects a sharp edge (i.e. the transition of the tooth into the dragon).
+
+The main goal is to make the application for desktop PCs, with main development time being focused on the Windows operating system. We did, however, use software engineering tools that can also be ported to a plethora of other platforms like Linux based OS, Mac OS and mobile, if the need should arise.

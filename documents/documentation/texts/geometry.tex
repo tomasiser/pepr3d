@@ -1,0 +1,369 @@
+\chapter{Geometry}
+
+In this chapter we describe the \texttt{Geometry} class in detail. We also discuss the other helper classes which handle geometry in Pepr3D.
+
+\label{chap:geom}
+
+\section{Geometry}
+
+\subsection{Geometry}
+
+\texttt{Geometry} is the main class of the whole data pipeline in Pepr3D. Here we explain the high-level details of this class, to hopefully give the reader a broader picture of the architecture, which makes navigating the code much easier. Since the class is rather large, we will not present a complete overview as in the following sections, but rather discuss several parts separately.
+
+\subsubsection{Public data members}
+
+The class itself does not provide any data as public. This is because it holds the geometry model, which cannot and should not be easily altered, since altering requires non-trivial re-computations (such as the acceleration tree structure or the Polyhedral surface data structure).
+
+\subsubsection{Private data members}
+
+All of the class' data is stored in private members, we present a list of the most important ones here:
+
+\begin{lstlisting}
+std::vector<DataTriangle> mTriangles;
+std::map<size_t, TriangleDetail> mTriangleDetails;
+
+std::unique_ptr<Tree> mTree;
+std::unique_ptr<Tree> mTreeDetailed;
+
+PolyhedronData mPolyhedronData;
+std::unique_ptr<PolyhedronData::Mesh> mMeshDetailed;
+
+std::unique_ptr<BoundingBox> mBoundingBox;
+ColorManager mColorManager;
+
+friend class cereal::access;
+OpenGlData mOgl;
+\end{lstlisting}
+
+As we can see, the members are of two main functions: the ones holding the actual data (such as \texttt{mTriangles} and \texttt{mTriangleDetails}) and data structures built upon the data, which help us perform the operations quickly. There are several more conversion \texttt{std::map} objects which help the user retrieve the correct triangle data with an arbitrary information about the triangle (an id, a pointer in the surface mesh, etc.), which are not listed here for clarity's sake.
+
+The \texttt{mTriangles} array functions as one would expect -- this is the main array, which stores the basic information for each triangle (the position, normals, etc.). If the \textit{Brush} or \textit{Text} tools are used, the triangles get split into detailed ones, and \texttt{mTriangleDetails} needs to be utilized to look up information about a triangle.
+
+The \texttt{Tree} structure is CGAL's AABB hierarchical search tree which allows us to intersect the model with rays. This is especially useful during the user interaction (retrieving the triangle id which corresponds to the user-clicked triangle).
+
+We also point out the duality of many of these data structures -- \texttt{mTree} and it's detailed version, as well as the  \texttt{PolyhedronData} object and it's detailed version. This is required, because the user can change the geometry of the model extensively by adding new details. Changing the geometry then alters the behaviour of several algorithms -- a \textit{breath-first} search behaves differently on a non-detailed model and a detailed model. However, completely discarding the non-detailed version is not wise either, since some operations may be faster to perform on the non-detailed versions, if the result does not depend on whether the mesh is detailed or not (for example, finding a position of ray-model intersection does not depend on any added details and should utilize the \texttt{mTree} member).
+
+The last notable members are the \textbf{cereal} friend access and \textbf{OpenGL} buffer object. Cereal requires friend access to the class if we want the class to be exported. Since \texttt{Geometry} is the most important data object in Pepr3D, we obviously want to be able to save parts of it. The \texttt{OpenGlData} object is used to transport the geometry to the front-end rendering part of Pepr3D. The \texttt{Geometry} class creates and updates the buffers, and the front-end only re-renders the model when the buffers are changed. This way the front-end does not have to have any knowledge about the geometry and can be kept separate.
+
+\subsubsection{Public methods}
+
+The main way to work with the \texttt{Geometry} class. They can be divided into two obvious categories: the \textit{getters} and the rest.
+
+We provide a lot of getter methods, so the user has a good way of communicating with the object and can extract as much information out as he wants. Most of the getter methods are \texttt{const}, since changing certain members is not allowed. There are, however, several which permit the user to change them, since the effect is immediate and doesn't have deeper consequences (like changing the colour palette in the \texttt{ColorManager}).
+
+The other category of the methods are the algorithms used to implement Pepr3D's tools, load the data correctly and compute the necessary information. We list a few of the most important ones here:
+
+\begin{lstlisting}
+// Loading and computation
+void computeSdfValues();
+void loadNewGeometry(const std::string& fileName);
+void recomputeFromData();
+GeometryState saveState() const;
+void loadState(const GeometryState&);
+
+// Algorithms
+std::optional<size_t> intersectMesh(const ci::Ray& ray) const;
+template <typename StoppingCondition>
+std::vector<size_t> bucket(const size_t startTriangle, const StoppingCondition& stopFunctor);
+void paintAreaWithSphere(const ci::Ray& ray, const BrushSettings& settings);
+void paintWithShape(const ci::Ray& ray, const std::vector<Point3>& shape, size_t color, bool paintBackfaces = false);
+size_t segmentation( ... );
+\end{lstlisting}
+
+The first few methods are the main way to alter the \texttt{Geometry} and perform computations on the loaded model. The first batch of methods provides the tools to load and save the model correctly, as well as recompute the data if required (e.g. if a bug was encountered and the data is corrupted). Many of these methods utilize the \texttt{GeometryProgress} capability of Pepr3D, which allows the user to know how long the selected operation will run, or at least re-assures him that Pepr3D has not frozen.
+
+The second group of methods are the algorithms employed to implement all the tools in the release version. We describe these methods in greater detail here:
+
+\begin{itemize}
+\item \texttt{intersectMesh(ray)} is the main method used to transform the user's clicks with tools into the geometry pipeline. Given a ray, this returns the id of the triangle which got intersected by the ray. Modern \texttt{std::optional} is utilized to avoid various "return codes" (like returning -1 for \textit{no hit}).
+
+\item \texttt{bucket(start, stopCriterion)} is used in se\-ve\-ral tools and implements the \textit{breath-first} search over a 3D triangle mesh. The \textit{BFS} traverses the mesh triangle to triangle until it is stopped by the stopping criterion. This criterion corresponds to the user interface of the \textit{Bucket} tool -- the user can either select to never stop, to stop upon meeting a different color, to stop on sharp edges or a combination of both. Modern C++ template approach is utilized to replace the runtime \texttt{if-else} decisions with compile time template processing.
+
+\item \texttt{paintWith} are two methods used by the \textit{Brush} and \textit{Text} tools. They allow to paint with selected settings along a target ray. \texttt{paintAreaWithSphere} only paints a circular region on the surface of the mesh, where the circle is computed as the intersection of a sphere placed on the surface of the mesh with the mesh's sides. \texttt{paintWithShape} accepts a \texttt{shape} vector composed of points in 3D space and allows the user to paint a custom shape onto the mesh's surface.
+
+\item \texttt{segmentation} implements the \textit{Automatic segmentation} tool by using the CGAL library, namely the \textit{Triangulated Surface Mesh Segmentation} \footnote{https://doc.cgal.org/latest/Surface\_mesh\_segmentation/index.html}. This process is dependant on the SDF values being calculated, which can be done with the computation method \texttt{computeSdfValues}.
+\end{itemize}
+
+\subsubsection{Private methods}
+
+We will only describe a handful of private methods, since they are largely unimportant and only contain technical details which are not required for a general understanding. We will, however, mention the \textbf{OpenGL} buffer generators, since this is something not obvious from the first look on the \texttt{Geometry} class. As we have already mentioned above, the \texttt{Geometry} class handles all the buffer creation and keeps the buffers up-to-date, which allows us to shield the front end from the \texttt{Geometry} structure completely. If the structure of the geometry class changes, no further changes in the rendering front end code are required. The only thing which is required is to keep these methods correct. Namely:
+
+\begin{lstlisting}
+void generateVertexBuffer();
+void generateIndexBuffer();
+void generateColorBuffer();
+void generateNormalBuffer();
+void generateHighlightBuffer();
+\end{lstlisting}
+
+Further information is available in the \textit{doxygen} documentation or directly in the code.
+
+\subsection{Triangle Detail}
+
+\texttt{TriangleDetail}
+
+The \texttt{TriangleDetail} class allows the user to divide a triangle of the original mesh into smaller, differently coloured pieces. The surface of a \texttt{Triangle\-Detail} can be represented in two formats. We first explain the core concepts of this class before giving a brief overview of its members.
+
+\subsubsection{Internal format}
+
+The \textbf{primary format} is a collection of PolygonSets. For each color in the triangle, a new PolygonSet is created. The union of all polygons from all PolygonSets would exactly fill the surface of the original triangle. These PolygonSets are stored in \texttt{mColoredPolys\_} map. All painting methods on TriangleDetail, with the exception of painting individual triangles, utilize this representation. 
+
+The \textbf{secondary format} is a collection of colored triangles, which are the result of a triangulation of the PolygonSets. Usually, this representation is only temporary, as it gets overwritten each time a new painting operation changes the PolygonSets. These coloured triangles are stored in \texttt{mTrianglesExact} array.
+
+When the user changes the color of one of these detail triangles (from the secondary format), the PolygonSet representation no longer has the correct color stored. This discrepancy is marked via \texttt{mColorChanged} boolean flag. When this flag is set, any method that works with PolygonSets must first update the PolygonSets from the coloured triangles.
+
+This duality of formats allows us to use PolygonSets -- required for CGAL boolean operations, and triangles -- required for rendering and other Pepr3D tools.
+
+\subsubsection{Numerical precision}
+
+To be numerically stable, TriangleDetail uses an exact Kernel type, provided by the CGAL library. The exact kernel is used for all internal ```Polygon``` and exact triangle operations. While an exact kernel is being used internally, all public methods and their results are using an ordinary, limited-precision kernel. To distinguish between different precision types used in TriangleDetail, the following convention is used:
+
+Types defined on exact kernel (\texttt{TriangleDetail::K}) use shorthand CGAL type names:
+- \texttt{Polygon}, \texttt{Point3}, \texttt{Triangle2}, \texttt{Segment2}, etc.
+
+Types defined on inexact kernel (\texttt{DataTriangle::K}) use the "Pepr" prefix before their shorthand CGAL type name:
+- \texttt{PeprPoint2}, \texttt{PeprVector3}, \texttt{PeprTriangle2}, etc.
+
+The "Pepr" prefix signifies the type is the same, as in the rest of the Pepr3D application and can be therefore passed to other methods and tools.
+
+\subsubsection{Class overview}
+
+We now provide a short overview of the \texttt{TriangleDetail} class. Due to the complexity of the class, we will only discuss the public methods of the class (since public members do not exist). We have discussed the private workings of the class in the previous paragraphs. Following, are the most important methods of the class.
+
+\begin{lstlisting}
+void paintSphere(const PeprSphere& sphere, int minSegments, size_t color);
+void paintShape(const std::vector<PeprPoint3>& shape, const PeprVector3& direction, size_t color);
+void paintShape(const std::vector<PeprTriangle>& triangles, const PeprVector3& direction, size_t color);
+
+void addPolygon(const Polygon& poly, size_t color);
+void addPolygonSet(PolygonSet& polySet, size_t color);
+
+void save(Archive& archive) const;
+void load(Archive& archive);
+
+static std::vector<Triangle2> triangulatePolygon(const PolygonWithHoles& poly);
+\end{lstlisting}
+
+There are several groups of methods which work the same way. The \texttt{paint} methods take a input object (a sphere or a arbitrary shape) and paint it into the triangle detail -- creating new polygons when necessary. The \texttt{add} methods can be used to manipulate the internal state of the class, either adding new polygon sets (e.g. if new colours are required) or adding new polygons to increase detail. Since Pepr3D saves objects of this class, there have to be \texttt{save} and \texttt{load} methods present, for the Cereal library. The \texttt{triangulatePolygon} method further highlights this duality of the class, allowing to create triangles from the existing polygons.
+
+\subsection{Detailed Triangle Id}
+
+This \texttt{struct} is a very simple object, but important to understand, so we present it here, even though it is not a complex or confusing concept. It is a way to connect the original triangles with the detailed ones, once the user paints with the \textit{Brush} or uses the \textit{Text} tool. Before the user uses these tools, each triangle has its own id -- a \texttt{size\_t} type number. However, once the triangles are subdivided by use of one of these tools, this is no longer the case, since we are adding new triangles. The tools also support re-merging and simplifying the topology if the user removes the details by painting over them again. This would not be possible if we simply added the new triangles to the end and kept indexing by the \texttt{size\_t}, hence why we use this, admittedly more complex way of indexing.
+
+\begin{lstlisting}
+struct DetailedTriangleId {
+    DetailedTriangleId()
+    explicit DetailedTriangleId(size_t baseId, std::optional<size_t> detailId = {})
+
+    size_t getBaseId() const;
+    std::optional<size_t> getDetailId();
+
+    bool operator==(const DetailedTriangleId& other) const;
+
+   private:
+    size_t mBaseId;
+    std::optional<size_t> mDetailId;
+};
+\end{lstlisting}
+
+The \texttt{BaseId} property is the triangle id of the original triangle, that has been split into many more. The \texttt{DetailId} is the id of the one of the smaller triangles, which form the original one (the one identified by \texttt{BaseId}).
+
+A triangle which has not been subdivided, will have the \texttt{DetailId} empty, which indicates it is a base triangle. A triangle which formed by subdividing an already existing triangle, will have the \texttt{BaseId} equal to the id of the triangle which it has subdivided -- used to look up the \texttt{TriangleDetail} object in \texttt{mTriangleDetails}, and the \texttt{DetailId} will be used to look up the actual triangle, within this object.
+
+\subsection{Data Triangle}
+
+\texttt{DataTriangle} is the main way the geometry is stored in Pepr3D. It is a custom wrapper around \textit{CGAL}'s \texttt{Triangle\_3} class. Adding this wrapper allows us to attach additional information to each triangle. The information attached in our case is:
+
+\begin{itemize}
+\item \textbf{mColor} which is the color of the triangle. This is kept in a \texttt{size\_t} variable, because it refers to the index of the color in the color palette.
+
+\item \textbf{mNormal} which is the normal vector of the triangle face. This is calculated as an average of the vertex normals of the triangle.
+
+\end{itemize}
+
+A second important class to talk about in this section is the \texttt{Data\-Triangle\-AABB\-Primitive}. This class provides the conversion between our \texttt{Data\-Tri\-angle} (which contains a \texttt{CGAL::Triangle\_3}) and the \texttt{CGAL::AABB\_tree} which requires \texttt{CGAL::Triangle\_3} as input to build the tree around. We provide the tree our \texttt{Data\-Triangle} array and the tree converts it into \texttt{Data\-Triangle\-AABB\-Primitive}, which it accepts as a geometry primitive.
+
+\section{Model Importer}
+
+One of the classes included in this section is the \textit{Model Importer}. As the name suggests, this class handles the import of a new triangle mesh model into Pepr3D. This class heavily utilizes the \textit{Assimp} library we have mentioned several times in both the specification and documentation. Here is a quick overview of the class:
+
+\begin{lstlisting}
+
+class ModelImporter {
+    std::string mPath;
+    std::vector<DataTriangle> mTriangles;
+
+    ColorManager mPalette;
+    bool mModelLoaded = false;
+
+    std::vector<glm::vec3> mVertexBuffer;
+    std::vector<std::array<size_t, 3>> mIndexBuffer;
+
+    GeometryProgress *mProgress;
+
+   public:
+    ModelImporter(const std::string p, GeometryProgress *progress, ::ThreadPool &threadPool);
+    bool isModelLoaded();
+
+    ColorManager getColorManager() const;
+    std::vector<DataTriangle> getTriangles() const;
+    std::vector<glm::vec3> getVertexBuffer() const;
+    std::vector<std::array<size_t, 3>> getIndexBuffer() const;
+}
+
+\end{lstlisting}
+
+We will now go through the public API of the class, explaining in detail what each method does and why it is needed.
+
+Firstly, \texttt{ModelImporter} gets initialized using its constructor. It gets the path to the file and our persistent threadpool, as well as a \texttt{GeometryProgress} object, which is used to report the import progress to the UI. This setup makes a single ModelImporter object responsible for a single imported mesh file, which follows the \textit{Resource Acquisition Is Initialization} or \textit{RAII} \footnote{https://en.cppreference.com/w/cpp/language/raii} principle, which is prevalent in the C++ scene. Once initialized, the \texttt{ModelImporter} can now return all the data it loaded.
+
+A simple check of \texttt{ModelImporter}'s ready status can be performed using the method \texttt{isModelLoaded()}. This should primarily be used in combination with C++'s \texttt{assert} call.
+
+Once the model is loaded correctly, the object now provides the data it has loaded. There are several methods to retrieve data.
+
+\begin{itemize}
+\item \texttt{getColorManager()} is a method which returns a \texttt{ColorManager} object, initialized with the colors of the imported file. This means that if a coloured geometry file gets loaded, the \texttt{ModelImporter} will automatically create a coloured model which is then displayed in Pepr3D. It will also initialize the color palette with the model's colors, not with the default ones.
+
+\item \texttt{getTriangles()} is the most important method of the class. This method returns an array of \texttt{DataTriangle} objects. This is the main data Pepr3D works on. These returned triangles are preprocessed using both \textit{Assimp} preprocessing options and our own. Examples of preprocessing include triangulating all non-triangle primitives (like quads), removing duplicated vertices and removing degenerate triangles (with a zero area).
+
+\item The pair of methods \texttt{getVertexBuffer()} and \texttt{getIndexBuffer()} is a secondary means of extracting the same geometry data as in the \texttt{get\-Triangles} method, but this time in the "OpenGL" format of a vertex buffer and an index buffer. This data is used only during the construction of the polyhedron model for the \textit{CGAL} library. Extracting the secondary data is easier and faster than transforming the \texttt{DataTriangle} array back into this buffer representation just for the polyhedron build.
+
+\end{itemize}
+
+Most of the private members are very self-explanatory, we will, however, briefly comment on the \texttt{mProgress} object. This object takes advantage of \textit{Assimp}'s ability to report the percentage-wise progress during loading and preprocessing. We use this information in the loading dialog, to notify the user on the progress of the import. This makes it clear to the that the program is working as intended and has not crashed or stopped.
+
+\section{Model Exporter}
+
+The \texttt{ModelExporter} is an easy to use class which handles the export of the model. Once again, it is initialized once for every geometry object (a model) and can get called multiple times if we are saving the same geometry data (maybe with different parameters) multiple times. Once a new model gets loaded, a new \texttt{ModelExporter} needs to be initialized. Here is a simple overview of the class:
+
+\begin{lstlisting}
+class ModelExporter {
+    const Geometry *mGeometry;
+
+    GeometryProgress *mProgress;
+    std::vector<float> mExtrusioCoef;
+
+   public:
+    ModelExporter(const Geometry *geometry, GeometryProgress *progress);
+
+    void setExtrusionCoef(std::vector<float> extrusionCoef);
+
+    bool saveModel(const std::string filePath, const std::string fileName, const std::string fileType, ExportType exportType);
+
+    std::map<colorIndex, std::unique_ptr<aiScene>> createScenes(ExportType exportType);
+}
+
+\end{lstlisting}
+
+There are a few basic methods which we will cover first, as well as an extra degree of freedom for the users of this class, which requires a bit more knowledge, which we explain at the end.
+
+\begin{itemize}
+
+\item The \textit{constructor} takes a pointer to the current \texttt{Geometry} object and a pointer to a progress indicator. Here we again exploit \textit{Assimp's} progress reporting functionality to let the user know how far along the export is.
+
+\item \texttt{setExtrusionCoef()} is a simple \textit{setter} which allows the user to specify the depth of extrusion for each segment.
+
+\item \texttt{saveModel()} is the main method the users will call if they wish to proceed with the export in the current setup. The user specifies the file path, file name and file type of the export, as well as which export should get used, as there are several options.
+\end{itemize}
+
+We mentioned several options of exporting, which are decided by the \texttt{Export\-Type} enumerator. The whole definition of this \texttt{enum} is:
+
+\begin{lstlisting}
+enum class ExportType { Surface, NonPolySurface, NonPolyExtrusion, PolyExtrusion, PolyExtrusionWithSDF };
+\end{lstlisting}
+
+The only options the end user has are exporting only in \texttt{Surface} mode or in \texttt{Extrusion} mode, with the ability to turn on \textit{SDF limitation} when in the \texttt{Extrusion} mode. The two options prefaced with the keyword \texttt{Poly} are there for the developers, since these get invoked when the loaded model cannot be built into a polyhedron structure (which is displayed as a warning dialog, which is covered in greater detail in Chapter \ref{ch:ui}.
+
+The last public method of the class is \texttt{createScenes()}. This is an advanced method which gives the developer access to the segmented scenes. This can be used, for example, to allow the user to preview the export results directly in Pepr3D (as it is done in the \textit{Export Assistant}).
+
+\section{Font processing}
+\label{sec:fonts}
+
+Big portion of the code of this class is based on the \textit{Font23D} library which can be found on GitHub \footnote{https://github.com/codetiger/Font23D}. The team read through the code, heavily modified it to transform it from the \textit{C} language to the modern \textit{C++} and built a new class around what were only free methods in \textit{Font23D}. This object also uses the \textit{FreeType}, \textit{FTGL} and \textit{Poly2Tri} libraries.
+
+The main goal of the \texttt{FontRasterizer} class is to take smooth bezier curves of letters from the \texttt{.ttf} font files and transform them into a triangle mesh, with a variable rasterization steps. These meshes are then used in the \textbf{Text} tool.
+
+A simple overview of the \texttt{FontRasterizer} class follows:
+
+\begin{lstlisting}
+class FontRasterizer {
+   private:
+	struct Tri {
+        glm::vec3 a, b, c;
+    };
+
+    std::string mFontFile;
+    bool mFontLoaded = false;
+
+    FT_Library mLibrary;
+    FT_Face mFace;
+    FT_UInt mPrevCharIndex = 0, mCurCharIndex = 0;
+    FT_Pos mPrev_rsb_delta = 0;
+
+   public:
+    FontRasterizer(const std::string fontFile);
+    std::string getCurrentFont() const;
+    bool isValid() const;
+
+    std::vector<std::vector<FontRasterizer::Tri>> rasterizeText(const std::string textString, const size_t fontHeight, const size_t bezierSteps);
+}
+\end{lstlisting}
+
+As we can see, similar to the \texttt{ModelImporter} class, this class also uses the \textit{RAII} principle, this time to load and hold the font face, loaded from a \texttt{.ttf} file. Once the font file is loaded successfully, the object can then convert any text into a triangle mesh.
+
+The interface of this class is rather simple -- the constructor takes a single \texttt{std::string}, which is the path to the font file. The API provides a \texttt{isValid()} method to check whether the initialization was performed correctly. The API also provides the font file name, without the whole path, which can be accessed by the method \texttt{getCurrentFont()}. This is used in the user interface to display the currently selected font.
+
+The main method of the class is the \texttt{rasterizeText()}. It takes a \texttt{string} containing the text the user wants to convert to triangles, the \texttt{fontHeight} integer, which corresponds to the font height commonly found in text editors and the variable \texttt{bezierSteps}, which allows the user to control the roughness of the approximation. The useful range of the \texttt{bezierSteps} variable is around $1$ -- $5$. $1$ yields very rough results, useful for "blocky" fonts like \textit{Impact}, while $3$ should be sufficient for any standard font. For high precision, a higher setting should be used. Please note that the higher the \texttt{bezierSteps}, the more triangles will be generated.
+
+Last thing to note, is the custom triangle object the \texttt{rasterizeText} method returns. \texttt{Tri} is a custom \texttt{struct} declared private in \texttt{FontRasterizer}. This is done to achieve two things: 
+
+\begin{enumerate}
+\item \texttt{FontRasterizer::Tri} should not be used outside of the class. It is a temporary type and is useful only to the \texttt{FontRasterizer} class. The private definition prevents this behaviour. Users should not create more objects of this type at any time.
+
+\item \texttt{FontRasterizer::Tri} is returned by \texttt{rasterizeText}. This is because we want the \texttt{FontRasterizer} to be an independent class, which can be used on its own and not depend on any Pepr3D types. Returning a custom type achieves this behaviour, and it is expected that the users will want to convert the outcome into a custom type more often than not anyway.
+\end{enumerate}
+
+\section{Color Manager}
+
+The \texttt{ColorManager} is a simple class which manages the current color palette. At most one \texttt{ColorManager} is active, which is the one \texttt{MainApplication} holds as a source of truth. \texttt{ModelImporter} also creates a new \texttt{ColorManager} while importing an already-coloured model.
+
+Now we list a simplified overview of the class:
+
+\begin{lstlisting}
+class ColorManager {
+   public:
+    using ColorMap = std::vector<glm::vec4>;
+
+   private:
+    ColorMap mColorMap;
+    size_t mActiveColorIndex = 0;
+
+    friend class cereal::access;
+
+   public:
+    ColorManager();
+    ColorManager(const ColorMap::const_iterator start, const ColorMap::const_iterator end);
+    explicit ColorManager(const size_t number);
+
+    void addColor(const glm::vec4 newColor);
+    void setColor(const size_t i, const glm::vec4 newColor);
+    void replaceColors(const ColorMap::const_iterator start, const ColorMap::const_iterator end);
+    void replaceColors(const ColorMap& newColors);
+    glm::vec4 getColor(const size_t i) const;
+
+    size_t getActiveColorIndex() const;
+    void setActiveColorIndex(size_t index);
+
+    static void generateColors(const size_t colorCount, std::vector<glm::vec4>& outNewColors);
+}
+\end{lstlisting}
+
+As we can see, \texttt{ColorManager} is basically a simple wrapper around STL's \texttt{std::vector}, specialized on holding \texttt{glm::vec4} and extended with some color-generation features. It also is responsible for handling the current active color in the \texttt{mActiveColorIndex} member variable. This is the color the user has currently selected in his color palette widget.
+
+There are several ways to initialize the \texttt{ColorManager}. You can initialize it to the default palette, with a list of colors or simply with a number of colors you require. In the last case, the \texttt{ColorManager} will generate new colors, which will be \textit{visibly distinct} from each other (you will not get 3 slightly different shades of blue). The generation is done using the \texttt{generateColors()} method.
+
+The \texttt{ColorManager} API has all the different calls you could expect from a \texttt{std::vector} wrapper, like \texttt{empty()}, \texttt{size()} and \texttt{clear()}, which we have omitted from the overview for clarity.
+
+The most important part of the API are the \texttt{addColor()}, \texttt{setColor()} and \texttt{replaceColors()} methods. These allow for changing of the palette on the fly. Note that changing the palette changes the colors on the model in real time. \texttt{getColor()} can be used to query the \texttt{ColorManager} on any color (for example for user interface purposes), and when combined with the following pair of methods, it provides a vital part of Pepr3D by allowing the color palette widget to work.
+
+We have already mentioned one of the two remaining methods -- the getter \texttt{getActiveColorIndex()} and the setter \texttt{setActiveColorIndex()}. These methods are invoked when the user changes the active color in the color palette widget in the user interface. They are also invoked by various tools when the tool is constructing the recolour command and needs to know which colour the user painted with.

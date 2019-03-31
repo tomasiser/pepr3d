@@ -1,0 +1,94 @@
+\chapter{Commands and Command Manager}
+\label{ch:commands}
+
+In this chapter, we discuss the command system that provides the \textit{Undo} and \textit{Redo} capability of Pepr3D. First we explain the \texttt{Command} class in detail and then we show how the \texttt{CommandManager} operates to provide a fully functioning \textit{Undo} and \textit{Redo}.
+
+\section{Commands}
+
+Commands are the primary means of altering the geometry model. Each of them gets executed and placed on the command stack, which allows for the Undo and Redo operations to function correctly. The commands then interact with the geometry model to modify it according to the user's wishes.
+
+Because each command gets put on the command stack, and each Undo step removes one command from the stack, each command has to have a visual impact on the user's work. This means that internal computations, such as geometry queries, cannot be represented as commands, because pressing the Undo button would not have any visual effect and would confuse the user. Examples of commands include: colouring a single triangle (triangle painter tool), colouring multiple triangles (like in bucket painter) or changing the color palette.
+
+A single command is a class derived from the \texttt{CommandBase} class, which has this structure:
+
+\begin{lstlisting}
+template <typename Target>
+class CommandBase {
+    template <typename>
+    friend class CommandManager;
+   public:
+
+    CommandBase(bool isSlow = false, bool canBeJoined = false);
+
+    virtual std::string_view getDescription() const = 0;
+    bool isSlowCommand() const;
+    bool canBeJoined() const;
+
+   protected:
+    virtual void run(Target& target) const = 0;
+    virtual bool joinCommand(const CommandBase&)
+
+   private:
+    const bool mIsSlow;
+    const bool mCanBeJoined;
+};
+\end{lstlisting}
+
+As we can see, there are only a few methods to implement per each command. Namely \texttt{run()} and \texttt{joinCommand()}. The only properties of the command are \texttt{mIsSlow} and \texttt{mCanBeJoined}, which are (through their const getters) accessed by the \texttt{CommandManager}.
+
+The \texttt{mIsSlow} property notifies the \texttt{CommandManager} about a slow command, which means a snapshot should be made to allow for quicker undoing and redoing (we will refer to both of these options as only "undo" from now on).
+
+The \texttt{mCanBeJoined} property allows the \texttt{CommandManager} to join two commands of the same type together.
+
+Now that we know how commands look like and work, we can look at the \texttt{CommandManager} class and see how the entire feature is implemented in Pepr3D.
+
+\section{Command Manager}
+
+The centrepiece of the \texttt{CommandManager} is the \textbf{command stack}. The Command Stack is a \textit{LIFO} type structure, with the main purpose to store the executed commands, which allows the \texttt{CommandManager} to perform the undo operations. This data structure is then operated by the \texttt{CommandManager}. Following is the overview of the \texttt{CommandManager} class.
+
+\begin{lstlisting}
+template <typename Target>
+class CommandManager {
+   public:
+    using CommandBaseType = CommandBase<Target>;
+    using StateType = decltype(std::declval<const Target>().saveState());
+    static const int SNAPSHOT_FREQUENCY = 10;
+
+    explicit CommandManager(Target& target);
+
+    void execute(std::unique_ptr<CommandBaseType>&& command, bool join = false);
+
+    void undo();
+    void redo();
+
+    bool canUndo() const;
+    bool canRedo() const;
+    const CommandBaseType& getLastCommand() const;
+    const CommandBaseType& getNextCommand() const;
+    size_t getVersionNumber() const;
+
+   private:
+    Target& mTarget;
+    std::vector<std::unique_ptr<CommandBaseType>> mCommandHistory;
+    size_t mPosFromEnd = 0;
+    size_t mVersion = 0;
+
+    struct SnapshotPair {
+        StateType state;
+        size_t nextCommandIdx;
+    };
+    std::vector<SnapshotPair> mTargetSnapshots;
+};
+\end{lstlisting}
+
+As we can see, the class is not complex. It operates over a templated class \texttt{Target}, which only has to be able to be able to load its state and save its state using the methods \texttt{loadState} and \texttt{saveState}. The state is what gets undone during the undo operation.
+
+The three main methods to operate the undo pipeline are \texttt{execute()}, \texttt{undo()} and \texttt{redo()}, which are self-explanatory. The user interface can also use the methods \texttt{canUndo()} and \texttt{canRedo()} to notify the user with visual cues (like emboldening the undo signs) if the undo and redo actions are available.
+
+The \texttt{CommandManager} also keeps its current cumulative version, which gets incremented during each \texttt{execute()}, \texttt{undo()} and \texttt{redo()}. This is a way to keep track of the user's actions and notify him if the current project was modified after it was saved.
+
+The main data is stored in the \textit{command stack}, which have already discussed. The command stack is the member \texttt{mCommandHistory}, which holds all past commands in a \texttt{std::vector}, which is a sufficient structure to implement a \textit{LIFO} in. It holds pointers to the commands, instead of commands themselves to be able to use \textbf{polymorphism} in C++. The pointers are realised with C++'s \texttt{unique\_ptr} for maximum memory safety.
+
+After consideration, we chose the snapshotting technique we discussed in the \textit{Specification document}. Snapshotting happens inside the \texttt{execute()} method and is regulated by one member variable inside the \texttt{CommandManager} -- the \texttt{SNAPSHOT\_FREQUENCY}. \texttt{mTargetSnapshots} is the array which holds the already taken snapshots. This \texttt{std::vector} gets manipulated during \texttt{execute()} and \texttt{redo()} to correctly perform the undo and redo functions. Snapshots are saved as a \texttt{SnapshotPair}, which remembers the current state and the command id which it was taken at.
+
+Let's now illustrate the redo realised by snapshotting on a specific example. Let there be $C$ commands on the command stack, with last snapshot taken at the $S$-th command, where $S < C - 1$. If we now undo, which means point the current Target state at $C - 1$, the last \texttt{SnapshotPair} gets inspected, and we find that the command id of the last snapshot was $S$. The state gets re-instantiated to the state we found in the \texttt{SnapshotPair}. Now we need to re-apply all commands from $S+1$ to $C-1$ to be correctly back in the $C-1$ state.

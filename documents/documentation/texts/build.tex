@@ -1,0 +1,108 @@
+\chapter{Building the project}
+\label{ch:build}
+
+In this chapter, we explain how Pepr3D can be built from the source codes.
+We assume some knowledge of build systems, compilers, and operating systems as this is a guide for developers.
+
+\section{Building on Windows}
+
+We explain how the 64-bit Pepr3D can be built on Windows 8 and 10, which are the officially supported platforms.
+
+\subsection{Repository}
+
+First of all, the official Pepr3D git repository has to be cloned.
+This requires git to be installed on the machine and then cloning the repository using the following command in the Windows command line:
+
+\begin{lstlisting}[
+    basicstyle=\scriptsize\ttfamily,language=command.com
+]
+git clone --recurse-submodules -j8 https://github.com/tomasiser/pepr3d.git
+\end{lstlisting}
+
+If you have already accidentally cloned without submodules, run this command from the root directory of this repo:
+
+\begin{lstlisting}[
+    language=command.com
+]
+git submodule update --init --recursive
+\end{lstlisting}
+
+\subsection{Dependencies}
+
+The following dependencies have to be downloaded and/or installed on the machine according to these steps:
+
+\begin{enumerate}
+\item Download and install the latest \textbf{CMake} from https://cmake.org/.
+\item Download and install either \textbf{Visual Studio 2017} (Community version is enough) or alternatively only \textbf{Build Tools for Visual Studio 2017}. Both can be found at https://visualstudio.microsoft.com/downloads/.
+\item Download and install \textbf{CGAL} from https://www.cgal.org/\-download/\-win\-dows.html. Make sure \texttt{CGAL\_DIR} environment variable is set to the installed CGAL path, which is done by default when using the official installer.
+\item Download and install \textbf{Boost} from https://www.boost.org/. You can either build Boost yourself or download pre-built binaries for the 14.1 toolset. Make sure to point \texttt{BOOST\_ROOT} environment variable to the installed Boost path.
+\item We use our own built version of \textbf{Assimp} from the latest \texttt{master} branch. Either build Assimp yourself from https://github.com/assimp/assimp, or download and unzip our prebuilt version\footnote{https://github.com/tomasiser/pepr3d/releases/download/v1.0/Assimp\_for\_Pepr3D.zip}. Our version is built with two \texttt{.dll}, one for Debug and one for Release. Do not mix them up! Make sure to point \texttt{ASSIMP\_ROOT} environment variable to the Assimp directory.
+\item Download \textbf{Freetype} from https://github.com/\-ubawurinna/\-freetype-\-win\-dows-\-binaries, preferably version 2.9.1. After downloading, it is \emph{necessary} to rename the \texttt{win64} subdirectory to \texttt{lib}. Make sure to point \texttt{FREETYPE\_DIR} to the Freetype directory.
+\end{enumerate}
+
+All other libraries are part of the Pepr3D repository and will be built automatically by our build system.
+
+\subsection{Building}
+
+From the root directory of the cloned repository, run the following from the command line, which creates a new \texttt{build} directory and runs CMake inside:
+
+\begin{lstlisting}[
+    language=command.com
+]
+mkdir build
+cd build
+cmake -G"Visual Studio 15 2017 Win64" ..
+\end{lstlisting}
+
+Now the build project is prepared inside the \texttt{build} subdirectory and we can now open \texttt{build/pepr3d.sln} in the Visual Studio 2017 application and compile Pepr3D from there.
+
+\paragraph{Building from command line}
+Alternatively, we can build Pepr3D from the command line using the build tools. We have to start \textbf{MSBuild Command Prompt for VS2017} or \textbf{Developer Command Prompt for VS 2017} from Start Menu, or we can also start the command prompt from a standard command line using:
+
+\begin{lstlisting}[
+    language=command.com
+]
+%comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat"
+\end{lstlisting}
+
+In the Visual Studio command prompt, we can build Pepr3D using:
+
+\begin{lstlisting}[
+    language=command.com
+]
+msbuild pepr3d.sln /m
+\end{lstlisting}
+
+\subsection{Running}
+
+The executable of Pepr3D should be located in \texttt{build/\-pepr3d/\-Debug/\-pe\-pr\-3d.exe} (or \texttt{Release} instead of \texttt{Debug}).
+
+After building in Visual Studio, we have to make sure the appropriate \texttt{.dll} files are copied next to the executables.
+If you used Visual Studio 2017 application to build it, some of the \texttt{.dll} files should be automatically copied to the executable directory.
+If you used command line to build, you need to copy \texttt{libgmp-10.dll}, \texttt{libmpfr-4.dll}, and \texttt{assimp-vc140-mt.dll} manually from the \texttt{build/} directory to the same directory as \texttt{pepr3d.exe}.
+
+\paragraph{Copying correct Assimp \texttt{.dll}}
+Note that by default, the Release version of Assimp \texttt{.dll} is copied.
+If you built a Debug version of Pepr3D, you need to replace \texttt{assimp-vc140-mt.dll} by the file located in the directory where you unziped our Assimp library.
+The Debug library is in the \texttt{bin/x64-Debug} subdirectory of Assimp instead of in \texttt{bin/x64}.
+If you built Assimp on your own, you need to compile it in the same Debug or Release as Pepr3D.
+
+\paragraph{Copying Freetype \texttt{.dll}}
+If you do not have \texttt{freetype.dll} as a part of your operating system already, you also need to copy this file next to the executable from the \texttt{lib} subdirectory of the Freetype you downloaded as described in the Dependencies subsection.
+
+\paragraph{Running unit tests}
+By default, the Debug executable of all Pepr3D unit tests is build into \texttt{build/Debug/pepr3dtests.exe}.
+It is necessary to also copy the \texttt{.dll} files there.
+
+\section{Building on Linux / Docker container}
+
+There is a possibility to build Pepr3D on Linux systems, but please note that is in only supported for verifying that the source codes do compile as necessary for continuous integration (Section~\ref{sec:ci}).
+It is not indended for running and using Pepr3D in release.
+
+We have a Linux Docker container\footnote{https://www.docker.com/resources/what-container} in our special repository at GitHub: https://github.com/tomasiser/docker-cinder.
+The \texttt{latest} image setups a Debian environment to build Cinder applications.
+The \texttt{prebuilt} image actually builds Cinder on top of the \texttt{latest} image.
+Pepr3D can be built in the \texttt{prebuilt} container by running \texttt{cmake} and \texttt{make} commands from the Pepr3D repository.
+
+Note that in order to compile Pepr3D using the container, one needs to have at least a minimal experience with Docker.
+We advise to follow the tutorials on the official Docker website\footnote{https://docs.docker.com/get-started/}.
