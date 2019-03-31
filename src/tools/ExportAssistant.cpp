@@ -404,7 +404,7 @@ void ExportAssistant::prepareExport() {
         mExporter->setExtrusionCoef(extrusionCoefs);
     }
 
-    if(geometry->polyhedronValid()) {
+    if(!geometry->isTemporaryDetailedDataValid()) {
         geometry->updateTemporaryDetailedData();
     }
 }

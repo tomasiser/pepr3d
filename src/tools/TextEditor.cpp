@@ -240,6 +240,10 @@ void TextEditor::drawToSidePane(SidePane& sidePane) {
     sidePane.drawSeparator();
 }
 
+bool TextEditor::isEnabled() const {
+    return mApplication.getCurrentGeometry()->polyhedronValid();
+}
+
 void TextEditor::onModelViewMouseDown(ModelView& modelView, ci::app::MouseEvent event) {
     if(!event.isLeft()) {
         return;
