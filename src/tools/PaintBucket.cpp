@@ -68,8 +68,7 @@ void PaintBucket::onToolSelect(ModelView &modelView) {
         return;
     }
     if(!geometry->isTemporaryDetailedDataValid()) {
-        mApplication.enqueueSlowOperation([this, geometry]() { geometry->updateTemporaryDetailedData(); }, []() {},
-                                          true);
+        mApplication.enqueueSlowOperation([geometry]() { geometry->updateTemporaryDetailedData(); }, []() {}, true);
     }
 }
 
