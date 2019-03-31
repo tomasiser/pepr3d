@@ -1,4 +1,5 @@
 \chapter{Comparison to minimal requirements}
+\label{ch:min-req}
 
 In this chapter, we focus on comparing the finished product with the minimal and advanced requirements we set in the specification, before we started to implement the project.
 
@@ -37,7 +38,10 @@ In the specification, we discussed two extension to this tool: \textbf{text proj
 
 \paragraph{Text projections}
 
-Starting with text projections, we added more than just X/Y/Z -- the user can rotate the camera around the model, and the projection will be orthonormal from the camera angle. This allows the user to not only write the text from three angles, but from each point of the bounding sphere of the object. We chose this option because it was not much harder to do than the promised X/Y/Z, while adding a lot of functionality.
+Starting with text projections, we added more than just X/Y/Z -- the user is now able to click on individual triangles, and the projection angle will be taken as the clicked triangle's normal vector.
+A real-time preview is displayed (the text is hovered above the clicked triangle) so the user can see what is going to happen after projecting.
+We chose this option because it was not much harder to do than the promised X/Y/Z, while adding a lot of functionality.
+The main perk of this method is the ability to reproduce the results reliably (the angle will be the same every time you click on a particular triangle), while giving the user more freedom than just X/Y/Z.
 
 On the other hand, we did not implement the cylindrical or any other special projections, mainly because we lacked the manpower to do everything we set out to do. The second reason is a more practical one. The application focuses on the \textit{WYSIWYG} pattern -- \textit{What you see is what you get} to be as intuitive as possible. Dealing with cylindrical and other complicated projections is not a task we can expect from a basic user.
 
