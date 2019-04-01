@@ -10,7 +10,7 @@ We explain how the 64-bit Pepr3D can be built on Windows 8 and 10, which are the
 
 \subsection{Repository}
 
-First of all, the official Pepr3D git repository has to be cloned.
+First of all, the official Pepr3D git repository has to be cloned.\footnote{Alternatively, use the attached CD (see Appendix II).}
 This requires git to be installed on the machine and then cloning the repository using the following command in the Windows command line:
 
 \begin{lstlisting}[
@@ -36,7 +36,7 @@ The following dependencies have to be downloaded and/or installed on the machine
 \item Download and install either \textbf{Visual Studio 2017} (Community version is enough) or alternatively only \textbf{Build Tools for Visual Studio 2017}. Both can be found at https://visualstudio.microsoft.com/downloads/.
 \item Download and install \textbf{CGAL} from https://www.cgal.org/\-download/\-win\-dows.html. Make sure \texttt{CGAL\_DIR} environment variable is set to the installed CGAL path, which is done by default when using the official installer.
 \item Download and install \textbf{Boost} from https://www.boost.org/. You can either build Boost yourself or download pre-built binaries for the 14.1 toolset. Make sure to point \texttt{BOOST\_ROOT} environment variable to the installed Boost path.
-\item We use our own built version of \textbf{Assimp} from the latest \texttt{master} branch. Either build Assimp yourself from https://github.com/assimp/assimp, or download and unzip our prebuilt version\footnote{https://github.com/tomasiser/pepr3d/releases/download/v1.0/Assimp\_for\_Pepr3D.zip}. Our version is built with two \texttt{.dll}, one for Debug and one for Release. Do not mix them up! Make sure to point \texttt{ASSIMP\_ROOT} environment variable to the Assimp directory.
+\item We use our own built version of \textbf{Assimp} from the latest \texttt{master} branch. Either build Assimp yourself from https://github.com/assimp/assimp, or download and unzip our prebuilt version\footnote{https://github.com/tomasiser/pepr3d/releases/download/v1.0/Assimp\_for\_Pepr3D.zip or use the attached CD (see Appendix II)}. Our version is built with two \texttt{.dll}, one for Debug and one for Release. Do not mix them up! Make sure to point \texttt{ASSIMP\_ROOT} environment variable to the Assimp directory.
 \item Download \textbf{Freetype} from https://github.com/\-ubawurinna/\-freetype-\-win\-dows-\-binaries, preferably version 2.9.1. After downloading, it is \emph{necessary} to rename the \texttt{win64} subdirectory to \texttt{lib}. Make sure to point \texttt{FREETYPE\_DIR} to the Freetype directory.
 \end{enumerate}
 
