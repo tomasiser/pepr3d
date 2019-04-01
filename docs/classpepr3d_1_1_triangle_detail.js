@@ -79,12 +79,10 @@ var classpepr3d_1_1_triangle_detail =
     [ "mBounds", "classpepr3d_1_1_triangle_detail.html#a80df9f3e1d10aafc8d6136490f332c5f", null ],
     [ "mColorChanged", "classpepr3d_1_1_triangle_detail.html#af49e18248a04af06f958001518b73db0", null ],
     [ "mColoredPolys", "classpepr3d_1_1_triangle_detail.html#a93dde966f3762bad3f47b0932bbcc70a", null ],
-    [ "MIN_VERTICES_IN_CIRCLE", "classpepr3d_1_1_triangle_detail.html#ac9259653e0e58901b931ef725df2eb49", null ],
     [ "mOriginal", "classpepr3d_1_1_triangle_detail.html#a4c6c24850c358f6a553b78b1460338fe", null ],
     [ "mOriginalPlane", "classpepr3d_1_1_triangle_detail.html#a1f21de29cd698369a8a8bf9f357cdcb2", null ],
     [ "mPolygonDegenerateTriangles", "classpepr3d_1_1_triangle_detail.html#a706689e78ae910e7bd4a799fc44db740", null ],
     [ "mTriangles", "classpepr3d_1_1_triangle_detail.html#a4739e317a83230e718680cabf62a4e59", null ],
     [ "mTrianglesExact", "classpepr3d_1_1_triangle_detail.html#a6816ebdc0f458261f4f73e24c599bbdd", null ],
-    [ "mTrianglesToExactIdx", "classpepr3d_1_1_triangle_detail.html#aa8ffb6f58e83ec892a8cd9d82d3e9054", null ],
-    [ "VERTICES_PER_UNIT_CIRCLE", "classpepr3d_1_1_triangle_detail.html#af3b751ca10e1e87e63d49d58f1e6d142", null ]
+    [ "mTrianglesToExactIdx", "classpepr3d_1_1_triangle_detail.html#aa8ffb6f58e83ec892a8cd9d82d3e9054", null ]
 ];

@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="pepr3d_icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Pepr3D
-   &#160;<span id="projectnumber">1.0</span>
+   &#160;<span id="projectnumber">v1.0</span>
    </div>
    <div id="projectbrief">Pepr3D is a 3D graphics editor designed for FDM printing</div>
   </td>
@@ -129,6 +129,10 @@ virtual std::optional&lt; <a class="el" href="structpepr3d_1_1_hotkey.html">Hotk
 virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_text_editor.html#ad7adaa2d3f7104bface2115407ea3ef3">getIcon</a> () const override</td></tr>
 <tr class="memdesc:ad7adaa2d3f7104bface2115407ea3ef3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a UTF-8 icon from an icon font. <br /></td></tr>
 <tr class="separator:ad7adaa2d3f7104bface2115407ea3ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a770ea44d818d1ff06f11ac14268be555"><td class="memItemLeft" align="right" valign="top"><a id="a770ea44d818d1ff06f11ac14268be555"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_text_editor.html#a770ea44d818d1ff06f11ac14268be555">isEnabled</a> () const override</td></tr>
+<tr class="memdesc:a770ea44d818d1ff06f11ac14268be555"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! <br /></td></tr>
+<tr class="separator:a770ea44d818d1ff06f11ac14268be555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0bb2481c00c38ff55eab21baa66624dc"><td class="memItemLeft" align="right" valign="top"><a id="a0bb2481c00c38ff55eab21baa66624dc"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_text_editor.html#a0bb2481c00c38ff55eab21baa66624dc">drawToSidePane</a> (<a class="el" href="classpepr3d_1_1_side_pane.html">SidePane</a> &amp;sidePane) override</td></tr>
 <tr class="memdesc:a0bb2481c00c38ff55eab21baa66624dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called every frame on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a>. Draw to <a class="el" href="classpepr3d_1_1_side_pane.html" title="Right side of the user interface that displays options of the currently selected tool.">SidePane</a> from inside this method. <br /></td></tr>
@@ -166,10 +170,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a331bbb48707ea07c472b7634b02e1a18">getDescription</a> () const</td></tr>
 <tr class="memdesc:a331bbb48707ea07c472b7634b02e1a18 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a description, displayed e.g., in a tooltip. <br /></td></tr>
 <tr class="separator:a331bbb48707ea07c472b7634b02e1a18 inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae323508b6d824047abc981e10a42c0f inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="aae323508b6d824047abc981e10a42c0f"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#aae323508b6d824047abc981e10a42c0f">isEnabled</a> () const</td></tr>
-<tr class="memdesc:aae323508b6d824047abc981e10a42c0f inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if enabled and can be selected, otherwise false. This should be a fast method, it is called every frame! <br /></td></tr>
-<tr class="separator:aae323508b6d824047abc981e10a42c0f inherit pub_methods_classpepr3d_1_1_tool"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56cc05810dfb90d78b0c1388f710a445 inherit pub_methods_classpepr3d_1_1_tool"><td class="memItemLeft" align="right" valign="top"><a id="a56cc05810dfb90d78b0c1388f710a445"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpepr3d_1_1_tool.html#a56cc05810dfb90d78b0c1388f710a445">onModelViewMouseDrag</a> (<a class="el" href="classpepr3d_1_1_model_view.html">ModelView</a> &amp;modelView, ci::app::MouseEvent event)</td></tr>
 <tr class="memdesc:a56cc05810dfb90d78b0c1388f710a445 inherit pub_methods_classpepr3d_1_1_tool"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a currently active <a class="el" href="classpepr3d_1_1_tool.html" title="A base class of all tools that the user can select and manipulate the Geometry and application with t...">Tool</a> when users drags a mouse button over a <a class="el" href="classpepr3d_1_1_model_view.html" title="The main part of the user interface, shows the geometry to the user.">ModelView</a>. <br /></td></tr>

@@ -1,7 +1,7 @@
 var searchData=
 [
   ['undo',['undo',['../classpepr3d_1_1_command_manager.html#af71406e4f6aee85b1cb9fe02b9a8b13e',1,'pepr3d::CommandManager']]],
-  ['update',['update',['../classpepr3d_1_1_main_application.html#aaeaff9b43639879dc3f318c97ae28a78',1,'pepr3d::MainApplication::update()'],['../classpepr3d_1_1_assimp_progress.html#a3cce9ce3f66ff7c1bca017ec0e1caa04',1,'pepr3d::AssimpProgress::Update()']]],
+  ['update',['Update',['../classpepr3d_1_1_assimp_progress.html#a3cce9ce3f66ff7c1bca017ec0e1caa04',1,'pepr3d::AssimpProgress::Update()'],['../classpepr3d_1_1_main_application.html#aaeaff9b43639879dc3f318c97ae28a78',1,'pepr3d::MainApplication::update()']]],
   ['updateextrusionpreview',['updateExtrusionPreview',['../classpepr3d_1_1_export_assistant.html#a9197c8f12e3a88c1c45563d130292017',1,'pepr3d::ExportAssistant']]],
   ['updatemodelmatrix',['updateModelMatrix',['../classpepr3d_1_1_model_view.html#a13a0075d890659252e739cb212f5ce1a',1,'pepr3d::ModelView']]],
   ['updateopenglbuffers',['updateOpenGlBuffers',['../classpepr3d_1_1_geometry.html#a1550192711eb10ddb685c08d15ef9922',1,'pepr3d::Geometry']]],

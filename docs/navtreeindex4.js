@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"classpepr3d_1_1_triangle_detail.html#a7ea6f709dd9bead683d75616fde6657f":[1,0,1,52,27],
+"classpepr3d_1_1_triangle_detail.html#a80df9f3e1d10aafc8d6136490f332c5f":[1,0,1,52,76],
 "classpepr3d_1_1_triangle_detail.html#a8409d1df8edf713beaf1743c0399c6d4":[1,0,1,52,73],
 "classpepr3d_1_1_triangle_detail.html#a876f96672cba689d1f74cac6e179192f":[1,0,1,52,60],
 "classpepr3d_1_1_triangle_detail.html#a8b6a41c7c881886bde6d1543beac68c8":[1,0,1,52,63],
@@ -10,7 +12,7 @@ var NAVTREEINDEX4 =
 "classpepr3d_1_1_triangle_detail.html#a9e9541120fb03635e37a298df6a60dc3":[1,0,1,52,37],
 "classpepr3d_1_1_triangle_detail.html#aa4a23f1168e2e50a4ea45ead29968204":[1,0,1,52,72],
 "classpepr3d_1_1_triangle_detail.html#aa5ad5f3d5e27f70a1f5308103fb49fae":[1,0,1,52,26],
-"classpepr3d_1_1_triangle_detail.html#aa8ffb6f58e83ec892a8cd9d82d3e9054":[1,0,1,52,85],
+"classpepr3d_1_1_triangle_detail.html#aa8ffb6f58e83ec892a8cd9d82d3e9054":[1,0,1,52,84],
 "classpepr3d_1_1_triangle_detail.html#ab0d804fda63bc0e77791140b7aa0f5b8":[1,0,1,52,25],
 "classpepr3d_1_1_triangle_detail.html#ab27f8b435c7c88f80eb35caac5ae9d34":[1,0,1,52,62],
 "classpepr3d_1_1_triangle_detail.html#ab3714e9fe2715a106d89ef9db6fe1773":[1,0,1,52,8],
@@ -22,7 +24,6 @@ var NAVTREEINDEX4 =
 "classpepr3d_1_1_triangle_detail.html#ac51978cae21325ae859138c55c9b1f24":[1,0,1,52,18],
 "classpepr3d_1_1_triangle_detail.html#ac85fa082aaa6c3f8cddca396516857d5":[1,0,1,52,70],
 "classpepr3d_1_1_triangle_detail.html#ac8aeea781673db9a1310d3754ae88162":[1,0,1,52,9],
-"classpepr3d_1_1_triangle_detail.html#ac9259653e0e58901b931ef725df2eb49":[1,0,1,52,79],
 "classpepr3d_1_1_triangle_detail.html#aca7cfbf857504802dd7e5de02c107565":[1,0,1,52,16],
 "classpepr3d_1_1_triangle_detail.html#acad2f44169bb8872522e60d11f54fe86":[1,0,1,52,51],
 "classpepr3d_1_1_triangle_detail.html#ad8daeb9c2bdb4d033a553ec4fa35e5a0":[1,0,1,52,40],
@@ -32,7 +33,6 @@ var NAVTREEINDEX4 =
 "classpepr3d_1_1_triangle_detail.html#aed92acb55850155cbc54142653afbcc4":[1,0,1,52,57],
 "classpepr3d_1_1_triangle_detail.html#af1656510445bacca593a631571f83c7f":[1,0,1,52,36],
 "classpepr3d_1_1_triangle_detail.html#af2341eb272261db43c63247dc2f29cf9":[1,0,1,52,33],
-"classpepr3d_1_1_triangle_detail.html#af3b751ca10e1e87e63d49d58f1e6d142":[1,0,1,52,86],
 "classpepr3d_1_1_triangle_detail.html#af49e18248a04af06f958001518b73db0":[1,0,1,52,77],
 "classpepr3d_1_1_triangle_detail.html#af671c482070226f504855f702e1cf9ac":[1,0,1,52,61],
 "classpepr3d_1_1_triangle_detail.html#af71efedfe287618fc844fbd2b68b0082":[1,0,1,52,49],
@@ -121,8 +121,7 @@ var NAVTREEINDEX4 =
 "namespacemembers.html":[0,1,0],
 "namespacemembers_enum.html":[0,1,2],
 "namespacemembers_func.html":[0,1,1],
-"namespacepepr.html":[0,0,1],
-"namespacepepr3d.html":[0,0,2],
+"namespacepepr3d.html":[0,0,1],
 "namespacepepr3d.html":[1,0,1],
 "namespaces.html":[0,0],
 "pages.html":[],
@@ -178,8 +177,8 @@ var NAVTREEINDEX4 =
 "structpepr3d_1_1_geometry_1_1_area_highlight.html#a980ab51ea5dac86ef2fb68dbf6dc079f":[1,0,1,27,0,6],
 "structpepr3d_1_1_geometry_1_1_area_highlight.html#ad39e62ccee10d0fb4c8165627aa952ec":[1,0,1,27,0,4],
 "structpepr3d_1_1_geometry_1_1_geometry_state.html":[1,0,1,27,1],
-"structpepr3d_1_1_geometry_1_1_geometry_state.html#a097f2aebe0d060076410e6b92edbc152":[1,0,1,27,1,1],
-"structpepr3d_1_1_geometry_1_1_geometry_state.html#afd1702b2b655b81ee6d9f140893d440c":[1,0,1,27,1,2],
+"structpepr3d_1_1_geometry_1_1_geometry_state.html#a097f2aebe0d060076410e6b92edbc152":[1,0,1,27,1,2],
+"structpepr3d_1_1_geometry_1_1_geometry_state.html#a0da9c7c4a67f70f3d127dda1e8640105":[1,0,1,27,1,1],
 "structpepr3d_1_1_geometry_1_1_geometry_state.html#afee735ce954eea322e684923cc7c0920":[1,0,1,27,1,0],
 "structpepr3d_1_1_geometry_1_1_open_gl_data.html":[1,0,1,27,2],
 "structpepr3d_1_1_geometry_1_1_open_gl_data.html#a1960dd95c0c38dda4a26422de4c981b4":[1,0,1,27,2,4],
@@ -249,5 +248,6 @@ var NAVTREEINDEX4 =
 "structpepr3d_1_1_paint_bucket_1_1_normal_stopping.html#a85815d0a0c3f538de4d9ebd2cba55a6d":[1,0,1,40,2,4],
 "structpepr3d_1_1_paint_bucket_1_1_normal_stopping.html#a9d143a0bc957e837cc897c316bf5268b":[1,0,1,40,2,1],
 "structpepr3d_1_1_paint_bucket_1_1_normal_stopping.html#aa5d1412d6141322da3fa57a776c0204e":[1,0,1,40,2,3],
-"structpepr3d_1_1_paint_bucket_1_1_normal_stopping.html#acc4c4a6791bf77f208ec4ee34939488e":[1,0,1,40,2,2]
+"structpepr3d_1_1_paint_bucket_1_1_normal_stopping.html#acc4c4a6791bf77f208ec4ee34939488e":[1,0,1,40,2,2],
+"structpepr3d_1_1_polyhedron_data.html":[1,0,1,42]
 };

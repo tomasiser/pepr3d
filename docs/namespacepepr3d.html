@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="pepr3d_icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Pepr3D
-   &#160;<span id="projectnumber">1.0</span>
+   &#160;<span id="projectnumber">v1.0</span>
    </div>
    <div id="projectbrief">Pepr3D is a 3D graphics editor designed for FDM printing</div>
   </td>
@@ -355,7 +355,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="name
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Fix for <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> bugs in polygon with holes verification Contained in <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a> PR #3688, likely to be in 4.14 version of <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a>. </p>
 <p>Modified for Pepr3D to prevent flipping of camera.</p>
-<p>For now, just keep this custom patched include file first, to avoid using <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a>'s version </p>
+<p>Custom assert definition that throws an exception on assertion.</p>
+<p>For now, just keep this custom patched include file first, to avoid using <a class="el" href="namespace_c_g_a_l.html" title="CGAL Serialization functions.">CGAL</a>'s version</p>
+<p>The original assert header sometimes straight up terminated program without any information on what happened. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

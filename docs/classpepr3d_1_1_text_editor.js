@@ -10,6 +10,7 @@ var classpepr3d_1_1_text_editor =
     [ "getName", "classpepr3d_1_1_text_editor.html#a89d5554aba18be49d5e8f13c1729e3b0", null ],
     [ "getPlaneBaseVector", "classpepr3d_1_1_text_editor.html#a8b6e697183b6df4f7c571015b32f1032", null ],
     [ "getPreviewOrigin", "classpepr3d_1_1_text_editor.html#aa111e897d281d8f936378ae278ef2eb9", null ],
+    [ "isEnabled", "classpepr3d_1_1_text_editor.html#a770ea44d818d1ff06f11ac14268be555", null ],
     [ "onModelViewMouseDown", "classpepr3d_1_1_text_editor.html#ac670b5620dda898d049c395c5b899b3f", null ],
     [ "onModelViewMouseMove", "classpepr3d_1_1_text_editor.html#a7598ba82ef36ae87f0317fe18c800bcb", null ],
     [ "onNewGeometryLoaded", "classpepr3d_1_1_text_editor.html#a0c7d5a45e94fd87a930b127c1f816deb", null ],

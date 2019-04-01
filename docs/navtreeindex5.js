@@ -1,6 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"structpepr3d_1_1_polyhedron_data.html":[1,0,1,42],
 "structpepr3d_1_1_polyhedron_data.html#a18c628197dc544d7a79b636792783c31":[1,0,1,42,10],
 "structpepr3d_1_1_polyhedron_data.html#a27477466ca362daaf66ed853405cf959":[1,0,1,42,9],
 "structpepr3d_1_1_polyhedron_data.html#a405c876987a078bc168f267972b46514":[1,0,1,42,7],
