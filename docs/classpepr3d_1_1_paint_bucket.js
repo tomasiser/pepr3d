@@ -19,6 +19,7 @@ var classpepr3d_1_1_paint_bucket =
     [ "onModelViewMouseDrag", "classpepr3d_1_1_paint_bucket.html#a64f3acef2f66ba3c5b323267aeadd98d", null ],
     [ "onModelViewMouseMove", "classpepr3d_1_1_paint_bucket.html#a4e667f3a895759cd6807241a378a6615", null ],
     [ "onNewGeometryLoaded", "classpepr3d_1_1_paint_bucket.html#a3460bee5bb24684edcdeca08b76b4cc4", null ],
+    [ "onToolSelect", "classpepr3d_1_1_paint_bucket.html#ac7492333b539c46dc9598feaa87dad39", null ],
     [ "mApplication", "classpepr3d_1_1_paint_bucket.html#a5756508c517dbec4bb4aeb17fc8acac8", null ],
     [ "mDoNotStop", "classpepr3d_1_1_paint_bucket.html#ad28c149c77707dab895d7a2cc29ae713", null ],
     [ "mDragging", "classpepr3d_1_1_paint_bucket.html#ad90734d28f1841f9510908343042d49a", null ],
