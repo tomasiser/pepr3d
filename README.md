@@ -52,3 +52,7 @@
 | Text editor | Export assistant |
 |:-------------------------:|:-------------------------:|
 |<img alt="Text editor" src="https://user-images.githubusercontent.com/10374559/62310753-7f8dd980-b48a-11e9-966c-46a670986ed5.gif">|<img alt="Export assistant" src="https://user-images.githubusercontent.com/10374559/62311235-af89ac80-b48b-11e9-8b79-e33f6190ced8.gif">|
+
+## Printing results
+
+![Printing results](https://user-images.githubusercontent.com/10374559/62311508-42c2e200-b48c-11e9-96fa-c481779d1152.png)
