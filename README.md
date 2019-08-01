@@ -68,11 +68,11 @@ Pepr3D was originally created as a university project at the [Faculty of Mathema
 * Luis Sanchez
 
 ### Supervisor
-* Oskár Elek, [CGG @ MFF CUNI](https://cgg.mff.cuni.cz/index.en.php), now [Creative Coding @ UC Santa Cruz](https://creativecoding.soe.ucsc.edu/people.php)
+* [Oskár Elek](https://cgg.mff.cuni.cz/~oskar/), [CGG @ MFF CUNI](https://cgg.mff.cuni.cz/index.en.php), now [Creative Coding @ UC Santa Cruz](https://creativecoding.soe.ucsc.edu/people.php)
 
 ### Consultants (alphabetically)
 * Vojtěch Bubník, [Prusa Research](https://www.prusa3d.com/)
-* Jaroslav Křivánek, [CGG @ MFF CUNI](https://cgg.mff.cuni.cz/index.en.php)
-* Tobias Rittig, [CGG @ MFF CUNI](https://cgg.mff.cuni.cz/index.en.php)
+* [Jaroslav Křivánek](https://cgg.mff.cuni.cz/~jaroslav/), [CGG @ MFF CUNI](https://cgg.mff.cuni.cz/index.en.php)
+* [Tobias Rittig](https://cgg.mff.cuni.cz/~tobias/), [CGG @ MFF CUNI](https://cgg.mff.cuni.cz/index.en.php)
 
 *The ["Bulbasaur" model](https://www.thingiverse.com/thing:327753) in the screenshots and photos by [Agustin Flowalistik](https://www.thingiverse.com/FLOWALISTIK/about). More sample models can be [downloaded](https://github.com/tomasiser/pepr3d/releases/download/v1.0/Pepr3D-SampleModels.zip) from the [Releases](https://github.com/tomasiser/pepr3d/releases) page. Third-party libraries used in the project are documented in the [LICENSE.md](LICENSE.md) file.*
