@@ -18,7 +18,7 @@
 
 <h1></h1>
 
-<h1 align="center"><img height="400" alt="Pepr3D Screenshot" src="https://user-images.githubusercontent.com/10374559/62304598-94fd0680-b47e-11e9-8b5d-cc1fe54af8f8.png"></h1>
+<h3 align="center"><img height="400" alt="Pepr3D Screenshot" src="https://user-images.githubusercontent.com/10374559/62304598-94fd0680-b47e-11e9-8b5d-cc1fe54af8f8.png"></h3>
 
 ## Key Features
 
@@ -37,3 +37,18 @@
 - **Export** the final result into individual `.stl` files using our easy-to-use export assistant.
 
 - The exported files can be **printed** directly via the official [Prusa Slicer](https://www.prusa3d.com/prusaslicer/) ([GitHub](https://github.com/prusa3d/PrusaSlicer)) using a [multi-material Prusa 3D printer](https://www.prusa3d.com/original-prusa-i3-multi-material-2-0/).
+
+## Examples
+
+| Model import | Triangle painter |
+|:-------------------------:|:-------------------------:|
+|<img alt="Model import" src="https://user-images.githubusercontent.com/10374559/62309816-7c91e980-b488-11e9-87e4-37ad81093d32.gif">|<img alt="Triangle painter" src="https://user-images.githubusercontent.com/10374559/62309982-d5618200-b488-11e9-9f1a-06698eca3bf8.gif">|
+
+| Paint bucket | Brush |
+|:-------------------------:|:-------------------------:|
+|<img alt="Paint bucket" src="https://user-images.githubusercontent.com/10374559/62310156-2e311a80-b489-11e9-97a0-fc6bb29b8a5f.gif">|<img alt="Brush" src="https://user-images.githubusercontent.com/10374559/62310365-a7c90880-b489-11e9-93cf-ea9d1f6d6093.gif">|
+
+
+| Text editor | Export assistant |
+|:-------------------------:|:-------------------------:|
+|<img alt="Text editor" src="https://user-images.githubusercontent.com/10374559/62310753-7f8dd980-b48a-11e9-966c-46a670986ed5.gif">|<img alt="Export assistant" src="https://user-images.githubusercontent.com/10374559/62311235-af89ac80-b48b-11e9-8b79-e33f6190ced8.gif">|
