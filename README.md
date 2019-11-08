@@ -17,11 +17,12 @@
 </h4>
 
 <h1></h1>
-<h4 align="center">
+
+<p align="center">
 <img alt="Build Badge" src="https://img.shields.io/github/languages/top/tomasiser/pepr3d" />
 <img alt="Build Badge" src="https://img.shields.io/circleci/build/github/tomasiser/pepr3d" />
-<img alt="Download Badge" src="https://img.shields.io/github/downloads/tomasiser/pepr3d/latest/total" />
-</h4>
+<img alt="Download Badge" src="https://img.shields.io/github/downloads/tomasiser/pepr3d/latest/total?color=amber&label=downloads" />
+</p>
 
 <h1></h1>
 
