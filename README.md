@@ -18,6 +18,14 @@
 
 <h1></h1>
 
+<p align="center">
+<img alt="Build Badge" src="https://img.shields.io/github/languages/top/tomasiser/pepr3d" />
+<img alt="Build Badge" src="https://img.shields.io/circleci/build/github/tomasiser/pepr3d" />
+<img alt="Download Badge" src="https://img.shields.io/github/downloads/tomasiser/pepr3d/latest/total?color=amber&label=downloads" />
+</p>
+
+<h1></h1>
+
 <h3 align="center"><img height="400" alt="Pepr3D Screenshot" src="https://user-images.githubusercontent.com/10374559/62304598-94fd0680-b47e-11e9-8b5d-cc1fe54af8f8.png"></h3>
 
 ## Key Features
