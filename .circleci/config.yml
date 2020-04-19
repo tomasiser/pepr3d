@@ -55,6 +55,16 @@ jobs:
           paths:
             - build/*
             - assets/*
+      - run:
+          name: Compress artifacts
+          command: |
+            mkdir -p /tmp
+            mkdir -p /tmp/artifacts
+            tar -cvf /tmp/artifacts/build.tar /root/project/build
+            tar -cvf /tmp/artifacts/assets.tar /root/project/assets
+      - store_artifacts:
+          path: /tmp/artifacts
+          destination: build-and-assets
   test:
     docker:
       - image: tomasiser/docker-cinder:pepr3d
