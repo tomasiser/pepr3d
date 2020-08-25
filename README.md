@@ -1,3 +1,7 @@
+| :left_speech_bubble: Note for visitors  |
+| ------------- |
+| Dear visitors,<br><br>please note that this project was a prototype created by students. **It is no longer being actively developed and maintained**.<br><br>Feel free to create your own fork, but keep in mind the [license](LICENSE.md) of this project, which is influenced by our usage of GPL libraries. If you would like to publicly distribute your own forked version of this project, please get in touch with any of the original contributors.<br><br>We wish you happy 3D printing! :) |
+
 <h1 align="center"><img height="131" alt="Pepr3D" src="https://user-images.githubusercontent.com/10374559/61998646-4c76cf00-b0b3-11e9-8e30-f88d70435b37.png"></h1>
 
 <h3 align="center">
@@ -71,7 +75,7 @@ Pepr3D was originally created as a university project at the [Faculty of Mathema
 
 ### Main contributors (alphabetically)
 * Štěpán Hojdar
-* Tomáš Iser
+* [Tomáš Iser](https://cgg.mff.cuni.cz/~tomas/)
 * Jindřich Pikora
 * Luis Sanchez
 
